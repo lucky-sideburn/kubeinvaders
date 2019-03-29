@@ -1,0 +1,17 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[project]
+title = KubeInvaders
+version = 0.1
+
+[display]
+variable_dt = 1
+fullscreen = 0
+update_frequency = 60
+width = 1280
+height = 720
+
+[script]
+shared_state = 1
+

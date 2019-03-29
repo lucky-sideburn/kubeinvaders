@@ -1,0 +1,40 @@
+local COLLISION_RESPONSE = hash("collision_response")
+
+function refresh_pods()
+	print "refresh pods"
+	http.request("https://ocmaster39:8443/api/v1/namespaces/foobar/pods", "GET", http_pod_result,headers)
+end
+
+function delete_request_pod()
+	print "request for deleting pods"
+	http.request("https://ocmaster39:8443/api/v1/namespaces/foobar/pods", "GET", http_pod_delete_request_result,headers)
+end
+
+function init(self)
+	print "init bullet"
+	token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJmb29iYXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiYm90LXRva2VuLTZiNndkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImJvdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjRmZTZkOWUwLWRlNjEtMTFlOC1hOTIzLTIyM2Q5NTVhNzBlOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpmb29iYXI6Ym90In0.GwuazgmPxWIGgFNuVQxpNz5kXweuPjUHMnsemX1YJAINYgzvZ2FMaTCqJJ1pN3Vdk05KA9YD69lJLYv3kBDSeTdWOCuIYSGyq0EPhUu5eGdFvDxg1Hqj58XWTfNS79Yb3jPTTETGLqDPLJIMqKbmvIERxVZlVT8cGWo6xVhDrUaA0YrGD6SFdvh35pqGV-hmyyzhqU27p51zUG4cYv9KVk1TVVJst2qDIoB2vCnab04qaaPuWB3GmVQLXEG09qqGWvYuil88gb76iMNv7vfX3FMKuENxD175et5hhIbEjWg2jdxqGzZ6wj8Qi19WJr-1fREk_loefi-1ipC-zc5uLw"
+	headers = {
+		["Authorization"] = "Bearer " .. token ,
+		["Accept"] = "application/json",
+		["Content-Type"] = "application/json"
+	}
+end
+
+function on_message(self, message_id, message, sender)
+	print "start on_message function for bullets"
+	print(self.id)
+	if message_id == COLLISION_RESPONSE  and hash("collision_response") == message_id then
+		print 'collision detected!'		
+		for i,id in ipairs(current_pods) do
+			print ("delete " .. id )
+			if id ~= "reset" then
+				go.delete(id)
+			end
+		end
+		current_pods={}
+		print "set pods.."
+		delete_request_pod()
+		set_pods()
+	end
+	print 'end on_message function for bullets'
+end

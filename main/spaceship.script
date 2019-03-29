@@ -1,0 +1,127 @@
+current_pods = {}
+check_current_pods = false
+
+function delete_pod(pod_name)
+	print "delete pods on Kubernetes/Openshift"
+	http.request("https://ocmaster39:8443/api/v1/namespaces/foobar/pods/" .. pod_name, "DELETE", http_pod_delete_result,headers)
+end
+
+function http_pod_delete_result(self, _, response)
+	print "print http_pod_delete_result"
+	print(response.status)
+	print(response.response)
+	print(response.headers)
+end
+
+function http_pod_delete_request_result(self, _, response)
+	print "getting http_pod_delete_result"
+	pods = {}
+	print(response.status)
+	print(response.response)
+	print(response.headers)
+	pods = json.decode(response.response)
+	pod_items_size = table.getn(pods["items"])
+	a = 0
+	while a <= pod_items_size do
+		if pod_items[a] ~= nil then
+			if pod_items[a]['status']['phase'] == "Running" then
+				pod_to_delete = pod_items[a]['metadata']['name']
+			end
+		end
+		a = a + 1
+	end
+	delete_pod(pod_to_delete)
+end
+
+function http_pod_result(self, _, response)
+	print(response.status)
+	print(response.response)
+	print(response.headers)
+	pods = json.decode(response.response)
+	pod_items_size = table.getn(pods["items"])
+	pod_items = pods["items"]
+	a = 0
+	distance_between_pods = 1000 / pod_items_size
+
+	while( a <= pod_items_size )
+	do  
+		if pod_items[a] ~= nil then
+			this_pod = pod_items[a]
+			phase = this_pod["status"]["phase"]
+			if phase == "Running" then
+				local pos = go.get_position()
+				pos.x = 100 + ( a * (1000 / pod_items_size)  )		
+				pos.y = 600
+				local pod = factory.create("/pod#podfactory", pos)
+				print("create " .. pod)
+				--go.animate(pod, "position.y", go.PLAYBACK_ONCE_FORWARD, 600, go.EASING_INQUAD, 1)
+				--go.animate(pod, "position.y", go.PLAYBACK_NONE, 12, go.EASING_LINEAR, 1, 0)
+				table.insert(current_pods, pod)
+				check_current_pods = true
+			end
+		end
+		a = a+1		
+	end
+end
+
+function set_pods()
+	print "create pods"
+	http.request("https://ocmaster39:8443/api/v1/namespaces/foobar/pods", "GET", http_pod_result,headers)
+end
+
+function init(self)
+	print "init spaceship"
+	msg.post(".", "acquire_input_focus")	
+	token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJmb29iYXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoiYm90LXRva2VuLTZiNndkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImJvdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjRmZTZkOWUwLWRlNjEtMTFlOC1hOTIzLTIyM2Q5NTVhNzBlOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpmb29iYXI6Ym90In0.GwuazgmPxWIGgFNuVQxpNz5kXweuPjUHMnsemX1YJAINYgzvZ2FMaTCqJJ1pN3Vdk05KA9YD69lJLYv3kBDSeTdWOCuIYSGyq0EPhUu5eGdFvDxg1Hqj58XWTfNS79Yb3jPTTETGLqDPLJIMqKbmvIERxVZlVT8cGWo6xVhDrUaA0YrGD6SFdvh35pqGV-hmyyzhqU27p51zUG4cYv9KVk1TVVJst2qDIoB2vCnab04qaaPuWB3GmVQLXEG09qqGWvYuil88gb76iMNv7vfX3FMKuENxD175et5hhIbEjWg2jdxqGzZ6wj8Qi19WJr-1fREk_loefi-1ipC-zc5uLw"
+	headers = {
+		["Authorization"] = "Bearer " .. token ,
+		["Accept"] = "application/json",
+		["Content-Type"] = "application/json"
+	}
+	set_pods()
+end
+
+function update(self, dt)
+	if rawequal(next(current_pods), nil) and check_current_pods then
+		set_pods()
+		current_pods = {"reset"}
+	end
+end
+
+function on_input(self, action_id, action)
+	print "start on_input"
+	if action_id == hash("up") then
+		local p = go.get_position()
+		p.y = p.y + 4
+		go.set_position(p)
+	elseif action_id == hash("down") then
+		local p = go.get_position()
+		p.y = p.y - 4
+		go.set_position(p)
+	elseif action_id == hash("left") then
+		local p = go.get_position()
+		p.x = p.x - 4
+		go.set_position(p)
+	elseif action_id == hash("right") then
+		local p = go.get_position()
+		p.x = p.x + 4
+		go.set_position(p)	
+	elseif action_id == hash("click") and action.pressed then
+		print(action_id)
+		print(hash("click"))
+		print("CLICK!")
+	elseif action_id == hash("space") and action.pressed then
+		print("SPACE!")	
+		local pos = go.get_position()
+		local to = pos.y + 2 * 64
+		local bullet = factory.create("/bullet#bulletfactory", pos)
+		print "animate and delete bullet"	
+		go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+			go.delete(bullet)
+		end)
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	print "ciaoooo"
+end

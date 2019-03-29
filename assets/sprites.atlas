@@ -1,0 +1,40 @@
+images {
+  image: "/assets/bg.png"
+}
+animations {
+  id: "spaceship"
+  images {
+    image: "/assets/spaceship_00.png"
+  }
+  images {
+    image: "/assets/spaceship_01.png"
+  }
+  images {
+    image: "/assets/spaceship_02.png"
+  }
+  images {
+    image: "/assets/spaceship_03.png"
+  }
+  images {
+    image: "/assets/spaceship_04.png"
+  }
+  images {
+    image: "/assets/spaceship_05.png"
+  }
+  images {
+    image: "/assets/spaceship_06.png"
+  }
+  images {
+    image: "/assets/spaceship_07.png"
+  }
+  images {
+    image: "/assets/spaceship_08.png"
+  }
+  playback: PLAYBACK_LOOP_FORWARD
+  fps: 30
+  flip_horizontal: 0
+  flip_vertical: 0
+}
+margin: 0
+extrude_borders: 0
+inner_padding: 0

@@ -85,5 +85,11 @@ function M.update(dt)
 	end
 end
 
+function M.repeat_seconds(seconds, callback)
+	M.seconds(seconds, function()
+		callback()
+		M.repeat_seconds(seconds, callback)
+	end)
+end
 
 return M

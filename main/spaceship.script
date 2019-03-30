@@ -1,5 +1,6 @@
 current_pods = {}
 check_current_pods = false
+local timer = require ("main.timer")
 
 function delete_pod(pod_name)
 	print "delete pods on Kubernetes/Openshift"
@@ -48,16 +49,17 @@ function http_pod_result(self, _, response)
 		if pod_items[a] ~= nil then
 			this_pod = pod_items[a]
 			phase = this_pod["status"]["phase"]
+			local pos = go.get_position()
+			pos.x = 100 + ( a * (1000 / pod_items_size)  )		
+			pos.y = 600
 			if phase == "Running" then
-				local pos = go.get_position()
-				pos.x = 100 + ( a * (1000 / pod_items_size)  )		
-				pos.y = 600
-				local pod = factory.create("/pod#podfactory", pos)
-				print("create " .. pod)
-				--go.animate(pod, "position.y", go.PLAYBACK_ONCE_FORWARD, 600, go.EASING_INQUAD, 1)
-				--go.animate(pod, "position.y", go.PLAYBACK_NONE, 12, go.EASING_LINEAR, 1, 0)
+				local pod = factory.create("/pod#podfactory", pos)				
 				table.insert(current_pods, pod)
 				check_current_pods = true
+			else
+				local pod = factory.create("/pod_not_running#podfactory", pos)
+				table.insert(current_pods, pod)
+				check_current_pods = true				
 			end
 		end
 		a = a+1		
@@ -83,6 +85,12 @@ end
 
 function update(self, dt)
 	if rawequal(next(current_pods), nil) and check_current_pods then
+		for i,id in ipairs(current_pods) do
+			print ("delete " .. id )
+			if id ~= "reset" then
+				go.delete(id)
+			end
+		end
 		set_pods()
 		current_pods = {"reset"}
 	end

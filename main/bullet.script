@@ -23,7 +23,7 @@ end
 function on_message(self, message_id, message, sender)
 	print "start on_message function for bullets"
 	print(self.id)
-	if message_id == COLLISION_RESPONSE  and hash("collision_response") == message_id then
+	if message_id == COLLISION_RESPONSE then
 		print 'collision detected!'		
 		for i,id in ipairs(current_pods) do
 			print ("delete " .. id )

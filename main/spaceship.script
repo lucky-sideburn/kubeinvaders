@@ -21,7 +21,7 @@ function swap_pod(items)
 	for i,value in ipairs(current_pods) do
 		if value["id"] ~= "reset" and value["color"] == "red" then
 			current_pod_not_running = current_pod_not_running + 1 
-			--print ("[swap_pod]:" .. value["id"] .. " is not running in KubeInvaders")
+		    --print ("[swap_pod]:" .. value["id"] .. " is not running in KubeInvaders")
 		end
 	end
 	for i,value in ipairs(items) do
@@ -30,9 +30,9 @@ function swap_pod(items)
 			--print ("[swap_pod]:" .. value['metadata']['name'] .. " is not running on Kubernetes cluster")
 		end
 	end
-	--print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
-	--print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
-	--print ("[swap_pod]: not running pods in  KubeInvaders: " .. current_pod_not_running)
+	print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
+	print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
+	print ("[swap_pod]: not running pods in  KubeInvaders: " .. current_pod_not_running)
 	
 	if (current_pod_not_running > 0) and (kube_pod_not_running > current_pod_not_running )then
 		diff  = kube_pod_not_running - current_pod_not_running
@@ -155,7 +155,7 @@ function init(self)
 		["Accept"] = "application/json",
 		["Content-Type"] = "application/json"
 	}
-	timer.repeat_seconds(1, function()
+	timer.repeat_seconds(0.5, function()
 		update_pod()
 	end)	
 	set_pods()

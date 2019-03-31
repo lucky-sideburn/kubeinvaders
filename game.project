@@ -3,7 +3,7 @@ main_collection = /main/main.collectionc
 
 [project]
 title = KubeInvaders
-version = 0.2
+version = 0.3
 
 [display]
 variable_dt = 1

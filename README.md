@@ -12,7 +12,7 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 ### Download KubeInvaders
 
 Linux
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/x86_64-linux.tar.gz)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/x86_64-linux.tar.gz?raw=true)
 
 macOS
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/x86_64-darwin.tar.gz)

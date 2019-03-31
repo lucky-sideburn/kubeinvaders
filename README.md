@@ -9,6 +9,11 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
+### Donwload KubeInvaders
+
+Please check the [releases](https://github.com/lucky-sideburn/KubeInvaders/releases) page.
+
+
 ### How Configure KubeInvaders
 
 .KubeInv.conf looks like this:

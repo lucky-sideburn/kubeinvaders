@@ -1,3 +1,4 @@
+.KubeInv.conf
 /.internal
 /build
 .externalToolBuilders

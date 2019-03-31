@@ -22,3 +22,7 @@ mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"
 }
+text_trigger {
+  input: TEXT
+  action: "type"
+}

@@ -1,0 +1,33 @@
+function init(self)
+
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Remove this function if not needed
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("hello_gui") then
+		gui.set_text(gui.get_node("status"), "Running pods: " .. message.pod_running)		
+	elseif  message_id == hash("howto") then
+		gui.set_text(gui.get_node("howto"), message.howto_message)	
+	elseif  message_id == hash("info") then
+		gui.set_text(gui.get_node("info"), message.infomessage)		
+	end
+end
+
+
+function on_input(self, action_id, action)
+
+end
+
+function on_reload(self)
+	-- Add input-handling code here
+	-- Remove this function if not needed
+end

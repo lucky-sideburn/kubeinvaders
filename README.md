@@ -9,6 +9,15 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
+### Download KubeInvaders
+
+Linux
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/x86_64-linux.tar.gz)
+
+macOS
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/x86_64-darwin.tar.gz)
+
+
 ### How Configure KubeInvaders
 
 .KubeInv.conf looks like this:
@@ -23,7 +32,7 @@ endpoint https://ocmaster39:8443
 namespace foobar
 ```
 
-Where should be .KubeInv.conf ?
+Where should be .KubeInv.conf?
 
 Start the game and it will say to you where
 

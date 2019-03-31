@@ -22,7 +22,7 @@ endpoint https://ocmaster39:8443
 
 namespace foobar
 ```
-*the token should have permission for list and delete pods into the namespace*
+**the token should have permission for list and delete pods into the namespace**
 
 Where should be .KubeInv.conf?
 

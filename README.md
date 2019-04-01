@@ -11,6 +11,8 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
+[YouTubeVideo](https://youtu.be/0NDAJ92tJkY)
+
 ### Donwload KubeInvaders
 
 Please check the [releases](https://github.com/lucky-sideburn/KubeInvaders/releases) page.

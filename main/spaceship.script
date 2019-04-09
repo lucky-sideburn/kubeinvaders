@@ -74,10 +74,23 @@ function swap_pod(items)
 end 
 
 function http_update_pod_result(self, _, response)
+	pod_running = {}
+	if response.status == 0 then
+		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
+	end
 	pods = json.decode(response.response)
 	pod_items_size = table.getn(pods["items"])
 	pod_items = pods["items"]
-	swap_pod(pod_items)
+	i = 0
+	while i <= pod_items_size do
+		if pod_items[i] ~= nil then
+			if pod_items[i]['status']['phase'] == "Running" then
+				table.insert(pod_running,pod_items[i])
+			end
+		end
+		i = i + 1
+	end
+	swap_pod(pod_running)
 end
 
 function update_pod()
@@ -95,16 +108,16 @@ end
 
 function http_pod_delete_result(self, _, response)
 	print "[http_pod_delete_result] Request for delete pod on kubernetes has been done"
-	--print(response.status)
-	--print(response.response)
-	--print(response.headers)
+	print(response.status)
+	print(response.response)
+	print(response.headers)
+	if string.match(response.status, '4.*') or string.match(response.status, '5.*')  then
+		msg.post("ui#gui", "error",{ errormessage = "Status code: " .. response.status .. "\n" .. response.response })
+	end
 end
 
 function http_pod_delete_request_result(self, _, response)
 	pods = {}
-	--print(response.status)
-	--print(response.response)
-	--print(response.headers)
 	pods = json.decode(response.response)
 	pod_items_size = table.getn(pods["items"])
 	a = 0
@@ -120,9 +133,14 @@ function http_pod_delete_request_result(self, _, response)
 end
 
 function http_pod_result(self, _, response)
-	--print(response.status)
-	--print(response.response)
-	--print(response.headers)
+	print(response.status)
+	print(response.response)
+	print(response.headers)
+
+	if string.match(response.status, '4.*') or string.match(response.status, '5.*')  then
+		msg.post("ui#gui", "error",{ errormessage = "Status code: " .. response.status .. "\n" .. response.response })
+	end
+	
 	pods = json.decode(response.response)
 	pod_items_size = table.getn(pods["items"])
 	pod_items = pods["items"]
@@ -156,42 +174,23 @@ function set_pods()
 end
 
 function init(self)
-
 	conf = {}
-
-	fp = io.open( ".KubeInv.conf", "r" )
-	if fp ~= nil then
-		for line in fp:lines() do
-			line = line:match( "%s*(.+)" )
-			if line and line:sub( 1, 1 ) ~= "#" and line:sub( 1, 1 ) ~= ";" then
-				option = line:match( "%S+" ):lower()
-				value  = line:match( "%S*%s*(.*)" )
-
-				if not value then
-					conf[option] = true
-				else
-					if not value:find( "," ) then
-						conf[option] = value
-					else
-						value = value .. ","
-						conf[option] = {}
-						for entry in value:gmatch( "%s*(.-)," ) do
-							conf[option][#conf[option]+1] = entry
-						end
-					end
-				end
-
-			end
-		end
-	fp:close()
-	end
-
-	local handle = io.popen('pwd')
-	local result = handle:read("*a")
-	handle:close()	
+	local path = os.getenv("HOME") .. "/.KubeInv.json"
+	local contents = ""
+	conf = {}
+	local file = io.open( path, "r" )
+    if file then
+		local contents = file:read( "*a" )
+		conf = json.decode(contents);
+		io.close(file)
+	else
+		conf["token"] = os.getenv("TOKEN")
+		conf["endpoint"] = os.getenv("ENDPOINT") 
+		conf["namespace"] = os.getenv("NAMESPACE") 
+	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then
-		msg.post("ui#gui", "howto",{ howto_message =  "Please create .KubeInv.conf in " .. result .. "Example of KubeInv.conf:\n\nnamespace foobar\ntoken eyJhbGciOiJ43i423i94239i49\nendpoint https://ocmaster39:8443\n"})
+		msg.post("ui#gui", "howto",{ howto_message = "Please create .KubeInv.json in " ..  os.getenv("HOME") .. "\nThe file .KubeInv.json should be like this \n{\"endpoint\": \"http://ocmaster39\",\"token\": \"xxxx\",\"namespace\": \"foobar\"}"})
 	else
 		print( "token: ", conf["token"] )
 		print( "endpoint: ", conf["endpoint"] )
@@ -205,10 +204,11 @@ function init(self)
 		msg.post("ui#gui", "info",{ infomessage =  info })
 		
 		msg.post(".", "acquire_input_focus")	
+
 		headers = {
-			["Authorization"] = "Bearer " .. token ,
 			["Accept"] = "application/json",
-			["Content-Type"] = "application/json"
+			["Content-Type"] = "application/json",
+			["Authorization"] = "Bearer " .. token
 		}
 		timer.repeat_seconds(0.5, function()
 			update_pod()
@@ -218,16 +218,6 @@ function init(self)
 end
 
 function update(self, dt)
-	--if rawequal(next(current_pods), nil) and check_current_pods then
-	--	for i,value in ipairs(current_pods) do
-	--		print ("delete " .. value["id"] )
-	--		if value["id"] ~= "reset" then
-	--		go.delete(id["id"])
-	--		end
-	-- 	end
-	--set_pods()
-	--current_pods = { id = "reset"}
-	--end
 	timer.update(dt)
 end
 

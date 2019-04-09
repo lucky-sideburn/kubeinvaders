@@ -1,3 +1,6 @@
+build_docker.sh
+push_docker.sh
+set_env.sh
 .KubeInv.conf
 /.internal
 /build

@@ -16,7 +16,7 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 To Install KubeInvaders on your Openshift Cluster launch the following commands
 
-```bash
+```console
 # replace the followint variables with the right values
 TARGET_NAMESPACE=kubeinvaders
 ENDPOINT=https://192.168.99.100:8443
@@ -59,15 +59,15 @@ Change the following variables inside the kubeinvaders DeploymentConfig
 
 ### How Configure KubeInvaders - Local execution
 
-create the file **.KubeInv.json** (the token should have permission for list and delete pods into the namespace).
+create the file **$HOME/.KubeInv.json** (the token should have permission for list and delete pods into the namespace).
 
-**Where should be .KubeInv.conf?**
-
-Start the game and it will say to you where
-
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/conf.png)
-
-
+```
+{
+  "token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJmb29iYXIiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlY3JldC5uYW1lIjoia3ViZWludmFkZXJzLXRva2VuLTJqbXF0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6Imt1YmVpbnZhZGVycyIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImRhNDc4MmQ2LTViMDgtMTFlOS05MmQ1LTIyM2Q5NTVhNzBlOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpmb29iYXI6a3ViZWludmFkZXJzIn0.dfw0OhfPsJmL09aOfY8Iw3zs-Wp0FgaUPRwGiXo3u-RQRJubzMvoPzxc97JayR-VmBTW8lMracdD2EhrHzaeA7ntH0TSKCWq6LTxaOa70IvPdAR2aa5oaRPHJ0SslcBr5WdNXFcOCgy9lLT9PIQkjRQvKos9NMxrTDJolqdPuMvTdAZLy1kiNURzXFW2ImHkUduOzJRi0xwy291YzOD5wqKsB9wnHGo74RNI8bd68wV",
+  "endpoint": "https://ocmaster39:8443",
+  "namespace": "foobar"
+}
+```
 ### TO-DO
 
 * Code style improvment 

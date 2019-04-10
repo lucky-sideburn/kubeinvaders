@@ -14,34 +14,26 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ### Install Kubernetes on Openshift
 
-To Install KubeInvaders on your Openshift Cluster launch the following commands
+If you deploy KubeInvaders on Openshift please configure corsAllowedOrigins in your /etc/origin/master/master-config.yaml
 
-```console
-# replace the followint variables with the right values
-TARGET_NAMESPACE=kubeinvaders
+```yaml
+ corsAllowedOrigins:
+   - (?i)//kubeinvaders.org(:|\z)
+```
+
+To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
+
+```bash
+TARGET_NAMESPACE=foobar
 ENDPOINT=https://192.168.99.100:8443
 ROUTE_URL=kubeinvaders.org
-# https://ionicframework.com/docs/faq/cors
-# If you deploy KubeInvaders on Openshift please configure corsAllowedOrigins in your /etc/origin/master/master-config.yaml
-# corsAllowedOrigins:
-# - (?i)//kubeinvaders.org(:|\z)
-
-
-# TO DO: put all stuff in Openshift Template
 oc new-project kubeinvaders --display-name='KubeInvaders'
 oc create sa kubeinvaders -n kubeinvaders
-oc create role podinvanders --verb=delete,get --resource=pod -n $TARGET_NAMESPACE
-oc adm policy add-role-to-user podinvanders kubeinvaders --role-namespace=$TARGET_NAMESPACE -n $TARGET_NAMESPACE
-TOKEN=$(oc describe secret $(oc describe sa kubeinvaders -n kubeinvaders | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
+oc create sa kubeinvaders -n $TARGET_NAMESPACE
+oc adm policy add-role-to-user edit -z kubeinvaders -n $TARGET_NAMESPACE
 
+TOKEN=$(oc describe secret -n $TARGET_NAMESPACE $(oc describe sa kubeinvaders -n $TARGET_NAMESPACE | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_URL=$ROUTE_URL -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p ENDPOINT=$ENDPOINT TOKEN=$TOKEN | oc create -f -
-
-oc create role kubeinvaders --verb=delete,get --resource=pod -n foobar
-oc adm policy add-role-to-user kubeinvaders kubeinvaders -n foobar
-TOKEN=$(oc describe secret -n kubeinvaders $(oc describe sa kubeinvaders -n kubeinvaders | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
-
-#https://ionicframework.com/docs/faq/cors
-
 
 ```
 

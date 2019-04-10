@@ -82,7 +82,7 @@ objects:
           - name: ENDPOINT
             value: "${ENDPOINT}"
           name: kubeinvaders
-          image: "docker.io/luckysideburn/kubeinvaders:0.2.2"
+          image: "docker.io/luckysideburn/kubeinvaders:0.2.7"
           ports:
           - containerPort: 8080
             protocol: TCP

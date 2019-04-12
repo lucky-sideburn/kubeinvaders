@@ -25,7 +25,7 @@ To Install KubeInvaders on your Openshift Cluster clone this repo and launch the
 
 ```bash
 TARGET_NAMESPACE=foobar
-ENDPOINT=https://192.168.99.100:8443
+ENDPOINT=https://ocmaster39:8443
 ROUTE_URL=kubeinvaders.org
 oc new-project kubeinvaders --display-name='KubeInvaders'
 oc create sa kubeinvaders -n kubeinvaders
@@ -34,7 +34,6 @@ oc adm policy add-role-to-user edit -z kubeinvaders -n $TARGET_NAMESPACE
 
 TOKEN=$(oc describe secret -n $TARGET_NAMESPACE $(oc describe sa kubeinvaders -n $TARGET_NAMESPACE | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_URL=$ROUTE_URL -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p ENDPOINT=$ENDPOINT TOKEN=$TOKEN | oc create -f -
-
 ```
 
 ### Donwload KubeInvaders - External to Openshift (macOS or Linux clients)

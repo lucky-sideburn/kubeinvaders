@@ -12,7 +12,7 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
-### Install Kubernetes on Openshift
+### Install KubeInvaders on Openshift
 
 If you deploy KubeInvaders on Openshift please configure corsAllowedOrigins in your /etc/origin/master/master-config.yaml
 

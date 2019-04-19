@@ -9,8 +9,10 @@ metadata:
     iconClass: fa fa-cogs
     tags: "spaceinvaders"
 parameters:
+- description: IP addresses that can contact Kubernetes
+  name: IP_WHITELIST
 - description: URL of KubeInvaders
-  name: ROUTE_URL
+  name: ROUTE_HOST
   value: kubeinvaders.local
 - description: The location of the kubeinvaders image
   name: IMAGE_KUBEINVADERS
@@ -22,8 +24,6 @@ parameters:
   name: TARGET_NAMESPACE
 - description: Token of a serviceAccount that can kill PODs in specific namespace.
   name: TOKEN
-- description: Openshift Master URL
-  name: ENDPOINT
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -35,8 +35,10 @@ objects:
   metadata:
     name: kubeinvaders
     namespace: "${NAMESPACE}"
+    annotations:
+      haproxy.router.openshift.io/ip_whitelist: ${IP_WHITELIST}
   spec:
-    host: "${ROUTE_URL}"
+    host: "${ROUTE_HOST}"
     to:
       name: kubeinvaders
     tls:
@@ -74,15 +76,16 @@ objects:
       spec:
         serviceAccountName: kubeinvaders
         containers:
-        - env: 
+        - env:
+          - name: ROUTE_HOST
+            value: "${ROUTE_HOST}" 
           - name: NAMESPACE
             value: "${TARGET_NAMESPACE}"
           - name: TOKEN
             value: "${TOKEN}"
-          - name: ENDPOINT
-            value: "${ENDPOINT}"
           name: kubeinvaders
-          image: "docker.io/luckysideburn/kubeinvaders:0.2.7"
+          image: ${IMAGE_KUBEINVADERS}
+          imagePullPolicy: Always 
           ports:
           - containerPort: 8080
             protocol: TCP

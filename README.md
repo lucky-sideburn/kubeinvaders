@@ -25,15 +25,19 @@ To Install KubeInvaders on your Openshift Cluster clone this repo and launch the
 
 ```bash
 TARGET_NAMESPACE=foobar
-ENDPOINT=https://ocmaster39:8443
-ROUTE_URL=kubeinvaders.org
+ROUTE_HOST=kubeinvaders.org
+
+# Please add your source ip IP_WHITELIST. This will add haproxy.router.openshift.io/ip_whitelist in KubeInvaders route
+# https://docs.openshift.com/container-platform/3.9/architecture/networking/routes.html#whitelist
+IP_WHITELIST="93.44.96.4"
+
 oc new-project kubeinvaders --display-name='KubeInvaders'
 oc create sa kubeinvaders -n kubeinvaders
 oc create sa kubeinvaders -n $TARGET_NAMESPACE
 oc adm policy add-role-to-user edit -z kubeinvaders -n $TARGET_NAMESPACE
 
 TOKEN=$(oc describe secret -n $TARGET_NAMESPACE $(oc describe sa kubeinvaders -n $TARGET_NAMESPACE | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
-oc process -f openshift/KubeInvaders.yaml -p ROUTE_URL=$ROUTE_URL -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p ENDPOINT=$ENDPOINT TOKEN=$TOKEN | oc create -f -
+oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p TOKEN=$TOKEN | oc create -f -
 ```
 
 ### Donwload KubeInvaders - External to Openshift (macOS or Linux clients)
@@ -45,7 +49,6 @@ Please check the [releases](https://github.com/lucky-sideburn/KubeInvaders/relea
 Change the following variables inside the kubeinvaders DeploymentConfig
 
 * TARGET_NAMESPACE
-* ENDPOINT
 * TOKEN
 
 ### How Configure KubeInvaders - Local execution

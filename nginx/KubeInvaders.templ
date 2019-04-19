@@ -1,0 +1,28 @@
+# These variables will be replaced by temporary_hack.sh
+upstream kubernetes {
+    server ${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
+}
+
+server {
+  listen 8080 default_server;
+  listen [::]:8080 default_server;
+  root /var/www/html/;
+  index index.html;
+  
+  location / {
+    try_files $uri $uri/ =404;
+    add_header Last-Modified $date_gmt;
+    add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
+    if_modified_since off;
+    expires off;
+    etag off;
+  }
+
+  location /kube {
+     rewrite /kube/(.*) /$1  break;
+     proxy_pass         https://kubernetes;
+     proxy_redirect     off;
+     proxy_set_header   Host $host;
+  }
+
+}

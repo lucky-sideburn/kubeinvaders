@@ -253,7 +253,7 @@ function init(self)
 		namespace = conf["namespace"]
 		token = conf["token"] 
 
-		info = "Kubernetes: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. conf["namespace"]
+		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. conf["namespace"]
 		msg.post("ui#gui", "info",{ infomessage =  info })
 		
 		msg.post(".", "acquire_input_focus")	

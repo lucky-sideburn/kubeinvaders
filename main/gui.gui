@@ -15,6 +15,10 @@ fonts {
   name: "error"
   font: "/main/error.font"
 }
+fonts {
+  name: "arcade"
+  font: "/assets/arcade.font"
+}
 background_color {
   x: 0.0
   y: 0.0
@@ -23,8 +27,8 @@ background_color {
 }
 nodes {
   position {
-    x: 120.0
-    y: 80.0
+    x: 299.0
+    y: 99.0
     z: 0.0
     w: 1.0
   }
@@ -41,25 +45,25 @@ nodes {
     w: 1.0
   }
   size {
-    x: 300.0
-    y: 300.0
+    x: 500.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
   color {
-    x: 0.1908397
+    x: 1.0
     y: 1.0
-    z: 0.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: ""
-  font: "kubefont"
+  font: "arcade"
   id: "status"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
+  pivot: PIVOT_W
   outline {
     x: 1.0
     y: 1.0
@@ -72,8 +76,8 @@ nodes {
     z: 1.0
     w: 1.0
   }
-  adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  adjust_mode: ADJUST_MODE_STRETCH
+  line_break: true
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -86,7 +90,7 @@ nodes {
 nodes {
   position {
     x: 601.0
-    y: 131.0
+    y: 196.0
     z: 0.0
     w: 1.0
   }
@@ -117,7 +121,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: ""
-  font: "kubefont"
+  font: "arcade"
   id: "howto"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -135,7 +139,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  line_break: true
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -147,8 +151,8 @@ nodes {
 }
 nodes {
   position {
-    x: 598.0
-    y: 34.0
+    x: 299.0
+    y: 71.0
     z: 0.0
     w: 1.0
   }
@@ -165,8 +169,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 600.0
-    y: 600.0
+    x: 500.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
@@ -179,11 +183,11 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: ""
-  font: "kubefont"
+  font: "arcade"
   id: "info"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
-  pivot: PIVOT_CENTER
+  pivot: PIVOT_W
   outline {
     x: 1.0
     y: 1.0
@@ -196,8 +200,8 @@ nodes {
     z: 1.0
     w: 1.0
   }
-  adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  adjust_mode: ADJUST_MODE_STRETCH
+  line_break: true
   layer: ""
   inherit_alpha: true
   alpha: 1.0
@@ -234,8 +238,8 @@ nodes {
   }
   color {
     x: 1.0
-    y: 0.0
-    z: 0.0
+    y: 1.0
+    z: 1.0
     w: 1.0
   }
   type: TYPE_TEXT
@@ -259,7 +263,7 @@ nodes {
     w: 1.0
   }
   adjust_mode: ADJUST_MODE_FIT
-  line_break: false
+  line_break: true
   layer: ""
   inherit_alpha: true
   alpha: 1.0

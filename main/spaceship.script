@@ -5,12 +5,20 @@ token = ""
 namespace = ""
 local timer = require ("main.timer")
 
+function reverse(tbl)
+	for i=1, math.floor(#tbl / 2) do
+		local tmp = tbl[i]
+		tbl[i] = tbl[#tbl - i + 1]
+		tbl[#tbl - i + 1] = tmp
+	end
+end
+
 function swap_pod(items)
 	current_pod_not_running = 0
 	kube_pod_not_running = 0
 	kube_pod_running = 0
 	pod_items_size = table.getn(items)
-		
+	current_kubeinvaders_pod_size = table.getn(current_pods)
 	for i,value in ipairs(current_pods) do
 		if value["collision"] ~= nil and value["color"] == "red" then
 			print("[swap_pod] creating " .. value["id"] .. " in red. Pos: " .. " " .. value["old_position"])
@@ -37,11 +45,33 @@ function swap_pod(items)
 		end
 	end
 	print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
+	print ("[swap_pod]: current pods on Kubeinvaders: " .. current_kubeinvaders_pod_size)
 	print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
-	print ("[swap_pod]: not running pods in  KubeInvaders: " .. current_pod_not_running)
+	print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
 
 	msg.post("ui#gui", "hello_gui",{ pod_running = kube_pod_running })
-	
+
+	if kube_pod_running < current_kubeinvaders_pod_size then
+		i = current_kubeinvaders_pod_size
+		while ( i > 0 ) do
+			if current_pods[i]["color"] == "white" then
+				go.delete(current_pods[i]["id"])
+				table.remove(current_pods,i)
+				break			
+			end	
+			i = i - 1
+		end
+		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.. Press space" })
+	end
+
+	if kube_pod_running > current_kubeinvaders_pod_size then
+		for i,value in ipairs(current_pods) do
+			go.delete(value["id"])
+		end
+		current_pods = {}
+		set_pods()
+	end
+
 	if (current_pod_not_running > 0) and (kube_pod_not_running > current_pod_not_running )then
 		diff  = kube_pod_not_running - current_pod_not_running
 		a = 0
@@ -56,7 +86,7 @@ function swap_pod(items)
 			a = a + 1
 		end
 
-	elseif current_pod_not_running >  kube_pod_not_running then
+	elseif current_pod_not_running > kube_pod_not_running then
 		diff  = current_pod_not_running - kube_pod_not_running
 		a = 0
 		while ( a < diff ) do
@@ -265,6 +295,7 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("click") and action.pressed then
 		print(action_id)
 	elseif action_id == hash("space") and action.pressed then
+		msg.post("ui#gui", "error",{ errormessage = "" })
 		local pos = go.get_position()
 		local to = pos.y + 2 * 64
 		local bullet = factory.create("/bullet#bulletfactory", pos)

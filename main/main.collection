@@ -415,7 +415,7 @@ embedded_instances {
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
   "  data: \"tile_set: \\\"/assets/console.atlas\\\"\\n"
-  "default_animation: \\\"console\\\"\\n"
+  "default_animation: \\\"infoconsole\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "\"\n"

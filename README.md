@@ -24,8 +24,6 @@ If you deploy KubeInvaders on Openshift please configure corsAllowedOrigins in y
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash
-# If you already instelled KubeInvaders
-oc delete all --all -n kubeinvaders
 
 TARGET_NAMESPACE=foobar
 ROUTE_HOST=kubeinvaders.org

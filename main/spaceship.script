@@ -144,17 +144,40 @@ function http_pod_result(self, _, response)
 	pods = json.decode(response.response)
 	pod_items_size = table.getn(pods["items"])
 	pod_items = pods["items"]
+	check_above = false
 	a = 0
 	distance_between_pods = 1000 / pod_items_size
-
+	y_pos = 600
+	space_between_factor = 0
+	
+	if pod_items_size <= 15 then
+		space_between_factor = pod_items_size
+	else
+		space_between_factor = 15
+	end
+	
 	while( a <= pod_items_size )
 	do  
 		if pod_items[a] ~= nil then
 			this_pod = pod_items[a]
 			phase = this_pod["status"]["phase"]
 			local pos = go.get_position()
-			pos.x = 100 + ( a * (1000 / pod_items_size)  )		
-			pos.y = 600
+
+			if a <= 15 then
+				pos.x = 100 + ( a * (1000 / space_between_factor) )	
+			end 
+			
+			if (a % 15 == 0) then
+				y_pos = y_pos - (( a / 15 ) * 50) 
+				check_above = true
+			end
+
+			if check_above == true then
+				pos_of_pod_above  = go.get_position(current_pods[a - 14]['id'])
+				pos.x = pos_of_pod_above.x
+			end
+			
+			pos.y = y_pos			
 			if phase == "Running" then
 				local pod = factory.create("/pod#podfactory", pos)				
 				table.insert(current_pods, { id = pod , color = "white" })

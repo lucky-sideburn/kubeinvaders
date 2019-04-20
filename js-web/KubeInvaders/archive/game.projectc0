@@ -1,6 +1,6 @@
 [project]
 title = KubeInvaders
-version = 0.3
+version = 0.2
 write_log = 0
 compress_archive = 1
 

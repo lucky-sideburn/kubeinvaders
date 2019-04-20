@@ -1,5 +1,5 @@
 images {
-  image: "/assets/console.png"
+  image: "/assets/infoconsole.png"
 }
 margin: 0
 extrude_borders: 0

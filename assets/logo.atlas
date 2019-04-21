@@ -1,5 +1,5 @@
 images {
-  image: "/assets/logo.png"
+  image: "/assets/kubeinvaderslogo.png"
 }
 margin: 0
 extrude_borders: 0

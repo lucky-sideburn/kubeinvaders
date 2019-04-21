@@ -135,7 +135,7 @@ function ai()
 		rand_pod = math.random(100, 1000)
 	end
 	pos = go.get_position()
-	pos.y = 180
+	pos.y = 220
 	go.set_position(pos)	
 	pos.x = rand_pod
 

@@ -18,6 +18,14 @@ key_trigger {
   input: KEY_SPACE
   action: "space"
 }
+key_trigger {
+  input: KEY_A
+  action: "automatic"
+}
+key_trigger {
+  input: KEY_M
+  action: "manual"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

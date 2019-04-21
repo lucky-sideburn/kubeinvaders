@@ -3,6 +3,7 @@ check_current_pods = false
 endpoint =  ""
 token = ""
 namespace = ""
+automatic = false
 local timer = require ("main.timer")
 
 function reverse(tbl)
@@ -19,6 +20,18 @@ function swap_pod(items)
 	kube_pod_running = 0
 	pod_items_size = table.getn(items)
 	current_kubeinvaders_pod_size = table.getn(current_pods)
+
+	for i,value in ipairs(items) do
+		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
+			kube_pod_not_running = kube_pod_not_running + 1
+			--print ("[swap_pod]:" .. value['metadata']['name'] .. " is not running on Kubernetes cluster")
+		else
+			kube_pod_running = kube_pod_running + 1
+		end
+	end
+	
+	msg.post("ui#gui", "hello_gui",{ pod_running = kube_pod_running })
+
 	for i,value in ipairs(current_pods) do
 		if value["collision"] ~= nil and value["color"] == "red" then
 			print("[swap_pod] creating " .. value["id"] .. " in red. Pos: " .. " " .. value["old_position"])
@@ -36,21 +49,11 @@ function swap_pod(items)
 		    --print ("[swap_pod]:" .. value["id"] .. " is not running in KubeInvaders")
 		end
 	end
-	for i,value in ipairs(items) do
-		if value['status']['phase'] ~= "Running" then
-			kube_pod_not_running = kube_pod_not_running + 1
-			--print ("[swap_pod]:" .. value['metadata']['name'] .. " is not running on Kubernetes cluster")
-		else
-			kube_pod_running = kube_pod_running + 1
-		end
-	end
 	print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
 	print ("[swap_pod]: current pods on Kubeinvaders: " .. current_kubeinvaders_pod_size)
 	print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
 	print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
-
-	msg.post("ui#gui", "hello_gui",{ pod_running = kube_pod_running })
-
+	
 	if kube_pod_running < current_kubeinvaders_pod_size then
 		i = current_kubeinvaders_pod_size
 		while ( i > 0 ) do
@@ -61,7 +64,7 @@ function swap_pod(items)
 			end	
 			i = i - 1
 		end
-		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.. Press space" })
+		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
 	end
 
 	if kube_pod_running > current_kubeinvaders_pod_size then
@@ -123,6 +126,29 @@ function http_update_pod_result(self, _, response)
 	swap_pod(pod_running)
 end
 
+function ai()
+	msg.post("ui#gui", "error",{ errormessage = "" })
+	if automatic == false then
+		return
+	end
+	math.randomseed(os.clock()*100000000000)
+	for i=1,2 do
+		rand_pod = math.random(100, 1000)
+	end
+	pos = go.get_position()
+	pos.y = 180
+	go.set_position(pos)	
+	pos.x = rand_pod
+
+	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_INQUAD, 1,0, function()
+		go.set_position(pos)
+		bullet = factory.create("/bullet#bulletfactory", pos)
+		go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+			go.delete(bullet)
+		end)	
+	end)
+end
+
 function update_pod()
 	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", http_update_pod_result,headers)
 end
@@ -153,8 +179,9 @@ function http_pod_delete_request_result(self, _, response)
 	a = 0
 	while a <= pod_items_size do
 		if pod_items[a] ~= nil then
-			if pod_items[a]['status']['phase'] == "Running" then
+			if pod_items[a]['status']['phase'] == "Running" and pod_items[a]['metadata']['deletionTimestamp'] == nil then
 				pod_to_delete = pod_items[a]['metadata']['name']
+				break
 			end
 		end
 		a = a + 1
@@ -227,6 +254,8 @@ function set_pods()
 end
 
 function init(self)
+	msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
+
 	conf = {}
 	local path = os.getenv("HOME") .. "/.KubeInv.json"
 	local contents = ""
@@ -263,12 +292,17 @@ function init(self)
 			["Content-Type"] = "application/json",
 			["Authorization"] = "Bearer " .. token
 		}
-		timer.repeat_seconds(0.5, function()
+		timer.repeat_seconds(0.3, function()
 			update_pod()
 		end)	
+		timer.repeat_seconds(2, function()
+			ai()
+		end)
 		set_pods()
 	end
 end
+
+
 
 function update(self, dt)
 	timer.update(dt)
@@ -294,14 +328,24 @@ function on_input(self, action_id, action)
 		go.set_position(p)	
 	elseif action_id == hash("click") and action.pressed then
 		print(action_id)
+	elseif action_id == hash("automatic") then
+		automatic = true
+		msg.post("ui#gui", "mode",{ mode = "You are using the automatic mode. Press \"m\" to use switch to manual"})
+		
+	elseif action_id == hash("manual") then
+		automatic = false
+		msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
+		
 	elseif action_id == hash("space") and action.pressed then
 		msg.post("ui#gui", "error",{ errormessage = "" })
-		local pos = go.get_position()
-		local to = pos.y + 2 * 64
-		local bullet = factory.create("/bullet#bulletfactory", pos)
-		go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
-			go.delete(bullet)
-		end)
+		if automatic == false then 
+			local pos = go.get_position()
+			local to = pos.y + 2 * 64
+			local bullet = factory.create("/bullet#bulletfactory", pos)
+			go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+				go.delete(bullet)
+			end)
+		end
 	end
 end
 

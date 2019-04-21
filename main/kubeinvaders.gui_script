@@ -20,7 +20,9 @@ function on_message(self, message_id, message, sender)
 	elseif  message_id == hash("info") then
 		gui.set_text(gui.get_node("info"), message.infomessage)	
 	elseif  message_id == hash("error") then
-		gui.set_text(gui.get_node("error"), message.errormessage)			
+		gui.set_text(gui.get_node("error"), message.errormessage)
+	elseif  message_id == hash("mode") then
+		gui.set_text(gui.get_node("mode"), message.mode)			
 	end
 end
 

@@ -1,5 +1,7 @@
 # KubeInvaders
 
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
+
 ### Chaos Engineering Tool for Kubernetes and Openshift
 
 KubeInvaders is a game and it has been written with Defold (https://www.defold.com/).

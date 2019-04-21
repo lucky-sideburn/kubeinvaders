@@ -131,7 +131,6 @@ function ai()
 	if automatic == false then
 		return
 	end
-	math.randomseed(os.clock()*100000000000)
 	for i=1,2 do
 		rand_pod = math.random(100, 1000)
 	end

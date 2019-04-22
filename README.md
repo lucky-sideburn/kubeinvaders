@@ -1,8 +1,5 @@
 # KubeInvaders
 
-
-[![](http://img.youtube.com/vi/Yc7ByDwYpbI/0.jpg)](http://www.youtube.com/watch?v=Yc7ByDwYpbI "KubeInvaders")
-
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
 ### Chaos Engineering Tool for Kubernetes and Openshift

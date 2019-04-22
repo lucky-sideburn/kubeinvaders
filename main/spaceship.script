@@ -45,29 +45,30 @@ function swap_pod(items)
 	for i,value in ipairs(current_pods) do
 		if value["id"] ~= "reset" and value["color"] == "red" then
 			current_pod_not_running = current_pod_not_running + 1 
-		    --print ("[swap_pod]:" .. value["id"] .. " is not running in KubeInvaders")
 		end
 	end
-	print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
-	print ("[swap_pod]: current pods on Kubeinvaders: " .. current_kubeinvaders_pod_size)
-	print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
-	print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
+	--print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
+	--print ("[swap_pod]: current pods on Kubeinvaders: " .. current_kubeinvaders_pod_size)
+	--print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
+	--print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
 	
 	if kube_pod_running < current_kubeinvaders_pod_size then
+		print ("[swap_pod]: there are less pod running in kubernetes")
 		i = current_kubeinvaders_pod_size - 1
-		diff = current_kubeinvaders_pod_size - kube_pod_running
-		cleaned_pods = 0
-		while ( i > current_kubeinvaders_pod_size or cleaned_pods < diff) do
-			if current_pods[i]["color"] == "red" then
+		deleted_pods = 0
+		print ("[swap_pod] clean red pods. Current KubveInvaders pod:" .. current_kubeinvaders_pod_size)
+		while ( i > 0) do
+			if  current_pods[i] ~= nil and current_pods[i]["color"] == "red" then
 				go.delete(current_pods[i]["id"])
 				table.remove(current_pods,i)
-				cleaned_pods = cleaned_pods + 1	
+				deleted_pods = deleted_pods + 1
 			end	
 			i = i - 1
 		end
 		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
+		return
 	end
-
+	
 	if kube_pod_running > current_kubeinvaders_pod_size then
 		for i,value in ipairs(current_pods) do
 			go.delete(value["id"])
@@ -118,7 +119,7 @@ function http_update_pod_result(self, _, response)
 	i = 0
 	while i <= pod_items_size do
 		if pod_items[i] ~= nil then
-			if pod_items[i]['status']['phase'] == "Running" then
+			if pod_items[i]['status']['phase'] == "Running" and pod_items[i]['metadata']['deletionTimestamp'] == nil then
 				table.insert(pod_running,pod_items[i])
 			end
 		end
@@ -234,7 +235,7 @@ function http_pod_result(self, _, response)
 			end
 			
 			pos.y = y_pos			
-			if phase == "Running" then
+			if phase == "Running" and this_pod['metadata']['deletionTimestamp'] == nil then
 				local pod = factory.create("/pod#podfactory", pos)				
 				table.insert(current_pods, { id = pod , color = "white" })
 				check_current_pods = true

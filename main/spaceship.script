@@ -24,7 +24,6 @@ function swap_pod(items)
 	for i,value in ipairs(items) do
 		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
 			kube_pod_not_running = kube_pod_not_running + 1
-			--print ("[swap_pod]:" .. value['metadata']['name'] .. " is not running on Kubernetes cluster")
 		else
 			kube_pod_running = kube_pod_running + 1
 		end
@@ -55,12 +54,14 @@ function swap_pod(items)
 	print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
 	
 	if kube_pod_running < current_kubeinvaders_pod_size then
-		i = current_kubeinvaders_pod_size
-		while ( i > 0 ) do
-			if current_pods[i]["color"] == "white" then
+		i = current_kubeinvaders_pod_size - 1
+		diff = current_kubeinvaders_pod_size - kube_pod_running
+		cleaned_pods = 0
+		while ( i > current_kubeinvaders_pod_size or cleaned_pods < diff) do
+			if current_pods[i]["color"] == "red" then
 				go.delete(current_pods[i]["id"])
 				table.remove(current_pods,i)
-				break			
+				cleaned_pods = cleaned_pods + 1	
 			end	
 			i = i - 1
 		end
@@ -131,16 +132,15 @@ function ai()
 	if automatic == false then
 		return
 	end
-	for i=1,2 do
+	for i=1,1 do
 		rand_pod = math.random(100, 1000)
 	end
 	pos = go.get_position()
 	pos.y = 220
 	go.set_position(pos)	
-	pos.x = rand_pod
-
+	pos.x = rand_pod	
 	go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_INQUAD, 1,0, function()
-		go.set_position(pos)
+		pos = go.get_position()		
 		bullet = factory.create("/bullet#bulletfactory", pos)
 		go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
 			go.delete(bullet)

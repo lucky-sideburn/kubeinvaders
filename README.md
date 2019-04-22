@@ -10,6 +10,9 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 **Actually this is an alpha release and it has been tested only with Openshift 3.9**
 
+
+[![](http://img.youtube.com/vi/Yc7ByDwYpbI/0.jpg)](http://www.youtube.com/watch?v=Yc7ByDwYpbI "KubeInvaders")
+
 ### How KubeInvaders Works
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
@@ -70,7 +73,6 @@ create the file **$HOME/.KubeInv.json** (the token should have permission for li
 * Code style improvment 
 * Make an Openshift Template within all resources
 * Test KubeInvaders on Kubernetes
-
 
 
 

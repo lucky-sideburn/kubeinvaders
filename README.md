@@ -1,4 +1,5 @@
 # KubeInvaders
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
@@ -7,10 +8,6 @@
 KubeInvaders is a game and it has been written with Defold (https://www.defold.com/).
 
 Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
-
-### How KubeInvaders Works
-
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
 ### Install KubeInvaders on Openshift
 

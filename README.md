@@ -10,19 +10,12 @@ KubeInvaders is a game and it has been written with Defold (https://www.defold.c
 Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
 
 ### Install KubeInvaders on Openshift
-
-If you deploy KubeInvaders on Openshift please configure corsAllowedOrigins in your /etc/origin/master/master-config.yaml
-
-```yaml
- corsAllowedOrigins:
-   - (?i)//kubeinvaders.org(:|\z)
-```
-
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash
-
 TARGET_NAMESPACE=foobar
+
+# Choose route host for your kubeinvaders instance.
 ROUTE_HOST=kubeinvaders.org
 
 # Please add your source ip IP_WHITELIST. This will add haproxy.router.openshift.io/ip_whitelist in KubeInvaders route
@@ -42,13 +35,6 @@ oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NA
 
 Please check the [releases](https://github.com/lucky-sideburn/KubeInvaders/releases) page.
 
-### How Configure KubeInvaders - Running on Openshift
-
-Change the following variables inside the kubeinvaders DeploymentConfig
-
-* TARGET_NAMESPACE
-* TOKEN
-
 ### How Configure KubeInvaders - Local execution
 
 create the file **$HOME/.KubeInv.json** (the token should have permission for list and delete pods into the namespace).
@@ -60,10 +46,3 @@ create the file **$HOME/.KubeInv.json** (the token should have permission for li
   "namespace": "foobar"
 }
 ```
-### TO-DO
-
-* Code style improvment 
-* Make an Openshift Template within all resources
-* Test KubeInvaders on Kubernetes
-
-

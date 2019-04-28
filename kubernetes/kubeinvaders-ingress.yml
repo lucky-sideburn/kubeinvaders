@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: kubeinvaders 
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - kubeinvaders.org
+  rules:
+  - host: kubeinvaders.org 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kubeinvaders 
+          servicePort: 8080

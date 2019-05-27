@@ -54,7 +54,7 @@ TOKEN=$(oc describe secret -n $TARGET_NAMESPACE $(oc describe sa kubeinvaders -n
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p TOKEN=$TOKEN | oc create -f -
 ```
 
-### Donwload KubeInvaders - External to Openshift (macOS or Linux clients)
+### Download KubeInvaders - External to Openshift (macOS or Linux clients)
 
 Please check the [releases](https://github.com/lucky-sideburn/KubeInvaders/releases) page.
 

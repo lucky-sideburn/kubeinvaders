@@ -23,7 +23,8 @@ kubectl apply -f kubernetes/kubeinvaders-deployment.yml -n kubeinvaders
 kubectl expose deployment  kubeinvaders --type=NodePort --name=kubeinvaders -n kubeinvaders --port 8080
 kubectl apply -f kubernetes/kubeinvaders-ingress.yml -n kubeinvaders
 kubectl create sa kubeinvaders -n foobar
-kubectl apply -f kubeinvaders-role.yml
+kubectl apply -f kubernetes/kubeinvaders-role.yml
+kubectl apply -f kubernetes/kubeinvaders-rolebinding.yml
 
 TOKEN=`kubectl describe secret $(kubectl get secret -n foobar | grep 'kubeinvaders-token' | awk '{ print $1}') -n foobar | grep 'token:' | awk '{ print $2}'`
 

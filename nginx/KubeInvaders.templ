@@ -1,8 +1,3 @@
-# These variables will be replaced by temporary_hack.sh
-upstream kubernetes {
-    server ${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
-}
-
 server {
   listen 8080 default_server;
   root /var/www/html/;
@@ -17,11 +12,9 @@ server {
     etag off;
   }
 
-  location /kube {
-     rewrite /kube/(.*) /$1  break;
-     proxy_pass         https://kubernetes;
-     proxy_redirect     off;
-     proxy_set_header   Host $host;
+  location /kube/api {
+     rewrite ^/kube/api(.*)$ /api$1 break;
+     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
   }
 
 }

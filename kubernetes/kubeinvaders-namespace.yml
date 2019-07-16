@@ -1,11 +1,7 @@
-{
-  "kind": "Namespace",
-  "apiVersion": "v1",
-  "metadata": {
-    "name": "kubeinvaders",
-    "labels": {
-      "name": "kubeinvaders"
-    }
-  }
-}
-
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    name: kubeinvaders
+  name: kubeinvaders

@@ -11,9 +11,8 @@ kubectl apply -f kubernetes/kubeinvaders-ingress.yml -n kubeinvaders
 kubectl create sa kubeinvaders -n foobar
 kubectl apply -f kubernetes/kubeinvaders-role.yml
 kubectl apply -f kubernetes/kubeinvaders-rolebinding.yml
-
 TOKEN=`kubectl describe secret $(kubectl get secret -n foobar | grep 'kubeinvaders-token' | awk '{ print $1}') -n foobar | grep 'token:' | awk '{ print $2}'`
-
+kubectl apply -f kubernetes/kubeinvaders-role.yml
 kubectl set env deployment/kubeinvaders TOKEN=$TOKEN -n kubeinvaders
 kubectl set env deployment/kubeinvaders NAMESPACE=$TARGET_NAMESPACE -n kubeinvaders
 kubectl set env deployment/kubeinvaders ROUTE_HOST=$ROUTE_HOST -n kubeinvaders

@@ -15,61 +15,69 @@ function reverse(tbl)
 end
 
 function swap_pod(items)
-	current_pod_not_running = 0
-	kube_pod_not_running = 0
-	kube_pod_running = 0
-	pod_items_size = table.getn(items)
-	current_kubeinvaders_pod_size = table.getn(current_pods)
-
-	for i,value in ipairs(items) do
-		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
-			kube_pod_not_running = kube_pod_not_running + 1
-		else
-			kube_pod_running = kube_pod_running + 1
-		end
-	end
-	
-	msg.post("ui#gui", "hello_gui",{ pod_running = kube_pod_running })
 
 	for i,value in ipairs(current_pods) do
-		if value["collision"] ~= nil and value["color"] == "red" then
-			print("[swap_pod] creating " .. value["id"] .. " in red. Pos: " .. " " .. value["old_position"])
+		if value["collision"] == true and value["color"] == "red" then
 			current_pods[i]["id"] =	factory.create("/pod_not_running#podfactory", value["old_position"])
 			current_pods[i]["color"] = "red"
-			current_pods[i]["collision"] = nil
+			current_pods[i]["collision"] = false
 			delete_request_pod()
 			return
 		end
 	end
+
+	kubeinvaders_pod_not_running = 0						    -- Pods not running in Kubeinvaders
+	kubeinvaders_pod_running =  0 								-- Pods running in Kubeinvaders
 	
-	for i,value in ipairs(current_pods) do
-		if value["id"] ~= "reset" and value["color"] == "red" then
-			current_pod_not_running = current_pod_not_running + 1 
+	kubernetes_pod_not_running = 0								-- Pods not running in Kubernetes
+	kubernetes_pod_running = 0 									-- Pods running in Kubernetes
+	global_kubernetes_pod_size = table.getn(items)			-- All pods in Kubernetes
+	global_kubeinvaders_pod_size = table.getn(current_pods) -- All pods in Kubeinvaders
+
+	for i,value in ipairs(items) do
+		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
+			print("[swap_pod] phase of " .. value['metadata']['name'] .. " is " ..value['status']['phase'])
+			print("[swap_pod] " .. value['metadata']['name'] .. " is not running")
+			kubernetes_pod_not_running = kubernetes_pod_not_running + 1
+		else
+			kubernetes_pod_running = kubernetes_pod_running + 1
 		end
 	end
-	--print ("[swap_pod]: current pods on Kubernetes: " .. pod_items_size)
-	--print ("[swap_pod]: current pods on Kubeinvaders: " .. current_kubeinvaders_pod_size)
-	--print ("[swap_pod]: not running pods Kubernetes: " .. kube_pod_not_running)
-	--print ("[swap_pod]: not running pods in KubeInvaders: " .. current_pod_not_running)
+
+	print ("[swap_pod]: pods not running pods in Kubernetes: " .. kubernetes_pod_not_running)
+	print ("[swap_pod]: pods running pods in Kubernetes: " .. kubernetes_pod_running)
 	
-	if kube_pod_running < current_kubeinvaders_pod_size then
-		print ("[swap_pod]: there are less pod running in kubernetes")
-		i = current_kubeinvaders_pod_size - 1
+	msg.post("ui#gui", "hello_gui",{ pod_running = kubernetes_pod_running })
+	
+	for i,value in ipairs(current_pods) do
+		if value["color"] == "red" then
+			kubeinvaders_pod_not_running = kubeinvaders_pod_not_running + 1 
+		elseif value["color"] == "white" then
+			kubeinvaders_pod_running = kubeinvaders_pod_running + 1 
+		end
+	end
+
+	print ("[swap_pod]: pods not running pods in KubeInvaders: " .. kubeinvaders_pod_not_running)
+	print ("[swap_pod]: pods running pods in KubeInvaders: " .. kubeinvaders_pod_running)
+	
+	if kubernetes_pod_running < kubeinvaders_pod_running then
+		print ("[swap_pod] there are less pod running in kubernetes than kubeinvaders")
+		i = global_kubeinvaders_pod_size - 1
 		deleted_pods = 0
-		print ("[swap_pod] clean red pods. Current KubveInvaders pod:" .. current_kubeinvaders_pod_size)
 		while ( i > 0) do
-			if  current_pods[i] ~= nil and current_pods[i]["color"] == "red" then
+			if  current_pods[i] ~= nil and current_pods[i]["color"] == "white" then
 				go.delete(current_pods[i]["id"])
 				table.remove(current_pods,i)
 				deleted_pods = deleted_pods + 1
+				print ("[swap_pod] delete kubeinvaders pod at position " .. tostring(i) .. " of kubeinvaders global pods array")
 			end	
 			i = i - 1
 		end
 		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
 		return
 	end
-	
-	if kube_pod_running > current_kubeinvaders_pod_size then
+
+	if (kubernetes_pod_running > kubeinvaders_pod_running) then
 		for i,value in ipairs(current_pods) do
 			go.delete(value["id"])
 		end
@@ -77,39 +85,25 @@ function swap_pod(items)
 		set_pods()
 	end
 
-	if (current_pod_not_running > 0) and (kube_pod_not_running > current_pod_not_running )then
-		diff  = kube_pod_not_running - current_pod_not_running
-		a = 0
-		while ( a < diff ) do
-			for i,value in ipairs(current_pods) do
-				if value["color"] == "white" then
-					go.delete(value["id"])
-					local pod = factory.create("/pod_not_running#podfactory", go.get_position(value["id"]))
-					current_pods[i] = { id = pod , color = "red" }
-				end
-			end
-			a = a + 1
-		end
-
-	elseif current_pod_not_running > kube_pod_not_running then
-		diff  = current_pod_not_running - kube_pod_not_running
+	if kubeinvaders_pod_not_running > kubernetes_pod_not_running then
+		print ("[swap_pod] there are more pod not running in KubeInvaders than Kubernetes")
+		diff  = kubeinvaders_pod_not_running - kubernetes_pod_not_running
 		a = 0
 		while ( a < diff ) do
 			for i,value in ipairs(current_pods) do
 				if value["color"] == "red" then
-					pos = go.get_position()
 					go.delete(value["id"])
-					local pod = factory.create("/pod#podfactory", go.get_position(value["id"]))				
-					current_pods[i] = { id = pod , color = "white" }
+					table.remove(current_pods,i)					
 				end
 			end
 			a = a + 1
 		end
-	end		
+		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
+	end	
 end 
 
 function http_update_pod_result(self, _, response)
-	pod_running = {}
+	kubernetes_pods = {}
 	if response.status == 0 then
 		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
 	end
@@ -119,13 +113,13 @@ function http_update_pod_result(self, _, response)
 	i = 0
 	while i <= pod_items_size do
 		if pod_items[i] ~= nil then
-			if pod_items[i]['status']['phase'] == "Running" and pod_items[i]['metadata']['deletionTimestamp'] == nil then
-				table.insert(pod_running,pod_items[i])
-			end
+			-- if pod_items[i]['status']['phase'] == "Running" and pod_items[i]['metadata']['deletionTimestamp'] == nil then
+			table.insert(kubernetes_pods,pod_items[i])
+			-- end
 		end
 		i = i + 1
 	end
-	swap_pod(pod_running)
+	swap_pod(kubernetes_pods)
 end
 
 function ai()
@@ -326,7 +320,6 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
-	print "start on_input"
 	if action_id == hash("up") then
 		local p = go.get_position()
 		p.y = p.y + 4

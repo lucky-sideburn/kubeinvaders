@@ -113,9 +113,7 @@ function http_update_pod_result(self, _, response)
 	i = 0
 	while i <= pod_items_size do
 		if pod_items[i] ~= nil then
-			-- if pod_items[i]['status']['phase'] == "Running" and pod_items[i]['metadata']['deletionTimestamp'] == nil then
 			table.insert(kubernetes_pods,pod_items[i])
-			-- end
 		end
 		i = i + 1
 	end

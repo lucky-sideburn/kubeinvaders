@@ -12,11 +12,11 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ### Special Input Keys
 
-| Input           | Action                                                                              |
-|-----------------|-------------------------------------------------------------------------------------|
-|     n           | Change namespace (you should define namespaces! Es: TARGET_NAMESPACE=foo1,foo2,foo3)|
-|     a           | Switch to automatic mode                                                            |
-|     m           | Switch to manual mode                                                               |
+| Input           | Action                                                                                   |
+|-----------------|------------------------------------------------------------------------------------------|
+|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3)|
+|     a           | Switch to automatic mode                                                                 |
+|     m           | Switch to manual mode                                                                    |
 
 
 ### Install KubeInvaders on Openshift
@@ -25,6 +25,7 @@ To Install KubeInvaders on your Openshift Cluster clone this repo and launch the
 
 ```bash
 TARGET_NAMESPACE=foobar
+## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2
 
 # Choose route host for your kubeinvaders instance.
 ROUTE_HOST=kubeinvaders.org
@@ -47,6 +48,7 @@ oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NA
 ```bash
 #Change with the namespace you want to stress
 TARGET_NAMESPACE='foobar'
+## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2
 
 #Change with the URL of your Kubeinvaders
 ROUTE_HOST=kubeinvaders.org

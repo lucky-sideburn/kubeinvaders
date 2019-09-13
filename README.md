@@ -1,4 +1,8 @@
 # KubeInvaders
+
+ KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. 
+ **It is like Space Invaders but alien ships are pods.**
+
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
 **jump between namespaces pressing 'n' !**
@@ -7,9 +11,9 @@
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
-### Chaos Engineering Tool for Kubernetes and Openshift
+### Description
 
-KubeInvaders is a game and it has been written with Defold (https://www.defold.com/).
+KubeInvaders has been written with Defold (https://www.defold.com/).
 
 Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
 

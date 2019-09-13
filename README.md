@@ -12,14 +12,15 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ### Special Input Keys
 
-| Input           | Action                   |
-|-----------------|--------------------------|
-|     n           | Change namespace         |
-|     a           | Switch to automatic mode |
-|     m           | Switch to manual mode    |
+| Input           | Action                                                                              |
+|-----------------|-------------------------------------------------------------------------------------|
+|     n           | Change namespace (you should define namespaces! Es: TARGET_NAMESPACE=foo1,foo2,foo3)|
+|     a           | Switch to automatic mode                                                            |
+|     m           | Switch to manual mode                                                               |
 
 
 ### Install KubeInvaders on Openshift
+
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash

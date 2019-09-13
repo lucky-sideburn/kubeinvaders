@@ -26,6 +26,10 @@ key_trigger {
   input: KEY_M
   action: "manual"
 }
+key_trigger {
+  input: KEY_N
+  action: "namespace"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

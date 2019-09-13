@@ -3,7 +3,11 @@ check_current_pods = false
 endpoint =  ""
 token = ""
 namespace = ""
+namespace_list = {}
+namespace_cnt = 0
+namespace_total = 0 
 automatic = false
+last_namespace_change = false
 local timer = require ("main.timer")
 
 function reverse(tbl)
@@ -104,6 +108,7 @@ end
 
 function http_update_pod_result(self, _, response)
 	kubernetes_pods = {}
+	msg.post("ui#gui", "error",{ errormessage = "k8s status code request: " .. response.status })
 	if response.status == 0 then
 		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
 	end
@@ -264,7 +269,6 @@ end
 
 function init(self)
 	msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
-
 	conf = {}
 	local path = os.getenv("HOME") .. "/.KubeInv.json"
 	local contents = ""
@@ -288,10 +292,17 @@ function init(self)
 		print( "namespace: ", conf["namespace"] )
 
 		endpoint = conf["endpoint"]
-		namespace = conf["namespace"]
 		token = conf["token"] 
-
-		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. conf["namespace"]
+		namespace_cnt = 0
+		for i in string.gmatch(conf["namespace"], "[^,]+") do
+			namespace_list[namespace_cnt] = i
+			namespace_cnt = namespace_cnt + 1
+		end
+		namespace_total = table.getn(namespace_list)
+		namespace_cnt = 0
+		namespace = namespace_list[0]
+		
+		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
 		msg.post("ui#gui", "info",{ infomessage =  info })
 		
 		msg.post(".", "acquire_input_focus")	
@@ -334,15 +345,46 @@ function on_input(self, action_id, action)
 		local p = go.get_position()
 		p.x = p.x + 4
 		go.set_position(p)	
-	elseif action_id == hash("click") and action.pressed then
-		print(action_id)
 	elseif action_id == hash("automatic") then
 		automatic = true
 		msg.post("ui#gui", "mode",{ mode = "You are using the automatic mode. Press \"m\" to use switch to manual"})
 		
 	elseif action_id == hash("manual") then
+		print ("[change_mode] manual")
 		automatic = false
 		msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
+
+	elseif action_id == hash("namespace") then
+		print ("[change_namespace] change namespaces requested by user")
+		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })
+		current_time = os.clock()
+		
+		if last_namespace_change ~= false then
+			diff_time = current_time - last_namespace_change
+			print ("[change_namespace] diff_time ".. diff_time)
+		else 
+			diff_time = 99
+		end
+
+		if diff_time > 0.1 then
+			for i,value in ipairs(current_pods) do
+				go.delete(value["id"])
+			end
+			current_pods = {}
+			if namespace_cnt > (namespace_total - 1) then
+				print ("[change_namespace] return to first namespace")
+				namespace = namespace_list[0]
+				namespace_cnt = 0
+			else
+				namespace_cnt = namespace_cnt + 1	
+				print ("[change_namespace] go to namespace " .. namespace_cnt)
+				namespace = namespace_list[namespace_cnt]	
+			end
+		end
+		
+		last_namespace_change = os.clock()
+		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
+		msg.post("ui#gui", "info",{ infomessage =  info })
 		
 	elseif action_id == hash("space") and action.pressed then
 		msg.post("ui#gui", "error",{ errormessage = "" })

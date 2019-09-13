@@ -1,6 +1,10 @@
 # KubeInvaders
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
+**jump between namespaces pressing 'n' !**
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders-switch-namespace.gif)
+
+
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
 ### Chaos Engineering Tool for Kubernetes and Openshift

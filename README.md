@@ -19,12 +19,14 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ### Special Input Keys
 
-| Input           | Action                                                                                   |
-|-----------------|------------------------------------------------------------------------------------------|
-|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3)|
-|     a           | Switch to automatic mode                                                                 |
-|     m           | Switch to manual mode                                                                    |
-
+| Input           | Action                                                                                    |
+|-----------------|-------------------------------------------------------------------------------------------|
+|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3).|
+|     a           | Switch to automatic mode.                                                                 |
+|     m           | Switch to manual mode.                                                                    |
+|     h           | Show special keys.                                                                        |
+|     q           | Hide help for special keys.                                                               |
+|     i           | Show pod's name. Move the ship towards an alien.                                          |
 
 ### Install KubeInvaders on Openshift
 

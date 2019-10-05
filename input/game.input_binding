@@ -30,6 +30,18 @@ key_trigger {
   input: KEY_N
   action: "namespace"
 }
+key_trigger {
+  input: KEY_I
+  action: "infopod"
+}
+key_trigger {
+  input: KEY_H
+  action: "help"
+}
+key_trigger {
+  input: KEY_Q
+  action: "quit_help"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

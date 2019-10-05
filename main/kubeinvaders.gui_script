@@ -22,7 +22,26 @@ function on_message(self, message_id, message, sender)
 	elseif  message_id == hash("error") then
 		gui.set_text(gui.get_node("error"), message.errormessage)
 	elseif  message_id == hash("mode") then
-		gui.set_text(gui.get_node("mode"), message.mode)			
+		gui.set_text(gui.get_node("mode"), message.mode)
+	elseif  message_id == hash("help") then
+		gui.set_position(gui.get_node("inputs"), message.position)
+	elseif  message_id == hash("quit_help") then
+		gui.set_position(gui.get_node("inputs"), message.position)
+		
+	elseif  message_id == hash("pod_name") then
+		if  message.pod_name == false or message.pod_name == nil then
+			fake_position = message.position
+			fake_position.x = 0
+			fake_position.y = 0
+			gui.set_text(gui.get_node("pod_name"),'')
+			gui.set_position(gui.get_node("pod_name"), fake_position)
+		else
+			gui.set_text(gui.get_node("pod_name"), message.pod_name)
+			print(message.position_of_pod)
+			new_position = message.position
+			new_position.y = message.position.y - 25 
+			gui.set_position(gui.get_node("pod_name"), new_position)
+		end		
 	end
 end
 

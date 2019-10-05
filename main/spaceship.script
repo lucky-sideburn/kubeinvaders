@@ -10,11 +10,37 @@ automatic = false
 last_namespace_change = false
 local timer = require ("main.timer")
 
+function get_help()
+	msg.post("ui#gui","help",{ position = vmath.vector3(24, 680, 0) })
+end
+
+function quit_help()
+	msg.post("ui#gui","quit_help",{ position = vmath.vector3(-160, 800, 0) })
+end
 function reverse(tbl)
 	for i=1, math.floor(#tbl / 2) do
 		local tmp = tbl[i]
 		tbl[i] = tbl[#tbl - i + 1]
 		tbl[#tbl - i + 1] = tmp
+	end
+end
+
+function print_pod_name()
+	pos = go.get_position()
+	message_pod_name = {}
+	pod_name = ""
+	for i,value in ipairs(current_pods) do
+		position_of_pod = go.get_position(value["id"])
+		if (pos.x > position_of_pod.x and pos.x - position_of_pod.x < 25) or (position_of_pod.x > pos.x and position_of_pod.x - pos.x < 25) then
+			pod_name = pod_name .. " " .. value["pod_name"]
+			last_pod_position = position_of_pod
+		end
+	end
+	if pod_name ~= "" then
+		if pod_name:match("[%a%d%p_]%s[%a%d%p_]") ~= nil then
+			pod_name = pod_name:gsub(" ", "\n")
+		end
+		msg.post("ui#gui","pod_name",{ pod_name = pod_name, position = last_pod_position })			
 	end
 end
 
@@ -25,7 +51,8 @@ function swap_pod(items)
 			current_pods[i]["id"] =	factory.create("/pod_not_running#podfactory", value["old_position"])
 			current_pods[i]["color"] = "red"
 			current_pods[i]["collision"] = false
-			delete_request_pod()
+			--delete_request_pod()
+			delete_pod(value["pod_name"])
 			return
 		end
 	end
@@ -35,8 +62,8 @@ function swap_pod(items)
 	
 	kubernetes_pod_not_running = 0								-- Pods not running in Kubernetes
 	kubernetes_pod_running = 0 									-- Pods running in Kubernetes
-	global_kubernetes_pod_size = table.getn(items)			-- All pods in Kubernetes
-	global_kubeinvaders_pod_size = table.getn(current_pods) -- All pods in Kubeinvaders
+	global_kubernetes_pod_size = table.getn(items)			    -- All pods in Kubernetes
+	global_kubeinvaders_pod_size = table.getn(current_pods)     -- All pods in Kubeinvaders
 
 	for i,value in ipairs(items) do
 		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
@@ -168,7 +195,7 @@ function update_pod()
 end
 
 function delete_pod(pod_name)
-	print "[delete_pod] delete pods of Kubernetes"
+	print ("[delete_pod] delete pods " .. pod_name .. " in Kubernetes")
 	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods/" .. pod_name, "DELETE", http_pod_delete_result,headers)
 end
 
@@ -251,11 +278,11 @@ function http_pod_result(self, _, response)
 			pos.y = y_pos			
 			if phase == "Running" and this_pod['metadata']['deletionTimestamp'] == nil then
 				local pod = factory.create("/pod#podfactory", pos)				
-				table.insert(current_pods, { id = pod , color = "white" })
+				table.insert(current_pods, { id = pod , color = "white", pod_name = this_pod['metadata']['name'] })
 				check_current_pods = true
 			else
 				local pod = factory.create("/pod_not_running#podfactory", pos)
-				table.insert(current_pods, { id = pod , color = "red" })
+				table.insert(current_pods, { id = pod , color = "red", pod_name = this_pod['metadata']['name'] })
 				check_current_pods = true				
 			end
 		end
@@ -314,6 +341,9 @@ function init(self)
 		}
 		timer.repeat_seconds(0.3, function()
 			update_pod()
+		end)
+		timer.repeat_seconds(1, function()
+			msg.post("ui#gui","pod_name",{ pod_name = false, position = go.get_position()})
 		end)	
 		timer.repeat_seconds(1, function()
 			ai()
@@ -321,8 +351,6 @@ function init(self)
 		set_pods()
 	end
 end
-
-
 
 function update(self, dt)
 	timer.update(dt)
@@ -345,15 +373,20 @@ function on_input(self, action_id, action)
 		local p = go.get_position()
 		p.x = p.x + 4
 		go.set_position(p)	
+	elseif action_id == hash("infopod") then
+		print_pod_name()
+	elseif action_id == hash("help") then
+		print "help!"
+		get_help()
+	elseif action_id == hash("quit_help") then
+		quit_help()
 	elseif action_id == hash("automatic") then
 		automatic = true
 		msg.post("ui#gui", "mode",{ mode = "You are using the automatic mode. Press \"m\" to use switch to manual"})
-		
 	elseif action_id == hash("manual") then
 		print ("[change_mode] manual")
 		automatic = false
 		msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
-
 	elseif action_id == hash("namespace") then
 		print ("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })

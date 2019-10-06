@@ -1,12 +1,11 @@
 # KubeInvaders
 
- KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. **It is like Space Invaders but the pods are alien ships**
+KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. **It is like Space Invaders but the pods are alien ships**
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
 **jump between namespaces pressing 'n' !**
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders-switch-namespace.gif)
-
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
@@ -15,7 +14,6 @@
 KubeInvaders has been written with Defold (https://www.defold.com/).
 
 Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
-
 
 ### Special Input Keys
 
@@ -53,7 +51,9 @@ KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kuber
 
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
-Below how the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST).
+
+### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)
+
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/dcenv.png)
 
 ### Install KubeInvaders on Kubernetes

@@ -4,8 +4,7 @@ KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. **It 
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
-**jump between namespaces pressing 'n' !**
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders-switch-namespace.gif)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 

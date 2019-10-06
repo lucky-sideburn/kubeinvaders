@@ -33,7 +33,9 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash
-TARGET_NAMESPACE=foobar
+oc create clusterrole kubeinvaders-role --verb=watch,get,delete --resource=pods
+
+TARGET_NAMESPACE=foobar,awesome-namespace
 ## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2
 
 # Choose route host for your kubeinvaders instance.
@@ -45,12 +47,14 @@ IP_WHITELIST="93.44.96.4"
 
 oc new-project kubeinvaders --display-name='KubeInvaders'
 oc create sa kubeinvaders -n kubeinvaders
-oc create sa kubeinvaders -n $TARGET_NAMESPACE
-oc adm policy add-role-to-user edit -z kubeinvaders -n $TARGET_NAMESPACE
+oc adm policy add-cluster-role-to-user kubeinvaders-role -z kubeinvaders -n kubeinvaders
 
-TOKEN=$(oc describe secret -n $TARGET_NAMESPACE $(oc describe sa kubeinvaders -n $TARGET_NAMESPACE | grep Tokens | awk '{ print $2}') | grep 'token:'| awk '{ print $2}')
-oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p TOKEN=$TOKEN | oc create -f -
+KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kubernetes.io/service-account-token | grep 'kubeinvaders-token' | awk '{ print $1}' | head -n 1)
+
+oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
+Below how the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST).
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/dcenv.png)
 
 ### Install KubeInvaders on Kubernetes
 

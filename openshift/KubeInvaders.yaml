@@ -22,8 +22,8 @@ parameters:
   value: kubeinvaders
 - description: A namespaces to stress with KubeInvaders.
   name: TARGET_NAMESPACE
-- description: Token of a serviceAccount that can kill PODs in specific namespace.
-  name: TOKEN
+- description: Secret of the serviceAccount that can kill PODs in specific namespace.
+  name: KUBEINVADERS_SECRET
 objects:
 - apiVersion: v1
   kind: ServiceAccount
@@ -82,7 +82,10 @@ objects:
           - name: NAMESPACE
             value: "${TARGET_NAMESPACE}"
           - name: TOKEN
-            value: "${TOKEN}"
+            valueFrom:
+              secretKeyRef:
+                name: "${KUBEINVADERS_SECRET}"
+                key: token
           name: kubeinvaders
           image: ${IMAGE_KUBEINVADERS}
           imagePullPolicy: Always 

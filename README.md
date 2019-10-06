@@ -2,11 +2,11 @@
 
 KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. **It is like Space Invaders but the pods are alien ships**
 
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
+
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.gif)
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
-
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
 ### Description
 

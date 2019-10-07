@@ -24,6 +24,7 @@ function on_message(self, message_id, message, sender)
 				print ("on_message] position of pod to be deleted is " .. old_pos)
 				current_pods[i] = { id = value["id"] , color = "red", collision = true, old_position = old_pos, pod_name = value["pod_name"] }
 				go.delete(value["id"])
+				go.delete()
 			end
 		end
 	end

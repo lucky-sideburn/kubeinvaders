@@ -1,6 +1,6 @@
 # KubeInvaders
 
-*KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters.It is like Space Invaders but the alens are PODs*
+*KubeInvaders is a gamified chaos engineering tool for Kubernetes Clusters. It is like Space Invaders but the alens are PODs*
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 

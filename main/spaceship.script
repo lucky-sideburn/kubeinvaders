@@ -11,7 +11,7 @@ automatic = false
 last_namespace_change = false
 last_hit_time = os.clock()
 alien_proximity_factor = 15
-hit_cpu_time_rate_limit = nil
+hit_cpu_time_rate_limit = 0
 local timer = require ("main.timer")
 
 function get_help()
@@ -314,14 +314,14 @@ function init(self)
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 
-		if os.getenv("alien_proximity_factor") ~= nil then
-			alien_proximity_factor = os.getenv("alien_proximity_factor")
+		if os.getenv("ALIEN_PROXIMITY_FACTOR") ~= nil then
+			alien_proximity_factor = os.getenv("ALIEN_PROXIMITY_FACTOR")
 		end
 
-		if os.getenv("hit_cpu_time_rate_limit") ~= nil then
-			hit_cpu_time_rate_limit = os.getenv("hit_cpu_time_rate_limit")
+		if os.getenv("HIT_CPU_TIME_RATE_LIMIT") ~= nil then
+			hit_cpu_time_rate_limit = os.getenv("HIT_CPU_TIME_RATE_LIMIT")
 		end
-
+		
 	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then

@@ -10,7 +10,7 @@ namespace_total = 0
 automatic = false
 last_namespace_change = false
 last_hit_time = os.clock()
-
+alien_proximity_factor = 15
 local timer = require ("main.timer")
 
 function get_help()
@@ -250,11 +250,15 @@ function http_pod_result(self, _, response)
 	distance_between_pods = 1000 / pod_items_size
 	y_pos = 600
 	space_between_factor = 0
+
+	if conf['alien_proximity_factor'] ~= nil then
+		alien_proximity_factor = conf['alien_proximity_factor']
+	end
 	
-	if pod_items_size <= 15 then
+	if pod_items_size <= alien_proximity_factor then
 		space_between_factor = pod_items_size
 	else
-		space_between_factor = 15
+		space_between_factor = alien_proximity_factor
 	end
 	
 	while( a <= pod_items_size )
@@ -264,17 +268,18 @@ function http_pod_result(self, _, response)
 			phase = this_pod["status"]["phase"]
 			local pos = go.get_position()
 
-			if a <= 15 then
+			if a <= alien_proximity_factor then
 				pos.x = 100 + ( a * (1000 / space_between_factor) )	
 			end 
 			
-			if (a % 15 == 0) then
-				y_pos = y_pos - (( a / 15 ) * 50) 
+			if (a % alien_proximity_factor == 0) then
+				y_pos = y_pos - (( a / alien_proximity_factor ) * 50) 
 				check_above = true
 			end
 
 			if check_above == true then
-				pos_of_pod_above  = go.get_position(current_pods[a - 14]['id'])
+				k = alien_proximity_factor - 1
+				pos_of_pod_above  = go.get_position(current_pods[a - k]['id'])
 				pos.x = pos_of_pod_above.x
 			end
 			
@@ -312,6 +317,7 @@ function init(self)
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 		conf["hit_cpu_time_rate_limit"] = os.getenv("hit_cpu_time_rate_limit")
+		conf["alien_proximity_factor"] = os.getenv("alien_proximity_factor")
 	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then

@@ -1,4 +1,5 @@
 current_pods = {}
+conf = {}
 check_current_pods = false
 endpoint =  ""
 token = ""
@@ -8,6 +9,8 @@ namespace_cnt = 0
 namespace_total = 0 
 automatic = false
 last_namespace_change = false
+last_hit_time = os.clock()
+
 local timer = require ("main.timer")
 
 function get_help()
@@ -296,7 +299,6 @@ end
 
 function init(self)
 	msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
-	conf = {}
 	local path = os.getenv("HOME") .. "/.KubeInv.json"
 	local contents = ""
 	conf = {}
@@ -308,7 +310,8 @@ function init(self)
 	else
 		conf["token"] = os.getenv("TOKEN")
 		conf["endpoint"] = os.getenv("ENDPOINT") 
-		conf["namespace"] = os.getenv("NAMESPACE") 
+		conf["namespace"] = os.getenv("NAMESPACE")
+		conf["hit_cpu_time_rate_limit"] = os.getenv("hit_cpu_time_rate_limit")
 	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then
@@ -390,6 +393,8 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("namespace") then
 		print ("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })
+
+		-- Returns an approximation of the amount in seconds of CPU time used by the program.
 		current_time = os.clock()
 		
 		if last_namespace_change ~= false then
@@ -421,13 +426,22 @@ function on_input(self, action_id, action)
 		
 	elseif action_id == hash("space") and action.pressed then
 		msg.post("ui#gui", "error",{ errormessage = "" })
-		if automatic == false then 
-			local pos = go.get_position()
-			local to = pos.y + 2 * 64
-			local bullet = factory.create("/bullet#bulletfactory", pos)
-			go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
-				go.delete(bullet)
-			end)
+		-- Returns an approximation of the amount in seconds of CPU time used by the program.
+		current_hit_time = os.clock()
+		if automatic == false then
+			shot = true
+			if  (conf["hit_cpu_time_rate_limit"]  ~= nil) and (current_hit_time - last_hit_time < conf["hit_cpu_time_rate_limit"] ) then
+				shot = false
+			end
+			if shot == true then
+				local pos = go.get_position()
+				local to = pos.y + 2 * 64
+				local bullet = factory.create("/bullet#bulletfactory", pos)
+				go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+					go.delete(bullet)
+				end)
+				last_hit_time = os.clock()
+			end
 		end
 	end
 end

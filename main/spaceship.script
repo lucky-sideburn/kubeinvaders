@@ -309,17 +309,26 @@ function init(self)
 		local contents = file:read( "*a" )
 		conf = json.decode(contents);
 		io.close(file)
+		
+		if conf['ALIENPROXIMITY'] ~= nil then
+			alien_proximity_factor = conf['ALIENPROXIMITY']
+		end
+
+		if conf['HITSLIMIT'] ~= nil then
+			hit_cpu_time_rate_limit = conf['HITSLIMIT']
+		end
+		
 	else
 		conf["token"] = os.getenv("TOKEN")
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 
-		if os.getenv("ALIEN_PROXIMITY_FACTOR") ~= nil then
-			alien_proximity_factor = os.getenv("ALIEN_PROXIMITY_FACTOR")
+		if os.getenv("ALIENPROXIMITY") ~= nil then
+			alien_proximity_factor = os.getenv("ALIENPROXIMITY")
 		end
 
-		if os.getenv("HIT_CPU_TIME_RATE_LIMIT") ~= nil then
-			hit_cpu_time_rate_limit = os.getenv("HIT_CPU_TIME_RATE_LIMIT")
+		if os.getenv("HITSLIMIT") ~= nil then
+			hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
 		end
 		
 	end 

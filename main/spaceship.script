@@ -11,6 +11,7 @@ automatic = false
 last_namespace_change = false
 last_hit_time = os.clock()
 alien_proximity_factor = 15
+hit_cpu_time_rate_limit = nil
 local timer = require ("main.timer")
 
 function get_help()
@@ -250,10 +251,6 @@ function http_pod_result(self, _, response)
 	distance_between_pods = 1000 / pod_items_size
 	y_pos = 600
 	space_between_factor = 0
-
-	if conf['alien_proximity_factor'] ~= nil then
-		alien_proximity_factor = conf['alien_proximity_factor']
-	end
 	
 	if pod_items_size <= alien_proximity_factor then
 		space_between_factor = pod_items_size
@@ -316,8 +313,15 @@ function init(self)
 		conf["token"] = os.getenv("TOKEN")
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
-		conf["hit_cpu_time_rate_limit"] = os.getenv("hit_cpu_time_rate_limit")
-		conf["alien_proximity_factor"] = os.getenv("alien_proximity_factor")
+
+		if os.getenv("alien_proximity_factor") ~= nil then
+			alien_proximity_factor = os.getenv("alien_proximity_factor")
+		end
+
+		if os.getenv("hit_cpu_time_rate_limit") ~= nil then
+			hit_cpu_time_rate_limit = os.getenv("hit_cpu_time_rate_limit")
+		end
+
 	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then
@@ -436,7 +440,7 @@ function on_input(self, action_id, action)
 		current_hit_time = os.clock()
 		if automatic == false then
 			shot = true
-			if  (conf["hit_cpu_time_rate_limit"]  ~= nil) and (current_hit_time - last_hit_time < conf["hit_cpu_time_rate_limit"] ) then
+			if  (hit_cpu_time_rate_limit ~= nil) and (current_hit_time - last_hit_time < hit_cpu_time_rate_limit) then
 				shot = false
 			end
 			if shot == true then

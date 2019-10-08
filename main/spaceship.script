@@ -10,7 +10,7 @@ namespace_total = 0
 automatic = false
 last_namespace_change = false
 last_hit_time = os.clock()
-alien_proximity_factor = 15
+alien_proximity_factor = os.getenv("ALIENPROXIMITY")
 hit_cpu_time_rate_limit = 0
 local timer = require ("main.timer")
 

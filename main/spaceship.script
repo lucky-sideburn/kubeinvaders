@@ -139,7 +139,7 @@ end
 
 function http_update_pod_result(self, _, response)
 	kubernetes_pods = {}
-	msg.post("ui#gui", "error",{ errormessage =  os.getenv("ALIENPROXIMITY") .." " .. os.getenv("HITSLIMIT") .. "k8s status code request: " .. response.status })
+	msg.post("ui#gui", "error",{ errormessage =  alien_proximity_factor .. " " .. hit_cpu_time_rate_limit .. " " .. os.getenv("ALIENPROXIMITY") .." " .. os.getenv("HITSLIMIT") .. " k8s status code request: " .. response.status })
 	if response.status == 0 then
 		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
 	end

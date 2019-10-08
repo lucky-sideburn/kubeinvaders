@@ -139,7 +139,7 @@ end
 
 function http_update_pod_result(self, _, response)
 	kubernetes_pods = {}
-	msg.post("ui#gui", "error",{ errormessage =  alien_proximity_factor .. " " .. hit_cpu_time_rate_limit .. " " .. os.getenv("ALIENPROXIMITY") .." " .. os.getenv("HITSLIMIT") .. " k8s status code request: " .. response.status })
+	msg.post("ui#gui", "error",{ errormessage =  alien_proximity_factor .. " " .. hit_cpu_time_rate_limit .. " " .. os.getenv("ALIENPROXIMITY") .." " .. os.getenv("HITSLIMIT") .. " " .. os.clock() .. " ".. response.status })
 	if response.status == 0 then
 		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
 	end
@@ -309,27 +309,13 @@ function init(self)
 		local contents = file:read( "*a" )
 		conf = json.decode(contents);
 		io.close(file)
-		
-		if conf['ALIENPROXIMITY'] ~= nil then
-			alien_proximity_factor = conf['ALIENPROXIMITY']
-		end
-
-		if conf['HITSLIMIT'] ~= nil then
-			hit_cpu_time_rate_limit = conf['HITSLIMIT']
-		end
-		
 	else
 		conf["token"] = os.getenv("TOKEN")
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 
-		if os.getenv("ALIENPROXIMITY") ~= nil then
-			alien_proximity_factor = os.getenv("ALIENPROXIMITY")
-		end
-
-		if os.getenv("HITSLIMIT") ~= nil then
-			hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
-		end
+		alien_proximity_factor = os.getenv("ALIENPROXIMITY")
+		hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
 		
 	end 
 
@@ -449,7 +435,7 @@ function on_input(self, action_id, action)
 		current_hit_time = os.clock()
 		if automatic == false then
 			shot = true
-			if  (hit_cpu_time_rate_limit ~= nil) and (current_hit_time - last_hit_time < hit_cpu_time_rate_limit) then
+			if ((current_hit_time - last_hit_time) < hit_cpu_time_rate_limit) then
 				shot = false
 			end
 			if shot == true then

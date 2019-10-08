@@ -10,8 +10,10 @@ namespace_total = 0
 automatic = false
 last_namespace_change = false
 last_hit_time = os.clock()
-alien_proximity_factor = tonumber(os.getenv("ALIENPROXIMITY")) 
+alien_proximity_factor = 15 
 hit_cpu_time_rate_limit = 0
+pod_update_time = 0.3
+
 local timer = require ("main.timer")
 
 function get_help()
@@ -139,7 +141,7 @@ end
 
 function http_update_pod_result(self, _, response)
 	kubernetes_pods = {}
-	msg.post("ui#gui", "error",{ errormessage =  alien_proximity_factor .. " " .. hit_cpu_time_rate_limit .. " " .. os.clock() .. " ".. response.status })
+	msg.post("ui#gui", "error",{ errormessage = "(" .. hit_cpu_time_rate_limit .. "," .. alien_proximity_factor .. "," .. pod_update_time .. ") K8S status code request: " .. response.status })	
 	if response.status == 0 then
 		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
 	end
@@ -314,9 +316,18 @@ function init(self)
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 
-		--alien_proximity_factor = os.getenv("ALIENPROXIMITY")
-		--hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
-		
+		if os.getenv("ALIENPROXIMITY") ~= nil then 
+			alien_proximity_factor = tonumber(os.getenv("ALIENPROXIMITY"))
+		end
+
+		if os.getenv("HITSLIMIT") ~= nil then
+			hit_cpu_time_rate_limit = tonumber(os.getenv("HITSLIMIT"))
+		end
+
+		if os.getenv("POD_UPDATE_TIME") ~= nil then
+			pod_update_time = tonumber(os.getenv("UPDATETIME"))
+		end
+
 	end 
 
 	if conf["token"] == nil or conf["endpoint"] == nil or conf["namespace"] == nil then
@@ -347,7 +358,7 @@ function init(self)
 			["Content-Type"] = "application/json",
 			["Authorization"] = "Bearer " .. token
 		}
-		timer.repeat_seconds(0.3, function()
+		timer.repeat_seconds(pod_update_time, function()
 			update_pod()
 		end)
 		timer.repeat_seconds(1, function()

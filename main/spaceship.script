@@ -314,8 +314,8 @@ function init(self)
 		conf["endpoint"] = os.getenv("ENDPOINT") 
 		conf["namespace"] = os.getenv("NAMESPACE")
 
-		alien_proximity_factor = os.getenv("ALIENPROXIMITY")
-		hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
+		--alien_proximity_factor = os.getenv("ALIENPROXIMITY")
+		--hit_cpu_time_rate_limit = os.getenv("HITSLIMIT")
 		
 	end 
 

@@ -30,7 +30,7 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash
-oc create clusterrole kubeinvaders-role --verb=watch,get,delete --resource=pods
+oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods
 
 TARGET_NAMESPACE=foobar,awesome-namespace
 ## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2

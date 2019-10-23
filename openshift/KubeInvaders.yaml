@@ -77,6 +77,10 @@ objects:
         serviceAccountName: kubeinvaders
         containers:
         - env:
+          - name: alien_proximity_factor
+            value: "15"
+          - name: hit_cpu_time_rate_limit
+            value: "0"
           - name: ROUTE_HOST
             value: "${ROUTE_HOST}" 
           - name: NAMESPACE

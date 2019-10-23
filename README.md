@@ -25,6 +25,17 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
 
+
+### Environment Variables - Make the game more difficult to win!
+
+Set the following variables in Kubernetes Deployment or Openshift DeploymentConfig
+
+| ENV Var                     | Description                                                                   |
+|-----------------------------|-------------------------------------------------------------------------------|
+| ALIENPROXIMITY (default 15) | Reduce the value to increase distance between aliens                          |
+| HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
+| UPDATETIME (default 0.3)    | ms to wait before update PODsstatus                                           |
+
 ### Install KubeInvaders on Openshift
 
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:

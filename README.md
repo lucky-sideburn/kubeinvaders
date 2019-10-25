@@ -34,7 +34,7 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 |-----------------------------|-------------------------------------------------------------------------------|
 | ALIENPROXIMITY (default 15) | Reduce the value to increase distance between aliens                          |
 | HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
-| UPDATETIME (default 0.3)    | ms to wait before update PODsstatus                                           |
+| UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
 
 ### Install KubeInvaders on Openshift
 

@@ -77,14 +77,16 @@ objects:
         serviceAccountName: kubeinvaders
         containers:
         - env:
-          - name: alien_proximity_factor
-            value: "15"
-          - name: hit_cpu_time_rate_limit
-            value: "0"
           - name: ROUTE_HOST
             value: "${ROUTE_HOST}" 
           - name: NAMESPACE
             value: "${TARGET_NAMESPACE}"
+          - name: UPDATETIME
+            value: "0.5"
+          - name: ALIENPROXIMITY
+            value: "15"
+          - name: HITSLIMIT
+            value: "0"
           - name: TOKEN
             valueFrom:
               secretKeyRef:

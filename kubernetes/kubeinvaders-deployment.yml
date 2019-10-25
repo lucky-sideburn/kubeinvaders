@@ -34,6 +34,12 @@ spec:
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
         env:
+        - name: UPDATETIME
+          value: "0.5"
+        - name: ALIENPROXIMITY
+          value: "15"
+        - name: HITSLIMIT
+          value: "0"
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler

@@ -12,7 +12,7 @@ last_namespace_change = false
 last_hit_time = os.clock()
 alien_proximity_factor = 15 
 hit_cpu_time_rate_limit = 0
-pod_update_time = 0.3
+pod_update_time = 0.5
 
 local timer = require ("main.timer")
 
@@ -324,7 +324,7 @@ function init(self)
 			hit_cpu_time_rate_limit = tonumber(os.getenv("HITSLIMIT"))
 		end
 
-		if os.getenv("POD_UPDATE_TIME") ~= nil then
+		if os.getenv("UPDATETIME") ~= nil then
 			pod_update_time = tonumber(os.getenv("UPDATETIME"))
 		end
 

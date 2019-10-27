@@ -6,7 +6,7 @@
 
 ### Description
 
-KubeInvaders has been written with Defold (https://www.defold.com/).
+KubeInvaders has been developed using Defold (https://www.defold.com/).
 
 Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
 

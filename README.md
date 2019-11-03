@@ -2,7 +2,7 @@
 
 *KubeInvaders is a gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are PODs*
 
-![](images/table https://raw.githubusercontent.com/lucky-sideburn/KubeInvaders/master/images/kubeinvaders.png?raw=true)
+![fooo](images/table https://raw.githubusercontent.com/lucky-sideburn/KubeInvaders/master/images/kubeinvaders.png?raw=true)
 
 ### Description
 

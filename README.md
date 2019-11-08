@@ -32,6 +32,14 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 | HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
 | UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
 
+
+### Install with HELM!
+
+```
+# Please set target_namespace to set your target namespace!
+helm install --set-string target_namespace="kubeinvaders\,fooo" --name kubeinvaders --namespace kubeinvaders ./helm-charts/kubeinvaders
+```
+
 ### Install KubeInvaders on Openshift
 
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:

@@ -12,7 +12,7 @@ Through KubeInvaders you can stress your Openshift cluster in a fun way and chec
 
 ```
 # Please set target_namespace to set your target namespace!
-helm install --set-string target_namespace=ì"namespace1\,namespace2" --name kubeinvaders --namespace kubeinvaders ./helm-charts/kubeinvaders
+helm install --set-string target_namespace="namespace1\,namespace2" --name kubeinvaders --namespace kubeinvaders ./helm-charts/kubeinvaders
 ```
 
 ### Special Input Keys

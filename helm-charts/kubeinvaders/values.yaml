@@ -22,7 +22,7 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
     - host: kubeinvaders.local
-      paths: [ "/" ]
+      paths: ["/"]
 
   tls:
     - secretName: chart-example-tls
@@ -43,7 +43,6 @@ resources: {}
   #   memory: 128Mi
 
 nodeSelector: {}
-
 tolerations: []
 
 route_host: kubeinvaders.local

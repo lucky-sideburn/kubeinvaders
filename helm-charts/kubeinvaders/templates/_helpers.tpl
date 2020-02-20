@@ -30,3 +30,25 @@ Create chart name and version as used by the chart label.
 {{- define "kubeinvaders.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{/*
+Create the name of the cluster role to use
+*/}}
+{{- define "kubeinvaders.clusterRoleName" -}}
+{{- if .Values.clusterRole.create -}}
+    {{ default (include "kubeinvaders.fullname" .) .Values.clusterRole.name }}
+{{- else -}}
+    {{ default "default" .Values.clusterRole.name }}
+{{- end -}}
+{{- end -}}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "kubeinvaders.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create -}}
+    {{ default (include "kubeinvaders.fullname" .) .Values.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.serviceAccount.name }}
+{{- end -}}
+{{- end -}}

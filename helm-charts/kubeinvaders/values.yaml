@@ -1,6 +1,26 @@
 # Default values for kubeinvaders.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+clusterRole:
+  create: true
+  # The name of a cluster role to bind to; if not set and create is
+  # true, a name based on fullname is generated
+  name:
+
+# If clusterRole "false" specifies which namespaces
+# kubeinvaders should have access to
+allowedNamespaces: []
 
 replicaCount: 1
 

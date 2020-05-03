@@ -37,6 +37,22 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 | HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
 | UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
 
+### Install client on your workstation
+
+The easy way to install KubeInvader is run it on you workstation.
+
+Create .KubeInv.json file on your home. This is an example:
+
+```
+{
+  "token": ".....",
+  "endpoint": "https://rancher.accolli.it:6443",
+  "namespace": "namespace1,namespace2"
+}
+```
+
+![MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-helm/x86_64-darwin.zip)
+![Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-helm/x86_64-linux.zip)
 
 ### Install with HELM!
 

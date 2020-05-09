@@ -1,7 +1,7 @@
 local COLLISION_RESPONSE = hash("collision_response")
 
 function refresh_pods()
-	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", http_pod_result,headers)
+	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", pod_api.http_pod_result,headers)
 end
 
 function init(self)

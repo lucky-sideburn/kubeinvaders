@@ -13,292 +13,20 @@ last_hit_time = os.clock()
 alien_proximity_factor = 15 
 hit_cpu_time_rate_limit = 0
 pod_update_time = 0.5
+kubernetes_pods = {}
 
-local timer = require ("main.timer")
+local timer = require "main.mymodules.timer"
+local spaceship = require "main.mymodules.spaceship"
+local help = require "main.mymodules.help"
+local pod_mod = require "main.mymodules.pod"
+local pod_api = require "main.mymodules.pod_api"
 
-function get_help()
-	msg.post("ui#gui","help",{ position = vmath.vector3(24, 680, 0) })
-end
-
-function quit_help()
-	msg.post("ui#gui","quit_help",{ position = vmath.vector3(-160, 800, 0) })
-end
 function reverse(tbl)
 	for i=1, math.floor(#tbl / 2) do
 		local tmp = tbl[i]
 		tbl[i] = tbl[#tbl - i + 1]
 		tbl[#tbl - i + 1] = tmp
 	end
-end
-
-function print_pod_name()
-	pos = go.get_position()
-	message_pod_name = {}
-	pod_name = ""
-	for i,value in ipairs(current_pods) do
-		position_of_pod = go.get_position(value["id"])
-		if (pos.x > position_of_pod.x and pos.x - position_of_pod.x < 25) or (position_of_pod.x > pos.x and position_of_pod.x - pos.x < 25) then
-			pod_name = pod_name .. " " .. value["pod_name"]
-			last_pod_position = position_of_pod
-		end
-	end
-	if pod_name ~= "" then
-		if pod_name:match("[%a%d%p_]%s[%a%d%p_]") ~= nil then
-			pod_name = pod_name:gsub(" ", "\n")
-		end
-		msg.post("ui#gui","pod_name",{ pod_name = pod_name, position = last_pod_position })			
-	end
-end
-
-function swap_pod(items)
-
-	for i,value in ipairs(current_pods) do
-		if value["collision"] == true and value["color"] == "red" then
-			current_pods[i]["id"] =	factory.create("/pod_not_running#podfactory", value["old_position"])
-			current_pods[i]["color"] = "red"
-			current_pods[i]["collision"] = false
-			--delete_request_pod()
-			delete_pod(value["pod_name"])
-			return
-		end
-	end
-
-	kubeinvaders_pod_not_running = 0						    -- Pods not running in Kubeinvaders
-	kubeinvaders_pod_running =  0 								-- Pods running in Kubeinvaders
-	
-	kubernetes_pod_not_running = 0								-- Pods not running in Kubernetes
-	kubernetes_pod_running = 0 									-- Pods running in Kubernetes
-	global_kubernetes_pod_size = table.getn(items)			    -- All pods in Kubernetes
-	global_kubeinvaders_pod_size = table.getn(current_pods)     -- All pods in Kubeinvaders
-
-	for i,value in ipairs(items) do
-		if value['status']['phase'] ~= "Running" or value['metadata']['deletionTimestamp'] ~= nil then
-			print("[swap_pod] phase of " .. value['metadata']['name'] .. " is " ..value['status']['phase'])
-			print("[swap_pod] " .. value['metadata']['name'] .. " is not running")
-			kubernetes_pod_not_running = kubernetes_pod_not_running + 1
-		else
-			kubernetes_pod_running = kubernetes_pod_running + 1
-		end
-	end
-
-	print ("[swap_pod]: pods not running pods in Kubernetes: " .. kubernetes_pod_not_running)
-	print ("[swap_pod]: pods running pods in Kubernetes: " .. kubernetes_pod_running)
-	
-	msg.post("ui#gui", "hello_gui",{ pod_running = kubernetes_pod_running })
-	
-	for i,value in ipairs(current_pods) do
-		if value["color"] == "red" then
-			kubeinvaders_pod_not_running = kubeinvaders_pod_not_running + 1 
-		elseif value["color"] == "white" then
-			kubeinvaders_pod_running = kubeinvaders_pod_running + 1 
-		end
-	end
-
-	print ("[swap_pod]: pods not running pods in KubeInvaders: " .. kubeinvaders_pod_not_running)
-	print ("[swap_pod]: pods running pods in KubeInvaders: " .. kubeinvaders_pod_running)
-	
-	if kubernetes_pod_running < kubeinvaders_pod_running then
-		print ("[swap_pod] there are less pod running in kubernetes than kubeinvaders")
-		i = global_kubeinvaders_pod_size - 1
-		deleted_pods = 0
-		while ( i > 0) do
-			if  current_pods[i] ~= nil and current_pods[i]["color"] == "white" then
-				go.delete(current_pods[i]["id"])
-				table.remove(current_pods,i)
-				deleted_pods = deleted_pods + 1
-				print ("[swap_pod] delete kubeinvaders pod at position " .. tostring(i) .. " of kubeinvaders global pods array")
-			end	
-			i = i - 1
-		end
-		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
-		return
-	end
-
-	if (kubernetes_pod_running > kubeinvaders_pod_running) then
-		for i,value in ipairs(current_pods) do
-			go.delete(value["id"])
-		end
-		current_pods = {}
-		set_pods()
-	end
-
-	if kubeinvaders_pod_not_running > kubernetes_pod_not_running then
-		print ("[swap_pod] there are more pod not running in KubeInvaders than Kubernetes")
-		diff  = kubeinvaders_pod_not_running - kubernetes_pod_not_running
-		a = 0
-		while ( a < diff ) do
-			for i,value in ipairs(current_pods) do
-				if value["color"] == "red" then
-					go.delete(value["id"])
-					table.remove(current_pods,i)					
-				end
-			end
-			a = a + 1
-		end
-		msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
-	end	
-end 
-
-function http_update_pod_result(self, _, response)
-	kubernetes_pods = {}
-	msg.post("ui#gui", "error",{ errormessage = "K8S status code request: " .. response.status })	
-	if response.status == 0 then
-		msg.post("ui#gui", "error",{ errormessage = "Error connecting to " .. conf['endpoint'] })
-	end
-	pods = json.decode(response.response)
-	pod_items_size = table.getn(pods["items"])
-	pod_items = pods["items"]
-	i = 0
-	while i <= pod_items_size do
-		if pod_items[i] ~= nil then
-			table.insert(kubernetes_pods,pod_items[i])
-		end
-		i = i + 1
-	end
-	swap_pod(kubernetes_pods)
-end
-
-function ai()
-	launch_bullet = false
-	msg.post("ui#gui", "error",{ errormessage = "" })
-	if automatic == false then
-		return
-	end
-	for i=1,1 do
-		rand_pos = math.random(100, 1100)
-	end
-	pos = go.get_position()
-	pos.y = 220
-	go.set_position(pos)	
-	pos.x = rand_pos
-
-	for i,value in ipairs(current_pods) do
-		if value["color"] == "white" then
-			position_of_pod = go.get_position(value["id"])
-			if (pos.x > position_of_pod.x and pos.x - position_of_pod.x < 30) then 
-				launch_bullet = true
-			elseif (position_of_pod.x > pos.x and position_of_pod.x - pos.x < 30) then
-				launch_bullet = true
-			end
-		end	
-	end
-
-	if launch_bullet == true then
-		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_INQUAD, 1,0, function()
-			pos = go.get_position()		
-			bullet = factory.create("/bullet#bulletfactory", pos)
-			go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
-				go.delete(bullet)
-			end)	
-		end)
-	else
-		go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_INQUAD, 1,0)
-	end	
-end
-
-function update_pod()
-	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", http_update_pod_result,headers)
-end
-
-function delete_pod(pod_name)
-	print ("[delete_pod] delete pods " .. pod_name .. " in Kubernetes")
-	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods/" .. pod_name, "DELETE", http_pod_delete_result,headers)
-end
-
-function delete_request_pod()
-	http.request(endpoint .. "/api/v1/namespaces/".. namespace .. "/pods", "GET", http_pod_delete_request_result,headers)
-end
-
-function http_pod_delete_result(self, _, response)
-	print "[http_pod_delete_result] Request for delete pod on kubernetes has been done"
-	print(response.status)
-	print(response.response)
-	print(response.headers)
-	if string.match(response.status, '4.*') or string.match(response.status, '5.*')  then
-		msg.post("ui#gui", "error",{ errormessage = "Status code: " .. response.status .. "\n" .. response.response })
-	end
-end
-
-function http_pod_delete_request_result(self, _, response)
-	pods = {}
-	pods = json.decode(response.response)
-	pod_items_size = table.getn(pods["items"])
-	a = 0
-	while a <= pod_items_size do
-		if pod_items[a] ~= nil then
-			if pod_items[a]['status']['phase'] == "Running" and pod_items[a]['metadata']['deletionTimestamp'] == nil then
-				pod_to_delete = pod_items[a]['metadata']['name']
-				break
-			end
-		end
-		a = a + 1
-	end
-	delete_pod(pod_to_delete)
-end
-
-function http_pod_result(self, _, response)
-	print(response.status)
-	print(response.response)
-	print(response.headers)
-
-	if string.match(response.status, '4.*') or string.match(response.status, '5.*')  then
-		msg.post("ui#gui", "error",{ errormessage = "Status code: " .. response.status .. "\n" .. response.response })
-	end
-	
-	pods = json.decode(response.response)
-	pod_items_size = table.getn(pods["items"])
-	pod_items = pods["items"]
-	check_above = false
-	a = 0
-	distance_between_pods = 1000 / pod_items_size
-	y_pos = 600
-	space_between_factor = 0
-	
-	if pod_items_size <= alien_proximity_factor then
-		space_between_factor = pod_items_size
-	else
-		space_between_factor = alien_proximity_factor
-	end
-	
-	while( a <= pod_items_size )
-	do  
-		if pod_items[a] ~= nil then
-			this_pod = pod_items[a]
-			phase = this_pod["status"]["phase"]
-			local pos = go.get_position()
-
-			if a <= alien_proximity_factor then
-				pos.x = 100 + ( a * (1000 / space_between_factor) )	
-			end 
-			
-			if (a % alien_proximity_factor == 0) then
-				y_pos = y_pos - (( a / alien_proximity_factor ) * 50) 
-				check_above = true
-			end
-
-			if check_above == true then
-				k = alien_proximity_factor - 1
-				pos_of_pod_above  = go.get_position(current_pods[a - k]['id'])
-				pos.x = pos_of_pod_above.x
-			end
-			
-			pos.y = y_pos			
-			if phase == "Running" and this_pod['metadata']['deletionTimestamp'] == nil then
-				local pod = factory.create("/pod#podfactory", pos)				
-				table.insert(current_pods, { id = pod , color = "white", pod_name = this_pod['metadata']['name'] })
-				check_current_pods = true
-			else
-				local pod = factory.create("/pod_not_running#podfactory", pos)
-				table.insert(current_pods, { id = pod , color = "red", pod_name = this_pod['metadata']['name'] })
-				check_current_pods = true				
-			end
-		end
-		a = a+1		
-	end
-end
-
-function set_pods()
-	http.request(endpoint .. "/api/v1/namespaces/".. namespace .. "/pods", "GET", http_pod_result,headers)
 end
 
 function init(self)
@@ -359,15 +87,16 @@ function init(self)
 			["Authorization"] = "Bearer " .. token
 		}
 		timer.repeat_seconds(pod_update_time, function()
-			update_pod()
+			pod_api.update_pod()
+			pod_mod.swap_pod(kubernetes_pods)		
 		end)
 		timer.repeat_seconds(1, function()
 			msg.post("ui#gui","pod_name",{ pod_name = false, position = go.get_position()})
 		end)	
 		timer.repeat_seconds(1, function()
-			ai()
+			spaceship.auto()
 		end)
-		set_pods()
+		pod_api.set_pods()
 	end
 end
 
@@ -393,12 +122,12 @@ function on_input(self, action_id, action)
 		p.x = p.x + 4
 		go.set_position(p)	
 	elseif action_id == hash("infopod") then
-		print_pod_name()
+		pod_mod.print_pod_name()
 	elseif action_id == hash("help") then
 		print "help!"
-		get_help()
+		help.get_help()
 	elseif action_id == hash("quit_help") then
-		quit_help()
+		help.quit_help()
 	elseif action_id == hash("automatic") then
 		automatic = true
 		msg.post("ui#gui", "mode",{ mode = "You are using the automatic mode. Press \"m\" to use switch to manual"})

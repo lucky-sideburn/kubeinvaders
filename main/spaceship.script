@@ -14,7 +14,11 @@ alien_proximity_factor = 15
 hit_cpu_time_rate_limit = 0
 pod_update_time = 0.5
 kubernetes_pods = {}
+last_pod_log = false
+last_pod_log_time = false
 
+
+local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
 local spaceship = require "main.mymodules.spaceship"
 local help = require "main.mymodules.help"
@@ -105,24 +109,33 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
+	local p = go.get_position()
+	msg.post("ui#gui","pod_log",{infomessage = ''})
+	last_pod_log = false
 	if action_id == hash("up") then
-		local p = go.get_position()
-		p.y = p.y + 4
-		go.set_position(p)
+		if p.y < 700 then
+			p.y = p.y + 4
+			go.set_position(p)
+		end
 	elseif action_id == hash("down") then
-		local p = go.get_position()
-		p.y = p.y - 4
-		go.set_position(p)
+		if p.y > 1 then
+			p.y = p.y - 4
+			go.set_position(p)
+		end
 	elseif action_id == hash("left") then
-		local p = go.get_position()
-		p.x = p.x - 4
-		go.set_position(p)
+		if p.x > 1 then
+			p.x = p.x - 4
+			go.set_position(p)
+		end
 	elseif action_id == hash("right") then
-		local p = go.get_position()
-		p.x = p.x + 4
-		go.set_position(p)	
+		if p.x < 1280 then
+			p.x = p.x + 4
+			go.set_position(p)
+		end
 	elseif action_id == hash("infopod") then
 		pod_mod.print_pod_name()
+	elseif action_id == hash("pod_log") then
+		pod_mod.print_pod_log()
 	elseif action_id == hash("help") then
 		print "help!"
 		help.get_help()
@@ -188,9 +201,28 @@ function on_input(self, action_id, action)
 				last_hit_time = os.clock()
 			end
 		end
-	end
+	end  
 end
 
 function on_message(self, message_id, message, sender)
+	current_time = os.clock()
+	if message_id == COLLISION_RESPONSE then
+		-- print("[on_message_collision] pod id of collision is " .. message["other_id"])
+		for i,value in ipairs(current_pods) do
+			if (message["other_id"] == value["id"]) then
+				pod_name = value["pod_name"]
+			end
+		end
 
+		if last_pod_log_time ~= false then
+			diff_time = current_time - last_pod_log_time
+		else 
+			diff_time = 99
+		end
+		
+		if last_pod_log ~= pod_name and  diff_time > 0.2 then
+			last_pod_log = pod_mod.print_pod_log(message["other_id"])
+			last_pod_log_time = os.clock()
+		end
+	end
 end

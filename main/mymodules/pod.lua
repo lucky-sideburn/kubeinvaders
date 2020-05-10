@@ -20,6 +20,18 @@ function M.print_pod_name()
   end
 end
 
+function M.print_pod_log(pod_id)
+  print("[pod_log] getting pod logs...")
+  pos = go.get_position()
+  for i,value in ipairs(current_pods) do
+    if (pod_id == value["id"]) then
+      print("[pod_log] getting pod logs for " .. value["pod_name"])
+      pod_api.pod_log(value["pod_name"])
+      return value["pod_name"]
+    end
+  end
+end
+
 function M.swap_pod(items)
   for i,value in ipairs(current_pods) do
     if value["collision"] == true and value["color"] == "red" then

@@ -19,6 +19,8 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(gui.get_node("howto"), message.howto_message)	
 	elseif  message_id == hash("info") then
 		gui.set_text(gui.get_node("info"), message.infomessage)	
+	elseif  message_id == hash("pod_log") then
+		gui.set_text(gui.get_node("pod_log"), message.infomessage)	
 	elseif  message_id == hash("error") then
 		gui.set_text(gui.get_node("error"), message.errormessage)
 	elseif  message_id == hash("mode") then
@@ -27,7 +29,6 @@ function on_message(self, message_id, message, sender)
 		gui.set_position(gui.get_node("inputs"), message.position)
 	elseif  message_id == hash("quit_help") then
 		gui.set_position(gui.get_node("inputs"), message.position)
-		
 	elseif  message_id == hash("pod_name") then
 		if  message.pod_name == false or message.pod_name == nil then
 			fake_position = message.position

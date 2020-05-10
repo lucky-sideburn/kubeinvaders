@@ -42,6 +42,10 @@ key_trigger {
   input: KEY_Q
   action: "quit_help"
 }
+key_trigger {
+  input: KEY_L
+  action: "pod_log"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

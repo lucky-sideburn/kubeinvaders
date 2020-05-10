@@ -1,6 +1,6 @@
 font: "/assets/Adore64.ttf"
 material: "/builtins/fonts/font.material"
-size: 14
+size: 10
 antialias: 1
 alpha: 1.0
 outline_alpha: 0.0

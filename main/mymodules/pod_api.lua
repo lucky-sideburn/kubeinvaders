@@ -26,6 +26,16 @@ function M.http_update_pod_result(self, _, response)
   end
 end
 
+function M.pod_log(pod_name)
+  print("[pod_log] show logs of pod " .. pod_name)
+  http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods/" .. pod_name .. "/log?tailLines=20&pretty=true", "GET", M.http_pod_log_result,headers)
+end
+
+function M.http_pod_log_result(self, _, response)
+  print(response.response)
+  msg.post("ui#gui","pod_log",{infomessage = response.response})
+end
+
 function M.delete_pod(pod_name)
   print ("[delete_pod] delete pods " .. pod_name .. " in Kubernetes")
   http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods/" .. pod_name, "DELETE", M.http_pod_delete_result,headers)

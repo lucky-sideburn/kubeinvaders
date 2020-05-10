@@ -1,6 +1,6 @@
 font: "/builtins/fonts/vera_mo_bd.ttf"
 material: "/builtins/fonts/label-df.material"
-size: 15
+size: 10
 antialias: 1
 alpha: 1.0
 outline_alpha: 0.0

@@ -43,8 +43,8 @@ key_trigger {
   action: "quit_help"
 }
 key_trigger {
-  input: KEY_L
-  action: "pod_log"
+  input: KEY_R
+  action: "refresh_pod_log"
 }
 mouse_trigger {
   input: MOUSE_BUTTON_1

@@ -433,7 +433,8 @@ nodes {
   text: "Special Keys:\n"
   "i: Show pod\'s name. Move the ship towards an alien\n"
   "n: Jump between namespaces. Read REAME.md for configuring TARGET_NAMESPACE\n"
-  "q: Hide this special keys list"
+  "q: Hide this special keys list\n"
+  "r: Refresh log of a pod when spaceship is over the alien"
   font: "info"
   id: "inputs"
   xanchor: XANCHOR_NONE

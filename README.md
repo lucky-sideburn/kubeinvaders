@@ -25,6 +25,7 @@ helm install --set-string target_namespace="namespace1\,namespace2" --name kubei
 |     h           | Show special keys.                                                                        |
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
+|     r           | Refresh log of a pod when spaceship is over the alien.                                    |
 
 ### Show logs of a pod
 

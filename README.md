@@ -8,12 +8,7 @@
 
 KubeInvaders has been developed using Defold (https://www.defold.com/).
 
-Through KubeInvaders you can stress your Openshift cluster in a fun way and check how it is resilient.
-
-```
-# Please set target_namespace to set your target namespace!
-helm install --set-string target_namespace="namespace1\,namespace2" --name kubeinvaders --namespace kubeinvaders ./helm-charts/kubeinvaders
-```
+Through KubeInvaders you can stress Kubernetes cluster in a fun way and check how it is resilient.
 
 ### Special Input Keys
 

@@ -26,6 +26,9 @@ helm install --set-string target_namespace="namespace1\,namespace2" --name kubei
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
 
+### Show logs of a pod
+
+Move the spaceship over a white alien
 
 ### Environment Variables - Make the game more difficult to win!
 

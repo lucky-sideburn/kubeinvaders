@@ -56,8 +56,13 @@ Create .KubeInv.json file on your home. This is an example:
 ### Install with HELM!
 
 ```
-# Please set target_namespace to set your target namespace!
-helm install --set-string target_namespace="namespace1\,namespace2" --name kubeinvaders --namespace kubeinvaders ./helm-charts/kubeinvaders
+# Set target_namespace and ingress.hostname!
+
+kubectl create namespace kubeinvaders
+helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+--namespace kubeinvaders ./helm-charts/kubeinvaders \
+--set ingress.hostname=kubeinvaders.io
+
 ```
 
 ### Install KubeInvaders on Openshift

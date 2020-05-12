@@ -1,4 +1,4 @@
-1. Get the application URL by running these commands:
+Thank you for installing KubeInvaders!
 {{- if .Values.ingress.enabled }}
 {{- range $host := .Values.ingress.hosts }}
   {{- range .paths }}

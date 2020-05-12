@@ -1,10 +1,8 @@
-{{- if and .Values.rbac.create (eq .Values.clusterRole.create false) -}}
-{{- range $namespace := (append .Values.allowedNamespaces .Release.Namespace) }}
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: kubeinvaders-role
-  namespace: {{ $namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: kubeinvaders
     chart: {{ template "kubeinvaders.chart" $ }}
@@ -12,17 +10,14 @@ metadata:
     heritage: {{ $.Release.Service }}
 rules:
 - apiGroups: [""]
-  resources: ["pods"]
-  verbs: ["get", "watch", "list", "delete"]
-- apiGroups: [""]
-  resources: ["pods/log"]
-  verbs: ["get", "watch", "list"]
+  resources: ["pods", "pods/log"]
+  verbs: ["get", "list", "delete"]
 ---
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: kubeinvaders-rolebinding
-  namespace: {{ $namespace }}
+  namespace: {{ .Release.Namespace }}
   labels:
     app: kubeinvaders
     chart: {{ template "kubeinvaders.chart" $ }}
@@ -31,10 +26,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: {{ template "kubeinvaders.serviceAccountName" $ }}
-  namespace: {{ $namespace }}
+  namespace: {{ .Release.Namespace }}
 roleRef:
   kind: Role
   name: kubeinvaders-role
   apiGroup: rbac.authorization.k8s.io
-{{- end -}}
-{{- end -}}

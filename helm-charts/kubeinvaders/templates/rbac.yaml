@@ -11,7 +11,7 @@ metadata:
     heritage: {{ .Release.Service }}
 rules:
 - apiGroups: [""]
-  resources: ["pods"]
+  resources: ["pods","pods/log"]
   verbs: ["get", "watch", "list", "delete"]
 {{- end -}}
 {{- if or .Values.clusterRole.create .Values.clusterRole.name }}

@@ -40,14 +40,8 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hosts:
-    - host: kubeinvaders.local
-      paths: ["/"]
-
+  hostName:
   tls:
-    - secretName: chart-example-tls
-      hosts:
-        - chart-example.local
 
 
 resources: {}
@@ -65,8 +59,9 @@ resources: {}
 nodeSelector: {}
 tolerations: []
 
-route_host: kubeinvaders.local
+route_host: kubernetes.default.svc
 target_namespace: "foobar"
 hitslimit: 1
 alienproximity: 15
 updatetime: 1
+

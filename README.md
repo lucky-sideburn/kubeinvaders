@@ -49,9 +49,8 @@ Create .KubeInv.json file on your home. This is an example:
   "namespace": "namespace1,namespace2"
 }
 ```
-
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-helm/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-helm/x86_64-linux.zip)
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-podlogs/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-podlogs/x86_64-linux.zip)
 
 ### Install with HELM!
 

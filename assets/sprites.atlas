@@ -1,43 +1,39 @@
 animations {
   id: "spaceship"
   images {
-    image: "/assets/spaceship_00.png"
+    image: "/assets/spaceship1.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_01.png"
+    image: "/assets/spaceship2.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_02.png"
+    image: "/assets/spaceship3.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_03.png"
+    image: "/assets/spaceship4.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_04.png"
+    image: "/assets/spaceship5.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_05.png"
+    image: "/assets/spaceship6.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_06.png"
+    image: "/assets/spaceship7.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   images {
-    image: "/assets/spaceship_07.png"
-    sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-  }
-  images {
-    image: "/assets/spaceship_08.png"
+    image: "/assets/spaceship8.png"
     sprite_trim_mode: SPRITE_TRIM_MODE_OFF
   }
   playback: PLAYBACK_LOOP_FORWARD
-  fps: 30
+  fps: 8
   flip_horizontal: 0
   flip_vertical: 0
 }

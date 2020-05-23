@@ -12,10 +12,10 @@ function M.auto()
     return
   end
   for i=1,1 do
-    rand_pos = math.random(100, 1100)
+    rand_pos = math.random(400, 1500)
   end
   pos = go.get_position()
-  pos.y = 220
+  pos.y = 300
   go.set_position(pos)	
   pos.x = rand_pos
 
@@ -34,7 +34,7 @@ function M.auto()
     go.animate(go.get_id(), "position.x", go.PLAYBACK_ONCE_FORWARD, pos.x, go.EASING_INQUAD, 1,0, function()
       pos = go.get_position()		
       bullet = factory.create("/bullet#bulletfactory", pos)
-      go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+      go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 1200, go.EASING_INQUAD, 1,0,function()
         go.delete(bullet)
       end)	
     end)

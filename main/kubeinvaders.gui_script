@@ -35,7 +35,7 @@ function on_message(self, message_id, message, sender)
 			fake_position.x = 0
 			fake_position.y = 0
 			gui.set_text(gui.get_node("pod_name"),'')
-			gui.set_position(gui.get_node("pod_name"), fake_position)
+			--gui.set_position(gui.get_node("pod_name"), fake_position)
 		else
 			gui.set_text(gui.get_node("pod_name"), message.pod_name)
 			print(message.position_of_pod)

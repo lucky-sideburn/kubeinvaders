@@ -103,7 +103,7 @@ function M.http_pod_result(self, _, response)
       local pos = go.get_position()
 
       if a <= alien_proximity_factor then
-        pos.x = 100 + ( a * (1000 / space_between_factor) )	
+        pos.x = 500 + ( a * (1000 / space_between_factor) )	
       end 
 
       if (a % alien_proximity_factor == 0) then

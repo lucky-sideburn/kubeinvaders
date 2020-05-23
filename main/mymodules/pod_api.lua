@@ -86,7 +86,7 @@ function M.http_pod_result(self, _, response)
   check_above = false
   a = 0
   distance_between_pods = 1000 / pod_items_size
-  y_pos = 600
+  y_pos = 950
   space_between_factor = 0
 
   if pod_items_size <= alien_proximity_factor then

@@ -113,7 +113,7 @@ function on_input(self, action_id, action)
 	if action_id == hash("up") then
 		msg.post("ui#gui","pod_log",{infomessage = ''})
 		last_pod_log = false
-		if p.y < 700 then
+		if p.y < 1000 then
 			p.y = p.y + 4
 			go.set_position(p)
 		end
@@ -134,7 +134,7 @@ function on_input(self, action_id, action)
 	elseif action_id == hash("right") then
 		msg.post("ui#gui","pod_log",{infomessage = ''})
 		last_pod_log = false
-		if p.x < 1280 then
+		if p.x < 1800 then
 			p.x = p.x + 4
 			go.set_position(p)
 		end
@@ -201,7 +201,7 @@ function on_input(self, action_id, action)
 				local pos = go.get_position()
 				local to = pos.y + 2 * 64
 				local bullet = factory.create("/bullet#bulletfactory", pos)
-				go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 700, go.EASING_INQUAD, 1,0,function()
+				go.animate(bullet, "position.y", go.PLAYBACK_ONCE_FORWARD, 1200, go.EASING_INQUAD, 1,0,function()
 					go.delete(bullet)
 				end)
 				last_hit_time = os.clock()

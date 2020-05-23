@@ -1,7 +1,7 @@
 local M = {}
 
 function M.get_help()
-  msg.post("ui#gui","help",{ position = vmath.vector3(24, 680, 0) })
+  msg.post("ui#gui","help",{ position = vmath.vector3(856, 95, 0) })
 end
 
 function M.quit_help()

@@ -9,8 +9,8 @@ version = 0.2.8
 variable_dt = 1
 fullscreen = 0
 update_frequency = 60
-width = 1280
-height = 720
+width = 1920
+height = 1080
 
 [script]
 shared_state = 1

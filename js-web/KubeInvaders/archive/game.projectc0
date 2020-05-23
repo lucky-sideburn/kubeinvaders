@@ -5,8 +5,8 @@ write_log = 0
 compress_archive = 1
 
 [display]
-width = 1280
-height = 720
+width = 1920
+height = 1080
 high_dpi = 0
 samples = 0
 fullscreen = 0
@@ -15,6 +15,12 @@ vsync = 0
 display_profiles = /builtins/render/default.display_profilesc
 dynamic_orientation = 0
 variable_dt = 1
+
+[render]
+clear_color_red = 0
+clear_color_green = 0
+clear_color_blue = 0
+clear_color_alpha = 0
 
 [physics]
 type = 2D
@@ -97,6 +103,8 @@ infoplist = /builtins/manifests/ios/Info.plist
 
 [android]
 version_code = 1
+minimum_sdk_version = 16
+target_sdk_version = 28
 package = com.example.todo
 manifest = /builtins/manifests/android/AndroidManifest.xml
 iap_provider = GooglePlay
@@ -112,9 +120,13 @@ bundle_identifier = example.unnamed
 
 [html5]
 custom_heap_size = 0
-include_dev_tool = 0
+heap_size = 256
 htmlfile = /builtins/manifests/web/engine_template.html
+cssfile = /builtins/manifests/web/light_theme.css
 archive_location_prefix = archive
+show_fullscreen_button = 1
+show_made_with_defold = 1
+scale_mode = downscale_fit
 
 [particle_fx]
 max_count = 64
@@ -131,8 +143,6 @@ http_timeout = 0
 [script]
 shared_state = 1
 
-[tracking]
-
 [label]
 max_count = 64
 subpixels = 1
@@ -142,4 +152,11 @@ track_cpu = 0
 
 [liveupdate]
 settings = /liveupdate.settings
+
+[tilemap]
+max_count = 16
+max_tile_count = 2048
+
+[engine]
+run_while_iconified = 0
 

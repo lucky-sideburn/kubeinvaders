@@ -40,8 +40,10 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 
 ```
 # Set target_namespace and ingress.hostname!
+git clone https://github.com/lucky-sideburn/KubeInvaders.git
 
 kubectl create namespace kubeinvaders
+
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostname=kubeinvaders.io

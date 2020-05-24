@@ -34,7 +34,7 @@ function reverse(tbl)
 end
 
 function init(self)
-	msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
+	msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot" })
 	local path = os.getenv("HOME") .. "/.KubeInv.json"
 	local contents = ""
 	conf = {}
@@ -149,11 +149,11 @@ function on_input(self, action_id, action)
 		help.quit_help()
 	elseif action_id == hash("automatic") then
 		automatic = true
-		msg.post("ui#gui", "mode",{ mode = "You are using the automatic mode. Press \"m\" to use switch to manual"})
+		msg.post("ui#gui", "mode",{ mode = "Press \"m\" to switch to manual mode"})
 	elseif action_id == hash("manual") then
 		print ("[change_mode] manual")
 		automatic = false
-		msg.post("ui#gui", "mode",{ mode = "You are using the manual mode. Press \"a\" to use switch to automatic"})
+		msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot"})
 	elseif action_id == hash("namespace") then
 		print ("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })

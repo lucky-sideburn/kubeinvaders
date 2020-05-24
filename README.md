@@ -36,6 +36,18 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 | HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
 | UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
 
+### Install with HELM
+
+```
+# Set target_namespace and ingress.hostname!
+
+kubectl create namespace kubeinvaders
+helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+--namespace kubeinvaders ./helm-charts/kubeinvaders \
+--set ingress.hostname=kubeinvaders.io
+
+```
+
 ### Install client on your workstation
 
 The easy way to install KubeInvader is run it on you workstation.
@@ -51,18 +63,6 @@ Create .KubeInv.json file on your home. This is an example:
 ```
 * [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-podlogs/x86_64-darwin.zip)
 * [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.9-podlogs/x86_64-linux.zip)
-
-### Install with HELM!
-
-```
-# Set target_namespace and ingress.hostname!
-
-kubectl create namespace kubeinvaders
-helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
---namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostname=kubeinvaders.io
-
-```
 
 ### Install KubeInvaders on Openshift
 

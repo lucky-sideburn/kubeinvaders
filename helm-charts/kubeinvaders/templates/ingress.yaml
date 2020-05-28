@@ -1,3 +1,5 @@
+{{- if .Values.ingress.enabled -}}
+
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -14,13 +16,14 @@ metadata:
 spec:
   tls:
     - hosts:
-      - {{ .Values.ingress.hostname | quote }}
+      - {{ .Values.ingress.hostName | quote }}
       secretName: {{ .Values.ingress.secretName }}
   rules:
-  - host: {{ .Values.ingress.hostname }}
+  - host: {{ .Values.ingress.hostName }}
     http:
       paths:
       - path: /
         backend:
           serviceName: kubeinvaders
           servicePort: 8080
+{{- end }}

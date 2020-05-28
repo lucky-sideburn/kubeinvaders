@@ -22,7 +22,7 @@ spec:
       containers:
         - env:
           - name: ROUTE_HOST
-            value: "{{ .Values.ingress.hostname }}"
+            value: "{{ .Values.ingress.hostName }}"
           - name: NAMESPACE
             value: {{ .Values.target_namespace }}
           - name: TOKEN

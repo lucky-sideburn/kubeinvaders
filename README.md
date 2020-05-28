@@ -26,16 +26,6 @@ Through KubeInvaders you can stress Kubernetes cluster in a fun way and check ho
 
 Move the spaceship over a white alien
 
-### Environment Variables - Make the game more difficult to win!
-
-Set the following variables in Kubernetes Deployment or Openshift DeploymentConfig
-
-| ENV Var                     | Description                                                                   |
-|-----------------------------|-------------------------------------------------------------------------------|
-| ALIENPROXIMITY (default 15) | Reduce the value to increase distance between aliens                          |
-| HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
-| UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
-
 ### Install with HELM
 
 ```
@@ -46,9 +36,19 @@ kubectl create namespace kubeinvaders
 
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostname=kubeinvaders.io
+--set ingress.hostName=kubeinvaders.io
 
 ```
+
+### Environment Variables - Make the game more difficult to win!
+
+Set the following variables in Kubernetes Deployment or Openshift DeploymentConfig
+
+| ENV Var                     | Description                                                                   |
+|-----------------------------|-------------------------------------------------------------------------------|
+| ALIENPROXIMITY (default 15) | Reduce the value to increase distance between aliens                          |
+| HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
+| UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
 
 ### Install client on your workstation
 

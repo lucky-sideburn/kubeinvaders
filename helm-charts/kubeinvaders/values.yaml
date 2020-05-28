@@ -40,9 +40,9 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hostName:
+  hostName: kubeinvaders.local
   tls:
-
+  #  secretName: kubeinvaders.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

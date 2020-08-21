@@ -12,6 +12,11 @@ server {
     etag off;
   }
 
+  location /kube {
+     rewrite ^/kube(.*)$ /api$1 break;
+     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
+  }
+
   location /kube/api {
      rewrite ^/kube/api(.*)$ /api$1 break;
      proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};

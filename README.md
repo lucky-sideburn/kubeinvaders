@@ -40,6 +40,26 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 
 ```
 
+### Run Directly from Docker
+
+```bash
+docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:foo
+```
+go to http://localhost.8080
+
+### Develop HTML5 application whit Defold and Docker
+
+1. (Defold) Go to Project => Bundle => HTML5 Application
+2. Copy the js-web folder inside the root of KubeInvaders project
+3. docker build . -t docker.io/luckysideburn/kubeinvaders:foo
+4. Run with this
+
+```bash
+docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:foo
+```
+5. go to http://localhost.8080
+
+
 ### Environment Variables - Make the game more difficult to win!
 
 Set the following variables in Kubernetes Deployment or Openshift DeploymentConfig

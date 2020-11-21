@@ -66,7 +66,7 @@ Create .KubeInv.json file on your home. This is an example:
 
 #### Creating ~/.KubeInv.json
 
-This is an example used for my EKS cluster.
+This is an example of my KubeInv.json
 
 ```bash
 # Set a spefic KUBECONFIG if you have different contexts

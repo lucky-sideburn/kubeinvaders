@@ -5,7 +5,7 @@ ENDPOINT=$(echo "https://${ROUTE_HOST}" | sed "s/\//\\\\\//g")
 if [ ! -z $DEVELOPMENT ];
 then
   sed -i "s/___buildEnvironment.called=true/___buildEnvironment.called=true;ENV[\"TOKEN\"]=\"$TOKEN\";ENV[\"ENDPOINT\"]=\"$ENDPOINT\";ENV[\"NAMESPACE\"]=\"$NAMESPACE\";ENV[\"HITSLIMIT\"]=\"$HITSLIMIT\";ENV[\"ALIENPROXIMITY\"]=\"$ALIENPROXIMITY\";ENV[\"UPDATETIME\"]=\"$UPDATETIME\"/g" /var/www/html/KubeInvaders_wasm.js
-  envsubst '${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}' < "/etc/nginx/conf.d/KubeInvaders_dev.templ" > "/etc/nginx/conf.d/KubeInvaders.conf"
+  envsubst '${ENDPOINT}' < "/etc/nginx/conf.d/KubeInvaders_dev.templ" > "/etc/nginx/conf.d/KubeInvaders.conf"
 
 else
   sed -i "s/___buildEnvironment.called=true/___buildEnvironment.called=true;ENV[\"TOKEN\"]=\"$TOKEN\";ENV[\"ENDPOINT\"]=\"$ENDPOINT\/kube\";ENV[\"NAMESPACE\"]=\"$NAMESPACE\";ENV[\"HITSLIMIT\"]=\"$HITSLIMIT\";ENV[\"ALIENPROXIMITY\"]=\"$ALIENPROXIMITY\";ENV[\"UPDATETIME\"]=\"$UPDATETIME\"/g" /var/www/html/KubeInvaders_wasm.js

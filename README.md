@@ -35,17 +35,7 @@ Move the spaceship over a white alien
 
 ## Installation
 
-### Run Directly from Docker
-
-Suggested for development purpose in order to test HTML build.
-
-```bash
-docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:latest
-```
-go to http://localhost.8080
-
 ### Install with HELM
-
 ```
 # Set target_namespace and ingress.hostname!
 git clone https://github.com/lucky-sideburn/KubeInvaders.git
@@ -85,25 +75,6 @@ oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NA
 #### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/dcenv.png)
-
-
-
-
-## Developing
-
-### Develop HTML5 application whit Defold and Docker
-
-1. (Defold) Go to Project => Bundle => HTML5 Application
-2. Copy the js-web folder inside the root of KubeInvaders project
-3. docker build . -t docker.io/luckysideburn/kubeinvaders:foo
-4. Run with this
-
-```bash
-docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:foo
-```
-5. go to http://localhost.8080
-
-
 ## Configuration
 
 ### Environment Variables - Make the game more difficult to win!
@@ -115,5 +86,4 @@ Set the following variables in Kubernetes Deployment or Openshift DeploymentConf
 | ALIENPROXIMITY (default 15) | Reduce the value to increase distance between aliens                          |
 | HITSLIMIT (default 0)       | Seconds of CPU time to wait before shooting                                   |
 | UPDATETIME (default 1)      | Seconds to wait before update PODs status (you can set also 0.x Es: 0.5)      |
-
 

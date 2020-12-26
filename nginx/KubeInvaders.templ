@@ -2,7 +2,7 @@ server {
   listen 8080 default_server;
   root /var/www/html/;
   index index.html;
- 
+  
   location / {
     try_files $uri $uri/ =404;
     add_header Last-Modified $date_gmt;
@@ -13,15 +13,13 @@ server {
   }
 
   location /kube {
-     add_header Access-Control-Allow-Origin *;
      rewrite ^/kube(.*)$ /api$1 break;
-     proxy_pass ${ENDPOINT};
+     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
   }
 
   location /kube/api {
-     add_header Access-Control-Allow-Origin *;
      rewrite ^/kube/api(.*)$ /api$1 break;
-     proxy_pass ${ENDPOINT};
+     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
   }
 
 }

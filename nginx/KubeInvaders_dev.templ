@@ -1,7 +1,5 @@
 server {
   listen 8080 default_server;
-  listen 6443;
-
   root /var/www/html/;
   index index.html;
   
@@ -15,13 +13,13 @@ server {
   }
 
   location /kube {
-    rewrite ^/kube(.*)$ /api$1 break;
-    proxy_pass ${ENDPOINT};
+     rewrite ^/kube(.*)$ /api$1 break;
+     proxy_pass ${ENDPOINT};
   }
 
   location /kube/api {
-    rewrite ^/kube/api(.*)$ /api$1 break;
-    proxy_pass ${ENDPOINT};
+     rewrite ^/kube/api(.*)$ /api$1 break;
+     proxy_pass ${ENDPOINT};
   }
 
 }

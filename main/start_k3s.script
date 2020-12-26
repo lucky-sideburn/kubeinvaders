@@ -1,0 +1,27 @@
+
+function init(self)
+	-- Add initialization code here
+	-- Remove this function if not needed
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+
+end
+
+function on_message(self, message_id, message, sender)
+
+end
+
+function on_input(self, action_id, action)
+
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

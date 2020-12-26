@@ -1,8 +1,23 @@
+components {
+  id: "bullet"
+  component: "/main/bullet.script"
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+}
 embedded_components {
-  id: "pod"
+  id: "sprite"
   type: "sprite"
-  data: "tile_set: \"/assets/untitled.atlas\"\n"
-  "default_animation: \"sprite_invader\"\n"
+  data: "tile_set: \"/assets/bullet.atlas\"\n"
+  "default_animation: \"bulletkube\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"
   ""
@@ -26,9 +41,8 @@ embedded_components {
   "mass: 0.0\n"
   "friction: 0.1\n"
   "restitution: 0.5\n"
-  "group: \"pod\"\n"
-  "mask: \"bullet\"\n"
-  "mask: \"spaceship\"\n"
+  "group: \"bullet\"\n"
+  "mask: \"pod\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"
@@ -46,7 +60,7 @@ embedded_components {
   "    index: 0\n"
   "    count: 1\n"
   "  }\n"
-  "  data: 25.0\n"
+  "  data: 15.0\n"
   "}\n"
   "linear_damping: 0.0\n"
   "angular_damping: 0.0\n"

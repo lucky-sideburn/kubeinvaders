@@ -46,9 +46,17 @@ key_trigger {
   input: KEY_R
   action: "refresh_pod_log"
 }
+key_trigger {
+  input: KEY_S
+  action: "stop"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"
+}
+touch_trigger {
+  input: TOUCH_MULTI
+  action: "touch"
 }
 text_trigger {
   input: TEXT

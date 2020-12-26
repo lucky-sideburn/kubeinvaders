@@ -1,0 +1,40 @@
+local COLLISION_RESPONSE = hash("collision_response")
+local timer = require "main.mymodules.timer"
+local spaceship = require "main.mymodules.spaceship"
+local help = require "main.mymodules.help"
+local pod_mod = require "main.mymodules.pod"
+local pod_api = require "main.mymodules.pod_api"
+local press_play = require "main.mymodules.press_play"
+
+local COLLISION_RESPONSE = hash("collision_response")
+
+function init(self)
+	-- Add initialization code here
+	-- Remove this function if not needed
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == COLLISION_RESPONSE then
+		press_play.press_play('/start_chaos#sprite')
+		msg.post('/spaceship', "start_chaos", { action = 'start_chaos'})
+		--go.delete()
+	end
+end
+
+function on_input(self, action_id, action)
+
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

@@ -16,7 +16,7 @@ pod_update_time = 0.5
 kubernetes_pods = {}
 last_pod_log = false
 last_pod_log_time = false
-
+start_chaos = false
 
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
@@ -24,22 +24,15 @@ local spaceship = require "main.mymodules.spaceship"
 local help = require "main.mymodules.help"
 local pod_mod = require "main.mymodules.pod"
 local pod_api = require "main.mymodules.pod_api"
+local press_play = require "main.mymodules.press_play"
 
-function reverse(tbl)
-	for i=1, math.floor(#tbl / 2) do
-		local tmp = tbl[i]
-		tbl[i] = tbl[#tbl - i + 1]
-		tbl[#tbl - i + 1] = tmp
-	end
-end
-
-function init(self)
+function start_chaos()
 	msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot" })
 	local path = os.getenv("HOME") .. "/.KubeInv.json"
 	local contents = ""
 	conf = {}
 	local file = io.open( path, "r" )
-    if file then
+	if file then
 		local contents = file:read( "*a" )
 		conf = json.decode(contents);
 		io.close(file)
@@ -79,10 +72,10 @@ function init(self)
 		namespace_total = table.getn(namespace_list)
 		namespace_cnt = 0
 		namespace = namespace_list[0]
-		
+
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
 		msg.post("ui#gui", "info",{ infomessage =  info })
-		
+
 		msg.post(".", "acquire_input_focus")	
 
 		headers = {
@@ -102,6 +95,21 @@ function init(self)
 		end)
 		pod_api.set_pods()
 	end
+	started_chaos = true
+	go.delete('/start_chaos')
+	go.delete('/start_k3s')
+end
+
+function reverse(tbl)
+	for i=1, math.floor(#tbl / 2) do
+		local tmp = tbl[i]
+		tbl[i] = tbl[#tbl - i + 1]
+		tbl[#tbl - i + 1] = tmp
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
 end
 
 function update(self, dt)
@@ -109,7 +117,7 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
-	local p = go.get_position()
+	p = go.get_position()
 	if action_id == hash("up") then
 		msg.post("ui#gui","pod_log",{infomessage = ''})
 		last_pod_log = false
@@ -160,7 +168,7 @@ function on_input(self, action_id, action)
 
 		-- Returns an approximation of the amount in seconds of CPU time used by the program.
 		current_time = os.clock()
-		
+
 		if last_namespace_change ~= false then
 			diff_time = current_time - last_namespace_change
 			print ("[change_namespace] diff_time ".. diff_time)
@@ -183,11 +191,11 @@ function on_input(self, action_id, action)
 				namespace = namespace_list[namespace_cnt]	
 			end
 		end
-		
+
 		last_namespace_change = os.clock()
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
 		msg.post("ui#gui", "info",{ infomessage =  info })
-		
+
 	elseif action_id == hash("space") and action.pressed then
 		msg.post("ui#gui", "error",{ errormessage = "" })
 		-- Returns an approximation of the amount in seconds of CPU time used by the program.
@@ -207,12 +215,13 @@ function on_input(self, action_id, action)
 				last_hit_time = os.clock()
 			end
 		end
-	end  
+	end
 end
 
 function on_message(self, message_id, message, sender)
 	current_time = os.clock()
-	if message_id == COLLISION_RESPONSE then
+	print('DEBUG' .. message_id)
+	if message_id == COLLISION_RESPONSE and started_chaos then
 		for i,value in ipairs(current_pods) do
 			if (message["other_id"] == value["id"]) then
 				pod_name = value["pod_name"]
@@ -224,12 +233,14 @@ function on_message(self, message_id, message, sender)
 		else 
 			diff_time = 99
 		end
-		
+
 		if last_pod_log ~= pod_name and  diff_time > 0.2 then
 			last_pod_log = pod_mod.print_pod_log(message["other_id"])
 			print("last_pod_log " .. last_pod_log)
 			print("pod_name " .. pod_name)
 			last_pod_log_time = os.clock()
 		end
+	elseif message_id == hash('start_chaos') then
+		start_chaos()
 	end
 end

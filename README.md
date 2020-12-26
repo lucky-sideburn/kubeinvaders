@@ -35,6 +35,15 @@ Move the spaceship over a white alien
 
 ## Installation
 
+### Run Directly from Docker
+
+Suggested for development purpose in order to test HTML build.
+
+```bash
+docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:latest
+```
+go to http://localhost.8080
+
 ### Install with HELM
 
 ```
@@ -47,89 +56,6 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io
 ```
-
-### Install client on your workstation
-
-The easy way to install KubeInvaders is run it on you workstation.
-
-Create .KubeInv.json file on your home. This is an example:
-
-```
-{
-  "token": ".....",
-  "endpoint": "https://rancher.accolli.it:6443",
-  "namespace": "namespace1,namespace2"
-}
-```
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.8-ui/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/0.2.8-ui/x86_64-linux.zip)
-
-#### Creating ~/.KubeInv.json
-
-This is an example of my KubeInv.json
-
-```bash
-# Set a spefic KUBECONFIG if you have different contexts
-# export KUBECONFIG=<path>
-
-NAMESPACES="default,namespace1"
-K8S_ENDPOINT="https://91A9752B6718D1E61824994D466EB574.gr7.eu-central-1.eks.amazonaws.com"
-
-SERVICE_ACCOUNT="kubeinvaders"
-
-kubectl --insecure-skip-tls-verify create sa kubeinvaders -n default
-
-cat <<EOF > ./kubeinvader-rbac.yaml
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRole
-metadata:
-  name: kubeinvaders
-  labels:
-    app: kubeinvaders
-rules:
-- apiGroups: [""]
-  resources: ["pods","pods/log"]
-  verbs: ["get", "watch", "list", "delete"]
----
-kind: ClusterRoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: kubeinvaders
-  labels:
-    app: kubeinvaders
-subjects:
-- kind: ServiceAccount
-  name: kubeinvaders
-  namespace: default
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kubeinvaders
-EOF
-
-kubectl --insecure-skip-tls-verify create -f ./kubeinvader-rbac.yaml -n default
-SECRET=$(kubectl --insecure-skip-tls-verify get serviceaccount ${SERVICE_ACCOUNT} -n default -o json | jq -Mr '.secrets[].name | select(contains("token"))')
-TOKEN=$(kubectl --insecure-skip-tls-verify get secret ${SECRET} -n default -o json | jq -Mr '.data.token' | base64 -d)
-
-JSON_STRING=$( jq -n \
-                  --arg token "$TOKEN" \
-                  --arg endpoint "$K8S_ENDPOINT" \
-                  --arg namespace "$NAMESPACES" \
-                  '{token: $token, endpoint: $endpoint, namespace: $namespace}' )
-
-echo $JSON_STRING > ~/.KubeInv.json
-````
-
-### Run Directly from Docker
-
-Suggested for development purpose in order to test HTML build.
-
-```bash
-docker run --env DEVELOPMENT=true --env ROUTE_HOST=myocpcluster:8443 --env NAMESPACE=kubeinvaders --env ALIENPROXIMITY=15 --env HITSLIMIT=0  --env UPDATETIME=0.5 --env TOKEN=<my service account or user token>  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 --env KUBERNETES_SERVICE_HOST=myocpcluster -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders:latest
-```
-go to http://localhost.8080
-
 ### Install KubeInvaders on Openshift
 
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:

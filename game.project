@@ -16,6 +16,6 @@ height = 1080
 shared_state = 1
 
 [html5]
-scale_mode = stretch
+scale_mode = fit
 htmlfile = /builtins/manifests/web/engine_template.html
 

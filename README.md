@@ -46,6 +46,22 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io
 ```
+### Install client on your workstation
+
+The easy way to install KubeInvaders is run it on you workstation.
+
+Create $HOME/.KubeInv.json like this:
+
+```
+{
+  "token": ".....",
+  "endpoint": "https://rancher.accolli.it:6443",
+  "namespace": "namespace1,namespace2"
+}
+```
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-linux.zip)
+
 ### Install KubeInvaders on Openshift
 
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:

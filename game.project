@@ -18,4 +18,6 @@ shared_state = 1
 [html5]
 scale_mode = fit
 htmlfile = /builtins/manifests/web/engine_template.html
+splash_image = /assets/kubeinvaderslogo.png
+show_made_with_defold = 0
 

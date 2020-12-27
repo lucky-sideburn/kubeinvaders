@@ -145,8 +145,9 @@ htmlfile = /builtins/manifests/web/engine_template.html
 cssfile = /builtins/manifests/web/light_theme.css
 archive_location_prefix = archive
 show_fullscreen_button = 1
-show_made_with_defold = 1
+show_made_with_defold = 0
 scale_mode = fit
+splash_image = /assets/kubeinvaderslogo.png
 
 [particle_fx]
 max_count = 64

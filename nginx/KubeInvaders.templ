@@ -2,6 +2,23 @@ server {
   listen 8080 default_server;
   root /var/www/html/;
   index index.html;
+
+  location /kube-linter {
+    default_type text/html;
+    content_by_lua_block {
+      local arg = ngx.req.get_uri_args()
+      ngx.req.read_body()
+      local request_body = ngx.req.get_body_data()  
+      local opts = " --token=" .. arg['token'] .. " --server=" .. arg['k8s_url'] .. " --insecure-skip-tls-verify=true -n " .. arg['namespace']
+      os.execute("kubectl get pod " .. arg['pod_name'] .. " " .. opts .. " -o yaml > /tmp/" .. arg['pod_name'] .. ".yaml")
+      os.execute("/opt/kube-linter-parser.sh /tmp/" .. arg['pod_name'] .. ".yaml > /tmp/" .. arg['pod_name'] .. ".linter")
+      local handle = io.popen('jq -R -s -c \'split("\n")\' < /tmp/' .. arg['pod_name'] .. '.linter  | jq \'map(select(length > 0))\'')
+      local result = handle:read("*a")
+      os.execute("rm -f /tmp/" .. arg['pod_name'] .. ".linter")
+      os.execute("rm -f /tmp/" .. arg['pod_name'] .. ".yaml")
+      ngx.say(result)
+    }
+  }
   
   location / {
     try_files $uri $uri/ =404;

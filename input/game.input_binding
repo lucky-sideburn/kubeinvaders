@@ -50,6 +50,10 @@ key_trigger {
   input: KEY_S
   action: "stop"
 }
+key_trigger {
+  input: KEY_K
+  action: "kubelinter"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

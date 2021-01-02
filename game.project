@@ -1,12 +1,13 @@
 [bootstrap]
-main_collection = /main/main.collectionc
+main_collection = /main/kubeinvaders.collectionc
 
 [project]
 title = KubeInvaders
 version = 0.2.8
+dependencies = 
 
 [display]
-variable_dt = 1
+variable_dt = 0
 fullscreen = 0
 update_frequency = 60
 width = 1920
@@ -20,4 +21,7 @@ scale_mode = fit
 htmlfile = /builtins/manifests/web/engine_template.html
 splash_image = /assets/kubeinvaderslogo.png
 show_made_with_defold = 0
+
+[library]
+include_dirs = 
 

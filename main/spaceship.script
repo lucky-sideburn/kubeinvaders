@@ -17,6 +17,14 @@ kubernetes_pods = {}
 last_pod_log = false
 last_pod_log_time = false
 start_chaos = false
+bullet_collision_action = "delete_pod"
+
+-- KubeLinter attributes
+kubelinter_url = "http://localhost:8080/kube-linter"
+kubelinter_pod = false
+kubelinter_table = ""
+kubelinter_read = false
+kubelinter_index = 0
 
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
@@ -25,6 +33,7 @@ local help = require "main.mymodules.help"
 local pod_mod = require "main.mymodules.pod"
 local pod_api = require "main.mymodules.pod_api"
 local press_play = require "main.mymodules.press_play"
+local kubelinter = require "main.mymodules.kubelinter"
 
 function start_chaos()
 	msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot" })
@@ -89,6 +98,10 @@ function start_chaos()
 		end)
 		timer.repeat_seconds(1, function()
 			msg.post("ui#gui","pod_name",{ pod_name = false, position = go.get_position()})
+			if kubelinter_pod then
+				kubelinter.run(pod_name)
+				kubelinter_pod = false
+			end
 		end)	
 		timer.repeat_seconds(1, function()
 			spaceship.auto()
@@ -97,7 +110,6 @@ function start_chaos()
 	end
 	started_chaos = true
 	go.delete('/start_chaos')
-	go.delete('/start_k3s')
 end
 
 function reverse(tbl)
@@ -196,7 +208,34 @@ function on_input(self, action_id, action)
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
 		msg.post("ui#gui", "info",{ infomessage =  info })
 
-	elseif action_id == hash("space") and action.pressed then
+	elseif ((action_id == hash("space")) or (action_id == hash("kubelinter"))) and action.pressed then
+
+		if action_id == hash("space") then
+			bullet_collision_action = "delete_pod"
+		elseif hash("kubelinter") then
+			bullet_collision_action = "kubelinter"
+		end
+
+		if kubelinter_read then
+			print("Reading kubelinter table")
+			print("Current Kubelinter table index is " .. kubelinter_index)
+			print("Kubelinter table size is " .. table.getn(kubelinter_table))
+			
+			for i,value in ipairs(kubelinter_table) do
+				if i > kubelinter_index then
+					msg.post("ui#gui", "set_kubelinter_text",{ kubelintermessage = value })
+					kubelinter_index = kubelinter_index + 1
+					break
+				end
+				if kubelinter_index == (table.getn(kubelinter_table) - 1) then
+					kubelinter_read = false
+					msg.post("ui#gui", "set_kubelinter_text",{ kubelintermessage = "" })
+					msg.post("ui#gui","open_kubelinter_box",{ position = vmath.vector3(-850, -750, 0) })
+				end
+			end
+			return
+		end
+
 		msg.post("ui#gui", "error",{ errormessage = "" })
 		-- Returns an approximation of the amount in seconds of CPU time used by the program.
 		current_hit_time = os.clock()

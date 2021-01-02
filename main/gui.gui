@@ -19,6 +19,10 @@ fonts {
   name: "arcade"
   font: "/assets/arcade.font"
 }
+textures {
+  name: "kubelinter"
+  texture: "/assets/kubelinter.atlas"
+}
 background_color {
   x: 0.0
   y: 0.0
@@ -337,8 +341,8 @@ nodes {
 }
 nodes {
   position {
-    x: 582.0
-    y: 443.0
+    x: 986.0
+    y: 639.0
     z: 0.0
     w: 1.0
   }
@@ -355,8 +359,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 700.0
-    y: 300.0
+    x: 1200.0
+    y: 500.0
     z: 0.0
     w: 1.0
   }
@@ -555,6 +559,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "Special Keys:\n"
+  "k: do kube-linter analysis\n"
   "i: Show pod\'s name. Move the ship towards an alien\n"
   "n: Jump between namespaces. Read REAME.md for configuring TARGET_NAMESPACE\n"
   "q: Hide this special keys list\n"
@@ -578,6 +583,68 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
+  layer: ""
+  inherit_alpha: true
+  alpha: 1.0
+  outline_alpha: 1.0
+  shadow_alpha: 1.0
+  template_node_child: false
+  text_leading: 1.0
+  text_tracking: 0.0
+}
+nodes {
+  position {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  size {
+    x: 1200.0
+    y: 1000.0
+    z: 0.0
+    w: 1.0
+  }
+  color {
+    x: 0.0
+    y: 1.0
+    z: 0.0
+    w: 1.0
+  }
+  type: TYPE_TEXT
+  blend_mode: BLEND_MODE_ALPHA
+  text: ""
+  font: "kubefont"
+  id: "kubelinter"
+  xanchor: XANCHOR_NONE
+  yanchor: YANCHOR_NONE
+  pivot: PIVOT_CENTER
+  outline {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  shadow {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+    w: 1.0
+  }
+  adjust_mode: ADJUST_MODE_FIT
+  line_break: true
   layer: ""
   inherit_alpha: true
   alpha: 1.0

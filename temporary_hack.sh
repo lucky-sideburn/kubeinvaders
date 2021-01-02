@@ -14,4 +14,4 @@ fi
 sed -i "s/TOTAL_ENV_SIZE=1024/TOTAL_ENV_SIZE=2048/g" /var/www/html/KubeInvaders_wasm.js
 sed -i "s/TOTAL_ENV_SIZE=1024/TOTAL_ENV_SIZE=2048/g" /var/www/html/KubeInvaders_asmjs.js
 
-nginx -g 'daemon off;'
+nginx -c /etc/nginx/nginx.conf -g 'daemon off;'

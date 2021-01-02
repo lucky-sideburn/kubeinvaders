@@ -12,11 +12,11 @@ height = 1080
 high_dpi = 0
 samples = 0
 fullscreen = 0
-update_frequency = 0
-vsync = 0
+update_frequency = 60
+vsync = 1
 display_profiles = /builtins/render/default.display_profilesc
 dynamic_orientation = 0
-variable_dt = 1
+variable_dt = 0
 
 [render]
 clear_color_red = 0
@@ -43,7 +43,7 @@ ray_cast_limit_3d = 128
 trigger_overlap_capacity = 16
 
 [bootstrap]
-main_collection = /main/main.collectionc
+main_collection = /main/kubeinvaders.collectionc
 render = /builtins/render/default.renderc
 
 [graphics]
@@ -162,6 +162,7 @@ http_thread_count = 4
 http_cache_enabled = 1
 
 [library]
+include_dirs = 
 
 [script]
 shared_state = 1

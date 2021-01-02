@@ -20,7 +20,7 @@ start_chaos = false
 bullet_collision_action = "delete_pod"
 
 -- KubeLinter attributes
-kubelinter_url = "http://localhost:8080/kube-linter"
+kubelinter_url = endpoint .. "/kube-linter"
 kubelinter_pod = false
 kubelinter_table = ""
 kubelinter_read = false
@@ -83,6 +83,7 @@ function start_chaos()
 		namespace = namespace_list[0]
 
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
+		kubelinter_url = endpoint .. "/kube-linter"
 		msg.post("ui#gui", "info",{ infomessage =  info })
 
 		msg.post(".", "acquire_input_focus")	

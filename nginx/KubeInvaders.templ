@@ -3,7 +3,7 @@ server {
   root /var/www/html/;
   index index.html;
 
-  location /kube-linter {
+  location /kube/kube-linter {
     default_type text/html;
     content_by_lua_block {
       local arg = ngx.req.get_uri_args()

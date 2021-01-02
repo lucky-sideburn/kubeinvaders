@@ -20,7 +20,7 @@ start_chaos = false
 bullet_collision_action = "delete_pod"
 
 -- KubeLinter attributes
-kubelinter_url = endpoint .. "/kube-linter"
+kubelinter_url = ""
 kubelinter_pod = false
 kubelinter_table = ""
 kubelinter_read = false

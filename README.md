@@ -1,6 +1,6 @@
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
-*Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are PODs*
+*Gamified chaos engineering a analysis tool for Kubernetes. It is like Space Invaders but the aliens are PODs*
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
 
@@ -16,7 +16,6 @@
 KubeInvaders has been developed using Defold (https://www.defold.com/).
 
 Through KubeInvaders you can stress Kubernetes cluster in a fun way and check how it is resilient.
-
 ## Special Input Keys and features
 
 | Input           | Action                                                                                    |
@@ -28,6 +27,7 @@ Through KubeInvaders you can stress Kubernetes cluster in a fun way and check ho
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
 |     r           | Refresh log of a pod when spaceship is over the alien.                                    |
+|     k           | Perform kube-linter (https://github.com/stackrox/kube-linter) analisys for a pod          |
 
 ### Show logs of a pod
 
@@ -48,7 +48,7 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 ### Install client on your workstation
 
-The easy way to install KubeInvaders is run it on you workstation.
+The easy way to install KubeInvaders is run it on you workstation but If you choose this method you cannot use kube-linter feature.
 
 Create $HOME/.KubeInv.json like this:
 

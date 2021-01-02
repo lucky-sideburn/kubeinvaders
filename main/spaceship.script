@@ -83,7 +83,8 @@ function start_chaos()
 		namespace = namespace_list[0]
 
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
-		kubelinter_url = endpoint .. "/kube-linter"
+		name:gsub("%^a", "")
+		kubelinter_url = endpoint:gsub("/kube", "") .. "/kube-linter"
 		msg.post("ui#gui", "info",{ infomessage =  info })
 
 		msg.post(".", "acquire_input_focus")	

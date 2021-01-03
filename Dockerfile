@@ -17,6 +17,7 @@ RUN apt-get -y install openresty
 # Install kube-linter
 RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.1.5/kube-linter-linux.tar.gz
 RUN tar -xvf kube-linter-linux.tar.gz
+RUN rm -f kube-linter-linux.tar.gz
 RUN cp  kube-linter /usr/local/bin/
 RUN chmod 775 /usr/local/bin/kube-linter
 COPY kube-linter/kube-linter-parser.sh /opt/kube-linter-parser.sh

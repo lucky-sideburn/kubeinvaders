@@ -626,7 +626,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: ""
-  font: "kubefont"
+  font: "arcade"
   id: "kubelinter"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE

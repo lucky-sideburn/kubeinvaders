@@ -1,8 +1,11 @@
 #!/bin/sh
 
+# Very temporary work-around
+KUBE=$(cat /etc/nginx/conf.d/KubeInvaders.conf | grep proxy_pass | head -n1 | awk '{ print $2 }' | sed 's/;//g')
+
 POD_FILE=/tmp/${3}.yaml
 
-curl -XGET "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${2}/pods/${3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
+curl -XGET "${KUBE}/api/v1/namespaces/${2}/pods/${3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
 [ ! $? -eq 0 ] && (echo "{}" && exit 0)
 
 chmod 775 ${POD_FILE}

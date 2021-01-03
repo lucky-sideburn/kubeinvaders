@@ -2,7 +2,7 @@
 
 POD_FILE=/tmp/${3}.yaml
 
-curl -XGET "${1}/api/v1/namespaces/${2}/pods/${3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
+curl -XGET "https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${2}/pods/${3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
 [ ! $? -eq 0 ] && (echo "{}" && exit 0)
 
 chmod 775 ${POD_FILE}

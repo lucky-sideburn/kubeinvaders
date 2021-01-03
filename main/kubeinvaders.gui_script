@@ -27,7 +27,10 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(gui.get_node("mode"), message.mode)
 	elseif  message_id == hash("open_kubelinter_box") then
 		gui.set_position(gui.get_node("kubelinter"), message.position)
-
+		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(893, 739, 0))
+	elseif  message_id == hash("close_kubelinter_box") then
+		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(-893, -739, 0))
+		
 	elseif  message_id == hash("set_kubelinter_text") then
 		gui.set_text(gui.get_node("kubelinter"), message.kubelintermessage)	
 

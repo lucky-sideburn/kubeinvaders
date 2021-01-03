@@ -237,6 +237,8 @@ function on_input(self, action_id, action)
 						kubelinter_read = false
 						msg.post("ui#gui", "set_kubelinter_text",{ kubelintermessage = "" })
 						msg.post("ui#gui","open_kubelinter_box",{ position = vmath.vector3(-850, -750, 0) })
+						msg.post("ui#gui","close_kubelinter_box")
+						
 					end
 				end
 			end

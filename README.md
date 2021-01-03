@@ -8,8 +8,7 @@
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
 3. [Installation](#Installation)
-4. [Developing](#Developing)
-5. [Configuration](#Configuration)
+4. [Configuration](#Configuration)
 
 ## Description
 
@@ -67,6 +66,15 @@ Create $HOME/.KubeInv.json like this:
 * [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-darwin.zip)
 * [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-linux.zip)
 
+### Run directly form Docker
+
+This method can be used for developing Kubeinvaders and testing the HTML5 bundle.
+
+```bash
+docker build . -t kubeinvaders_dev
+
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443 --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
+```
 ### Install KubeInvaders on Openshift
 
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:

@@ -13,9 +13,11 @@
 
 ## Description
 
-KubeInvaders has been developed using Defold (https://www.defold.com/).
+KubeInvaders has been developed using [Defold](https://www.defold.com/).
 
 Through KubeInvaders you can stress Kubernetes cluster in a fun way and check how it is resilient.
+
+I added also new experimental features like a linter for the pods. The current latest image of the game include [kube-linter](https://github.com/stackrox/kube-linter) developed by [stackrox](https://github.com/stackrox)
 ## Special Input Keys and features
 
 | Input           | Action                                                                                    |
@@ -27,9 +29,9 @@ Through KubeInvaders you can stress Kubernetes cluster in a fun way and check ho
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
 |     r           | Refresh log of a pod when spaceship is over the alien.                                    |
-|     k           | Perform kube-linter (https://github.com/stackrox/kube-linter) analisys for a pod          |
+|     k           | Perform [kube-linter](https://github.com/stackrox/kube-linter) analisys for a pod          |
 
-### known problems
+### Known problems
 It seems that Kubeinvaders does not work with EKS because of problems with ServiceAccount. I cannot test it because EKS costs too much :D
 
 ### Show logs of a pod

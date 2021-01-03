@@ -29,6 +29,9 @@ Through KubeInvaders you can stress Kubernetes cluster in a fun way and check ho
 |     r           | Refresh log of a pod when spaceship is over the alien.                                    |
 |     k           | Perform kube-linter (https://github.com/stackrox/kube-linter) analisys for a pod          |
 
+### known problems
+It seems that Kubeinvaders does not work with EKS because of problems with ServiceAccount. I cannot test it because EKS costs too much :D
+
 ### Show logs of a pod
 
 Move the spaceship over a white alien

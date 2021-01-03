@@ -11,7 +11,7 @@ function M.http_kubelinter_result(self, _, response)
 	print(response.status)
 	print(response.response)
 	print(response.headers)
-	msg.post("ui#gui","open_kubelinter_box",{ position = vmath.vector3(850, 750, 0) })
+	msg.post("ui#gui","open_kubelinter_box",{ position = vmath.vector3(850, 550, 0) })
 	kubelinter_table = json.decode(response.response)
 	kubelinter_read = true
 	kubelinter_index = 0

@@ -20,16 +20,26 @@ function on_message(self, message_id, message, sender)
 	elseif  message_id == hash("info") then
 		gui.set_text(gui.get_node("info"), message.infomessage)	
 	elseif  message_id == hash("pod_log") then
-		gui.set_text(gui.get_node("pod_log"), message.infomessage)	
+		--gui.set_text(gui.get_node("pod_log"), message.infomessage)	
+		if message.infomessage and message.infomessage ~= '' and not kubelinter_read then
+			gui.set_text(gui.get_node("pod_log_text"), message.infomessage)	
+			gui.set_position(gui.get_node("podlog_box"), vmath.vector3(893, 539, 0))
+			--gui.set_position(gui.get_node("pod_log_text"), vmath.vector3(850, 500, 0))
+		elseif not kubelinter_read  and message.infomessage then
+			gui.set_position(gui.get_node("podlog_box"), vmath.vector3(-893, -739, 0))
+			gui.set_text(gui.get_node("pod_log_text"), message.infomessage)	
+		end
+	elseif  message_id == hash("error1") then
+		gui.set_text(gui.get_node("error1"), message.errormessage)
 	elseif  message_id == hash("error") then
 		gui.set_text(gui.get_node("error"), message.errormessage)
 	elseif  message_id == hash("mode") then
 		gui.set_text(gui.get_node("mode"), message.mode)
 	elseif  message_id == hash("open_kubelinter_box") then
 		gui.set_position(gui.get_node("kubelinter"), message.position)
-		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(893, 739, 0))
+		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(893, 539, 0))
 	elseif  message_id == hash("close_kubelinter_box") then
-		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(-893, -739, 0))
+		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(-893, -539, 0))
 		
 	elseif  message_id == hash("set_kubelinter_text") then
 		gui.set_text(gui.get_node("kubelinter"), message.kubelintermessage)	

@@ -33,6 +33,7 @@ end
 
 function M.http_pod_log_result(self, _, response)
   msg.post("ui#gui","pod_log",{infomessage = response.response})
+  current_pod_log = response.response
 end
 
 function M.delete_pod(pod_name)

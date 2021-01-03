@@ -16,6 +16,7 @@ pod_update_time = 0.5
 kubernetes_pods = {}
 last_pod_log = false
 last_pod_log_time = false
+current_pod_log = ""
 start_chaos = false
 bullet_collision_action = "delete_pod"
 
@@ -103,6 +104,12 @@ function start_chaos()
 				kubelinter.run(pod_name)
 				kubelinter_pod = false
 			end
+
+			if kubelinter_read or current_pod_log ~= "" then
+				msg.post("ui#gui", "error1",{ errormessage = "Press SPACE!" })
+			else
+				msg.post("ui#gui", "error1",{ errormessage = "" })
+			end
 		end)	
 		timer.repeat_seconds(1, function()
 			spaceship.auto()
@@ -132,29 +139,21 @@ end
 function on_input(self, action_id, action)
 	p = go.get_position()
 	if action_id == hash("up") then
-		msg.post("ui#gui","pod_log",{infomessage = ''})
-		last_pod_log = false
 		if p.y < 1000 then
 			p.y = p.y + 4
 			go.set_position(p)
 		end
 	elseif action_id == hash("down") then
-		msg.post("ui#gui","pod_log",{infomessage = ''})
-		last_pod_log = false
 		if p.y > 1 then
 			p.y = p.y - 4
 			go.set_position(p)
 		end
 	elseif action_id == hash("left") then
-		msg.post("ui#gui","pod_log",{infomessage = ''})
-		last_pod_log = false
 		if p.x > 1 then
 			p.x = p.x - 4
 			go.set_position(p)
 		end
 	elseif action_id == hash("right") then
-		msg.post("ui#gui","pod_log",{infomessage = ''})
-		last_pod_log = false
 		if p.x < 1800 then
 			p.x = p.x + 4
 			go.set_position(p)
@@ -210,6 +209,9 @@ function on_input(self, action_id, action)
 		msg.post("ui#gui", "info",{ infomessage =  info })
 
 	elseif ((action_id == hash("space")) or (action_id == hash("kubelinter"))) and action.pressed then
+		msg.post("ui#gui","pod_log",{infomessage = ''})
+		last_pod_log = false
+		current_pod_log = ""
 
 		if action_id == hash("space") then
 			bullet_collision_action = "delete_pod"
@@ -245,7 +247,9 @@ function on_input(self, action_id, action)
 			return
 		end
 
-		msg.post("ui#gui", "error",{ errormessage = "" })
+		if not kubelinter_read then
+			msg.post("ui#gui", "error",{ errormessage = "" })
+		end
 		-- Returns an approximation of the amount in seconds of CPU time used by the program.
 		current_hit_time = os.clock()
 		if automatic == false then
@@ -270,6 +274,9 @@ function on_message(self, message_id, message, sender)
 	current_time = os.clock()
 	print('DEBUG' .. message_id)
 	if message_id == COLLISION_RESPONSE and started_chaos then
+
+		msg.post("ui#gui","pod_log")
+		
 		for i,value in ipairs(current_pods) do
 			if (message["other_id"] == value["id"]) then
 				pod_name = value["pod_name"]

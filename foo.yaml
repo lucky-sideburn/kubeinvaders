@@ -1,0 +1,185 @@
+{
+  "kind": "Pod",
+  "apiVersion": "v1",
+  "metadata": {
+    "name": "nginx-example-1-bs5hp",
+    "generateName": "nginx-example-1-",
+    "namespace": "kubeinvadersdemo",
+    "selfLink": "/api/v1/namespaces/kubeinvadersdemo/pods/nginx-example-1-bs5hp",
+    "uid": "41182847-4d50-11eb-9c7c-26c3a597991e",
+    "resourceVersion": "179302687",
+    "creationTimestamp": "2021-01-02T23:14:24Z",
+    "labels": {
+      "deployment": "nginx-example-1",
+      "deploymentconfig": "nginx-example",
+      "name": "nginx-example"
+    },
+    "annotations": {
+      "openshift.io/deployment-config.latest-version": "1",
+      "openshift.io/deployment-config.name": "nginx-example",
+      "openshift.io/deployment.name": "nginx-example-1",
+      "openshift.io/scc": "anyuid"
+    },
+    "ownerReferences": [
+      {
+        "apiVersion": "v1",
+        "kind": "ReplicationController",
+        "name": "nginx-example-1",
+        "uid": "06547be2-b793-11ea-8178-e2e0dc34a646",
+        "controller": true,
+        "blockOwnerDeletion": true
+      }
+    ]
+  },
+  "spec": {
+    "volumes": [
+      {
+        "name": "default-token-crmsv",
+        "secret": {
+          "secretName": "default-token-crmsv",
+          "defaultMode": 420
+        }
+      }
+    ],
+    "containers": [
+      {
+        "name": "nginx-example",
+        "image": "docker-registry.default.svc:5000/kubeinvadersdemo/nginx-example@sha256:894e6f4b0c004f83dd128a8dfb2690594d2123612d5cf53bb2d0f977ec88582d",
+        "ports": [
+          {
+            "containerPort": 8080,
+            "protocol": "TCP"
+          }
+        ],
+        "resources": {
+          "limits": {
+            "memory": "512Mi"
+          },
+          "requests": {
+            "memory": "512Mi"
+          }
+        },
+        "volumeMounts": [
+          {
+            "name": "default-token-crmsv",
+            "readOnly": true,
+            "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+          }
+        ],
+        "livenessProbe": {
+          "httpGet": {
+            "path": "/",
+            "port": 8080,
+            "scheme": "HTTP"
+          },
+          "initialDelaySeconds": 30,
+          "timeoutSeconds": 3,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 3
+        },
+        "readinessProbe": {
+          "httpGet": {
+            "path": "/",
+            "port": 8080,
+            "scheme": "HTTP"
+          },
+          "initialDelaySeconds": 3,
+          "timeoutSeconds": 3,
+          "periodSeconds": 10,
+          "successThreshold": 1,
+          "failureThreshold": 3
+        },
+        "terminationMessagePath": "/dev/termination-log",
+        "terminationMessagePolicy": "File",
+        "imagePullPolicy": "IfNotPresent",
+        "securityContext": {
+          "capabilities": {
+            "drop": [
+              "MKNOD"
+            ]
+          }
+        }
+      }
+    ],
+    "restartPolicy": "Always",
+    "terminationGracePeriodSeconds": 30,
+    "dnsPolicy": "ClusterFirst",
+    "nodeSelector": {
+      "node-role.kubernetes.io/compute": "true"
+    },
+    "serviceAccountName": "default",
+    "serviceAccount": "default",
+    "nodeName": "wrk9-oc.corp.sourcesense.com",
+    "securityContext": {
+      "seLinuxOptions": {
+        "level": "s0:c18,c2"
+      }
+    },
+    "imagePullSecrets": [
+      {
+        "name": "default-dockercfg-2qzt8"
+      }
+    ],
+    "schedulerName": "default-scheduler",
+    "tolerations": [
+      {
+        "key": "node.kubernetes.io/memory-pressure",
+        "operator": "Exists",
+        "effect": "NoSchedule"
+      }
+    ],
+    "priority": 0
+  },
+  "status": {
+    "phase": "Running",
+    "conditions": [
+      {
+        "type": "Initialized",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2021-01-02T23:14:25Z"
+      },
+      {
+        "type": "Ready",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2021-01-02T23:14:35Z"
+      },
+      {
+        "type": "ContainersReady",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": null
+      },
+      {
+        "type": "PodScheduled",
+        "status": "True",
+        "lastProbeTime": null,
+        "lastTransitionTime": "2021-01-02T23:14:24Z"
+      }
+    ],
+    "hostIP": "172.16.6.5",
+    "podIP": "10.128.7.64",
+    "startTime": "2021-01-02T23:14:25Z",
+    "containerStatuses": [
+      {
+        "name": "nginx-example",
+        "state": {
+          "running": {
+            "startedAt": "2021-01-02T23:14:27Z"
+          }
+        },
+        "lastState": {
+          
+        },
+        "ready": true,
+        "restartCount": 0,
+        "image": "sha256:3b53f175d928fc7d98b3be5805d8c46572a2840bc8eccd896aa2cd84c1d80e26",
+        "imageID": "docker-pullable://docker-registry.default.svc:5000/kubeinvadersdemo/nginx-example@sha256:894e6f4b0c004f83dd128a8dfb2690594d2123612d5cf53bb2d0f977ec88582d",
+        "containerID": "docker://27b5a6d1f826c7202dec6f820610601b3f5a6be2cc29956019eae7884bf82c4f"
+      }
+    ],
+    "qosClass": "Burstable"
+  }
+}

@@ -2,14 +2,13 @@
 
 POD_FILE=/tmp/${3}.yaml
 
-#Getting yaml of pod ${3} through kubernetes API
 curl -XGET "{$1}/api/v1/namespaces/{$2}/pods/{$3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
 [ ! $? -eq 0 ] && (echo "{}" && exit 0)
 
-#Execute kubelinter against ${POD_FILE}
-wcl=$(cat ${POD_FILE} | wc -l )
+chmod 775 ${POD_FILE}
+wcl=$(cat $POD_FILE | wc -l )
 
-if [[ $wcl -gt 0 ]];then
+if [ $wcl -gt 0 ];then
   kube-linter lint ${POD_FILE} 2>&1 |
     while read -r line
     do

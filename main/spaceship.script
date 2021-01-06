@@ -196,37 +196,47 @@ function on_input(self, action_id, action)
 			p.y = p.y + 4
 			go.set_position(p)
 		end
+
 	elseif action_id == hash("down") then
 		if p.y > 1 then
 			p.y = p.y - 4
 			go.set_position(p)
 		end
+
 	elseif action_id == hash("left") then
 		if p.x > 1 then
 			p.x = p.x - 4
 			go.set_position(p)
 		end
+
 	elseif action_id == hash("right") then
 		if p.x < 1800 then
 			p.x = p.x + 4
 			go.set_position(p)
 		end
+
 	elseif action_id == hash("infopod") then
 		pod_mod.print_pod_name()
+
 	elseif action_id == hash("refresh_pod_log") then
 		last_pod_log = false		
+
 	elseif action_id == hash("help") then
 		print "help!"
 		help.get_help()
+
 	elseif action_id == hash("quit_help") then
 		help.quit_help()
+
 	elseif action_id == hash("automatic") then
 		automatic = true
 		msg.post("ui#gui", "mode",{ mode = "Press \"m\" to switch to manual mode"})
+
 	elseif action_id == hash("manual") then
 		print ("[change_mode] manual")
 		automatic = false
 		msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot"})
+
 	elseif action_id == hash("namespace") then
 		print ("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })

@@ -65,7 +65,7 @@ to k8s
 
 ```json
 {
-  "token": "<Service Account Token>"
+  "token": "<Service Account Token>",
   "endpoint": "http://localhost:8080",
   "namespace": "namespace1,namespace2"
 }

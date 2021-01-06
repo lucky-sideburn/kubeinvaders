@@ -22,6 +22,29 @@ function on_message(self, message_id, message, sender)
 	elseif  message_id == hash("info") then
 		gui.set_text(gui.get_node("info"), message.infomessage)	
 
+	elseif  message_id == hash("node_name") then
+		spaceship_x = message.spaceship_pos.x
+ 
+		if spaceship_x <= 80 then
+			spaceship_x = spaceship_x + 100
+		end
+
+		spaceship_y = message.spaceship_pos.y
+		node_name_pos = vmath.vector3(spaceship_x, spaceship_y - 50, 0)
+		gui.set_text(gui.get_node("node_name"), message.node_name)	
+		gui.set_position(gui.get_node("node_name"), node_name_pos)
+		k8s_nodes_show = true
+
+	elseif  message_id == hash("reset_node_name") and k8s_nodes_show then
+		node_name_pos = gui.get_position(gui.get_node("node_name"))
+		print("Reset node name text box")
+		if node_name_pos.x > 0 then
+			gui.set_text(gui.get_node("node_name"), '')	
+			node_name_pos = vmath.vector3(-501, -501, 0)
+			print("Reset node_name text node")
+			k8s_nodes_show = false
+		end
+		
 	elseif  message_id == hash("pod_log") then
 		--gui.set_text(gui.get_node("pod_log"), message.infomessage)	
 		if message.infomessage and message.infomessage ~= '' and not kubelinter_read then
@@ -43,7 +66,7 @@ function on_message(self, message_id, message, sender)
 		gui.set_text(gui.get_node("mode"), message.mode)
 
 	elseif  message_id == hash("open_kubelinter_box") then
-		gui.set_position(gui.get_node("kubelinter"), message.position)
+		--gui.set_position(gui.get_node("kubelinter"), message.position)
 		gui.set_position(gui.get_node("kubelinter_box"), vmath.vector3(893, 539, 0))
 
 	elseif  message_id == hash("close_kubelinter_box") then
@@ -57,7 +80,7 @@ function on_message(self, message_id, message, sender)
 
 	elseif  message_id == hash("quit_help") then
 		gui.set_position(gui.get_node("inputs"), message.position)
-
+		
 	elseif  message_id == hash("pod_name") then
 		if  message.pod_name == false or message.pod_name == nil then
 			fake_position = message.position

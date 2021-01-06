@@ -54,6 +54,10 @@ key_trigger {
   input: KEY_K
   action: "kubelinter"
 }
+key_trigger {
+  input: KEY_W
+  action: "worker"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

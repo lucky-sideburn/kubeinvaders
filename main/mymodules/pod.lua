@@ -65,8 +65,8 @@ function M.swap_pod(items)
     end
   end
 
-  print ("[swap_pod]: pods not running pods in Kubernetes: " .. kubernetes_pod_not_running)
-  print ("[swap_pod]: pods running pods in Kubernetes: " .. kubernetes_pod_running)
+  -- print ("[swap_pod]: pods not running pods in Kubernetes: " .. kubernetes_pod_not_running)
+  -- print ("[swap_pod]: pods running pods in Kubernetes: " .. kubernetes_pod_running)
   msg.post("ui#gui", "hello_gui",{ pod_running = kubernetes_pod_running })
 
   for i,value in ipairs(current_pods) do
@@ -77,8 +77,8 @@ function M.swap_pod(items)
     end
   end
 
-  print ("[swap_pod]: pods not running pods in KubeInvaders: " .. kubeinvaders_pod_not_running)
-  print ("[swap_pod]: pods running pods in KubeInvaders: " .. kubeinvaders_pod_running)
+  -- print ("[swap_pod]: pods not running pods in KubeInvaders: " .. kubeinvaders_pod_not_running)
+  -- print ("[swap_pod]: pods running pods in KubeInvaders: " .. kubeinvaders_pod_running)
 
   if kubernetes_pod_running < kubeinvaders_pod_running then
     print ("[swap_pod] there are less pod running in kubernetes than kubeinvaders")

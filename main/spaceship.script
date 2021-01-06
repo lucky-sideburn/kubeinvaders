@@ -80,6 +80,13 @@ kubelinter_read = false
 -- Keetp track of the line showed of the kubelinter analysis content
 kubelinter_index = 0
 
+-- by default the k8s nodes are not shown. Set this var to true
+k8s_nodes_show = false
+
+-- global table that contains k8s nodes
+kubernetes_nodes = {}
+
+
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
 local spaceship = require "main.mymodules.spaceship"
@@ -88,6 +95,7 @@ local pod_mod = require "main.mymodules.pod"
 local pod_api = require "main.mymodules.pod_api"
 local press_play = require "main.mymodules.press_play"
 local kubelinter = require "main.mymodules.kubelinter"
+local k8s_node = require "main.mymodules.node"
 
 function start_chaos()
 	msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot" })
@@ -151,8 +159,9 @@ function start_chaos()
 			pod_api.update_pod()
 			pod_mod.swap_pod(kubernetes_pods)		
 		end)
-		timer.repeat_seconds(1, function()
-			msg.post("ui#gui","pod_name",{ pod_name = false, position = go.get_position()})
+		
+		timer.repeat_seconds(1, function()			
+			msg.post("ui#gui", "pod_name", { pod_name = false, position = go.get_position()})
 			if kubelinter_pod then
 				kubelinter.run(pod_name)
 				kubelinter_pod = false
@@ -190,6 +199,9 @@ function update(self, dt)
 end
 
 function on_input(self, action_id, action)
+
+	msg.post("ui#gui", "reset_node_name", {})
+	
 	p = go.get_position()
 	if action_id == hash("up") then
 		if p.y < 1000 then
@@ -222,7 +234,6 @@ function on_input(self, action_id, action)
 		last_pod_log = false		
 
 	elseif action_id == hash("help") then
-		print "help!"
 		help.get_help()
 
 	elseif action_id == hash("quit_help") then
@@ -237,8 +248,12 @@ function on_input(self, action_id, action)
 		automatic = false
 		msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot"})
 
+	elseif action_id == hash("worker") then
+		print("Show kubernetes nodes...")
+		k8s_node.get_nodes()
+
 	elseif action_id == hash("namespace") then
-		print ("[change_namespace] change namespaces requested by user")
+		print("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })
 
 		-- Returns an approximation of the amount in seconds of CPU time used by the program.
@@ -246,7 +261,7 @@ function on_input(self, action_id, action)
 
 		if last_namespace_change ~= false then
 			diff_time = current_time - last_namespace_change
-			print ("[change_namespace] diff_time ".. diff_time)
+			print("[change_namespace] diff_time ".. diff_time)
 		else 
 			diff_time = 99
 		end
@@ -335,7 +350,18 @@ end
 
 function on_message(self, message_id, message, sender)
 	current_time = os.clock()
-	print('DEBUG' .. message_id)
+	
+	if message_id == COLLISION_RESPONSE and not k8s_nodes_show then
+		for i,value in ipairs(kubernetes_nodes) do
+			if message["other_id"] == value["id"] then
+				print("Spaceship collides with " .. value["name"])
+				spaceship_pos = go.get_position()
+				msg.post("ui#gui","node_name", { node_name = value["name"], spaceship_pos = spaceship_pos })				
+			end
+		end
+		return
+	end
+
 	if message_id == COLLISION_RESPONSE and started_chaos then
 
 		msg.post("ui#gui","pod_log")
@@ -358,6 +384,7 @@ function on_message(self, message_id, message, sender)
 			print("pod_name " .. pod_name)
 			last_pod_log_time = os.clock()
 		end
+
 	elseif message_id == hash('start_chaos') then
 		start_chaos()
 	end

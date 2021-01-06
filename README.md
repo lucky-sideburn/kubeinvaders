@@ -52,7 +52,7 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 ### Install client on your workstation
 
-The easy way to install KubeInvaders is run it on you workstation but if you choose this method you cannot use kube-linter feature directly from the game. Follow this guide:
+The easiest way to install KubeInvaders is runing it on you workstation but if you choose this method you cannot use kube-linter feature directly from the game. Follow this guide:
 
 1. Start KubeInvaders docker container locally
 
@@ -70,9 +70,11 @@ to k8s
   "namespace": "namespace1,namespace2"
 }
 ```
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/start-button/x86_64-linux.zip)
 
+Download the game from these locations:
+https://github.com/lucky-sideburn/KubeInvaders/archive/kubelinter-logs.zip
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/kubelinter-logs/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/kubelinter-logs/x86_64-linux.zip)
 ### Run directly form Docker
 
 This method can be used for developing Kubeinvaders and testing the HTML5 bundle.

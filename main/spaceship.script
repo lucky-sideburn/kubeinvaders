@@ -1,30 +1,83 @@
+-- Table used for keep track of pods status in relation of aliens
 current_pods = {}
+
+-- Table that container token, namespaces and k8s url
 conf = {}
+
+-- TO DO: Check if this variables can be deleted
 check_current_pods = false
+
+-- K8S url. In case of installing KubeInvaders into an existing k8s cluster it points to a Nginx installed into the KubeInvaders pod
 endpoint =  ""
+
+-- Token of a ServiceAccount with specific role
+-- Like this: https://github.com/lucky-sideburn/KubeInvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-role.yaml
 token = ""
+
+-- Namespace tager. For specifing multiple namespace use this form: namespace1,namespace2
 namespace = ""
+
+-- Table of namespace targets
 namespace_list = {}
+
+-- Selected namespace index
 namespace_cnt = 0
-namespace_total = 0 
+
+-- Total amount of namespaces under control of KubeInvaders
+namespace_total = 0
+
+-- When is true the automatic pilot is activated
 automatic = false
+
+-- Keep time of changing namespace
 last_namespace_change = false
+
+-- Keep time of latest shot
 last_hit_time = os.clock()
-alien_proximity_factor = 15 
+
+-- Reduce the value to increase distance between aliens
+alien_proximity_factor = 15
+
+-- Seconds of CPU time to wait before shooting
 hit_cpu_time_rate_limit = 0
+
+-- Frequency in seconds for refreshing pod status
 pod_update_time = 0.5
+
+-- Table for keep track of kubernetes pod status
+-- TO DO: check if this variable can be deleted
 kubernetes_pods = {}
+
+-- Name of pod for which is requested the log
 last_pod_log = false
+
+-- Keep time of the last request of pod's log
 last_pod_log_time = false
+
+-- Content of last logs of a pod
 current_pod_log = ""
+
+-- Start the game
 start_chaos = false
+
+-- Default action for a collision between bullets and aliens.
+-- Other value can be "kubelinter" which means that after a collision it will start a kubelinter scanning
 bullet_collision_action = "delete_pod"
 
--- KubeLinter attributes
+-- KubeLinter URL. It is the Nginx with Openresty running into the KubeInvaders pod
+-- Check /kube/kube-linter into https://github.com/lucky-sideburn/KubeInvaders/blob/master/nginx/KubeInvaders.templ
 kubelinter_url = ""
+
+-- Pod name for which a kubelinter scanning has been requested
 kubelinter_pod = false
+
+-- Tables that contains content of kubelinter analysis
 kubelinter_table = ""
+
+-- Is true when there a kubelinter analysis to show
 kubelinter_read = false
+
+-- Keetp track of the line showed of the kubelinter analysis content
 kubelinter_index = 0
 
 local COLLISION_RESPONSE = hash("collision_response")

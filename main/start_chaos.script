@@ -26,7 +26,6 @@ function on_message(self, message_id, message, sender)
 	if message_id == COLLISION_RESPONSE then
 		press_play.press_play('/start_chaos#sprite')
 		msg.post('/spaceship', "start_chaos", { action = 'start_chaos'})
-		--go.delete()
 	end
 end
 

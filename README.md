@@ -31,7 +31,7 @@ I added also new experimental features like a linter for the pods. The current l
 |     k           | Perform [kube-linter](https://github.com/stackrox/kube-linter) analisys for a pod          |
 
 ### Known problems
-It seems that Kubeinvaders does not work with EKS because of problems with ServiceAccount. I cannot test it because EKS costs too much :D
+It seems that Kubeinvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
 
 ### Show logs of a pod
 
@@ -52,14 +52,21 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 ### Install client on your workstation
 
-The easy way to install KubeInvaders is run it on you workstation but If you choose this method you cannot use kube-linter feature.
+The easy way to install KubeInvaders is run it on you workstation but if you choose this method you cannot use kube-linter feature directly from the game. Follow this guide:
 
-Create $HOME/.KubeInv.json like this:
+1. Start KubeInvaders docker container locally
 
+```bash
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders
 ```
+
+2. Create $HOME/.KubeInv.json like this - The endpoint is localhost:8080 because it is using Kubeinvaders container as proxy 
+to k8s
+
+```json
 {
-  "token": ".....",
-  "endpoint": "https://rancher.accolli.it:6443",
+  "token": "<Service Account Token>"
+  "endpoint": "http://localhost:8080",
   "namespace": "namespace1,namespace2"
 }
 ```
@@ -69,6 +76,7 @@ Create $HOME/.KubeInv.json like this:
 ### Run directly form Docker
 
 This method can be used for developing Kubeinvaders and testing the HTML5 bundle.
+Using this method you can have problem of CORS.
 
 ```bash
 docker build . -t kubeinvaders_dev

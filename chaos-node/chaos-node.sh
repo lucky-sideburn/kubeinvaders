@@ -23,6 +23,10 @@ metadata:
     approle: chaosnode
 spec:
   template:
+    metadata:
+      labels:
+        app: kubeinvaders
+        approle: chaosnode
     spec:
       containers:
       - name: kubeinvaders-chaos-node
@@ -37,9 +41,13 @@ EOF
 sed -i  "s/node_name_placeholder/$NODE_NAME/g" $YAML_FILE
 sed -i  "s/random_suffix/$RAND/g" $YAML_FILE
 
-kubectl create -f $YAML_FILE --token=${TOKEN} --server=${KUBE}  -n ${NAMESPACE} --insecure-skip-tls-verify=true >> /tmp/kubectl.log 2>&1
+kubectl create -f $YAML_FILE --token=${TOKEN} --server=${KUBE} -n ${NAMESPACE} --insecure-skip-tls-verify=true >> /tmp/kubectl.log 2>&1
 
-kubectl delete job -l app=kubeinvaders -l approle=chaosnode --token=${TOKEN} --server=${KUBE} --insecure-skip-tls-verify=true -n $NAMESPACE >> /tmp/kubectl.log 2>&1
-kubectl delete pod --token=${TOKEN} --server=${KUBE} --insecure-skip-tls-verify=true -l app=kubeinvaders -l approle=chaosnode --field-selector=status.phase==Succeeded -n $NAMESPACE >> /tmp/kubectl.log 2>&1
-
+for i in $(kubectl get jobs -l app=kubeinvaders -l approle=chaosnode -o=jsonpath='{.items[?(@.status.succeeded==1)].metadata.name}' --token=${TOKEN} --server=${KUBE} -n ${NAMESPACE} --insecure-skip-tls-verify=true)
+  kubectl delete job $i --token=${TOKEN} --server=${KUBE} --insecure-skip-tls-verify=true -n $NAMESPACE >> /tmp/kubectl.log 2>&1
+done
+  
+for i in $(kubectl get pods -l app=kubeinvaders -l approle=chaosnode --field-selector=status.phase==Succeeded --token=${TOKEN} --server=${KUBE} --insecure-skip-tls-verify=true | grep -v NAME | awk '{ print $1 }')
+  kubectl delete pod $i --token=${TOKEN} --server=${KUBE} --insecure-skip-tls-verify=true -n $NAMESPACE >> /tmp/kubectl.log 2>&1
+done
 rm -f $YAML_FILE

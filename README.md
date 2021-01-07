@@ -73,9 +73,8 @@ to k8s
 ```
 
 Download the game from these locations:
-https://github.com/lucky-sideburn/KubeInvaders/archive/kubelinter-logs.zip
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/kubelinter-logs/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/kubelinter-logs/x86_64-linux.zip)
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node/x86_64-linux.zip)
 ### Run directly form Docker
 
 This method can be used for developing Kubeinvaders and testing the HTML5 bundle.

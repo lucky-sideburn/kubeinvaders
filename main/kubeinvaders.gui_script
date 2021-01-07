@@ -33,16 +33,16 @@ function on_message(self, message_id, message, sender)
 		node_name_pos = vmath.vector3(spaceship_x, spaceship_y - 50, 0)
 		gui.set_text(gui.get_node("node_name"), message.node_name)	
 		gui.set_position(gui.get_node("node_name"), node_name_pos)
-		k8s_nodes_show = true
+		k8s_node_name_show = true
 
-	elseif  message_id == hash("reset_node_name") and k8s_nodes_show then
+	elseif  message_id == hash("reset_node_name") and k8s_node_name_show then
 		node_name_pos = gui.get_position(gui.get_node("node_name"))
 		print("Reset node name text box")
 		if node_name_pos.x > 0 then
 			gui.set_text(gui.get_node("node_name"), '')	
 			node_name_pos = vmath.vector3(-501, -501, 0)
 			print("Reset node_name text node")
-			k8s_nodes_show = false
+			k8s_node_name_show = false
 		end
 		
 	elseif  message_id == hash("pod_log") then

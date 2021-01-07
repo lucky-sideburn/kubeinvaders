@@ -8,7 +8,7 @@ RUN mv ./kubectl /usr/local/bin/kubectl
 
 # Install Openresty
 RUN apt-get update
-RUN apt-get -y install --no-install-recommends wget gnupg ca-certificates jq
+RUN apt-get -y install --no-install-recommends wget gnupg ca-certificates jq openssl
 RUN wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 RUN codename=`grep -Po 'VERSION="[0-9]+ \(\K[^)]+' /etc/os-release` && echo "deb http://openresty.org/package/debian $codename openresty" | tee /etc/apt/sources.list.d/openresty.list
 RUN apt-get update
@@ -22,6 +22,10 @@ RUN cp  kube-linter /usr/local/bin/
 RUN chmod 775 /usr/local/bin/kube-linter
 COPY kube-linter/kube-linter-parser.sh /opt/kube-linter-parser.sh
 RUN chmod +x /opt/kube-linter-parser.sh
+
+# Install chaos-node
+COPY chaos-node/chaos-node.sh /opt/
+RUN chmod +x /opt/chaos-node.sh
 
 # Install KubeInvaders
 COPY ./js-web/KubeInvaders /var/www/html

@@ -1,11 +1,11 @@
 local M = {}
 
 function M.update_pod()
-  http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", M.http_update_pod_result,headers)
+  http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", M.http_update_pod_result, headers, '', { timeout=2 })
 end
 
 function M.set_pods()
-  http.request(endpoint .. "/api/v1/namespaces/".. namespace .. "/pods", "GET", M.http_pod_result,headers)
+  http.request(endpoint .. "/api/v1/namespaces/".. namespace .. "/pods", "GET", M.http_pod_result, headers,'', { timeout=2 })
 end
 
 function M.http_update_pod_result(self, _, response)
@@ -120,9 +120,10 @@ function M.http_pod_result(self, _, response)
 
       pos.y = y_pos			
       if phase == "Running" and this_pod['metadata']['deletionTimestamp'] == nil then
-        local pod = factory.create("/pod#podfactory", pos)				
+        local pod = factory.create("/pod#podfactory", pos)
         table.insert(current_pods, { id = pod , color = "white", pod_name = this_pod['metadata']['name'] })
         check_current_pods = true
+  --    elseif phase ~= "Succeeded" then
       else
         local pod = factory.create("/pod_not_running#podfactory", pos)
         table.insert(current_pods, { id = pod , color = "red", pod_name = this_pod['metadata']['name'] })

@@ -43,6 +43,7 @@ embedded_components {
   "restitution: 0.5\n"
   "group: \"bullet\"\n"
   "mask: \"pod\"\n"
+  "mask: \"k8s_node\"\n"
   "embedded_collision_shape {\n"
   "  shapes {\n"
   "    shape_type: TYPE_SPHERE\n"

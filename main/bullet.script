@@ -1,4 +1,5 @@
 local COLLISION_RESPONSE = hash("collision_response")
+local k8s_node = require "main.mymodules.node"
 
 function refresh_pods()
 	http.request(endpoint .. "/api/v1/namespaces/" .. namespace .. "/pods", "GET", pod_api.http_pod_result,headers)
@@ -16,7 +17,19 @@ end
 function on_message(self, message_id, message, sender)
 	print "[on_message] bullet object received a message"
 	if message_id == COLLISION_RESPONSE then
-		print "[on_message] collision detected"		
+		print "[on_message] collision detected"	
+
+		-- check if it is a k8s_node
+		print("check if the bullet collides with a k8s_node")
+		for i,value in ipairs(kubernetes_nodes) do
+			if message["other_id"] == value["id"] then
+				print("Spaceship collides with " .. value["name"])
+				bullet_collision_action = "chaos_node"
+				print("Set bullet_collision_action to chaos_node")
+				node_name = value["name"]
+			end
+		end
+				
 		if bullet_collision_action == "delete_pod" then
 			msg.post(message["other_id"], "play_animation", {id = hash("delete")})
 			for i,value in ipairs(current_pods) do
@@ -28,6 +41,7 @@ function on_message(self, message_id, message, sender)
 					go.delete(value["id"])
 				end
 			end
+
 		elseif bullet_collision_action == "kubelinter" then
 			for i,value in ipairs(current_pods) do
 				print("[on_message] pod of collision is " .. value["color"] .. " " .. "id is " .. message["other_id"] )
@@ -38,7 +52,23 @@ function on_message(self, message_id, message, sender)
 			print("start kubelinter analysis of " .. message["other_id"] .. " pod = " .. pod_name)
 			msg.post(message["other_id"], "play_animation", {id = hash("view")})
 			kubelinter_pod = pod_name
+
+		elseif bullet_collision_action == "chaos_node" then
+			msg.post(message["other_id"], "play_animation", {id = hash("chaos")})
+			print("launch deploy of chaos_node to " .. node_name)
+			k8s_node.deploy_chaos_node(node_name)
+			-- msg.post(message["other_id"], "play_animation", {id = hash("led")})	
+			bullet_collision_action = "delete_pod"
+			for k,v in ipairs(kubernetes_nodes) do
+				if v["id"] == message["other_id"] then
+					new_value = v
+					new_value["fired"] = true
+					new_value["fired_time"] = os.clock()
+					kubernetes_nodes[k] = new_value
+				end
+			end
 		end
+
 		go.delete()
 	end
 	print "[on_message] end of on_message function"

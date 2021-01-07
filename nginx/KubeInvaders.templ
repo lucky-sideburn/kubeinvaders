@@ -14,6 +14,18 @@ server {
       ngx.say(result)
     }
   }
+
+  location /kube/chaos-node {
+    default_type text/html;
+    content_by_lua_block {
+      local arg = ngx.req.get_uri_args()
+      ngx.req.read_body()
+      local request_body = ngx.req.get_body_data()
+      local handle = io.popen("/opt/chaos-node.sh " .. arg['k8s_url'] .. " " .. arg['token'] .. " " .. arg['node_name'] .. " " ..  arg['namespace'])
+      local result = handle:read("*a")
+      ngx.say(result)
+    }
+  }
   
   location / {
     try_files $uri $uri/ =404;

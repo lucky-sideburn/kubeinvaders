@@ -80,12 +80,20 @@ kubelinter_read = false
 -- Keetp track of the line showed of the kubelinter analysis content
 kubelinter_index = 0
 
--- by default the k8s nodes are not shown. Set this var to true
-k8s_nodes_show = false
+-- by default the k8s nodes name are not shown. Use this var for keep track of requests for show node name
+k8s_node_name_show = false
 
 -- global table that contains k8s nodes
 kubernetes_nodes = {}
 
+-- Endpoint for deploy chaos-node
+chaos_node_url = ""
+
+-- keep track of request for showing k8s nodes
+kubernetes_nodes_request_show = false
+
+-- keep time of the latest request of showing nodes
+latest_kubernetes_nodes_request_show = 0
 
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
@@ -145,7 +153,10 @@ function start_chaos()
 		namespace = namespace_list[0]
 
 		info = "Endpoint: " .. conf["endpoint"] .. "\n\n" .. "Namespace: " .. namespace
+
 		kubelinter_url = endpoint .. "/kube-linter"
+		chaos_node_url = endpoint .. "/chaos-node"
+ 
 		msg.post("ui#gui", "info",{ infomessage =  info })
 
 		msg.post(".", "acquire_input_focus")	
@@ -155,9 +166,27 @@ function start_chaos()
 			["Content-Type"] = "application/json",
 			["Authorization"] = "Bearer " .. token
 		}
+
 		timer.repeat_seconds(pod_update_time, function()
 			pod_api.update_pod()
 			pod_mod.swap_pod(kubernetes_pods)		
+		end)
+
+		timer.repeat_seconds(2, function()
+			current_time_a = os.clock()
+			for k,v in ipairs(kubernetes_nodes) do
+				if  v["fired"] ~= nil and v["fired"] then
+					print(v["name"] .. " is in chaos state...")
+					if ((current_time_a - v["fired_time"]) > 0.8) then
+						print(v["name"] .. " is in chaos state since too time, it is time to switch to led state")
+						msg.post(v["id"], "play_animation", {id = hash("led")})	
+						new_value = v
+						new_value["fired"] = false
+						new_value["fired_time"] = 0
+						kubernetes_nodes[k] = new_value
+					end
+				end
+			end
 		end)
 		
 		timer.repeat_seconds(1, function()			
@@ -249,9 +278,30 @@ function on_input(self, action_id, action)
 		msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot"})
 
 	elseif action_id == hash("worker") then
-		print("Show kubernetes nodes...")
-		k8s_node.get_nodes()
 
+		current_time = os.clock()
+		
+		worker_diff_time = current_time - latest_kubernetes_nodes_request_show
+
+		if worker_diff_time > 0.05 then
+			kubernetes_nodes_size = table.getn(kubernetes_nodes)
+			if kubernetes_nodes_size == 0  and not kubernetes_nodes_request_show then
+				print("Show kubernetes nodes...")
+				k8s_node.get_nodes()
+				kubernetes_nodes_request_show = true
+			else
+				print("Kubernetes nodes already present...")
+				for k,v in ipairs(kubernetes_nodes) do
+					go.delete(v["id"])
+				end
+				kubernetes_nodes_request_show = false
+				kubernetes_nodes = {}
+			end
+			latest_kubernetes_nodes_request_show = os.clock()
+		end
+		
+
+	
 	elseif action_id == hash("namespace") then
 		print("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })
@@ -350,8 +400,7 @@ end
 
 function on_message(self, message_id, message, sender)
 	current_time = os.clock()
-	
-	if message_id == COLLISION_RESPONSE and not k8s_nodes_show then
+	if message_id == COLLISION_RESPONSE then
 		for i,value in ipairs(kubernetes_nodes) do
 			if message["other_id"] == value["id"] then
 				print("Spaceship collides with " .. value["name"])
@@ -359,10 +408,9 @@ function on_message(self, message_id, message, sender)
 				msg.post("ui#gui","node_name", { node_name = value["name"], spaceship_pos = spaceship_pos })				
 			end
 		end
-		return
 	end
 
-	if message_id == COLLISION_RESPONSE and started_chaos then
+	if message_id == COLLISION_RESPONSE and started_chaos and last_pod_log then
 
 		msg.post("ui#gui","pod_log")
 		

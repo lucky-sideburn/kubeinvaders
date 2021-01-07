@@ -559,6 +559,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: "Special Keys:\n"
+  "w: show kubernetes nodes\n"
   "k: do kube-linter analysis\n"
   "i: Show pod\'s name. Move the ship towards an alien\n"
   "n: Jump between namespaces. Read REAME.md for configuring TARGET_NAMESPACE\n"

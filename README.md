@@ -90,7 +90,7 @@ docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=h
 To Install KubeInvaders on your Openshift Cluster clone this repo and launch the following commands:
 
 ```bash
-oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods,pods/log
+oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods,pods/log,jobs
 
 TARGET_NAMESPACE=foobar,awesome-namespace
 ## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2

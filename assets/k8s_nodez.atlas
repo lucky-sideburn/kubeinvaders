@@ -1,7 +1,3 @@
-images {
-  image: "/assets/k8s_node.png"
-  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
-}
 animations {
   id: "led"
   images {

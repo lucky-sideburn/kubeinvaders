@@ -16,7 +16,7 @@ components {
 embedded_components {
   id: "k8s_node"
   type: "sprite"
-  data: "tile_set: \"/assets/k8s_node.atlas\"\n"
+  data: "tile_set: \"/assets/k8s_nodez.atlas\"\n"
   "default_animation: \"led\"\n"
   "material: \"/builtins/materials/sprite.material\"\n"
   "blend_mode: BLEND_MODE_ALPHA\n"

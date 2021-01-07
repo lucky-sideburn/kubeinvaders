@@ -28,8 +28,8 @@ I added also new experimental features like a linter for the pods. The current l
 |     q           | Hide help for special keys.                                                               |
 |     i           | Show pod's name. Move the ship towards an alien.                                          |
 |     r           | Refresh log of a pod when spaceship is over the alien.                                    |
-|     k           | Perform [kube-linter](https://github.com/stackrox/kube-linter) analisys for a pod         |
-|     w           | Chaos engineering against kubernetes nodes                                                |
+|     k           | *NEW* Perform [kube-linter](https://github.com/stackrox/kube-linter) analisys for a pod   |
+|     w           | *NEW* Chaos engineering against kubernetes nodes                                          |
 
 ### Known problems
 It seems that Kubeinvaders does not work with EKS because of problems with ServiceAccount. Work in progress!

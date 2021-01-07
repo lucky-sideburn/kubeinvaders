@@ -27,7 +27,7 @@ replicaCount: 1
 image:
   repository: luckysideburn/kubeinvaders
   tag: latest
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 nameOverride: ""
 fullnameOverride: ""

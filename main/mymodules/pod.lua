@@ -119,7 +119,8 @@ function M.swap_pod(items)
       a = a + 1
     end
     msg.post("ui#gui", "error",{ errormessage = "Synchronizing alien ships with Kubernetes pods.." })
-  end	
+  end
+ 
 end 
 
 return M

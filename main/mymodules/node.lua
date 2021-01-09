@@ -47,13 +47,13 @@ function M.http_get_nodes_result(self, _, response)
 			end
 		end
 	end
-	local node_deleted = 0
+	local node_deleted = 1
 	if table.getn(kubernetes_nodes_temp) > max_nodes then
 		print("Nodes number are greater than the max_nodes. Going to to select randomly " .. max_nodes .. " nodes")
 		while (table.getn(kubernetes_nodes_temp) > max_nodes) do
-			print("foo")
 			math.randomseed(os.clock()*100000000000)
-			table.remove(kubernetes_nodes_temp,math.random(1,max_nodes))
+			local interval =  max_nodes - node_deleted
+			table.remove(kubernetes_nodes_temp,math.random(1,interval))
 			node_deleted  = node_deleted + 1
 		end
 		print("New size of kubernetes_nodes table is " .. table.getn(kubernetes_nodes_temp))

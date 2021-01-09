@@ -8,7 +8,8 @@
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
 3. [Installation](#Installation)
-4. [Configuration](#Configuration)
+4. [Notes For large clusters][#Notes-for-large-clusters]
+5. [Configuration](#Configuration)
 
 ## Description
 
@@ -114,6 +115,16 @@ oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NA
 #### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/dcenv.png)
+
+
+## Notes for large clusters
+
+For cluster with many workers-nodes, Kubeinvaders selects a number of random items.
+
+| Item      | Max Number   |
+|-----------|--------------|
+| Nodes     | 15           |
+
 ## Configuration
 
 ### Environment Variables - Make the game more difficult to win!

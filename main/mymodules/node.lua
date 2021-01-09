@@ -15,16 +15,6 @@ function M.deploy_chaos_node_result(self, _, response)
 	print(response.status)
 	print(response.response)
 	print(response.headers)
-	--msg.post("ui#gui","open_kubelinter_box",{ position = vmath.vector3(850, 550, 0) })
-	--kubelinter_read = true
-	--kubelinter_index = 0
-
-	--for i,value in ipairs(kubelinter_table) do
-	--	kubelintermessage = value
-	--	kubelinter_index = kubelinter_index + 1
-	--	msg.post("ui#gui", "set_kubelinter_text",{ kubelintermessage = value })
-	--	break
-	--end
 end
 
 function M.http_node_metrics_result(self, _, response)
@@ -37,32 +27,54 @@ end
 
 function M.http_get_nodes_result(self, _, response)
 	kubernetes_nodes = {}
+	local kubernetes_nodes_temp = {} 
+	local nodes = json.decode(response.response)
+	local node_items = nodes["items"]
+	local node_items_size = table.getn(node_items)
+	local pos_x = 80
+	local pos_y = 500
+	local nodes_cnt = 1
+
 	print("Get nodes output")
 	print('/api/v1/nodes response: ' .. response.status)
-	nodes = json.decode(response.response)
-	node_items = nodes["items"]
-	node_items_size = table.getn(node_items)
 	print("Node table size: " .. node_items_size)
-	pos_x = 80
-	pos_y = 500
+	
 	nodes_cnt = 1
 	for k, v in pairs(node_items) do
 		for k1, v2 in pairs(v) do
 			if v2["name"] then
-				print("Found k8s node: " .. v2["name"])
-				pos = vmath.vector3(pos_x, pos_y, 0) 
-				new_node = factory.create("/k8s_node#k8s_node_factory", pos)
-				table.insert(kubernetes_nodes,{ name = v2["name"], id = new_node })
-			
-				if ((nodes_cnt % 15 ) == 0) then
-					pos_y = pos_y + 200
-					pos_x = 80
-				else
-					pos_x = pos_x + 80
-				end
-				
-				nodes_cnt = nodes_cnt + 1
+				table.insert(kubernetes_nodes_temp,{ name = v2["name"], id = '' })
 			end
+		end
+	end
+	local node_deleted = 0
+	if table.getn(kubernetes_nodes_temp) > max_nodes then
+		print("Nodes number are greater than the max_nodes. Going to to select randomly " .. max_nodes .. " nodes")
+		while (table.getn(kubernetes_nodes_temp) > max_nodes) do
+			print("foo")
+			math.randomseed(os.clock()*100000000000)
+			table.remove(kubernetes_nodes_temp,math.random(1,max_nodes))
+			node_deleted  = node_deleted + 1
+		end
+		print("New size of kubernetes_nodes table is " .. table.getn(kubernetes_nodes_temp))
+	end
+
+	kubernetes_nodes = kubernetes_nodes_temp
+	
+	for k1, v2 in pairs(kubernetes_nodes) do
+		if v2["name"] then
+			print("Found k8s node: " .. v2["name"])
+			pos = vmath.vector3(pos_x, pos_y, 0) 
+			new_node = factory.create("/k8s_node#k8s_node_factory", pos)
+			kubernetes_nodes[k1] = { name = v2["name"], id = new_node }
+			if ((nodes_cnt % 15 ) == 0) then
+				pos_y = pos_y + 200
+				pos_x = 80
+			else
+				pos_x = pos_x + 80
+			end
+
+			nodes_cnt = nodes_cnt + 1
 		end
 	end
 end

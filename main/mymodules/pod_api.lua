@@ -119,12 +119,11 @@ function M.http_pod_result(self, _, response)
       end
 
       pos.y = y_pos			
-      if phase == "Running" and this_pod['metadata']['deletionTimestamp'] == nil then
+      if phase == "Running" and phase ~= "Succeeded" and this_pod['metadata']['deletionTimestamp'] == nil then
         local pod = factory.create("/pod#podfactory", pos)
         table.insert(current_pods, { id = pod , color = "white", pod_name = this_pod['metadata']['name'] })
         check_current_pods = true
-  --    elseif phase ~= "Succeeded" then
-      else
+      elseif phase ~= "Succeeded" then
         local pod = factory.create("/pod_not_running#podfactory", pos)
         table.insert(current_pods, { id = pod , color = "red", pod_name = this_pod['metadata']['name'] })
         check_current_pods = true				

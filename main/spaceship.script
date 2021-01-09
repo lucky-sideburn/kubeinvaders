@@ -95,6 +95,12 @@ kubernetes_nodes_request_show = false
 -- keep time of the latest request of showing nodes
 latest_kubernetes_nodes_request_show = 0
 
+-- max number of pod to show 
+max_pods = 5
+
+-- max number of node to show 
+max_nodes = 5
+
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
 local spaceship = require "main.mymodules.spaceship"

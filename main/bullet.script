@@ -15,11 +15,9 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	print "[on_message] bullet object received a message"
-	if message_id == COLLISION_RESPONSE then
-		print "[on_message] collision detected"	
 
-		-- check if it is a k8s_node
+	if message_id == COLLISION_RESPONSE then
+
 		print("check if the bullet collides with a k8s_node")
 		for i,value in ipairs(kubernetes_nodes) do
 			if message["other_id"] == value["id"] then
@@ -57,7 +55,6 @@ function on_message(self, message_id, message, sender)
 			msg.post(message["other_id"], "play_animation", {id = hash("chaos")})
 			print("launch deploy of chaos_node to " .. node_name)
 			k8s_node.deploy_chaos_node(node_name)
-			-- msg.post(message["other_id"], "play_animation", {id = hash("led")})	
 			bullet_collision_action = "delete_pod"
 			for k,v in ipairs(kubernetes_nodes) do
 				if v["id"] == message["other_id"] then

@@ -98,8 +98,6 @@ latest_kubernetes_nodes_request_show = 0
 -- max number of nodes to show 
 max_nodes = 15
 
-
-
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
 local spaceship = require "main.mymodules.spaceship"
@@ -207,8 +205,14 @@ function start_chaos()
 				msg.post("ui#gui", "error1",{ errormessage = "" })
 			end
 		end)	
-		timer.repeat_seconds(0.5, function()
-			spaceship.auto()
+		timer.repeat_seconds(1, function()
+			if automatic then
+				spaceship.auto()
+				math.randomseed(os.clock()*100000000000)
+				if math.random(1, 100) % 3 == 0 then
+					k8s_node.get_nodes()
+				end
+			end
 		end)
 		pod_api.set_pods()
 	end
@@ -283,29 +287,7 @@ function on_input(self, action_id, action)
 		msg.post("ui#gui", "mode",{ mode = "Press \"a\" to use automatic pilot"})
 
 	elseif action_id == hash("worker") then
-
-		current_time = os.clock()
-		
-		worker_diff_time = current_time - latest_kubernetes_nodes_request_show
-
-		if worker_diff_time > 0.05 then
-			kubernetes_nodes_size = table.getn(kubernetes_nodes)
-			if kubernetes_nodes_size == 0  and not kubernetes_nodes_request_show then
-				print("Show kubernetes nodes...")
-				k8s_node.get_nodes()
-				kubernetes_nodes_request_show = true
-			else
-				print("Kubernetes nodes already present...")
-				for k,v in ipairs(kubernetes_nodes) do
-					go.delete(v["id"])
-				end
-				kubernetes_nodes_request_show = false
-				kubernetes_nodes = {}
-			end
-			latest_kubernetes_nodes_request_show = os.clock()
-		end
-		
-
+		k8s_node.get_nodes()
 	
 	elseif action_id == hash("namespace") then
 		print("[change_namespace] change namespaces requested by user")
@@ -415,8 +397,9 @@ function on_message(self, message_id, message, sender)
 		end
 	end
 
-	if message_id == COLLISION_RESPONSE and started_chaos and last_pod_log then
+	if message_id == COLLISION_RESPONSE and started_chaos and not last_pod_log then
 
+		print("log1!")
 		msg.post("ui#gui","pod_log")
 		
 		for i,value in ipairs(current_pods) do

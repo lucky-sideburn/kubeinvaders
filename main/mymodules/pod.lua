@@ -16,10 +16,7 @@ function M.print_pod_name()
     if pod_name:match("[%a%d%p_]%s[%a%d%p_]") ~= nil then
       pod_name = pod_name:gsub(" ", "\n")
     end
-    
-    msg.post("ui#gui","pod_name",{ pod_name = pod_name, position = last_pod_position })		
-    --msg.post("ui#gui","pod_name",{ pod_name = pod_name })			
-    
+    msg.post("ui#gui","pod_name",{ pod_name = pod_name, position = last_pod_position })
   end
 end
 

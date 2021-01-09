@@ -22,7 +22,26 @@ function M.http_node_metrics_result(self, _, response)
 end
 
 function M.get_nodes()
-	http.request(endpoint .. "/api/v1/nodes", "GET", M.http_get_nodes_result, headers)
+	current_time = os.clock()
+
+	worker_diff_time = current_time - latest_kubernetes_nodes_request_show
+
+	if worker_diff_time > 0.05 then
+		kubernetes_nodes_size = table.getn(kubernetes_nodes)
+		if kubernetes_nodes_size == 0  and not kubernetes_nodes_request_show then
+			print("Show kubernetes nodes...")
+			http.request(endpoint .. "/api/v1/nodes", "GET", M.http_get_nodes_result, headers)
+			kubernetes_nodes_request_show = true
+		else
+			print("Kubernetes nodes already present...")
+			for k,v in ipairs(kubernetes_nodes) do
+				go.delete(v["id"])
+			end
+			kubernetes_nodes_request_show = false
+			kubernetes_nodes = {}
+		end
+		latest_kubernetes_nodes_request_show = os.clock()
+	end
 end
 
 function M.http_get_nodes_result(self, _, response)
@@ -31,7 +50,7 @@ function M.http_get_nodes_result(self, _, response)
 	local nodes = json.decode(response.response)
 	local node_items = nodes["items"]
 	local node_items_size = table.getn(node_items)
-	local pos_x = 80
+	local pos_x = 300
 	local pos_y = 500
 	local nodes_cnt = 1
 
@@ -69,7 +88,7 @@ function M.http_get_nodes_result(self, _, response)
 			kubernetes_nodes[k1] = { name = v2["name"], id = new_node }
 			if ((nodes_cnt % 15 ) == 0) then
 				pos_y = pos_y + 200
-				pos_x = 80
+				pos_x = 300
 			else
 				pos_x = pos_x + 80
 			end

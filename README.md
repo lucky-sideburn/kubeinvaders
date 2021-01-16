@@ -1,6 +1,6 @@
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
-*Gamified chaos engineering an analysis tool for Kubernetes. It is like Space Invaders but the aliens are PODs.*
+*Gamified chaos engineering and analysis tool for Kubernetes. It is like Space Invaders but the aliens are PODs.*
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
 

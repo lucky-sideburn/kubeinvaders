@@ -101,7 +101,7 @@ docker build . -t kubeinvaders_dev
 docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443 --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
 ```
 
-### Install KubeInvaders on OpenShift
+### Install KubeInvaders on OpenShift (DEPRECATED - Please use Helm only)
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
 

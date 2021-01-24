@@ -62,7 +62,7 @@ helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
 
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io --set REDIS_HOST=<ip of redis>
+--set ingress.hostName=kubeinvaders.io --set redis_host=<ip of redis>
 ```
 ### Install client on your workstation
 

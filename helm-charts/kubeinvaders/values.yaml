@@ -64,4 +64,4 @@ target_namespace: "foobar"
 hitslimit: 1
 alienproximity: 15
 updatetime: 1
-
+redis_host: redis

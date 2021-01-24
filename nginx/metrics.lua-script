@@ -63,7 +63,7 @@ if okredis then
     end
 
 else 
-  ngx.log(ngx.ERR, "Connection to Redis is not ok. REDIS_URL is " .. os.getenv("REDIS_URL"))
+  ngx.log(ngx.ERR, "Connection to Redis is not ok. REDIS_HOST is " .. os.getenv("REDIS_HOST"))
   ngx.log(ngx.ERR, errredis)
 
 end

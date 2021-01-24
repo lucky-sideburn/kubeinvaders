@@ -9,7 +9,7 @@
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
 3. [Installation](#Installation)
-4. [Prometheus Metrics - Make sense of Kubeinvaders!](#Metrics)
+4. [Prometheus Metrics](#Metrics)
 5. [Notes for large clusters](#Notes-for-large-clusters)
 6. [Configuration](#Configuration)
 
@@ -57,11 +57,13 @@ git clone https://github.com/lucky-sideburn/KubeInvaders.git
 
 kubectl create namespace kubeinvaders
 
+# Install Redis for exposing Prometheus Metrics
+helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
+
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io
+--set ingress.hostName=kubeinvaders.io --set REDIS_HOST=redis-master
 ```
-
 ### Install client on your workstation
 
 The easiest way to install KubeInvaders is on your workstation but if you choose this method you cannot use kube-linter feature directly from the game. Follow this guide:

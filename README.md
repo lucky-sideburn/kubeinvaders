@@ -71,7 +71,7 @@ The easiest way to install KubeInvaders is on your workstation but if you choose
 1. Start KubeInvaders docker container locally
 
 ```bash
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --env REDIS_HOST="172.17.0.3" --name kubeinvaders docker.io/luckysideburn/kubeinvaders
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --env REDIS_HOST="<ip of name of redis>" --name kubeinvaders docker.io/luckysideburn/kubeinvaders
 ```
 
 2. Create $HOME/.KubeInv.json like this - The endpoint is localhost:8080 because it is using KubeInvaders container as a proxy 
@@ -100,8 +100,7 @@ docker build . -t kubeinvaders_dev
 
 docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443 --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
 ```
-
-### Install KubeInvaders on OpenShift (DEPRECATED - Please use Helm only)
+### Install KubeInvaders on OpenShift
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
 

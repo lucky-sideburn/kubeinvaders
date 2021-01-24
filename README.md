@@ -9,8 +9,9 @@
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
 3. [Installation](#Installation)
-4. [Notes for large clusters](#Notes-for-large-clusters)
-5. [Configuration](#Configuration)
+4. [Prometheus Metrics - Make sense of Kubeinvaders!](#Metrics)
+5. [Notes for large clusters](#Notes-for-large-clusters)
+6. [Configuration](#Configuration)
 
 ## Description
 
@@ -135,9 +136,17 @@ For clusters with many workers-nodes, KubeInvaders selects a subset of random it
 | Item      | Max Number   |
 |-----------|--------------|
 | Nodes     | 15           |
+## Metrics
+
+KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
+
+In order to use metrics functions install Redis into the namespace of Kubeinvaders
+
+```bash
+helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
+```
 
 ## Configuration
-
 ### Environment Variables - Make the game more difficult to win!
 
 Set the following variables in Kubernetes Deployment or OpenShift DeploymentConfig:

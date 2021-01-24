@@ -98,6 +98,18 @@ latest_kubernetes_nodes_request_show = 0
 -- max number of nodes to show 
 max_nodes = 15
 
+-- put the spaceship in automatic_pilot_x when automatic pilot is activated
+automatic_pilot_x = 400
+
+-- max x when automatic pilot is activated
+automatic_pilot_x_limit = 1400
+
+-- min x when automatic pilot is activated
+automatic_pilot_x_start= 400
+
+-- used for change direction of the spaceship
+automatic_pilot_x_reverse = false
+
 local COLLISION_RESPONSE = hash("collision_response")
 local timer = require "main.mymodules.timer"
 local spaceship = require "main.mymodules.spaceship"
@@ -205,12 +217,20 @@ function start_chaos()
 				msg.post("ui#gui", "error1",{ errormessage = "" })
 			end
 		end)	
-		timer.repeat_seconds(1, function()
+		timer.repeat_seconds(0.5, function()
 			if automatic then
 				spaceship.auto()
 				math.randomseed(os.clock()*100000000000)
-				if math.random(1, 100) % 3 == 0 then
+				local math_rand = math.random(1, 100)
+				if math_rand % 3 == 0 then
 					k8s_node.get_nodes()
+				end
+				if math_rand % 5 == 0 then
+					if automatic_pilot_x_reverse then
+						automatic_pilot_x_reverse = false
+					else
+						automatic_pilot_x_reverse = true
+					end
 				end
 			end
 		end)
@@ -243,25 +263,25 @@ function on_input(self, action_id, action)
 	p = go.get_position()
 	if action_id == hash("up") then
 		if p.y < 1000 then
-			p.y = p.y + 4
+			p.y = p.y + 5
 			go.set_position(p)
 		end
 
 	elseif action_id == hash("down") then
 		if p.y > 1 then
-			p.y = p.y - 4
+			p.y = p.y - 5
 			go.set_position(p)
 		end
 
 	elseif action_id == hash("left") then
 		if p.x > 1 then
-			p.x = p.x - 4
+			p.x = p.x - 5
 			go.set_position(p)
 		end
 
 	elseif action_id == hash("right") then
 		if p.x < 1800 then
-			p.x = p.x + 4
+			p.x = p.x + 5
 			go.set_position(p)
 		end
 
@@ -398,8 +418,6 @@ function on_message(self, message_id, message, sender)
 	end
 
 	if message_id == COLLISION_RESPONSE and started_chaos and not last_pod_log then
-
-		print("log1!")
 		msg.post("ui#gui","pod_log")
 		
 		for i,value in ipairs(current_pods) do

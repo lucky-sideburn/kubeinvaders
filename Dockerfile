@@ -35,6 +35,8 @@ COPY ./js-web/KubeInvaders /var/www/html
 RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
+COPY nginx/metrics.lua /tmp/metrics.lua
+
 COPY nginx/KubeInvaders.templ /etc/nginx/conf.d/KubeInvaders.templ
 COPY nginx/KubeInvaders_dev.templ /etc/nginx/conf.d/KubeInvaders_dev.templ
 

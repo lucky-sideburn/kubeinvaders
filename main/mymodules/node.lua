@@ -53,7 +53,7 @@ function M.http_get_nodes_result(self, _, response)
 	local pos_x = 300
 	local pos_y = 500
 	local nodes_cnt = 1
-
+	local master = false
 	print("Get nodes output")
 	print('/api/v1/nodes response: ' .. response.status)
 	print("Node table size: " .. node_items_size)
@@ -62,7 +62,15 @@ function M.http_get_nodes_result(self, _, response)
 	for k, v in pairs(node_items) do
 		for k1, v2 in pairs(v) do
 			if v2["name"] then
-				table.insert(kubernetes_nodes_temp,{ name = v2["name"], id = '' })
+				for k3, v3 in pairs(v2["labels"]) do
+					if k3 == "node-role.kubernetes.io/master" then
+						master = true
+					end
+				end
+				if not master then
+					table.insert(kubernetes_nodes_temp,{ name = v2["name"], id = '' })
+				end
+				master = false
 			end
 		end
 	end

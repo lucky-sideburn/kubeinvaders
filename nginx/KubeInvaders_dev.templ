@@ -2,6 +2,19 @@ server {
   listen 8080 default_server;
   root /var/www/html/;
   index index.html;
+  
+  location /metrics {
+    default_type text/html;
+    content_by_lua_block {
+      local redis = require "resty.redis"
+      local red = redis:new()
+      local okredis, errredis = red:connect(os.getenv("REDIS_URL"), 6379)
+      for i, res in ipairs(red:keys("*")) do
+        ngx.log(ngx.ERR, res)
+        ngx.say(res ..  " " .. red:get(res))
+      end
+    }
+  }
 
   location /kube/kube-linter {
     default_type text/html;
@@ -17,6 +30,8 @@ server {
 
   location /kube/chaos-node {
     default_type text/html;
+    access_by_lua_file /tmp/metrics.lua;
+
     content_by_lua_block {
       local arg = ngx.req.get_uri_args()
       ngx.req.read_body()
@@ -26,23 +41,15 @@ server {
     }
   }
   
-  location / {
-    try_files $uri $uri/ =404;
-    add_header Last-Modified $date_gmt;
-    add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
-    if_modified_since off;
-    expires off;
-    etag off;
-  }
-
   location /kube {
-     rewrite ^/kube(.*)$ /api$1 break;
-     proxy_pass ${ENDPOINT};
+    rewrite ^/kube(.*)$ /api$1 break;
+    proxy_pass ${ENDPOINT};
+    access_by_lua_file /tmp/metrics.lua;
   }
 
   location /kube/api {
-     rewrite ^/kube/api(.*)$ /api$1 break;
-     proxy_pass ${ENDPOINT};
+    rewrite ^/kube/api(.*)$ /api$1 break;
+    proxy_pass ${ENDPOINT};
+    access_by_lua_file /tmp/metrics.lua;
   }
-
 }

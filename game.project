@@ -3,7 +3,7 @@ main_collection = /main/kubeinvaders.collectionc
 
 [project]
 title = KubeInvaders
-version = 0.2.8
+version = 1.0
 dependencies = 
 
 [display]

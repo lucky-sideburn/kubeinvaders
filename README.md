@@ -160,10 +160,10 @@ chaos_node_jobs_total_on_workernode01 2
 # Total number of chaos jobs executed against all worker nodes
 chaos_node_jobs_total 4
 
-# Total number of pods deleted by Kubeinvaders
+# Total number of deleted pods
 deleted_pods_total 12
 
-# Total number of pods deleted by Kubeinvaders into the namespace kubeinvaderdemo
+# Total number of deleted pods
 deleted_pods_total_on_kubeinvadersdemo 4
 ```
 

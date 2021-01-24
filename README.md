@@ -105,6 +105,8 @@ docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=h
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
 
 ```bash
+helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
+
 oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods,pods/log,jobs
 
 TARGET_NAMESPACE=foobar,awesome-namespace
@@ -123,7 +125,7 @@ oc adm policy add-cluster-role-to-user kubeinvaders-role -z kubeinvaders -n kube
 
 KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kubernetes.io/service-account-token | grep 'kubeinvaders-token' | awk '{ print $1}' | head -n 1)
 
-oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
+oc process -f openshift/KubeInvaders.yaml -p REDIS_HOST=redis-master -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
 
 #### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)

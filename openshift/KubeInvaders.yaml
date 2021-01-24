@@ -9,6 +9,8 @@ metadata:
     iconClass: fa fa-cogs
     tags: "spaceinvaders"
 parameters:
+- description: Redis Service
+  name: REDIS_HOST
 - description: IP addresses that can contact Kubernetes
   name: IP_WHITELIST
 - description: URL of KubeInvaders
@@ -77,6 +79,8 @@ objects:
         serviceAccountName: kubeinvaders
         containers:
         - env:
+          - name: REDIS_HOST
+            value: "${REDIS_HOST}" 
           - name: ROUTE_HOST
             value: "${ROUTE_HOST}" 
           - name: NAMESPACE

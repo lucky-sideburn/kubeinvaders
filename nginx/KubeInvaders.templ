@@ -8,7 +8,7 @@ server {
     content_by_lua_block {
       local redis = require "resty.redis"
       local red = redis:new()
-      local okredis, errredis = red:connect(os.getenv("REDIS_URL"), 6379)
+      local okredis, errredis = red:connect(os.getenv("REDIS_HOST"), 6379)
       for i, res in ipairs(red:keys("*")) do
         ngx.log(ngx.ERR, res)
         ngx.say(res ..  " " .. red:get(res))

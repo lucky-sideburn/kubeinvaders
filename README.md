@@ -69,7 +69,7 @@ The easiest way to install KubeInvaders is on your workstation but if you choose
 1. Start KubeInvaders docker container locally
 
 ```bash
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --name kubeinvaders docker.io/luckysideburn/kubeinvaders
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --env REDIS_HOST="172.17.0.3" --name kubeinvaders docker.io/luckysideburn/kubeinvaders
 ```
 
 2. Create $HOME/.KubeInv.json like this - The endpoint is localhost:8080 because it is using KubeInvaders container as a proxy 
@@ -144,6 +144,24 @@ In order to use metrics functions install Redis into the namespace of Kubeinvade
 
 ```bash
 helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
+```
+
+Example of metrics
+
+```bash
+curl localhost:8080/metrics
+
+# Total number of chaos jobs executed on the node workernode01
+chaos_node_jobs_total_on_workernode01 2
+
+# Total number of chaos jobs executed against all worker nodes
+chaos_node_jobs_total 4
+
+# Total number of pods deleted by Kubeinvaders
+deleted_pods_total 12
+
+# Total number of pods deleted by Kubeinvaders into the namespace kubeinvaderdemo
+deleted_pods_total_on_kubeinvadersdemo 4
 ```
 
 ## Configuration

@@ -1,6 +1,6 @@
 local redis = require "resty.redis"
 local red = redis:new()
-local okredis, errredis = red:connect(os.getenv("REDIS_URL"), 6379)
+local okredis, errredis = red:connect(os.getenv("REDIS_HOST"), 6379)
 local arg = ngx.req.get_uri_args()
 local incr = 0
 if okredis then

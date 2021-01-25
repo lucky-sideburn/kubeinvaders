@@ -157,6 +157,8 @@ deleted_namespace_pods_count{namespace=myawesomenamespace} 8
 ```
 ![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
 
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana.png)
+
 ## Configuration
 ### Environment Variables - Make the game more difficult to win!
 

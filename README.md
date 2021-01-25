@@ -9,7 +9,7 @@
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
 3. [Installation](#Installation)
-4. [Prometheus Metrics](#Metrics)
+4. [Prometheus metrics and Grafana](#Metrics)
 5. [Notes for large clusters](#Notes-for-large-clusters)
 6. [Configuration](#Configuration)
 

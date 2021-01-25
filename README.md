@@ -155,16 +155,16 @@ Example of metrics
 curl localhost:8080/metrics
 
 # Total number of chaos jobs executed on the node workernode01
-chaos_node_jobs_total_on_workernode01 2
+chaos_jobs_node_count{node=workernode01} 100
 
 # Total number of chaos jobs executed against all worker nodes
-chaos_node_jobs_total 4
+chaos_node_jobs_total 200
 
 # Total number of deleted pods
-deleted_pods_total 12
+deleted_pods_total 16
 
 # Total number of deleted pods
-deleted_pods_total_on_kubeinvadersdemo 4
+deleted_namespace_pods_count{namespace=myawesomenamespace} 8
 ```
 
 ## Configuration

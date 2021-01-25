@@ -155,6 +155,7 @@ deleted_pods_total 16
 # Total number of deleted pods
 deleted_namespace_pods_count{namespace=myawesomenamespace} 8
 ```
+![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
 
 ## Configuration
 ### Environment Variables - Make the game more difficult to win!

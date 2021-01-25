@@ -1,5 +1,7 @@
 #!/bin/sh
 
+redis-server /etc/redis/redis.conf &
+
 if [ ! -z $DEVELOPMENT ];
 then
   ENDPOINT_JS=$(echo "${ENDPOINT}" | sed "s/\//\\\\\//g")

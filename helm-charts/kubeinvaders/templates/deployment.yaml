@@ -21,8 +21,6 @@ spec:
     spec:
       containers:
         - env:
-          - name: REDIS_HOST
-            values: "{{ .Values.redis_host }}"
           - name: ROUTE_HOST
             value: "{{ .Values.ingress.hostName }}"
           - name: NAMESPACE

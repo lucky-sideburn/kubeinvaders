@@ -27,6 +27,10 @@ RUN chmod +x /opt/kube-linter-parser.sh
 COPY chaos-node/chaos-node.sh /opt/
 RUN chmod +x /opt/chaos-node.sh
 
+# Install Redis
+RUN apt-get install redis -y
+COPY redis/redis.conf /etc/redis/redis.conf
+
 # Install KubeInvaders
 COPY ./js-web/KubeInvaders /var/www/html
 

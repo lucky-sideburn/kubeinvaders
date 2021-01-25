@@ -38,7 +38,6 @@ I added also new experimental features like a linter for the pods. The current l
 ### Known problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
-* KubeInvaders use OpenResty for writing metrics into Redis as caching layer. Resolution of the kubernetes service name for Redis is not working, use the IP.
 ### Show logs of a pod
 
 Move the spaceship over a white alien.
@@ -57,12 +56,9 @@ git clone https://github.com/lucky-sideburn/KubeInvaders.git
 
 kubectl create namespace kubeinvaders
 
-# Install Redis for exposing Prometheus Metrics
-helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
-
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io --set redis_host=<ip of redis>
+--set ingress.hostName=kubeinvaders.io
 ```
 ### Install client on your workstation
 
@@ -71,7 +67,7 @@ The easiest way to install KubeInvaders is on your workstation but if you choose
 1. Start KubeInvaders docker container locally
 
 ```bash
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080 --env REDIS_HOST="<ip of name of redis>" --name kubeinvaders docker.io/luckysideburn/kubeinvaders
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080  --name kubeinvaders docker.io/luckysideburn/kubeinvaders
 ```
 
 2. Create $HOME/.KubeInv.json like this - The endpoint is localhost:8080 because it is using KubeInvaders container as a proxy 
@@ -98,14 +94,13 @@ Using this method you can have problem of CORS:
 ```bash
 docker build . -t kubeinvaders_dev
 
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443  --env REDIS_HOST=<ip of redis> --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
+docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443 --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
 ```
 ### Install KubeInvaders on OpenShift
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
 
 ```bash
-helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
 
 oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods,pods/log,jobs
 
@@ -125,7 +120,7 @@ oc adm policy add-cluster-role-to-user kubeinvaders-role -z kubeinvaders -n kube
 
 KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kubernetes.io/service-account-token | grep 'kubeinvaders-token' | awk '{ print $1}' | head -n 1)
 
-oc process -f openshift/KubeInvaders.yaml -p REDIS_HOST=<ip of redis> -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
+oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
 
 #### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)
@@ -142,12 +137,6 @@ For clusters with many workers-nodes, KubeInvaders selects a subset of random it
 ## Metrics
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
-
-In order to use metrics functions install Redis into the namespace of Kubeinvaders
-
-```bash
-helm install redis bitnami/redis -n kubeinvaders -f redis/values.yaml
-```
 
 Example of metrics
 

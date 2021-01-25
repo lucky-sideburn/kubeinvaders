@@ -9,7 +9,7 @@ developer = unnamed
 [display]
 width = 1920
 height = 1080
-high_dpi = 0
+high_dpi = 1
 samples = 0
 fullscreen = 0
 update_frequency = 60
@@ -146,7 +146,7 @@ cssfile = /builtins/manifests/web/light_theme.css
 archive_location_prefix = archive
 show_fullscreen_button = 1
 show_made_with_defold = 0
-scale_mode = downscale_fit
+scale_mode = fit
 splash_image = /assets/kubeinvaderslogo.png
 
 [particle_fx]

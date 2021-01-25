@@ -12,12 +12,13 @@ fullscreen = 0
 update_frequency = 60
 width = 1920
 height = 1080
+high_dpi = 1
 
 [script]
 shared_state = 1
 
 [html5]
-scale_mode = downscale_fit
+scale_mode = fit
 htmlfile = /builtins/manifests/web/engine_template.html
 splash_image = /assets/kubeinvaderslogo.png
 show_made_with_defold = 0

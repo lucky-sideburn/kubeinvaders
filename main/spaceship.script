@@ -99,13 +99,13 @@ latest_kubernetes_nodes_request_show = 0
 max_nodes = 15
 
 -- put the spaceship in automatic_pilot_x when automatic pilot is activated
-automatic_pilot_x = 400
+automatic_pilot_x = 500
 
 -- max x when automatic pilot is activated
-automatic_pilot_x_limit = 1400
+automatic_pilot_x_limit = 1500
 
 -- min x when automatic pilot is activated
-automatic_pilot_x_start= 400
+automatic_pilot_x_start= 500
 
 -- used for change direction of the spaceship
 automatic_pilot_x_reverse = false
@@ -308,7 +308,10 @@ function on_input(self, action_id, action)
 
 	elseif action_id == hash("worker") then
 		k8s_node.get_nodes()
-	
+
+	elseif action_id == hash("hide_worker") then
+		k8s_node.hide_nodes()
+
 	elseif action_id == hash("namespace") then
 		print("[change_namespace] change namespaces requested by user")
 		msg.post("ui#gui", "error",{ errormessage = "changing namespace!" })

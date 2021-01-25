@@ -94,12 +94,12 @@ nodes {
 nodes {
   position {
     x: 950.0
-    y: 258.0
+    y: 301.0
     z: 0.0
     w: 1.0
   }
   rotation {
-    x: -18.602
+    x: 0.0
     y: 0.0
     z: 0.0
     w: 1.0
@@ -111,8 +111,8 @@ nodes {
     w: 1.0
   }
   size {
-    x: 500.0
-    y: 50.0
+    x: 700.0
+    y: 300.0
     z: 0.0
     w: 1.0
   }
@@ -125,7 +125,7 @@ nodes {
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
   text: ""
-  font: "arcade"
+  font: "error"
   id: "howto"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
@@ -142,7 +142,7 @@ nodes {
     z: 1.0
     w: 1.0
   }
-  adjust_mode: ADJUST_MODE_FIT
+  adjust_mode: ADJUST_MODE_STRETCH
   line_break: false
   layer: ""
   inherit_alpha: true

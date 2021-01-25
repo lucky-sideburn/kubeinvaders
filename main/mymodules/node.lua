@@ -50,7 +50,7 @@ function M.http_get_nodes_result(self, _, response)
 	local nodes = json.decode(response.response)
 	local node_items = nodes["items"]
 	local node_items_size = table.getn(node_items)
-	local pos_x = 300
+	local pos_x = 500
 	local pos_y = 500
 	local nodes_cnt = 1
 	local master = false
@@ -96,7 +96,7 @@ function M.http_get_nodes_result(self, _, response)
 			kubernetes_nodes[k1] = { name = v2["name"], id = new_node }
 			if ((nodes_cnt % 15 ) == 0) then
 				pos_y = pos_y + 200
-				pos_x = 300
+				pos_x = 500
 			else
 				pos_x = pos_x + 80
 			end

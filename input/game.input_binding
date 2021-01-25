@@ -58,6 +58,10 @@ key_trigger {
   input: KEY_W
   action: "worker"
 }
+key_trigger {
+  input: KEY_E
+  action: "hide_worker"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_1
   action: "click"

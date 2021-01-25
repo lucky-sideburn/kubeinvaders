@@ -26,7 +26,7 @@ function M.get_nodes()
 
 	worker_diff_time = current_time - latest_kubernetes_nodes_request_show
 
-	if worker_diff_time > 0.05 then
+	if worker_diff_time > 0.1 then
 		kubernetes_nodes_size = table.getn(kubernetes_nodes)
 		if kubernetes_nodes_size == 0  and not kubernetes_nodes_request_show then
 			print("Show kubernetes nodes...")

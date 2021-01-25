@@ -83,9 +83,8 @@ to Kubernetes:
 
 Download the game from these locations:
 
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node-2.0/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node-2.0/x86_64-linux.zip)
-
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-linux.zip)
 ### Run directly from Docker
 
 This method can be used for developing KubeInvaders and testing the HTML5 bundle.

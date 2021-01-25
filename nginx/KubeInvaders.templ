@@ -23,12 +23,12 @@ server {
         
         if string.find(res, "chaos_node_jobs_total_on") then
           node = string.gsub(res, "chaos_node_jobs_total_on_", "")
-          metric = "chaos_jobs_node_count{node=".. node .."}"
+          metric = "chaos_jobs_node_count{\"node\"=".. node .."}"
           ngx.say(metric ..  " " .. red:get(res))
         
         elseif string.find(res, "deleted_pods_total_on")  then
           namespace = string.gsub(res, "deleted_pods_total_on_", "")
-          metric = "deleted_namespace_pods_count{namespace=".. namespace .."}"
+          metric = "deleted_namespace_pods_count{\"namespace=\"".. namespace .."}"
           ngx.say(metric ..  " " .. red:get(res))
         else
           ngx.say(res ..  " " .. red:get(res))

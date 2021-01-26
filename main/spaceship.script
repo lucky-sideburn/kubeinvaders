@@ -220,7 +220,7 @@ function start_chaos()
 		timer.repeat_seconds(0.5, function()
 			if automatic then
 				spaceship.auto()
-				math.randomseed(os.clock()*100000000000)
+				--math.randomseed(os.clock()*100000000000)
 				local math_rand = math.random(1, 100)
 				if math_rand % 3 == 0 then
 					k8s_node.get_nodes()

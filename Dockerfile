@@ -13,6 +13,7 @@ RUN wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 RUN codename=`grep -Po 'VERSION="[0-9]+ \(\K[^)]+' /etc/os-release` && echo "deb http://openresty.org/package/debian $codename openresty" | tee /etc/apt/sources.list.d/openresty.list
 RUN apt-get update
 RUN apt-get -y install openresty
+RUN chmod 777 /usr/local/openresty/nginx
 
 # Install kube-linter
 RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.1.5/kube-linter-linux.tar.gz

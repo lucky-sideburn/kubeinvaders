@@ -78,9 +78,10 @@ deleted_namespace_pods_count{namespace=myawesomenamespace} 8
 
 ![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
 
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana1.png)
+
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana2.png)
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana.png)
 ## Installation
 ### Install to Kubernetes with Helm (v3+)
 

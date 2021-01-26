@@ -8,8 +8,8 @@
 
 1. [Description](#Description)
 2. [Special Input Keys and features](#Special-Input-Keys-and-features)
-3. [Installation](#Installation)
-4. [Prometheus Metrics](#Metrics)
+3. [Prometheus metrics and Grafana](#Metrics)
+4. [Installation](#Installation)
 5. [Notes for large clusters](#Notes-for-large-clusters)
 6. [Configuration](#Configuration)
 
@@ -45,9 +45,33 @@ Move the spaceship over a white alien.
 ## Hands-on Tutorial
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).
+## Metrics
 
+KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
+
+Example of metrics
+
+```bash
+curl localhost:8080/metrics
+
+# Total number of chaos jobs executed on the node workernode01
+chaos_jobs_node_count{node=workernode01} 100
+
+# Total number of chaos jobs executed against all worker nodes
+chaos_node_jobs_total 200
+
+# Total number of deleted pods
+deleted_pods_total 16
+
+# Total number of deleted pods
+deleted_namespace_pods_count{namespace=myawesomenamespace} 8
+```
+![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana2.png)
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana.png)
 ## Installation
-
 ### Install to Kubernetes with Helm (v3+)
 
 ```bash
@@ -83,9 +107,8 @@ to Kubernetes:
 
 Download the game from these locations:
 
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node-2.0/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/chaos_node-2.0/x86_64-linux.zip)
-
+* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-darwin.zip)
+* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-linux.zip)
 ### Run directly from Docker
 
 This method can be used for developing KubeInvaders and testing the HTML5 bundle.
@@ -134,28 +157,6 @@ For clusters with many workers-nodes, KubeInvaders selects a subset of random it
 | Item      | Max Number   |
 |-----------|--------------|
 | Nodes     | 15           |
-## Metrics
-
-KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
-
-Example of metrics
-
-```bash
-curl localhost:8080/metrics
-
-# Total number of chaos jobs executed on the node workernode01
-chaos_jobs_node_count{node=workernode01} 100
-
-# Total number of chaos jobs executed against all worker nodes
-chaos_node_jobs_total 200
-
-# Total number of deleted pods
-deleted_pods_total 16
-
-# Total number of deleted pods
-deleted_namespace_pods_count{namespace=myawesomenamespace} 8
-```
-
 ## Configuration
 ### Environment Variables - Make the game more difficult to win!
 

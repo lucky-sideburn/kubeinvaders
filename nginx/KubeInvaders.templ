@@ -2,8 +2,12 @@ server {
   listen 8080 default_server;
   root /var/www/html/;
   index index.html;
-
+  
   location / {
+    add_header 'Access-Control-Allow-Origin' '*';
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range';
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
     try_files $uri $uri/ =404;
     add_header Last-Modified $date_gmt;
     add_header Cache-Control 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0';
@@ -12,12 +16,63 @@ server {
     etag off;
   }
 
+  location /kube {
+    rewrite ^/kube(.*)$ /api$1 break;
+    proxy_pass ${ENDPOINT};
+    access_by_lua_file /tmp/metrics.lua;
+  }
+
+  location /kube/api {
+    rewrite ^/kube/api(.*)$ /api$1 break;
+    proxy_pass ${ENDPOINT};
+    access_by_lua_file /tmp/metrics.lua;
+  }
+
+  location /kube/pods {
+    access_by_lua_file "/tmp/pod.lua";
+  }
+
+  location /kube/delete/pods {
+    access_by_lua_file "/tmp/pod.lua";
+  }
+
+  location /kube/nodes {
+    access_by_lua_file "/tmp/node.lua";
+  }
+
+  location /kube/chaos/nodes {
+    access_by_lua_file "/tmp/chaos-node.lua";
+  }
+
+  location /kube/endpoint {
+    content_by_lua_block {
+      ngx.header['Access-Control-Allow-Origin'] = '*'
+      ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+      ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
+      ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
+      ngx.say(os.getenv("ENDPOINT"))
+    }  
+  }
+
+  location /kube/namespaces {
+    content_by_lua_block {
+      ngx.header['Access-Control-Allow-Origin'] = '*'
+      ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+      ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
+      ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
+      ngx.say(os.getenv("NAMESPACE"))
+    }  
+  }
+
   location /metrics {
     default_type text/html;
     content_by_lua_block {
       local redis = require "resty.redis"
       local red = redis:new()
+
+      -- local okredis, errredis = red:connect(os.getenv("REDIS_HOST"), 6379)
       local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+
       for i, res in ipairs(red:keys("*")) do
         ngx.log(ngx.ERR, res)
         
@@ -42,34 +97,10 @@ server {
     content_by_lua_block {
       local arg = ngx.req.get_uri_args()
       ngx.req.read_body()
-      local request_body = ngx.req.get_body_data()
+      local request_body = ngx.req.get_body_data()  
       local handle = io.popen("/opt/kube-linter-parser.sh " .. arg['k8s_url'] .. " " .. arg['namespace'] .. " " .. arg['pod_name'] .. " " ..  arg['token'])
       local result = handle:read("*a")
       ngx.say(result)
     }
-  }
-
-  location /kube/chaos-node {
-    default_type text/html;
-    access_by_lua_file /tmp/metrics.lua;
-    content_by_lua_block {
-      local arg = ngx.req.get_uri_args()
-      ngx.req.read_body()
-      local request_body = ngx.req.get_body_data()
-      os.execute("/opt/chaos-node.sh " .. arg['k8s_url'] .. " " .. arg['token'] .. " " .. arg['node_name'] .. " " ..  arg['namespace'] .. " &")
-      ngx.say('chaos_node started!')
-    }
-  }
-  
-  location /kube {
-     rewrite ^/kube(.*)$ /api$1 break;
-     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
-     access_by_lua_file /tmp/metrics.lua;
-  }
-
-  location /kube/api {
-     rewrite ^/kube/api(.*)$ /api$1 break;
-     proxy_pass https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS};
-    access_by_lua_file /tmp/metrics.lua;
   }
 }

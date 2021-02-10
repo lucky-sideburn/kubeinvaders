@@ -1,39 +1,44 @@
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
 
-*Gamified chaos engineering and analysis tool for Kubernetes. It is like Space Invaders but the aliens are PODs.*
+*Gamified chaos engineering and analysis tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
 
 # Table of Contents
 
 1. [Description](#Description)
-2. [Special Input Keys and features](#Special-Input-Keys-and-features)
-3. [Prometheus metrics and Grafana](#Metrics)
-4. [Installation](#Installation)
-5. [Notes for large clusters](#Notes-for-large-clusters)
-6. [Configuration](#Configuration)
+2. [New Version (game part in pure JS)](#new-version)
+3. [Special Input Keys and features](#Special-Input-Keys-and-features)
+4. [Prometheus metrics and Grafana](#Metrics)
+5. [Installation](#Installation)
+6. [Notes for large clusters](#Notes-for-large-clusters)
+7. [Configuration](#Configuration)
 
 ## Description
 
-KubeInvaders has been developed using [Defold](https://www.defold.com/).
-
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
+## New Version
 
-I added also new experimental features like a linter for the pods. The current latest image of the game include [kube-linter](https://github.com/stackrox/kube-linter) developed by [stackrox](https://github.com/stackrox).
+KubeInvaders is going to be full open-source. Meanwhile it possibile choose 2 different version.
+
+Legacy version: Made with Defold as game engine
+New version: It has been written in pure Javascript and it is totaly open-source
+
+The new version of KubeInvaders has fewer features than legacy but is optimized for chaos engineering because pods and nodes are rendered together and there is a shuffle for better random experiments.
 
 ## Special Input Keys and features
 
-| Input           | Action                                                                                     |
-|-----------------|--------------------------------------------------------------------------------------------|
-|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3). |
-|     a           | Switch to automatic mode.                                                                  |
-|     m           | Switch to manual mode.                                                                     |
-|     h           | Show special keys.                                                                         |
-|     q           | Hide help for special keys.                                                                |
-|     i           | Show pod's name. Move the ship towards an alien.                                           |
-|     r           | Refresh log of a pod when spaceship is over the alien.                                     |
-|     k           | *(NEW)* Perform [kube-linter](https://github.com/stackrox/kube-linter) analysis for a pod. |
-|     w           | *(NEW)* Chaos engineering against Kubernetes nodes.                                        |
+| Input           | Action                                                                                     | Version (New or Legacy)|
+|-----------------|--------------------------------------------------------------------------------------------|------------------------|
+|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3). | New, Legacy            |
+|     a           | Switch to automatic mode.                                                                  | Legacy                 |
+|     m           | Switch to manual mode.                                                                     | Legacy                 |
+|     h           | Show special keys.                                                                         | New, Legacy            |
+|     q           | Hide help for special keys.                                                                | New, Legacy            |
+|     i           | Show pod's name. Move the ship towards an alien.                                           | Legacy                 |
+|     r           | Refresh log of a pod when spaceship is over the alien.                                     | Legacy                 |
+|     k           | *(NEW)* Perform [kube-linter](https://github.com/stackrox/kube-linter) analysis for a pod. | Legacy                 |
+|     w           | *(NEW)* Chaos engineering against Kubernetes nodes.                                        | New, Legacy            |
 
 ### Known problems
 
@@ -82,44 +87,15 @@ git clone https://github.com/lucky-sideburn/KubeInvaders.git
 
 kubectl create namespace kubeinvaders
 
+# Install new and full open-source version
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io
-```
-### Install client on your workstation
+--set ingress.hostName=kubeinvaders.io --set image.tag=latest
 
-The easiest way to install KubeInvaders is on your workstation but if you choose this method you cannot use kube-linter feature directly from the game. Follow this guide:
-
-1. Start KubeInvaders docker container locally
-
-```bash
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://<k8s_url> --env NAMESPACE=namespace1,namespace2 --env TOKEN=<Service Account token> -p 8080:8080  --name kubeinvaders docker.io/luckysideburn/kubeinvaders
-```
-
-2. Create $HOME/.KubeInv.json like this - The endpoint is localhost:8080 because it is using KubeInvaders container as a proxy 
-to Kubernetes:
-
-```json
-{
-  "token": "<Service Account Token>",
-  "endpoint": "http://localhost:8080",
-  "namespace": "namespace1,namespace2"
-}
-```
-
-Download the game from these locations:
-
-* [MacOS](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-darwin.zip)
-* [Linux](https://github.com/lucky-sideburn/KubeInvaders/releases/download/1.0-metrics/x86_64-linux.zip)
-### Run directly from Docker
-
-This method can be used for developing KubeInvaders and testing the HTML5 bundle.
-Using this method you can have problem of CORS:
-
-```bash
-docker build . -t kubeinvaders_dev
-
-docker rm kubeinvaders -f  && docker run --env DEVELOPMENT=true --env ENDPOINT=https://youk8scluster:8443 --env NAMESPACE=kubeinvadersdemo --env TOKEN=xxxx -p 8080:8080 --name kubeinvaders kubeinvaders_dev
+# Install legacy version
+helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+--namespace kubeinvaders ./helm-charts/kubeinvaders \
+--set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
 ### Install KubeInvaders on OpenShift
 
@@ -147,11 +123,6 @@ KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kuber
 
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
-
-#### How the configuration of KubeInvaders DeploymentConfig should be (remember to use your TARGET_NAMESPACE and ROUTE_HOST)
-
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/dcenv.png)
-
 ## Notes for large clusters
 
 For clusters with many workers-nodes, KubeInvaders selects a subset of random items.
@@ -160,7 +131,7 @@ For clusters with many workers-nodes, KubeInvaders selects a subset of random it
 |-----------|--------------|
 | Nodes     | 15           |
 ## Configuration
-### Environment Variables - Make the game more difficult to win!
+### (Legacy Version) Environment Variables - Make the game more difficult to win!
 
 Set the following variables in Kubernetes Deployment or OpenShift DeploymentConfig:
 

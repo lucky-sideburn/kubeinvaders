@@ -9,7 +9,11 @@ var spaceshipHeight = 60;
 var spaceshipWidth = 60;
 var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
-var namespace = "kubeinvadersdemo";
+var cluster = "CLUSTER_PLACEOLDER";
+var namespaces = ["kubeinvadersdemo", "foobar"];
+var namespaces_index = 0;
+var namespace = namespaces[namespaces_index];
+var endpoint = "";
 
 // pods list from kubernetes
 var pods = [];
@@ -64,14 +68,43 @@ var collisionDetected = false;
 var aliensY = [];
 var aliensIncrementY = 50;
 
+var shuffle = true;
+var help = false;
+
+function getEndpoint(){
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        endpoint = this.responseText;
+    };;
+    oReq.open("GET", "http://localhost:8080/kube/endpoint");
+    oReq.send();
+}
+
+function startChaosNode(node_name){
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        console.log(JSON.parse(this.responseText))
+    };;
+    oReq.open("GET", "http://localhost:8080/kube/chaos/nodes?nodename=node_name=" + node_name + "&namespace=" + namespace);
+    oReq.send();
+}
+
+function deletePods(pod_name){
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        console.log(JSON.parse(this.responseText))
+    };;
+    oReq.open("GET", "http://localhost:8080/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
+    oReq.send();
+}
+
 function getPods(){
-    foo = pods;
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         json_parsed = JSON.parse(this.responseText)
-        pods = json_parsed["items"];
+        pods = json_parsed["items"].concat(nodes);
     };;
-    oReq.open("GET", "http://localhost:8080/kube/pods?namespace=" + namespace);
+    oReq.open("GET", "http://localhost:8080/kube/pods?action=list&namespace=" + namespace);
     oReq.send();
 }
 
@@ -86,7 +119,8 @@ function getNodes(){
 }
 
 function getKubeItems() { 
-    getPods()
+    getNodes();
+    getPods();
 }
 
 function keyDownHandler(e) {
@@ -114,9 +148,42 @@ function keyDownHandler(e) {
         console.log("Spaceship Y: " + spaceshipY);
         console.log("Spaceship X: " + spaceshipX);
     }
+    else if(e.keyCode == 83) {
+        if (shuffle) {
+            shuffle = false;
+            console.log("Deactivate shuffle");
+        }
+        else {
+            shuffle = true
+            console.log("Activate shuffle");
+        }
+    }
     else if(e.keyCode == 32) {
         console.log("Shot");
         shot = true
+    }
+    else if(e.keyCode == 78) {
+        console.log("Change Namespace");
+        if (namespaces_index < namespaces.length-1) {
+            namespaces_index +=1 ;
+        }
+        else {
+            namespaces_index = 0;
+        }
+        namespace = namespaces[namespaces_index];
+        aliens = [];
+        pods = [];
+    }
+    else if(e.keyCode == 72) {
+        console.log("Help");
+        if (help) {
+            help = false;
+            console.log("Deactivate help");
+        }
+        else {
+            help = true
+            console.log("Activate help");
+        }
     }
 }
 
@@ -138,10 +205,17 @@ function keyUpHandler(e) {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-function drawAlien(alienX, alienY) {
+function drawAlien(alienX, alienY, name) {
     var image = new Image(); // Image constructor
-    image.src = './sprite_invader.png';
-    ctx.drawImage(image, alienX, alienY, 40, 40);
+    if (nodes.includes(name)) {
+        image.src = './k8s_node.png';
+        ctx.drawImage(image, alienX, alienY, 30, 40);
+    }
+    else {
+        image.src = './sprite_invader.png';
+        ctx.drawImage(image, alienX, alienY, 40, 40);
+    }
+    
     ctx.closePath();
 }
 
@@ -152,8 +226,6 @@ function checkRocketAlienCollision(){
         for (i=aliens.length - 1; i >= 0; i--) {
             if (aliens[i]["active"] && (rocketY - aliens[i]["y"] < 5)) {
                 var rangeX = []
-                //console.log(aliens[i]);
-                //console.log(aliens[i]["x"]);
                 rangeX.push(aliens[i]["x"]);
 
                 for (k=aliens[i]["x"]; k<aliens[i]["x"]+aliensWidth; k++) {
@@ -166,7 +238,14 @@ function checkRocketAlienCollision(){
                     console.log("collision detected");
                     collisionDetected = true;
                     aliens[i]["active"] = false;
-                    aliens[i]["name"] = "killed_pod";
+                    if (nodes.includes(aliens[i]["name"])) {
+                        startChaosNode(aliens[i]["name"]);
+                        aliens[i]["name"] = "killed_pod"; 
+                    }
+                    else {
+                        deletePods(aliens[i]["name"]);
+                        aliens[i]["name"] = "killed_pod";
+                    }
                     return true;
                 }
             }
@@ -175,13 +254,15 @@ function checkRocketAlienCollision(){
     return false;
 }
 
+function shuffleAliens() {
+    pods = pods.sort(() => Math.random() - 0.5)
+}
 function drawRocket() {
     var image = new Image(); // Image constructor
     image.src = './kuberocket.png';
     ctx.drawImage(image, rocketX, rocketY, 20, 20);
 
     ctx.closePath();
-    //console.log("Rocket X: " + rocketX + " Rocket Y: " + rocketY);
 
     if (checkRocketAlienCollision()) {
         rocketY = -100;
@@ -215,6 +296,7 @@ function drawSpaceship() {
 }
 
 function draw() {
+   
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawSpaceship();
     
@@ -258,8 +340,21 @@ function draw() {
     
     for (i=0; i<aliens.length; i++) {
         if (aliens[i]["active"]) {
-            drawAlien(aliens[i]["x"], aliens[i]["y"]);
+            drawAlien(aliens[i]["x"], aliens[i]["y"], aliens[i]["name"]);
         }
+    }
+    ctx.fillStyle = 'white';
+    ctx.font = '15px Verdana';
+    ctx.fillText('Cluster: ' + endpoint, 10, 400);
+    ctx.fillText('Current Namespace: ' + namespace, 10, 420);
+    ctx.fillText('Alien Shuffle: ' + shuffle, 10, 440);
+    ctx.fillText('press \'h\' for help!', 10, 470);
+
+    if (help) {
+        ctx.fillText('Special Keys:', 10, 300);
+        ctx.fillText('h => Activate or deactivate Help', 10, 320);
+        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 340);
+        ctx.fillText('n => Change namespace', 10, 360);
     }
 }
 
@@ -282,6 +377,11 @@ function findReplace() {
 }
 
 function setAliens() {
+    if (shuffle) {
+        pods = pods.sort(() => Math.random() - 0.5)
+    }
+    aliens = [];
+    console.log("Length of aliensY array: " + aliensY.length);
     if (pods.length > 0) {
         for (k=10; k>0; k--) {
             if (!aliensY.includes(k)) {
@@ -301,7 +401,7 @@ function setAliens() {
                     aliens.push({"name": pods[i], "x": x, "y": y, "active": true});
                     cnt =+ 1;
                 }
-                if (aliens.length == 12) {
+                if (aliens.length % 12 == 0) {
                     console.log("we need another line of aliens for Y="+aliensIncrementY);
                     x = 10;
                     y += aliensIncrementY;
@@ -320,6 +420,7 @@ function setAliens() {
     }
 }
 
+getEndpoint();
 setInterval(draw, 10);
 setInterval(getKubeItems, 1000);
 setInterval(setAliens, 1000);

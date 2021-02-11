@@ -1,4 +1,4 @@
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/logo.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/logo.png)
 
 *Gamified chaos engineering and analysis tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
@@ -76,9 +76,9 @@ Example of metrics
 
 ![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana1.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana1.png)
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana2.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
 
 
 ## Installation

@@ -19,7 +19,12 @@ math.randomseed(os.clock()*100000000000)
 local rand = math.random(999, 9999)
 local arg = ngx.req.get_uri_args()
 
-local k8s_url = os.getenv("ENDPOINT")
+if os.getenv("KUBERNETES_SERVICE_HOST") then
+  k8s_url = "https://" .. os.getenv("KUBERNETES_SERVICE_HOST") .. ":" .. os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
+else
+  k8s_url = os.getenv("ENDPOINT")
+end
+
 local token = os.getenv("TOKEN")
 local namespace = arg['namespace']
 local node_name =  arg['nodename']

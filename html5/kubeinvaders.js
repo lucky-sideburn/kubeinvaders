@@ -104,7 +104,7 @@ function getEndpoint(){
 function startChaosNode(node_name){
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        console.log(JSON.parse(this.responseText))
+        //console.log(JSON.parse(this.responseText))
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=node_name=" + node_name + "&namespace=" + namespace);
     oReq.send();
@@ -113,7 +113,7 @@ function startChaosNode(node_name){
 function deletePods(pod_name){
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        console.log(JSON.parse(this.responseText))
+        //console.log(JSON.parse(this.responseText))
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
@@ -147,44 +147,44 @@ function getKubeItems() {
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight") {
         rightPressed = true;
-        console.log("Go right");
-        console.log("Spaceship Y:" + spaceshipY);
-        console.log("Spaceship X: " + spaceshipX);
+        //console.log("Go right");
+        //console.log("Spaceship Y:" + spaceshipY);
+        //console.log("Spaceship X: " + spaceshipX);
     }
     else if(e.key == "Left" || e.key == "ArrowLeft") {
         leftPressed = true;
-        console.log("Go left");
-        console.log("Spaceship Y:" + spaceshipY);
-        console.log("Spaceship X: " + spaceshipX);
+        //console.log("Go left");
+        //console.log("Spaceship Y:" + spaceshipY);
+        //console.log("Spaceship X: " + spaceshipX);
     }
     if(e.key == "Up" || e.key == "ArrowUp") {
         upPressed = true;
-        console.log("Go up");
-        console.log("Spaceship Y:" + spaceshipY);
-        console.log("Spaceship X: " + spaceshipX);
+        //console.log("Go up");
+        //console.log("Spaceship Y:" + spaceshipY);
+        //console.log("Spaceship X: " + spaceshipX);
     }
     else if(e.key == "Down" || e.key == "ArrowDown") {
         downPressed = true;
-        console.log("Go down");
-        console.log("Spaceship Y: " + spaceshipY);
-        console.log("Spaceship X: " + spaceshipX);
+        //console.log("Go down");
+        //console.log("Spaceship Y: " + spaceshipY);
+        //console.log("Spaceship X: " + spaceshipX);
     }
     else if(e.keyCode == 83) {
         if (shuffle) {
             shuffle = false;
-            console.log("Deactivate shuffle");
+            //console.log("Deactivate shuffle");
         }
         else {
             shuffle = true
-            console.log("Activate shuffle");
+            //console.log("Activate shuffle");
         }
     }
     else if(e.keyCode == 32) {
-        console.log("Shot");
+        //console.log("Shot");
         shot = true
     }
     else if(e.keyCode == 78) {
-        console.log("Change Namespace");
+        //console.log("Change Namespace");
         if (namespaces_index < namespaces.length-1) {
             namespaces_index +=1 ;
         }
@@ -196,14 +196,14 @@ function keyDownHandler(e) {
         pods = [];
     }
     else if(e.keyCode == 72) {
-        console.log("Help");
+        //console.log("Help");
         if (help) {
             help = false;
-            console.log("Deactivate help");
+            //console.log("Deactivate help");
         }
         else {
             help = true
-            console.log("Activate help");
+            //console.log("Activate help");
         }
     }
 }
@@ -242,7 +242,7 @@ function drawAlien(alienX, alienY, name) {
 
 function checkRocketAlienCollision(){
     if (contains(aliensY, rocketY)){
-        console.log("The y of rocket is the same of an alien. rocketY=" + rocketY + " List of aliensY:" + aliensY);
+        //console.log("The y of rocket is the same of an alien. rocketY=" + rocketY + " List of aliensY:" + aliensY);
         var i;
         for (i=aliens.length - 1; i >= 0; i--) {
             if (aliens[i]["active"] && (rocketY - aliens[i]["y"] < 5)) {
@@ -253,10 +253,10 @@ function checkRocketAlienCollision(){
                     rangeX.push(k);
                 }
 
-                console.log("rangeX is:" + rangeX);
+                //console.log("rangeX is:" + rangeX);
                 
                 if(contains(rangeX, rocketX)) {
-                    console.log("collision detected");
+                    //console.log("collision detected");
                     collisionDetected = true;
                     aliens[i]["active"] = false;
                     if (contains(nodes, aliens[i]["name"])) {
@@ -294,7 +294,7 @@ function drawRocket() {
 
     if(shot && rocketLaunched) {
         if (rocketY < 0){
-            console.log("Rocket arrived to the end of canvas");
+            //console.log("Rocket arrived to the end of canvas");
             shot = false;
             rocketLaunched = false;
         }
@@ -402,7 +402,7 @@ function setAliens() {
         pods = pods.sort(() => Math.random() - 0.5)
     }
     aliens = [];
-    console.log("Length of aliensY array: " + aliensY.length);
+    //console.log("Length of aliensY array: " + aliensY.length);
     if (pods.length > 0) {
         for (k=10; k>0; k--) {
             if (!contains(aliensY, k)) {
@@ -423,7 +423,7 @@ function setAliens() {
                     cnt =+ 1;
                 }
                 if (aliens.length % 12 == 0) {
-                    console.log("we need another line of aliens for Y="+aliensIncrementY);
+                    //console.log("we need another line of aliens for Y="+aliensIncrementY);
                     x = 10;
                     y += aliensIncrementY;
                     for (k=y+10; k>=y; k--) {
@@ -431,7 +431,7 @@ function setAliens() {
                             aliensY.push(k);
                         }
                     }
-                    console.log("aliensY contains new Y for detecting eventual collisions. aliensY="+aliensY);
+                    //console.log("aliensY contains new Y for detecting eventual collisions. aliensY="+aliensY);
                 }
                 else {
                     x += 60;

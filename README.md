@@ -101,7 +101,7 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 ### Security Notes
 
-In order to restrict the access to the Kubeinvaders endpoint add this white list into the ingress.
+In order to restrict the access to the Kubeinvaders endpoint add this annotation into the ingress.
 
 ```yaml
 nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32

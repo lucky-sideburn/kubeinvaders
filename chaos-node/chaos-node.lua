@@ -3,6 +3,9 @@ loadfile("/tmp/metrics.lua")
 local https = require "ssl.https"
 local ltn12 = require "ltn12"
 local json = require 'lunajson'
+local redis = require "resty.redis"
+local arg = ngx.req.get_uri_args()
+local incr = 0
 
 function read_all(file)
     local f = assert(io.open(file, "rb"))
@@ -19,9 +22,42 @@ local arg = ngx.req.get_uri_args()
 local k8s_url = os.getenv("ENDPOINT")
 local token = os.getenv("TOKEN")
 local namespace = arg['namespace']
-local node_name =  arg['node_name']
+local node_name =  arg['nodename']
 local url = k8s_url .. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
 local resp = {}
+
+if ngx.var.request_method == "GET" then
+  local red = redis:new()
+  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+
+  if okredis then
+    ngx.log(ngx.ERR, "Connection to Redis is ok")
+  else
+    ngx.log(ngx.ERR, "Connection to Redis is not ok")
+    ngx.log(ngx.ERR, errredis)
+  end
+  -- Count the total of chaos jobs launched against nodes
+  local chaos_node_res, err = red:get("chaos_node_jobs_total")
+
+  if chaos_node_res == ngx.null then
+    ngx.say(err)
+    red:set("chaos_node_jobs_total", 0)
+  else
+    local incr = chaos_node_res + 1
+    local res, err = red:set("chaos_node_jobs_total",incr)
+  end
+
+  -- Count the total of chaos jobs launched against nodes per node
+  local node_name = arg['nodename']
+  local chaos_node_res, err = red:get("chaos_node_jobs_total_on_" .. node_name)
+  if chaos_node_res == ngx.null then
+    ngx.say(err)
+    red:set("chaos_node_jobs_total_on_" .. node_name, 1)
+  else
+    local incr = chaos_node_res + 1
+    local res, err = red:set("chaos_node_jobs_total_on_" .. node_name,incr)
+  end
+end
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
 ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'

@@ -83,6 +83,8 @@ objects:
             value: "${REDIS_HOST}" 
           - name: ROUTE_HOST
             value: "${ROUTE_HOST}" 
+          - name: ROUTE_HOST
+            value: "${ENDPOINT}"
           - name: NAMESPACE
             value: "${TARGET_NAMESPACE}"
           - name: UPDATETIME

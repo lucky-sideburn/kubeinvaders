@@ -47,10 +47,6 @@ if action == "delete" then
       red:set("deleted_pods_total", incr)
   end
 
-  -- TODO: Make a better regular expression!
-  local namespace_pods = string.match(ngx.var.request_uri, '^.*/namespaces/(.*)/.*$')
-  local namespace = namespace_pods:gsub("/pods", "")
-
   -- Count the total of deleted pods for namespace
   local res, err = red:get("deleted_pods_total_on_" .. namespace)
 

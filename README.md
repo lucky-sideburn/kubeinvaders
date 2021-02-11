@@ -14,15 +14,18 @@
 6. [Notes for large clusters](#Notes-for-large-clusters)
 7. [Configuration](#Configuration)
 
+
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
+
+
 ## New Version
 
-KubeInvaders is going to be full open-source. Meanwhile it possibile choose 2 different version.
+KubeInvaders is going to be full open-source. Meanwhile it is possibile choose between 2 different versions.
 
-Legacy version: Made with Defold as game engine
-New version: It has been written in pure Javascript and it is totaly open-source
+Legacy version: Made suing Defold as game engine.
+New version: It has been written in pure Javascript and it is totally open-source.
 
 The new version of KubeInvaders has fewer features than legacy but is optimized for chaos engineering because pods and nodes are rendered together and there is a shuffle for better random experiments.
 
@@ -43,13 +46,12 @@ The new version of KubeInvaders has fewer features than legacy but is optimized 
 ### Known problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
-### Show logs of a pod
-
-Move the spaceship over a white alien.
 
 ## Hands-on Tutorial
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).
+
+
 ## Metrics
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
@@ -78,7 +80,9 @@ Example of metrics
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana2.png)
 
+
 ## Installation
+
 ### Install to Kubernetes with Helm (v3+)
 
 ```bash
@@ -97,6 +101,7 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
+
 ### Install KubeInvaders on OpenShift
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
@@ -123,6 +128,7 @@ KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kuber
 
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
+
 ## Notes for large clusters
 
 For clusters with many workers-nodes, KubeInvaders selects a subset of random items.
@@ -130,7 +136,10 @@ For clusters with many workers-nodes, KubeInvaders selects a subset of random it
 | Item      | Max Number   |
 |-----------|--------------|
 | Nodes     | 15           |
+
+
 ## Configuration
+
 ### (Legacy Version) Environment Variables - Make the game more difficult to win!
 
 Set the following variables in Kubernetes Deployment or OpenShift DeploymentConfig:

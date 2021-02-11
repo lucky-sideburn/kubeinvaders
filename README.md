@@ -64,7 +64,7 @@ scrape_configs:
   static_configs:
   - targets:
     - kubeinvaders.kubeinvaders.svc.cluster.local:8080
-````
+```
 Example of metrics
 
 | Metric           | Description                                                                                                                          |  
@@ -80,9 +80,7 @@ Example of metrics
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
 
-
 ## Installation
-
 ### Install to Kubernetes with Helm (v3+)
 
 ```bash
@@ -101,7 +99,13 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
+### Security Notes
 
+In order to restrict the access to the Kubeinvaders endpoint add this white list into the ingress.
+
+```yaml
+nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
+```
 ### Install KubeInvaders on OpenShift
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
@@ -131,7 +135,7 @@ oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NA
 
 ## Notes for large clusters
 
-For clusters with many workers-nodes, KubeInvaders selects a subset of random items.
+For clusters with many workers-nodes, KubeInvaders (legacy version) selects a subset of random items.
 
 | Item      | Max Number   |
 |-----------|--------------|

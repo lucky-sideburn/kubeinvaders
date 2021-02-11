@@ -1,7 +1,8 @@
-loadfile("/tmp/metrics.lua")
 local https = require "ssl.https"
 local ltn12 = require "ltn12"
 local json = require 'lunajson'
+local redis = require "resty.redis"
+local incr = 0
 
 if os.getenv("KUBERNETES_SERVICE_HOST") then
   k8s_url = "https://" .. os.getenv("KUBERNETES_SERVICE_HOST") .. ":" .. os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
@@ -23,6 +24,44 @@ ngx.header['Access-Control-Allow-Origin'] = '*'
 ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
 ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
+
+
+if action == "delete" then
+  local red = redis:new()
+  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+
+  if okredis then
+    ngx.log(ngx.ERR, "Connection to Redis is ok")
+  else
+    ngx.log(ngx.ERR, "Connection to Redis is not ok")
+    ngx.log(ngx.ERR, errredis)
+  end
+  -- Count the total of deleted pods
+  local res, err = red:get("deleted_pods_total")
+
+  if res == ngx.null then
+    ngx.say(err)
+    red:set("deleted_pods_total", 1)
+  else
+      incr = res + 1
+      red:set("deleted_pods_total", incr)
+  end
+
+  -- TODO: Make a better regular expression!
+  local namespace_pods = string.match(ngx.var.request_uri, '^.*/namespaces/(.*)/.*$')
+  local namespace = namespace_pods:gsub("/pods", "")
+
+  -- Count the total of deleted pods for namespace
+  local res, err = red:get("deleted_pods_total_on_" .. namespace)
+
+  if res == ngx.null then
+    red:set("deleted_pods_total_on_" .. namespace, 1)
+  else
+    incr = res + 1
+    red:set("deleted_pods_total_on_" .. namespace, incr)
+  end
+end
+
 
 if action == "list" then
   url = k8s_url.. "/api/v1/namespaces/" .. namespace  .. "/pods"
@@ -60,8 +99,6 @@ ngx.log(ngx.ERR, "REQUEST LOGS...")
 ngx.log(ngx.ERR, ok)
 ngx.log(ngx.ERR, statusCode)
 ngx.log(ngx.ERR, statusText)
-
-ngx.log(ngx.ERR, table.concat(resp))
 
 if action == "list" then
   local i = 1

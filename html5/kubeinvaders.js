@@ -87,7 +87,7 @@ function getNamespaces(){
 	namespaces = namespaces.split(",");
 	namespace = namespaces[namespaces_index];
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/namespaces");
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/namespaces");
     oReq.send();
 }
 
@@ -97,7 +97,7 @@ function getEndpoint(){
     oReq.onload = function () {
         endpoint = this.responseText;
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/endpoint");
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/endpoint");
     oReq.send();
 }
 
@@ -106,7 +106,7 @@ function startChaosNode(node_name){
     oReq.onload = function () {
         console.log(JSON.parse(this.responseText))
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/chaos/nodes?nodename=node_name=" + node_name + "&namespace=" + namespace);
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=node_name=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -115,7 +115,7 @@ function deletePods(pod_name){
     oReq.onload = function () {
         console.log(JSON.parse(this.responseText))
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -125,7 +125,7 @@ function getPods(){
         json_parsed = JSON.parse(this.responseText)
         pods = json_parsed["items"].concat(nodes);
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/pods?action=list&namespace=" + namespace);
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=list&namespace=" + namespace);
     oReq.send();
 }
 
@@ -135,7 +135,7 @@ function getNodes(){
         json_parsed = JSON.parse(this.responseText)
         nodes = json_parsed["items"];
     };;
-    oReq.open("GET", "https://kubeinvaders.io/kube/nodes");
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/nodes");
     oReq.send();
 }
 

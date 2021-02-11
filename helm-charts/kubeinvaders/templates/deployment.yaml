@@ -21,6 +21,8 @@ spec:
     spec:
       containers:
         - env:
+          - name: ENDPOINT
+            value: "{{ .Values.ingress.hostName }}"
           - name: ROUTE_HOST
             value: "{{ .Values.ingress.hostName }}"
           - name: NAMESPACE
@@ -43,14 +45,6 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}

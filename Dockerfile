@@ -26,6 +26,9 @@ RUN chmod 775 /usr/local/bin/kube-linter
 COPY kube-linter/kube-linter-parser.sh /opt/kube-linter-parser.sh
 RUN chmod +x /opt/kube-linter-parser.sh
 
+# Install game part
+COPY ./html5 /var/www/html
+
 # Install chaos-node
 COPY chaos-node/chaos-node.sh /opt/
 RUN chmod +x /opt/chaos-node.sh
@@ -34,27 +37,21 @@ RUN chmod +x /opt/chaos-node.sh
 RUN apt-get install redis -y
 COPY redis/redis.conf /etc/redis/redis.conf
 
-# Install KubeInvaders
-COPY ./js-web/KubeInvaders /var/www/html
-
 # Configure Nginx
-#RUN sed -i.bak 's/^user/#user/' /etc/nginx/nginx.conf
 RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
-COPY nginx/metrics.lua-script /tmp/metrics.lua
+COPY nginx/metrics.lua /tmp/metrics.lua
 COPY nginx/pod.lua /tmp/pod.lua
 COPY nginx/node.lua /tmp/node.lua
 COPY chaos-node/chaos-node.lua /tmp/chaos-node.lua
 
-COPY nginx/KubeInvaders.templ /etc/nginx/conf.d/KubeInvaders.templ
-COPY nginx/KubeInvaders_dev.templ /etc/nginx/conf.d/KubeInvaders_dev.templ
-
-RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d/KubeInvaders.templ /etc/nginx/conf.d
+COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
+RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d
 
 EXPOSE 8080
 
 ENV PATH=/usr/local/openresty/nginx/sbin:$PATH
-COPY ./temporary_hack.sh /
-RUN chmod a+rwx temporary_hack.sh
-ENTRYPOINT ["/temporary_hack.sh"]
+COPY ./entrypoint.sh /
+RUN chmod a+rwx ./entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]

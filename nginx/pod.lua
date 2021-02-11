@@ -1,8 +1,14 @@
+loadfile("/tmp/metrics.lua")
 local https = require "ssl.https"
 local ltn12 = require "ltn12"
 local json = require 'lunajson'
 
-local k8s_url = os.getenv("ENDPOINT")
+if os.getenv("KUBERNETES_SERVICE_HOST") then
+  k8s_url = "https://" .. os.getenv("KUBERNETES_SERVICE_HOST") .. ":" .. os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
+else
+  k8s_url = os.getenv("ENDPOINT")
+end
+
 local token = os.getenv("TOKEN")
 local arg = ngx.req.get_uri_args()
 local namespace = arg['namespace']
@@ -55,6 +61,8 @@ ngx.log(ngx.ERR, ok)
 ngx.log(ngx.ERR, statusCode)
 ngx.log(ngx.ERR, statusText)
 
+ngx.log(ngx.ERR, table.concat(resp))
+
 if action == "list" then
   local i = 1
   pods["items"] = {}
@@ -73,7 +81,7 @@ if action == "list" then
   end
 
   if pods_not_found then
-    ngx.log(ngx.ERR, "No pods found into the namespace" .. namespace)
+    ngx.log(ngx.ERR, "No pods found into the namespace " .. namespace)
     ngx.say("{\"items\": []}")
   else
     ngx.say(json.encode(pods))

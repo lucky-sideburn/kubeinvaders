@@ -40,6 +40,7 @@ The new version of KubeInvaders has fewer features than legacy but is optimized 
 |     q           | Hide help for special keys.                                                                | New, Legacy            |
 |     i           | Show pod's name. Move the ship towards an alien.                                           | Legacy                 |
 |     r           | Refresh log of a pod when spaceship is over the alien.                                     | Legacy                 |
+|     s           | Activate or deactivate shuffle                                                             | New                    |
 |     k           | *(NEW)* Perform [kube-linter](https://github.com/stackrox/kube-linter) analysis for a pod. | Legacy                 |
 |     w           | *(NEW)* Chaos engineering against Kubernetes nodes.                                        | New, Legacy            |
 

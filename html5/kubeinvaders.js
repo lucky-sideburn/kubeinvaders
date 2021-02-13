@@ -106,7 +106,7 @@ function startChaosNode(node_name){
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=node_name=" + node_name + "&namespace=" + namespace);
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
 

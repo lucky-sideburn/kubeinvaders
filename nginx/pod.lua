@@ -72,7 +72,7 @@ else
   ngx.exit(ngx.OK)
 end
 
-ngx.log(ngx.ERR, "token: " .. token)
+--ngx.log(ngx.ERR, "token: " .. token)
 ngx.log(ngx.ERR, "url: " .. url)
 ngx.log(ngx.ERR, "namespace: " .. namespace)
 

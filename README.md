@@ -24,7 +24,7 @@ Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check 
 
 KubeInvaders is going to be full open-source. Meanwhile it is possibile choose between 2 different versions.
 
-Legacy version: Made suing Defold as game engine.
+Legacy version: Made using Defold as game engine.
 New version: It has been written in pure Javascript and it is totally open-source.
 
 The new version of KubeInvaders has fewer features than legacy but is optimized for chaos engineering because pods and nodes are rendered together and there is a shuffle for better random experiments.

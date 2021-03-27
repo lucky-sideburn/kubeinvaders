@@ -85,17 +85,17 @@ Example of metrics
 ### Install to Kubernetes with Helm (v3+)
 
 ```bash
-# Set target_namespace and ingress.hostname!
-git clone https://github.com/lucky-sideburn/KubeInvaders.git
+helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
 
 kubectl create namespace kubeinvaders
 
-# Install new and full open-source version
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io --set image.tag=v1.0
+```
+### Install legacy version
 
-# Install legacy version
+```bash
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 --namespace kubeinvaders ./helm-charts/kubeinvaders \
 --set ingress.hostName=kubeinvaders.io --set image.tag=legacy

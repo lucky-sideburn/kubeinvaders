@@ -90,15 +90,13 @@ helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
 kubectl create namespace kubeinvaders
 
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
---namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io --set image.tag=v1.0
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io
 ```
 ### Install legacy version
 
 ```bash
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
---namespace kubeinvaders ./helm-charts/kubeinvaders \
---set ingress.hostName=kubeinvaders.io --set image.tag=legacy
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
 ### Security Notes
 

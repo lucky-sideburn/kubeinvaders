@@ -123,7 +123,11 @@ function getPods(){
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         json_parsed = JSON.parse(this.responseText)
-        pods = json_parsed["items"].concat(nodes);
+        if (nodes && nodes.length > 0){
+            pods = json_parsed["items"].concat(nodes);
+        } else {
+            pods = json_parsed["items"];
+        }
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=list&namespace=" + namespace);
     oReq.send();

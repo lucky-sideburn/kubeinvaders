@@ -32,12 +32,6 @@ spec:
               secretKeyRef:
                 key: token
                 name: kubeinvaders-token
-          - name: HITSLIMIT
-            value: "{{ .Values.hitslimit }}"
-          - name: ALIENPROXIMITY
-            value: "{{ .Values.alienproximity }}"
-          - name: UPDATETIME
-            value: "{{ .Values.updatetime }}"
           name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

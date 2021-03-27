@@ -34,6 +34,7 @@ Vagrant.configure('2') do |config|
   config.vm.define 'kubeinvaders01' do |rke|
     rke.vm.box = 'ubuntu/focal64'
     rke.vm.hostname = 'kubeinvaders01'
+    rke.vm.network "private_network", ip: "192.168.58.99"
     rke.vm.provider :virtualbox do |vb|
       vb.memory = 4096
       vb.cpus = 2

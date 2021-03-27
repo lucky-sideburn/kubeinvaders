@@ -85,11 +85,12 @@ for k,v in ipairs(resp) do
   decoded = json.decode(v)
   if decoded["kind"] == "NodeList" then
     for k2,v2 in ipairs(decoded["items"]) do
-      if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
-        ngx.log(ngx.ERR, "found node " .. v2["metadata"]["name"])
-        nodes["items"][i] = v2["metadata"]["name"]
-        i = i + 1
-      end
+      -- TODO: masters should be included?
+      -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
+      ngx.log(ngx.ERR, "found node " .. v2["metadata"]["name"])
+      nodes["items"][i] = v2["metadata"]["name"]
+      i = i + 1
+      --end
     end
   end
 end

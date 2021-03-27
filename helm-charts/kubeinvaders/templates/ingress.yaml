@@ -1,5 +1,4 @@
 {{- if .Values.ingress.enabled -}}
-
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -27,3 +26,4 @@ spec:
           serviceName: kubeinvaders
           servicePort: 8080
 {{- end }}
+

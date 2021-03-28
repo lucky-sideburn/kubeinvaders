@@ -1,6 +1,6 @@
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/logo.png)
 
-*Gamified chaos engineering and analysis tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
+*Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
 
@@ -22,12 +22,8 @@ Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check 
 
 ## New Version
 
-KubeInvaders is going to be full open-source. Meanwhile it is possibile choose between 2 different versions.
+KubeInvaders is now fully open-source. However, it is still possibile to use the legacy version made with Defold.
 
-* Legacy version: Made using Defold as game engine.
-* New version: It has been written in pure Javascript and it is totally open-source.
-
-The new version of KubeInvaders has fewer features than legacy but is optimized for chaos engineering because pods and nodes are rendered together and there is a shuffle functionality for better random experiments.
 
 ## Special Input Keys and features
 
@@ -44,9 +40,12 @@ The new version of KubeInvaders has fewer features than legacy but is optimized 
 |     k           | *(NEW)* Perform [kube-linter](https://github.com/stackrox/kube-linter) analysis for a pod. | Legacy                 |
 |     w           | *(NEW)* Chaos engineering against Kubernetes nodes.                                        | New, Legacy            |
 
+
 ### Known problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
+
+
 
 ## Hands-on Tutorial
 
@@ -81,7 +80,9 @@ Example of metrics
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
 
+
 ## Installation
+
 ### Install to Kubernetes with Helm (v3+)
 
 ```bash
@@ -92,12 +93,14 @@ kubectl create namespace kubeinvaders
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io
 ```
+
 ### Install legacy version
 
 ```bash
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
+
 ### Security Notes
 
 In order to restrict the access to the Kubeinvaders endpoint add this annotation into the ingress.
@@ -105,6 +108,7 @@ In order to restrict the access to the Kubeinvaders endpoint add this annotation
 ```yaml
 nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
 ```
+
 ### Install KubeInvaders on OpenShift
 
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
@@ -131,14 +135,6 @@ KUBEINVADERS_SECRET=$(oc get secret -n kubeinvaders --field-selector=type==kuber
 
 oc process -f openshift/KubeInvaders.yaml -p ROUTE_HOST=$ROUTE_HOST -p TARGET_NAMESPACE=$TARGET_NAMESPACE -p KUBEINVADERS_SECRET=$KUBEINVADERS_SECRET | oc create -f -
 ```
-
-## Notes for large clusters
-
-For clusters with many workers-nodes, KubeInvaders (legacy version) selects a subset of random items.
-
-| Item      | Max Number   |
-|-----------|--------------|
-| Nodes     | 15           |
 
 
 ## Configuration

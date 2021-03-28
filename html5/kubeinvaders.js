@@ -143,10 +143,10 @@ function getNodes(){
     oReq.send();
 }
 
-function getKubeItems() { 
+window.setInterval(function getKubeItems() { 
     getNodes();
     getPods();
-}
+}, 1000)
 
 function keyDownHandler(e) {
     if(e.key == "Right" || e.key == "ArrowRight") {
@@ -320,8 +320,7 @@ function drawSpaceship() {
     ctx.closePath();
 }
 
-function draw() {
-   
+window.setInterval(function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawSpaceship();
     
@@ -381,7 +380,7 @@ function draw() {
         ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 340);
         ctx.fillText('n => Change namespace', 10, 360);
     }
-}
+}, 10)
 
 function podExists(podName) {
     for (i=0; i<aliens.length; i++) {
@@ -401,7 +400,7 @@ function findReplace() {
     return -1;
 }
 
-function setAliens() {
+window.setInterval(function setAliens() {
     if (shuffle) {
         pods = pods.sort(() => Math.random() - 0.5)
     }
@@ -443,10 +442,7 @@ function setAliens() {
             }
         }
     }
-}
+}, 1000)
 
 getEndpoint();
 getNamespaces();
-setInterval(draw, 10);
-setInterval(getKubeItems, 1000);
-setInterval(setAliens, 1000);

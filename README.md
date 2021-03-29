@@ -7,7 +7,7 @@
 # Table of Contents
 
 1. [Description](#Description)
-2. [New Version (game part in pure JS)](#new-version)
+2. [New Version](#new-version)
 3. [Special Input Keys and features](#Special-Input-Keys-and-features)
 4. [Prometheus metrics and Grafana](#Metrics)
 5. [Installation](#Installation)

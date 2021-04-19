@@ -9,16 +9,16 @@ metadata:
     iconClass: fa fa-cogs
     tags: "spaceinvaders"
 parameters:
-- description: Redis Service
-  name: REDIS_HOST
 - description: IP addresses that can contact Kubernetes
   name: IP_WHITELIST
 - description: URL of KubeInvaders
   name: ROUTE_HOST
   value: kubeinvaders.local
+- name: ENDPOINT
+  value: kubeinvaders.local
 - description: The location of the kubeinvaders image
   name: IMAGE_KUBEINVADERS
-  value: docker.io/luckysideburn/kubeinvaders:latest
+  value: docker.io/luckysideburn/kubeinvaders:v1.2
 - description: The namespace to instantiate Kubeinvaders under.
   name: NAMESPACE
   value: kubeinvaders
@@ -79,12 +79,10 @@ objects:
         serviceAccountName: kubeinvaders
         containers:
         - env:
-          - name: REDIS_HOST
-            value: "${REDIS_HOST}" 
           - name: ROUTE_HOST
             value: "${ROUTE_HOST}" 
-          - name: ROUTE_HOST
-            value: "${ENDPOINT}"
+          - name: ENDPOINT
+            value: "${ROUTE_HOST}"
           - name: NAMESPACE
             value: "${TARGET_NAMESPACE}"
           - name: UPDATETIME

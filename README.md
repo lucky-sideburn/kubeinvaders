@@ -110,11 +110,10 @@ nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
 To Install KubeInvaders on your OpenShift Cluster clone this repo and launch the following commands:
 
 ```bash
-
 oc create clusterrole kubeinvaders-role --verb=watch,get,delete,list --resource=pods,pods/log,jobs
 
-TARGET_NAMESPACE=foobar,awesome-namespace
 ## You can define multiple namespaces ex: TARGET_NAMESPACE=foobar,foobar2
+TARGET_NAMESPACE=foobar,awesome-namespace
 
 # Choose route host for your kubeinvaders instance.
 ROUTE_HOST=kubeinvaders.org

@@ -24,14 +24,7 @@ parameters:
   value: kubeinvaders
 - description: A namespaces to stress with KubeInvaders.
   name: TARGET_NAMESPACE
-- description: Secret of the serviceAccount that can kill PODs in specific namespace.
-  name: KUBEINVADERS_SECRET
 objects:
-- apiVersion: v1
-  kind: ServiceAccount
-  metadata:
-    name: kubeinvaders
-    namespace: ${NAMESPACE}
 - apiVersion: route.openshift.io/v1
   kind: Route
   metadata:
@@ -91,11 +84,6 @@ objects:
             value: "15"
           - name: HITSLIMIT
             value: "0"
-          - name: TOKEN
-            valueFrom:
-              secretKeyRef:
-                name: "${KUBEINVADERS_SECRET}"
-                key: token
           name: kubeinvaders
           image: ${IMAGE_KUBEINVADERS}
           imagePullPolicy: Always 

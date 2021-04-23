@@ -70,6 +70,7 @@ var aliensIncrementY = 50;
 
 var shuffle = true;
 var help = false;
+var chaos_nodes = true;
 
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
@@ -140,6 +141,11 @@ function getNodes(){
         nodes = json_parsed["items"];
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/nodes");
+    if (chaos_nodes) {
+        oReq.send();
+    } else {
+        nodes = [];
+    }
     oReq.send();
 }
 
@@ -200,14 +206,19 @@ function keyDownHandler(e) {
         pods = [];
     }
     else if(e.keyCode == 72) {
-        //console.log("Help");
         if (help) {
             help = false;
-            //console.log("Deactivate help");
         }
         else {
             help = true
-            //console.log("Activate help");
+        }
+    }
+    else if(e.keyCode == 67) {
+        if (chaos_nodes) {
+            chaos_nodes = false;
+        }
+        else {
+            chaos_nodes = true
         }
     }
 }
@@ -379,6 +390,7 @@ window.setInterval(function draw() {
         ctx.fillText('h => Activate or deactivate Help', 10, 320);
         ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 340);
         ctx.fillText('n => Change namespace', 10, 360);
+        ctx.fillText('c =>  Activate or deactivate chaos engineering against nodes', 10, 380);
     }
 }, 10)
 

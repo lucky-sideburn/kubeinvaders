@@ -19,8 +19,8 @@ spec:
         app.kubernetes.io/name: kubeinvaders
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      serviceAccountName: kubeinvaders
       containers:
-        serviceAccountName: {{ template "kubeinvaders.serviceAccountName" . }
         - env:
           - name: ENDPOINT
             value: "{{ .Values.ingress.hostName }}"

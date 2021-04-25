@@ -55,8 +55,7 @@ ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
 ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 
---ngx.log(ngx.ERR, "token: " .. token)
-ngx.log(ngx.ERR, "url: " .. url)
+ngx.log(ngx.ERR, "Requesting nodes using this url: " .. url)
 
 local headers = {
   ["Accept"] = "application/json",
@@ -78,21 +77,18 @@ ngx.log(ngx.ERR, ok)
 ngx.log(ngx.ERR, statusCode)
 ngx.log(ngx.ERR, statusText)
 
-local i = 0
 nodes["items"] = {}
-
 for k,v in ipairs(resp) do
+  ngx.log(ngx.ERR, k)
   decoded = json.decode(v)
   if decoded["kind"] == "NodeList" then
     for k2,v2 in ipairs(decoded["items"]) do
       -- TODO: masters should be included?
       -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
       ngx.log(ngx.ERR, "found node " .. v2["metadata"]["name"])
-      nodes["items"][i] = v2["metadata"]["name"]
-      i = i + 1
+      table.insert(nodes["items"], v2["metadata"]["name"])
       --end
     end
   end
 end
-
 ngx.say(json.encode(nodes))

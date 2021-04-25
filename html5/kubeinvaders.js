@@ -123,7 +123,7 @@ function deletePods(pod_name){
 function getPods(){
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        json_parsed = JSON.parse(this.responseText)
+        json_parsed = JSON.parse(this.responseText);
         if (nodes && nodes.length > 0){
             pods = json_parsed["items"].concat(nodes);
         } else {
@@ -135,18 +135,18 @@ function getPods(){
 }
 
 function getNodes(){
-    var oReq = new XMLHttpRequest();
-    oReq.onload = function () {
-        json_parsed = JSON.parse(this.responseText)
-        nodes = json_parsed["items"];
-    };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/nodes");
     if (chaos_nodes) {
+        var oReq = new XMLHttpRequest();
+        oReq.onload = function () {
+            json_parsed = JSON.parse(this.responseText);
+            nodes = json_parsed["items"];
+        };;
+        oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/nodes");
         oReq.send();
-    } else {
-        nodes = [];
     }
-    oReq.send();
+    else {
+        nodes = []
+    }
 }
 
 window.setInterval(function getKubeItems() { 

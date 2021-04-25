@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: kubeinvaders
@@ -28,11 +28,6 @@ spec:
             value: "{{ .Values.ingress.hostName }}"
           - name: NAMESPACE
             value: {{ .Values.target_namespace }}
-          - name: TOKEN
-            valueFrom:
-              secretKeyRef:
-                key: token
-                name: kubeinvaders-token
           name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

@@ -84,6 +84,7 @@ Example of metrics
 ## Installation
 
 ### Install to Kubernetes with Helm (v3+)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 
 ```bash
 helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/

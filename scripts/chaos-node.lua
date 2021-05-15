@@ -8,6 +8,8 @@ local arg = ngx.req.get_uri_args()
 local incr = 0
 local config = require "config_kubeinv"
 local chaos_container = ""
+local red = redis:new()
+local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
 function read_all(file)
     local f = assert(io.open(file, "rb"))
@@ -34,8 +36,6 @@ local url = k8s_url .. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
 local resp = {}
 
 if ngx.var.request_method == "GET" then
-  local red = redis:new()
-  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
   if okredis then
     ngx.log(ngx.ERR, "Connection to Redis is ok")
@@ -79,7 +79,7 @@ headers = {
 
 local res, err = red:get("chaos_container")
   
-if res == ngx.null then
+if res ~= ngx.null then
   ngx.log(ngx.ERR, "Found chaos_container defined in Redis!")
   ngx.log(ngx.ERR, res)
   chaos_container = res

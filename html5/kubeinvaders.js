@@ -71,6 +71,7 @@ var aliensIncrementY = 50;
 var shuffle = true;
 var help = false;
 var chaos_nodes = true;
+var chaos_pods = true;
 
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
@@ -81,7 +82,7 @@ function contains(a, obj) {
     return false;
 }
 
-function getNamespaces(){
+function getNamespaces() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
     	namespaces = this.responseText;
@@ -93,7 +94,7 @@ function getNamespaces(){
 }
 
 
-function getEndpoint(){
+function getEndpoint() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         endpoint = this.responseText;
@@ -102,7 +103,19 @@ function getEndpoint(){
     oReq.send();
 }
 
-function startChaosNode(node_name){
+function getCurrentChaosJob() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        console.log(this.responseText);
+        job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
+        console.log(job_parsed);
+        $('#currentChaosJobYaml').text(job_parsed);
+    };;
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=default");
+    oReq.send();
+}
+
+function startChaosNode(node_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
@@ -111,7 +124,7 @@ function startChaosNode(node_name){
     oReq.send();
 }
 
-function deletePods(pod_name){
+function deletePods(pod_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
@@ -120,21 +133,30 @@ function deletePods(pod_name){
     oReq.send();
 }
 
-function getPods(){
-    var oReq = new XMLHttpRequest();
-    oReq.onload = function () {
-        json_parsed = JSON.parse(this.responseText);
-        if (nodes && nodes.length > 0){
-            pods = json_parsed["items"].concat(nodes);
+function getPods() {
+    if (chaos_pods) {
+        var oReq = new XMLHttpRequest();
+        oReq.onload = function () {
+            json_parsed = JSON.parse(this.responseText);
+            if (nodes && nodes.length > 0) {
+                pods = json_parsed["items"].concat(nodes);
+            } else {
+                pods = json_parsed["items"];
+            }
+        };;
+        oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=list&namespace=" + namespace);
+        oReq.send();
+    }
+    else {
+        if (nodes && nodes.length > 0) {
+            pods = nodes;
         } else {
-            pods = json_parsed["items"];
-        }
-    };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=list&namespace=" + namespace);
-    oReq.send();
+            pods = [];
+        }    
+    }
 }
 
-function getNodes(){
+function getNodes() {
     if (chaos_nodes) {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
@@ -221,6 +243,14 @@ function keyDownHandler(e) {
             chaos_nodes = true
         }
     }
+    else if(e.keyCode == 80) {
+        if (chaos_pods) {
+            chaos_pods = false;
+        }
+        else {
+            chaos_pods = true
+        }
+    }
 }
 
 function keyUpHandler(e) {
@@ -255,8 +285,8 @@ function drawAlien(alienX, alienY, name) {
     ctx.closePath();
 }
 
-function checkRocketAlienCollision(){
-    if (contains(aliensY, rocketY)){
+function checkRocketAlienCollision() {
+    if (contains(aliensY, rocketY)) {
         //console.log("The y of rocket is the same of an alien. rocketY=" + rocketY + " List of aliensY:" + aliensY);
         var i;
         for (i=aliens.length - 1; i >= 0; i--) {
@@ -308,7 +338,7 @@ function drawRocket() {
     }
 
     if(shot && rocketLaunched) {
-        if (rocketY < 0){
+        if (rocketY < 0) {
             //console.log("Rocket arrived to the end of canvas");
             shot = false;
             rocketLaunched = false;
@@ -332,7 +362,8 @@ function drawSpaceship() {
 }
 
 window.setInterval(function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.widthWith supporting text below as a natural lead-in to additional content
+        , canvas.height);
     drawSpaceship();
     
     if (shot && !collisionDetected) {
@@ -361,7 +392,7 @@ window.setInterval(function draw() {
 
     if(upPressed) {
         spaceshipY -= 3;
-        if (spaceshipY < 0){
+        if (spaceshipY < 0) {
             spaceshipY = 0;
         }
     }
@@ -386,16 +417,11 @@ window.setInterval(function draw() {
     ctx.fillText('press \'h\' for help!', 10, 470);
 
     if (help) {
-        ctx.fillText('Special Keys:', 10, 300);
-        ctx.fillText('h => Activate or deactivate Help', 10, 320);
-        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 340);
-        ctx.fillText('n => Change namespace', 10, 360);
-        ctx.fillText('c =>  Activate or deactivate chaos engineering against nodes', 10, 380);
-    }
-}, 10)
-
-function podExists(podName) {
-    for (i=0; i<aliens.length; i++) {
+        ctx.fillText('Special Keys:', 10, 280);
+        ctx.fillText('h => Activate or deactivate Help', 10, 300);
+        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 320);
+        ctx.fillText('n => Change namespace', 10, 340);
+        ctx.fillText('p => Activate or deacdes 
         if (aliens[i]["name"] == podName) {
             return true;
         }

@@ -28,7 +28,7 @@ Vagrant.configure('2') do |config|
   SCRIPT
 
   config.vm.post_up_message = '\n\nEnjoy KubeInvaders!\n\n'
-  config.vm.synced_folder ".", "/vagrant", type: "smb"
+  #config.vm.synced_folder ".", "/vagrant", type: "smb"
   
   config.vm.define 'kubeinvaders01' do |k3s|
     k3s.vm.box = 'ubuntu/focal64'
@@ -37,8 +37,8 @@ Vagrant.configure('2') do |config|
     k3s.vm.network 'private_network', ip: '192.168.58.99'
     k3s.vm.network 'forwarded_port', guest: 80, host: 8080, host_ip: '127.0.0.1'
     k3s.vm.provider :virtualbox do |vb|
-      vb.memory = 4096
-      vb.cpus = 2
+      vb.memory = 2048
+      vb.cpus = 1
     end
    #k3s.vm.provision "shell",
    #   run: "always",

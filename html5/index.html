@@ -1,16 +1,89 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>KubeInvaders</title>
+    <!-- Bootstrap -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <style>
-    	* { padding: 0; margin-top: 3%; background: #000;}
-    	canvas { background: #000; display: block; margin: 0 auto; border:1px solid #00ff2a;}
+      canvas { background: #000; display: block; margin: 0 auto; border:1px solid #ffffff;}
     </style>
-</head>
-<body>
-
-<canvas id="myCanvas" width="720" height="480"></canvas>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">KubeInvaders</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Chaos Menu
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" href="#" onclick="showCurrentChaosJob()">Show Current Chaos Job</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Modal -->
+    <div class="modal fade" id="currentChaosJobModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <pre id="currentChaosJobYaml"></pre> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container" style="width: 50%;">
+      <div class="starter-template">
+        <div class="row">
+          <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 25%; height: auto; margin-bottom: 0%;" alt="Responsive image">
+        </div>
+        <div class="row">
+          <canvas id="myCanvas" width="720" height="480"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="container" style="width: 50%; margin-top: 2%; margin-bottom: 2%;">
+      <div class="card">
+        <div class="card-header">
+          Special Keys
+        </div>
+        <div class="card-body">
+          <p class="card-text">
+            h => Activate or deactivate Help<br>
+            s => Activate or deactivate shuffle for aliens<br>
+            n => Change namespace<br>
+            p => Activate or deactivate chaos engineering against pods<br>
+            c => Activate or deactivate chaos engineering against nodes
+          </p>
+        </div>
+      </div>
+    </div>
     <script src="kubeinvaders.js"></script>
-</body>
+    <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+
+    <script>
+      function showCurrentChaosJob() {
+        getCurrentChaosJob();
+        $('#currentChaosJobModal').modal('show');
+      }
+      function closeCurrentChaosJobModal() {
+        $('#currentChaosJobModal').modal('hide');
+      }
+    </script>
+  </body>
 </html>

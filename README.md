@@ -24,27 +24,30 @@ Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check 
 
 KubeInvaders is now fully open-source. However, it is still possibile to use the legacy version made with Defold.
 
+## Installation
 
-## Special Input Keys and features
+### Install to Kubernetes with Helm (v3+)
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 
-| Input           | Action                                                                                     | Version (New or Legacy)|
-|-----------------|--------------------------------------------------------------------------------------------|------------------------|
-|     n           | Change namespace (you should define namespaces list. Ex: TARGET_NAMESPACE=foo1,foo2,foo3). | New, Legacy            |
-|     a           | Switch to automatic mode.                                                                  | Legacy                 |
-|     m           | Switch to manual mode.                                                                     | Legacy                 |
-|     h           | Show special keys.                                                                         | New, Legacy            |
-|     q           | Hide help for special keys.                                                                | New, Legacy            |
-|     i           | Show pod's name. Move the ship towards an alien.                                           | Legacy                 |
-|     r           | Refresh log of a pod when spaceship is over the alien.                                     | Legacy                 |
-|     s           | Activate or deactivate shuffle                                                             | New                    |
-|     k           | *(NEW)* Perform [kube-linter](https://github.com/stackrox/kube-linter) analysis for a pod. | Legacy                 |
-|     w           | *(NEW)* Chaos engineering against Kubernetes nodes.                                        | New, Legacy            |
+```bash
+helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
 
+kubectl create namespace kubeinvaders
 
-### Known problems
+helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.4
+```
+
+### Install legacy version
+
+```bash
+helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
+```
+
+## Known problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
-
 
 
 ## Hands-on Tutorial
@@ -80,27 +83,6 @@ Example of metrics
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
 
-
-## Installation
-
-### Install to Kubernetes with Helm (v3+)
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
-
-```bash
-helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
-
-kubectl create namespace kubeinvaders
-
-helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.4
-```
-
-### Install legacy version
-
-```bash
-helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
-```
 
 ### Security Notes
 

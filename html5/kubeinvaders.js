@@ -120,6 +120,7 @@ function startChaosNode(node_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
+    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Start Chaos Job on ' + node_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -129,6 +130,7 @@ function deletePods(pod_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
+    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Kill ' + pod_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -204,11 +206,13 @@ function keyDownHandler(e) {
     else if(e.keyCode == 83) {
         if (shuffle) {
             shuffle = false;
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
             //console.log("Deactivate shuffle");
         }
         else {
             shuffle = true
             //console.log("Activate shuffle");
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
         }
     }
     else if(e.keyCode == 32) {
@@ -224,6 +228,7 @@ function keyDownHandler(e) {
             namespaces_index = 0;
         }
         namespace = namespaces[namespaces_index];
+        $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
         aliens = [];
         pods = [];
     }
@@ -238,17 +243,22 @@ function keyDownHandler(e) {
     else if(e.keyCode == 67) {
         if (chaos_nodes) {
             chaos_nodes = false;
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
+
         }
         else {
             chaos_nodes = true
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
         }
     }
     else if(e.keyCode == 80) {
         if (chaos_pods) {
             chaos_pods = false;
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show pods</div>');
         }
         else {
             chaos_pods = true
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
         }
     }
 }
@@ -306,7 +316,7 @@ function checkRocketAlienCollision() {
                     aliens[i]["active"] = false;
                     if (contains(nodes, aliens[i]["name"])) {
                         startChaosNode(aliens[i]["name"]);
-                        aliens[i]["name"] = "killed_pod"; 
+                        aliens[i]["name"] = "killed_pod";
                     }
                     else {
                         deletePods(aliens[i]["name"]);
@@ -416,7 +426,7 @@ window.setInterval(function draw() {
     ctx.fillText('press \'h\' for help!', 10, 470);
 
     if (help) {
-        ctx.fillText('h => Activate or deactivate Help', 10, 280);
+        ctx.fillText('h => Activate or deactivate help', 10, 280);
         ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 300);
         ctx.fillText('n => Change namespace', 10, 320);
         ctx.fillText('p => Activate or deactivate chaos engineering against pods', 10, 340);

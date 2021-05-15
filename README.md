@@ -2,7 +2,7 @@
 
 *Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/kubeinvaders.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/new_gui.png)
 
 # Table of Contents
 

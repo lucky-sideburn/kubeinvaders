@@ -1,7 +1,0 @@
-{
-  "name": "kubeinvaders",
-  "version": "1.0.0",
-  "dependencies": {
-    "xterm": "^4.11.0"
-  }
-}

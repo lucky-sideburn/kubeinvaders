@@ -362,8 +362,7 @@ function drawSpaceship() {
 }
 
 window.setInterval(function draw() {
-    ctx.clearRect(0, 0, canvas.widthWith supporting text below as a natural lead-in to additional content
-        , canvas.height);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawSpaceship();
     
     if (shot && !collisionDetected) {
@@ -417,11 +416,16 @@ window.setInterval(function draw() {
     ctx.fillText('press \'h\' for help!', 10, 470);
 
     if (help) {
-        ctx.fillText('Special Keys:', 10, 280);
-        ctx.fillText('h => Activate or deactivate Help', 10, 300);
-        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 320);
-        ctx.fillText('n => Change namespace', 10, 340);
-        ctx.fillText('p => Activate or deacdes 
+        ctx.fillText('h => Activate or deactivate Help', 10, 280);
+        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 300);
+        ctx.fillText('n => Change namespace', 10, 320);
+        ctx.fillText('p => Activate or deactivate chaos engineering against pods', 10, 340);
+        ctx.fillText('c => Activate or deactivate chaos engineering against nodes', 10, 360);
+    }
+}, 10)
+
+function podExists(podName) {
+    for (i=0; i<aliens.length; i++) {
         if (aliens[i]["name"] == podName) {
             return true;
         }
@@ -437,7 +441,7 @@ function findReplace() {
     }
     return -1;
 }
-
+    
 window.setInterval(function setAliens() {
     if (shuffle) {
         pods = pods.sort(() => Math.random() - 0.5)

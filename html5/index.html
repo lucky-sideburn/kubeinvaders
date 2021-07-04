@@ -21,22 +21,22 @@
           <ul class="navbar-nav">
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Chaos Menu
+                Chaos Containers
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
-                <li><a class="dropdown-item" href="#" onclick="showCurrentChaosJob()">Show Current Chaos Job</a></li>
-              </ul>
+                <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>              
             </li>
           </ul>
         </div>
       </div>
     </nav>
     <!-- Modal -->
-    <div class="modal fade" id="currentChaosJobModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal fade" id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-body">
-            <pre id="currentChaosJobYaml"></pre> 
+            <pre id="currentChaosContainrYaml"></pre> 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
@@ -44,6 +44,29 @@
         </div>
       </div>
     </div>
+
+    <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <label for="exampleFormControlTextarea1" style="margin-bottom: 3%;" onte>Chaos Container Definition</label>
+                <textarea class="form-control" id="currentChaosContainerJsonTextArea" rows="20"></textarea>
+              </div>
+              <div class="form-group">
+                <p id="alert_placeholder2" style="color: black; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="setChaosContainer()">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container" style="width: 50%;">
       <div class="starter-template">
         <div class="row">
@@ -78,13 +101,34 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <script>
-      function showCurrentChaosJob() {
-        getCurrentChaosJob();
-        $('#currentChaosJobModal').modal('show');
+
+      function showCurrentChaosContainer() {
+        getCurrentChaosContainer();
+        $('#currentChaosContainerModal').modal('show');
+        modal_opened = true;
       }
+      
       function closeCurrentChaosJobModal() {
-        $('#currentChaosJobModal').modal('hide');
+        $('#currentChaosContainerModal').modal('hide');
+        modal_opened = false;
       }
+
+      function showSetCurrentChaosContainer() {
+        $('#alert_placeholder2').text('');
+        getCurrentChaosContainer();
+        $('#setChaosContainerModal').modal('show');
+        modal_opened = true;
+      }
+
+      function closeSetChaosContainerModal() {
+        $('#setChaosContainerModal').modal('hide');
+        modal_opened = false;
+      }
+      
+      $('textarea').on('input', function() {
+        $('#alert_placeholder2').text('');
+      });
+
     </script>
   </body>
 </html>

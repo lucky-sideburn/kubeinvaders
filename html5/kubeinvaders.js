@@ -14,6 +14,7 @@ var namespaces = [];
 var namespaces_index = 0;
 var namespace = namespaces[namespaces_index];
 var endpoint = "";
+var modal_opened = false;
 
 // pods list from kubernetes
 var pods = [];
@@ -73,6 +74,15 @@ var help = false;
 var chaos_nodes = true;
 var chaos_pods = true;
 
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
 function contains(a, obj) {
     for (var i = 0; i < a.length; i++) {
         if (a[i] === obj) {
@@ -103,16 +113,36 @@ function getEndpoint() {
     oReq.send();
 }
 
-function getCurrentChaosJob() {
+function getCurrentChaosContainer() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         console.log(this.responseText);
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
         console.log(job_parsed);
-        $('#currentChaosJobYaml').text(job_parsed);
+        $('#currentChaosContainrYaml').text(job_parsed);
+        $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=default");
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=container_definition");
     oReq.send();
+}
+
+function setChaosContainer() {
+    if (!IsJsonString($('#currentChaosContainerJsonTextArea').val())) {
+        $('#alert_placeholder2').text('JSON syntax not valid.');
+    }
+    else {
+        var oReq = new XMLHttpRequest();
+        oReq.open("POST", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=set", true);
+
+        oReq.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log(this.responseText);
+                $('#alert_placeholder2').text('New container definition has been saved.');
+            }
+        };;
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send($('#currentChaosContainerJsonTextArea').val());
+    }
 }
 
 function startChaosNode(node_name) {
@@ -179,86 +209,88 @@ window.setInterval(function getKubeItems() {
 }, 1000)
 
 function keyDownHandler(e) {
-    if(e.key == "Right" || e.key == "ArrowRight") {
-        rightPressed = true;
-        //console.log("Go right");
-        //console.log("Spaceship Y:" + spaceshipY);
-        //console.log("Spaceship X: " + spaceshipX);
-    }
-    else if(e.key == "Left" || e.key == "ArrowLeft") {
-        leftPressed = true;
-        //console.log("Go left");
-        //console.log("Spaceship Y:" + spaceshipY);
-        //console.log("Spaceship X: " + spaceshipX);
-    }
-    if(e.key == "Up" || e.key == "ArrowUp") {
-        upPressed = true;
-        //console.log("Go up");
-        //console.log("Spaceship Y:" + spaceshipY);
-        //console.log("Spaceship X: " + spaceshipX);
-    }
-    else if(e.key == "Down" || e.key == "ArrowDown") {
-        downPressed = true;
-        //console.log("Go down");
-        //console.log("Spaceship Y: " + spaceshipY);
-        //console.log("Spaceship X: " + spaceshipX);
-    }
-    else if(e.keyCode == 83) {
-        if (shuffle) {
-            shuffle = false;
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
-            //console.log("Deactivate shuffle");
+    if (!modal_opened) {
+        if(e.key == "Right" || e.key == "ArrowRight") {
+            rightPressed = true;
+            //console.log("Go right");
+            //console.log("Spaceship Y:" + spaceshipY);
+            //console.log("Spaceship X: " + spaceshipX);
         }
-        else {
-            shuffle = true
-            //console.log("Activate shuffle");
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
+        else if(e.key == "Left" || e.key == "ArrowLeft") {
+            leftPressed = true;
+            //console.log("Go left");
+            //console.log("Spaceship Y:" + spaceshipY);
+            //console.log("Spaceship X: " + spaceshipX);
         }
-    }
-    else if(e.keyCode == 32) {
-        //console.log("Shot");
-        shot = true
-    }
-    else if(e.keyCode == 78) {
-        //console.log("Change Namespace");
-        if (namespaces_index < namespaces.length-1) {
-            namespaces_index +=1 ;
+        if(e.key == "Up" || e.key == "ArrowUp") {
+            upPressed = true;
+            //console.log("Go up");
+            //console.log("Spaceship Y:" + spaceshipY);
+            //console.log("Spaceship X: " + spaceshipX);
         }
-        else {
-            namespaces_index = 0;
+        else if(e.key == "Down" || e.key == "ArrowDown") {
+            downPressed = true;
+            //console.log("Go down");
+            //console.log("Spaceship Y: " + spaceshipY);
+            //console.log("Spaceship X: " + spaceshipX);
         }
-        namespace = namespaces[namespaces_index];
-        $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
-        aliens = [];
-        pods = [];
-    }
-    else if(e.keyCode == 72) {
-        if (help) {
-            help = false;
+        else if(e.keyCode == 83) {
+            if (shuffle) {
+                shuffle = false;
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
+                //console.log("Deactivate shuffle");
+            }
+            else {
+                shuffle = true
+                //console.log("Activate shuffle");
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
+            }
         }
-        else {
-            help = true
+        else if(e.keyCode == 32) {
+            //console.log("Shot");
+            shot = true
         }
-    }
-    else if(e.keyCode == 67) {
-        if (chaos_nodes) {
-            chaos_nodes = false;
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
+        else if(e.keyCode == 78) {
+            //console.log("Change Namespace");
+            if (namespaces_index < namespaces.length-1) {
+                namespaces_index +=1 ;
+            }
+            else {
+                namespaces_index = 0;
+            }
+            namespace = namespaces[namespaces_index];
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
+            aliens = [];
+            pods = [];
+        }
+        else if(e.keyCode == 72) {
+            if (help) {
+                help = false;
+            }
+            else {
+                help = true
+            }
+        }
+        else if(e.keyCode == 67) {
+            if (chaos_nodes) {
+                chaos_nodes = false;
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
 
+            }
+            else {
+                chaos_nodes = true
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
+            }
         }
-        else {
-            chaos_nodes = true
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
-        }
-    }
-    else if(e.keyCode == 80) {
-        if (chaos_pods) {
-            chaos_pods = false;
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show pods</div>');
-        }
-        else {
-            chaos_pods = true
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
+        else if(e.keyCode == 80) {
+            if (chaos_pods) {
+                chaos_pods = false;
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show pods</div>');
+            }
+            else {
+                chaos_pods = true
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
+            }
         }
     }
 }

@@ -92,17 +92,36 @@ function contains(a, obj) {
     return false;
 }
 
+function getMetrics() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+    	console.log(this.responseText);
+        var lines = this.responseText.split('\n');
+        for (var i = 0;i < lines.length;i++){
+            metric = lines[i].split(' ');
+            if (metric[0] == "chaos_node_jobs_total") {
+                chaos_jobs_total
+                $('#chaos_jobs_total').text(metric[1]);
+            }
+            else if (metric[0] == "deleted_pods_total") {
+                $('#deleted_pods_total').text(metric[1]);            
+            } 
+        }
+    };;
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/metrics");
+    oReq.send();
+}
+
 function getNamespaces() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
     	namespaces = this.responseText;
-	namespaces = namespaces.split(",");
-	namespace = namespaces[namespaces_index];
+	    namespaces = namespaces.split(",");
+	    namespace = namespaces[namespaces_index];
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/namespaces");
     oReq.send();
 }
-
 
 function getEndpoint() {
     var oReq = new XMLHttpRequest();
@@ -150,7 +169,7 @@ function startChaosNode(node_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
-    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Start Chaos Job on ' + node_name + '</div>');
+    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Start Chaos Job on ' + node_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -160,7 +179,7 @@ function deletePods(pod_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
-    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Kill ' + pod_name + '</div>');
+    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Kill ' + pod_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -210,6 +229,7 @@ window.setInterval(function getKubeItems() {
 
 function keyDownHandler(e) {
     if (!modal_opened) {
+        e.preventDefault();
         if(e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
             //console.log("Go right");
@@ -237,13 +257,13 @@ function keyDownHandler(e) {
         else if(e.keyCode == 83) {
             if (shuffle) {
                 shuffle = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
                 //console.log("Deactivate shuffle");
             }
             else {
                 shuffle = true
                 //console.log("Activate shuffle");
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
             }
         }
         else if(e.keyCode == 32) {
@@ -259,7 +279,7 @@ function keyDownHandler(e) {
                 namespaces_index = 0;
             }
             namespace = namespaces[namespaces_index];
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
+            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" style="margin-top: 3%;" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
             aliens = [];
             pods = [];
         }
@@ -274,22 +294,22 @@ function keyDownHandler(e) {
         else if(e.keyCode == 67) {
             if (chaos_nodes) {
                 chaos_nodes = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
 
             }
             else {
                 chaos_nodes = true
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
             }
         }
         else if(e.keyCode == 80) {
             if (chaos_pods) {
                 chaos_pods = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Show pods</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
             }
             else {
                 chaos_pods = true
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
+                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Show pods</div>');
             }
         }
     }
@@ -527,6 +547,10 @@ window.setInterval(function setAliens() {
         }
     }
 }, 1000)
+
+window.setInterval(function metrics() {
+    getMetrics()
+}, 2000)
 
 getEndpoint();
 getNamespaces();

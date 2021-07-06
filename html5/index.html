@@ -69,14 +69,42 @@
 
     <div class="container" style="width: 50%;">
       <div class="starter-template">
-        <div class="row">
-          <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 25%; height: auto; margin-bottom: 0%;" alt="Responsive image">
+        <div class="container" style="margin-bottom: 2%;">
+          <div class="row" style="margin-top: 2%;">
+            <div class="col-sm  d-flex align-items-start flex-column">
+              <div class="card d-flex justify-content-center" style="max-width: 70%;">
+                <div class="card-header">
+                  Stats
+                </div>
+                <div class="card-body">
+                  <p class="card-text">Deleted Pod Total:&nbsp;<span id="deleted_pods_total" style="color: #3700ff">0</span></p> 
+                  <p class="card-text">Chaos Jobs Total:&nbsp;<span id="chaos_jobs_total" style="color: #3700ff">0</span></p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm">
+              <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 90%; max-height: 80%; margin-bottom: 0%;" alt="Responsive image">
+            </div>
+            <div class="col-sm d-flex align-items-end flex-column">
+              <div class="card" style="max-width: 70%;">
+                <div class="card-header">
+                  Speed
+                </div>
+                <div class="card-body">
+                  <h5 class="card-subtitle mb-2 text-muted"><font size=2>Latest speed of return to the desired state</font></h5>
+                  <div class="d-flex justify-content-center">
+                    <h2 class="card-text" style="justify-content: center;"><span id="chaos_pod_total" style="color: #3700ff">0</span></h2> 
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div id="alert_placeholder"></div>
         <div class="row">
           <canvas id="myCanvas" width="720" height="480"></canvas>
         </div>
       </div>
+      <div id="alert_placeholder" style="margin-top: 3%;"></div>
     </div>
     <div class="container" style="width: 50%; margin-top: 2%; margin-bottom: 2%;">
       <div class="card">

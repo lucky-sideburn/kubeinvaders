@@ -1,43 +1,10 @@
 local redis = require "resty.redis"
 local arg = ngx.req.get_uri_args()
 local incr = 0
-if ngx.var.request_method == "DELETE" then
-  local red = redis:new()
-  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
-  
-  if okredis then
-    ngx.log(ngx.ERR, "Connection to Redis is ok")
-  else
-    ngx.log(ngx.ERR, "Connection to Redis is not ok")
-    ngx.log(ngx.ERR, errredis)
-  end
-  -- Count the total of deleted pods
-  local res, err = red:get("deleted_pods_total")
-  
-  if res == ngx.null then
-    ngx.say(err)
-    red:set("deleted_pods_total", 1)
-  else
-      incr = res + 1
-      red:set("deleted_pods_total", incr)      
-  end
 
-  -- TODO: Make a better regular expression!
-  local namespace_pods = string.match(ngx.var.request_uri, '^.*/namespaces/(.*)/.*$')
-  local namespace = namespace_pods:gsub("/pods", "")
-  
-  -- Count the total of deleted pods for namespace
-  local res, err = red:get("deleted_pods_total_on_" .. namespace)
-  
-  if res == ngx.null then
-    red:set("deleted_pods_total_on_" .. namespace, 1)
-  else
-    incr = res + 1
-    red:set("deleted_pods_total_on_" .. namespace, incr)
-  end
-  
+-- TO DO put all metrics into this metrics.lua. Actually in pod.lua are written other metrics in Redis
 
-elseif ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/chaos[-]node.*$") then
+if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/chaos[-]node.*$") then
   local red = redis:new()
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
   
@@ -52,7 +19,7 @@ elseif ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.
   
   if chaos_node_res == ngx.null then
     ngx.say(err)
-    red:set("chaos_node_jobs_total", 0)
+    red:set("chaos_node_jobs_total", 1)
   else
     local incr = chaos_node_res + 1
     local res, err = red:set("chaos_node_jobs_total",incr)      

@@ -25,7 +25,6 @@ ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
 ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 
-
 if action == "delete" then
   local red = redis:new()
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
@@ -38,6 +37,18 @@ if action == "delete" then
   end
   -- Count the total of deleted pods
 
+  local res, err = red:get("deleted_pods_total")
+
+  if res == ngx.null then
+    ngx.say(err)
+    ngx.log(ngx.ERR, "deleted_pods_total is not present on Redis. Creating it..")
+    red:set("deleted_pods_total", 1)
+  else
+      incr = res + 1
+      ngx.log(ngx.ERR, "deleted_pods_total is present on Redis. Incrementing it..")
+      red:set("deleted_pods_total", incr)      
+  end
+
   -- Count the total of deleted pods for namespace
   local res, err = red:get("deleted_pods_total_on_" .. namespace)
 
@@ -48,7 +59,6 @@ if action == "delete" then
     red:set("deleted_pods_total_on_" .. namespace, incr)
   end
 end
-
 
 if action == "list" then
   url = k8s_url.. "/api/v1/namespaces/" .. namespace  .. "/pods"

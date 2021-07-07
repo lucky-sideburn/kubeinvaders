@@ -61,7 +61,7 @@ Vagrant.configure('2') do |config|
   docker rm kubeinvaders -f
   docker run -d -v /vagrant/scripts:/usr/local/openresty/nginx/conf/kubeinvaders -p 8080:8080 \
     --restart always --name kubeinvaders --env KUBERNETES_SERVICE_HOST=192.168.58.99 --env KUBERNETES_SERVICE_PORT=8443\
-    --env ROUTE_HOST=kubeinvaders.io --env ENDPOINT=kubeinvaders.io \
+    --env ENDPOINT=kubeinvaders.io \
     --env TOKEN=#{ ENV['KUBEINVADERS_DEV_TOKEN']} --env NAMESPACE="namespace1,namespace2" \
     kubeinvaders-dev
   SCRIPT

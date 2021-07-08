@@ -99,6 +99,7 @@ ngx.log(ngx.ERR, statusText)
 
 if action == "list" then
   local i = 1
+  local j = 0
   pods["items"] = {}
   for k,v in ipairs(resp) do
     decoded = json.decode(v)
@@ -109,9 +110,47 @@ if action == "list" then
           pods["items"][i] = v2["metadata"]["name"]
           i = i + 1
           pods_not_found = false;
+        elseif v2["status"]["phase"] ~= "Running" and v2["status"]["phase"] ~= "Completed" and v2["status"]["phase"] ~= "Succeeded" then
+          j = j + 1
         end
       end
+      local red = redis:new()
+      local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+      red:set("pods_not_running_on_selected_ns", j)
     end
+  end
+
+  local red = redis:new()
+  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+  
+  local pods_not_running_on, err = red:get("pods_not_running_on_selected_ns")
+  local fewer_replicas_seconds, err = red:get("fewer_replicas_seconds")
+  local latest_fewer_replicas_seconds, err = red:get("latest_fewer_replicas_seconds")
+  local fewer_replicas_time, err = red:get("fewer_replicas_time")
+
+  ngx.log(ngx.ERR, "[METRICS] pods_not_running_on=" .. pods_not_running_on)
+
+  if fewer_replicas_seconds == ngx.null then
+    red:set("fewer_replicas_seconds", 0)
+  end
+
+  if latest_fewer_replicas_seconds == ngx.null then
+    red:set("latest_fewer_replicas_seconds", 0)
+  end
+
+  if fewer_replicas_time == ngx.null or tonumber(pods_not_running_on) == 0 then
+    red:set("fewer_replicas_time", 0)
+    
+    if tonumber(fewer_replicas_seconds) > 0 then
+      red:set("latest_fewer_replicas_seconds", fewer_replicas_seconds)
+      red:set("fewer_replicas_seconds", 0)
+    end
+  end
+
+  if pods_not_running_on ~= ngx.null and tonumber(pods_not_running_on) > 1 and tonumber(fewer_replicas_time) == 0 then
+    red:set("fewer_replicas_time", tonumber(os.time(os.date("!*t"))))
+  elseif tonumber(pods_not_running_on) > 1 and tonumber(fewer_replicas_time) > 1 then
+    red:set("fewer_replicas_seconds", tonumber(os.time(os.date("!*t"))) - tonumber(fewer_replicas_time))
   end
 
   if pods_not_found then

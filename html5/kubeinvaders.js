@@ -105,7 +105,16 @@ function getMetrics() {
             }
             else if (metric[0] == "deleted_pods_total") {
                 $('#deleted_pods_total').text(metric[1]);            
-            } 
+            }
+            else if (metric[0] == "fewer_replicas_seconds") {
+                $('#fewer_replicas_seconds').text(metric[1]);            
+            }
+            else if (metric[0] == "latest_fewer_replicas_seconds") {
+                $('#latest_fewer_replicas_seconds').text(metric[1]);            
+            }
+            else if (metric[0] == "pods_not_running_on_selected_ns") {
+                $('#pods_not_running_on').text(metric[1]);            
+            }
         }
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/metrics");

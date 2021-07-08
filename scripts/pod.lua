@@ -141,7 +141,7 @@ if action == "list" then
   if fewer_replicas_time == ngx.null or tonumber(pods_not_running_on) == 0 then
     red:set("fewer_replicas_time", 0)
     
-    if tonumber(fewer_replicas_seconds) > 0 then
+    if fewer_replicas_seconds ~= ngx.null and tonumber(fewer_replicas_seconds) > 0 then
       red:set("latest_fewer_replicas_seconds", fewer_replicas_seconds)
       red:set("fewer_replicas_seconds", 0)
     end

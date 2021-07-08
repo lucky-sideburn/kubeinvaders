@@ -39,8 +39,10 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hostName: kubeinvaders.local
+  hostName: "" 
   tls: {}
+
+route_host: ""
 
 resources: {}
 nodeSelector: {}

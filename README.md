@@ -5,23 +5,16 @@
 # Table of Contents
 
 1. [Description](#Description)
-2. [New Version](#new-version)
-3. [Special Input Keys and features](#Special-Input-Keys-and-features)
-4. [Prometheus metrics and Grafana](#Metrics)
-5. [Installation](#Installation)
-6. [Notes for large clusters](#Notes-for-large-clusters)
-7. [Configuration](#Configuration)
-
+2. [Installation](#Installation)
+3. [Known Problems](#Known-problems)
+4. [Metrics](#Metrics)
+6. [Security](#Security)
 
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
 
 Just released the version v1.7. How is "Replicas State Delay" of your cluster? Just play and watch metrics.
-
-## New Version
-
-KubeInvaders is now fully open-source. However, it is still possibile to use the legacy version made with Defold.
 
 ## Installation
 
@@ -35,13 +28,6 @@ kubectl create namespace kubeinvaders
 
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.7
-```
-
-### Install legacy version
-
-```bash
-helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=legacy
 ```
 
 ## Known problems
@@ -83,7 +69,7 @@ Example of metrics
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
 
 
-### Security Notes
+## Security
 
 In order to restrict the access to the Kubeinvaders endpoint add this annotation into the ingress.
 

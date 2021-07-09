@@ -14,7 +14,7 @@
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
 
-Just released the version v1.7. How is "Replicas State Delay" of your cluster? Just play and watch metrics.
+Just released the version v1.8. How is "Replicas State Delay" of your cluster? Just play and watch metrics.
 
 ## Installation
 

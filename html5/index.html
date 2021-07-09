@@ -79,12 +79,24 @@
                 <div class="card-body">
                   <p class="card-text">Deleted Pod Total:&nbsp;<span id="deleted_pods_total" style="color: #4f4f4f">0</span></p> 
                   <p class="card-text">Chaos Jobs Total:&nbsp;<span id="chaos_jobs_total" style="color: #4f4f4f">0</span></p>
-                  <p class="card-text">Not Running Pods:&nbsp;<span id="pods_not_running_on" style="color: #4f4f4f">0</span></p> 
+                  <p class="card-text">Not Running Pods:&nbsp;<span id="pods_not_running_on" style="color: #4f4f4f">0</span></p>
                 </div>
               </div>
             </div>
             <div class="col-sm">
-              <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 90%; max-height: 80%; margin-bottom: 0%;" alt="Responsive image">
+              <div class="row">
+                <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 90%; max-height: 80%; margin-bottom: 0%;" alt="Responsive image">
+              </div>
+              <div class="row">
+                <button type="button" id="controlAutoPilotButton" class="btn btn-danger  btn-sm" onclick="controlAutoPilot()">Start</button>
+              </div>
+              <div class="row" style="margin-top: 2%;">
+                <div>
+                  <input type="range" id="randomFactorInput" name="randomFactorInput"
+                       min="0" max="100" value="50" onclick="changeRandomFactor()">
+                  <label for="randomFactorInput">Ramdom Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+                </div>
+              </div>
             </div>
             <div class="col-sm d-flex align-items-end flex-column">
               <div class="card" style="max-width: 70%;">
@@ -130,6 +142,20 @@
 
     <script>
 
+      function changeRandomFactor() {
+        randomFactor = $("#randomFactorInput").val();
+        $("#currentRandomFactor").text(randomFactor);
+      }
+      function controlAutoPilot() {
+        if (autoPilot) {
+          autoPilot = false;
+          $("#controlAutoPilotButton").text("Start");
+        } else {
+          autoPilot = true;
+          $("#controlAutoPilotButton").text("Stop");
+        }
+      }
+      
       function showCurrentChaosContainer() {
         getCurrentChaosContainer();
         $('#currentChaosContainerModal').modal('show');

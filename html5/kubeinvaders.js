@@ -15,7 +15,10 @@ var namespaces_index = 0;
 var namespace = namespaces[namespaces_index];
 var endpoint = "";
 var modal_opened = false;
-
+var autoPilot = false;
+var autoPilotDirection = 0;
+var spaceshipxOld = 0;
+var randomFactor = 10;
 // pods list from kubernetes
 var pods = [];
 
@@ -432,6 +435,10 @@ function drawSpaceship() {
     ctx.closePath();
 }
 
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
 window.setInterval(function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawSpaceship();
@@ -447,6 +454,40 @@ window.setInterval(function draw() {
         dy = -dy;
     }
     
+    if (autoPilot){
+        spaceshipY = 340;
+        
+        if (getRandomInt(100) < randomFactor) {
+            shot = true;
+        }
+        
+        if (autoPilotDirection == 0) {
+            autoPilotDirection = getRandomInt(canvas.width-spaceshipWidth);
+            spaceshipxOld = spaceshipX;
+        } 
+        else if ((spaceshipX == autoPilotDirection)) {
+            autoPilotDirection = getRandomInt(canvas.width-spaceshipWidth);
+            spaceshipxOld = spaceshipX;
+        }
+        else if ((autoPilotDirection < spaceshipxOld) && (spaceshipX < autoPilotDirection)) {
+            autoPilotDirection = getRandomInt(canvas.width-spaceshipWidth);
+            spaceshipxOld = spaceshipX;
+        }
+        else if ((autoPilotDirection > spaceshipxOld) && (spaceshipX > autoPilotDirection)) {
+            autoPilotDirection = getRandomInt(canvas.width-spaceshipWidth);
+            spaceshipxOld = spaceshipX;
+        }
+        else {
+            if (autoPilotDirection > spaceshipX) {
+                spaceshipX += 5;
+            }
+            else {
+                spaceshipX -= 5;
+            }
+        }
+        
+    }
+
     if(rightPressed) {
         spaceshipX += 3;
         if (spaceshipX + spaceshipWidth > canvas.width) {

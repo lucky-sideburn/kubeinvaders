@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: kubeinvaders
@@ -22,8 +22,11 @@ spec:
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: kubeinvaders
-          servicePort: 8080
+          service:
+            name: kubeinvaders
+            port:
+              number: 8080
 {{- end }}
 

@@ -98,7 +98,7 @@
       </div>
     </div>
 
-    <div class="container" style="width: 50%;">
+    <div class="container" id="gameContainer" style="width: 50%; height: 50%;">
       <div class="starter-template">
         <div class="container" style="margin-bottom: 2%;">
           <div class="row" style="margin-top: 2%;">
@@ -118,12 +118,24 @@
         <div class="row">
           <canvas id="myCanvas" width="720" height="480"></canvas>
         </div>
+        <div class="row">
+          <div class="col text-center">
+
+          </div>
+          <div class="col text-center">
+            <input type="button" style="margin-top: 2%" class="btn btn-dark" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+            <input type="button" style="margin-top: 2%" class="btn btn-dark" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+          </div>
+          <div class="col text-center">
+
+          </div>
+        </div>
       </div>
       <div id="alert_placeholder" style="margin-top: 3%;"></div>
     </div>
     <div id="footer" style="margin-top: 5%;">
       <div class="container text-center">
-        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9</p>
+        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: develop</p>
       </div>
     </div>
     
@@ -139,6 +151,23 @@
         randomFactor = $("#randomFactorInput").val();
         $("#currentRandomFactor").text(randomFactor);
       }
+
+      function zoomIn() {
+        document.getElementById("gameContainer").style.width = "100%"
+        document.getElementById("gameContainer").style.height = "100%";
+        document.getElementById("zoomInGameScreenInput").disabled = true;
+        document.getElementById("zoomOutGameScreenInput").disabled = false; 
+      }
+
+      function zoomOut() {
+        var gameContainerWidth = document.getElementById("gameContainer").style.width;
+        var gameContainerHeight = document.getElementById("gameContainer").style.height;
+        document.getElementById("gameContainer").style.width = "50%"
+        document.getElementById("gameContainer").style.height = "50%"
+        document.getElementById("zoomInGameScreenInput").disabled = false; 
+        document.getElementById("zoomOutGameScreenInput").disabled = true; 
+      }
+
       function controlAutoPilot() {
         if (autoPilot) {
           autoPilot = false;

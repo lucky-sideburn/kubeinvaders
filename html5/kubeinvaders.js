@@ -77,6 +77,8 @@ var help = false;
 var chaos_nodes = true;
 var chaos_pods = true;
 
+var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
+
 function IsJsonString(str) {
     try {
         JSON.parse(str);
@@ -181,7 +183,7 @@ function startChaosNode(node_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
-    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Start Chaos Job on ' + node_name + '</div>');
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start Chaos Job on ' + node_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -191,7 +193,7 @@ function deletePods(pod_name) {
     oReq.onload = function () {
         //console.log(JSON.parse(this.responseText))
     };;
-    $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Kill ' + pod_name + '</div>');
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -269,13 +271,13 @@ function keyDownHandler(e) {
         else if(e.keyCode == 83) {
             if (shuffle) {
                 shuffle = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Disable shuffle</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Disable shuffle</div>');
                 //console.log("Deactivate shuffle");
             }
             else {
                 shuffle = true
                 //console.log("Activate shuffle");
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Enable shuffle</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Enable shuffle</div>');
             }
         }
         else if(e.keyCode == 32) {
@@ -291,7 +293,7 @@ function keyDownHandler(e) {
                 namespaces_index = 0;
             }
             namespace = namespaces[namespaces_index];
-            $('#alert_placeholder').replaceWith('<div id="alert_placeholder" class="alert alert-info" style="margin-top: 3%;" role="alert">Latest action: Change target namespace to ' + namespace + '</div>');
+            $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Change target namespace to ' + namespace + '</div>');
             aliens = [];
             pods = [];
         }
@@ -306,22 +308,22 @@ function keyDownHandler(e) {
         else if(e.keyCode == 67) {
             if (chaos_nodes) {
                 chaos_nodes = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Hide nodes</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Hide nodes</div>');
 
             }
             else {
                 chaos_nodes = true
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Show nodes</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Show nodes</div>');
             }
         }
         else if(e.keyCode == 80) {
             if (chaos_pods) {
                 chaos_pods = false;
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Hide pods</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Hide pods</div>');
             }
             else {
                 chaos_pods = true
-                $('#alert_placeholder').replaceWith('<div id="alert_placeholder" style="margin-top: 3%;" class="alert alert-info" role="alert">Latest action: Show pods</div>');
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Show pods</div>');
             }
         }
     }

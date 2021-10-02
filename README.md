@@ -35,7 +35,7 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 Press 'h' or select 'Show Special Keys' from the menu
 
 ### Do Kube-linter Lint
-It is possibile using kube-linter through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
+It is possibile using [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
 
 [Example from YouTube](https://www.youtube.com/watch?v=n_EuYjq3M-A)
 

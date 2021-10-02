@@ -45,6 +45,7 @@ ingress:
 # Use route_host only if ingress is disabled
 route_host: ""
 
+legacyIngress: false
 resources: {}
 nodeSelector: {}
 tolerations: []

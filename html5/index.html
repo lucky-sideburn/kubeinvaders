@@ -13,21 +13,29 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">KubeInvaders</a>
+        <a class="navbar-brand" href="#" style="margin-top: 0.2%;">KubeInvaders</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
           <ul class="navbar-nav">
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" style="margin-top: 0.2%;">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Chaos Containers
+                <font style="color: #0cf52b;">Menu</font>
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
-                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>              
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
             </li>
           </ul>
+          <li class="nav-item" style="margin-top: 1%;">
+            <span class=".navbar-text" style="color: #bbbbbb;">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
+            <span class=".navbar-text" style="color: #bbbbbb">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
+            <span class=".navbar-text" style="color: #bbbbbb">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
+            <span class=".navbar-text" style="color: #bbbbbb">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #f1f500">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;|&nbsp;</span>
+            <span class=".navbar-text" style="color: #bbbbbb">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #f1f500">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
+          </li>
         </div>
       </div>
     </nav>
@@ -67,47 +75,42 @@
       </div>
     </div>
 
+    <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="card">
+              <div class="card-header">
+                Special Keys
+              </div>
+              <div class="card-body">
+                <p class="card-text">
+                  h => Activate or deactivate help<br>
+                  s => Activate or deactivate shuffle for aliens<br>
+                  n => Change namespace<br>
+                  p => Activate or deactivate chaos engineering against pods<br>
+                  c => Activate or deactivate chaos engineering against nodes
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="container" style="width: 50%;">
       <div class="starter-template">
         <div class="container" style="margin-bottom: 2%;">
           <div class="row" style="margin-top: 2%;">
-            <div class="col-sm  d-flex align-items-start flex-column">
-              <div class="card d-flex justify-content-center" style="max-width: 70%;">
-                <div class="card-header">
-                  Stats
-                </div>
-                <div class="card-body">
-                  <p class="card-text">Deleted Pod Total:&nbsp;<span id="deleted_pods_total" style="color: #4f4f4f">0</span></p> 
-                  <p class="card-text">Chaos Jobs Total:&nbsp;<span id="chaos_jobs_total" style="color: #4f4f4f">0</span></p>
-                  <p class="card-text">Not Running Pods:&nbsp;<span id="pods_not_running_on" style="color: #4f4f4f">0</span></p>
-                </div>
+            <div class="row">
+              <div class="col text-center">
+                <button type="button" id="controlAutoPilotButton" class="btn btn-danger btn-sm" onclick="controlAutoPilot()">Start</button>
               </div>
-            </div>
-            <div class="col-sm">
-              <div class="row">
-                <img src="./logo.png" class="rounded mx-auto d-bloc" style="max-width: 90%; max-height: 80%; margin-bottom: 0%;" alt="Responsive image">
+              <div class="col text-center">
+                <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
               </div>
-              <div class="row">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-danger  btn-sm" onclick="controlAutoPilot()">Start</button>
-              </div>
-              <div class="row" style="margin-top: 2%;">
-                <div>
-                  <input type="range" id="randomFactorInput" name="randomFactorInput"
-                       min="0" max="100" value="50" onclick="changeRandomFactor()">
-                  <label for="randomFactorInput">Ramdom Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
-                </div>
-              </div>
-            </div>
-            <div class="col-sm d-flex align-items-end flex-column">
-              <div class="card" style="max-width: 70%;">
-                <div class="card-header">
-                  Replicas State Delay (second)
-                </div>
-                <div class="card-body">
-                  <h5 class="card-subtitle mb-2 text-muted"><font size=2>Seconds waiting for desired replicas state</font></h5>
-                    <p class="card-text">Current:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #4f4f4f">0</span><font color="#4f4f4f">&nbsp;sec</font></p>
-                    <p class="card-text">Latest:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #4f4f4f">0</span><font color="#4f4f4f">&nbsp;sec</font></p> 
-                </div>
+              <div class="col text-center">
+                <label for="randomFactorInput">Ramdom Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
               </div>
             </div>
           </div>
@@ -118,25 +121,15 @@
       </div>
       <div id="alert_placeholder" style="margin-top: 3%;"></div>
     </div>
-    <div class="container" style="width: 50%; margin-top: 2%; margin-bottom: 2%;">
-      <div class="card">
-        <div class="card-header">
-          Special Keys
-        </div>
-        <div class="card-body">
-          <p class="card-text">
-            h => Activate or deactivate help<br>
-            s => Activate or deactivate shuffle for aliens<br>
-            n => Change namespace<br>
-            p => Activate or deactivate chaos engineering against pods<br>
-            c => Activate or deactivate chaos engineering against nodes
-          </p>
-        </div>
+    <div id="footer" style="margin-top: 5%;">
+      <div class="container text-center">
+        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: develop</p>
       </div>
     </div>
+    
+
     <script src="kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
-
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
@@ -156,12 +149,17 @@
         }
       }
       
+      function showSpecialKeys() {
+        $('#showSpecialKeysModal').modal('show');
+        modal_opened = true;
+      }
+
       function showCurrentChaosContainer() {
         getCurrentChaosContainer();
         $('#currentChaosContainerModal').modal('show');
         modal_opened = true;
       }
-      
+
       function closeCurrentChaosJobModal() {
         $('#currentChaosContainerModal').modal('hide');
         modal_opened = false;

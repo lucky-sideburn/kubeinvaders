@@ -37,7 +37,7 @@ Press 'h' or select 'Show Special Keys' from the menu
 ### Do Kube-linter Lint
 It is possibile using kube-linter through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
 
-[HowTo](https://www.youtube.com/watch?v=n_EuYjq3M-A)
+[Example from YouTube](https://www.youtube.com/watch?v=n_EuYjq3M-A)
 
 ### Commands and metrics
 At the top you will find some metrics, the start button for automatic pilot and the rand-factor bar for increasing or decreasing speed of automatic shots.

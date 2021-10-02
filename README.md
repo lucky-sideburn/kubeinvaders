@@ -6,15 +6,14 @@
 
 1. [Description](#Description)
 2. [Installation](#Installation)
-3. [Known Problems](#Known-problems)
-4. [Metrics](#Metrics)
+3. [Usage](#Usage)
+4. [Known Problems](#Known-problems)
+5. [Metrics](#Metrics)
 6. [Security](#Security)
 
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
-
-Just released the version v1.8. How is "Replicas State Delay" of your cluster? Just play and watch metrics.
 
 ## Installation
 
@@ -30,15 +29,34 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.9
 ```
 
+## Usage
+
+### Show Special Keys
+Press 'h' or select 'Show Special Keys' from the menu
+
+### Do Kube-linter Lint
+It is possibile using kube-linter through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
+
+[HowTo](https://www.youtube.com/watch?v=n_EuYjq3M-A)
+
+### Commands and metrics
+At the top you will find some metrics, the start button for automatic pilot and the rand-factor bar for increasing or decreasing speed of automatic shots.
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/commands.png)
+
+Current Replicas State Delay is a metric that show how much time the cluster takes to coming back at the desired state of pods replicas.
+
+### Chaos Containers for masters and workers nodes
+Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
+Select from the menu "Set Custom Chaos Container for nodes" for use your preferred image or configuration for stressing Kubernetes nodes.
+
 ## Known problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
 
-
 ## Hands-on Tutorial
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).
-
 
 ## Metrics
 

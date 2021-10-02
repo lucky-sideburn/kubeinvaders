@@ -78,6 +78,7 @@ var chaos_nodes = true;
 var chaos_pods = true;
 
 var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
+var kubelinter = '';
 
 function IsJsonString(str) {
     try {
@@ -100,7 +101,7 @@ function contains(a, obj) {
 function getMetrics() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-    	console.log(this.responseText);
+        //console.log(this.responseText);
         var lines = this.responseText.split('\n');
         for (var i = 0;i < lines.length;i++){
             metric = lines[i].split(' ');
@@ -126,12 +127,25 @@ function getMetrics() {
     oReq.send();
 }
 
+function runKubeLinter() {
+    $('#kubeLinterModal').modal('show');
+    modal_opened = true;
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        kubelinter = this.responseText;
+        result_parsed = JSON.stringify(JSON.parse(kubelinter), null, 4);
+        $('#currentKubeLinterResult').text(result_parsed);
+    };;
+    //console.log("https://ENDPOINT_PLACEHOLDER/kube/kube-linter?namespace=" + namespace);
+    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/kube-linter?namespace=" + namespace);
+    oReq.send();
+}
 function getNamespaces() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-    	namespaces = this.responseText;
-	    namespaces = namespaces.split(",");
-	    namespace = namespaces[namespaces_index];
+        namespaces = this.responseText;
+        namespaces = namespaces.split(",");
+        namespace = namespaces[namespaces_index];
     };;
     oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/namespaces");
     oReq.send();
@@ -149,9 +163,8 @@ function getEndpoint() {
 function getCurrentChaosContainer() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        console.log(this.responseText);
+        //console.log(this.responseText);
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
-        console.log(job_parsed);
         $('#currentChaosContainrYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
@@ -169,7 +182,7 @@ function setChaosContainer() {
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                console.log(this.responseText);
+                //console.log(this.responseText);
                 $('#alert_placeholder2').text('New container definition has been saved.');
             }
         };;

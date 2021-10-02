@@ -1,23 +1,18 @@
 #!/bin/sh
 
-# Very temporary work-around
-KUBE=$(cat /etc/nginx/conf.d/KubeInvaders.conf | grep proxy_pass | head -n1 | awk '{ print $2 }' | sed 's/;//g')
-
-POD_FILE=/tmp/${3}.json
-
-curl -XGET "${KUBE}/api/v1/namespaces/${2}/pods/${3}" --header "Authorization: Bearer ${4}" --silent -k > ${POD_FILE}
-[ ! $? -eq 0 ] && (echo "{}" && exit 0)
-
-chmod 775 ${POD_FILE}
-wcl=$(cat $POD_FILE | wc -l )
-
-if [ $wcl -gt 0 ];then
-  kube-linter lint ${POD_FILE} 2>&1 |
-    while read -r line
-    do
-      echo $line | sed  -n 's/^\([^\ ]*\)\ \(([^\(]*)\)\ \(.*\)$/\3/p'
-    done | jq -R -s -c 'split("\n")'
-    rm -f ${POD_FILE}
+if [ ! -z "$K8S_TOKEN" ];then
+  echo 'Found K8S_TOKEN... using K8S_TOKEN instead of TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)'
+  export TOKEN=$K8S_TOKEN
 else
-  echo "{}"
+  # Source the service account token from the container directly.
+  export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
+
+for i in $(curl -k -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${1}/pods/ \
+--header "Authorization: Bearer ${TOKEN}" | jq -rM '.items[].metadata.name')
+do
+  curl -k -s https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}/api/v1/namespaces/${1}/pods/${i} \
+  --header "Authorization: Bearer ${TOKEN}" > /tmp/kube-linter-pods/${i}.yaml
+done
+
+kube-linter lint /tmp/kube-linter-pods/* --format json

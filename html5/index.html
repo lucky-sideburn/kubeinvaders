@@ -24,6 +24,7 @@
                 <font style="color: #0cf52b;">Menu</font>
               </a>
               <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><a class="dropdown-item" href="#" onclick="runKubeLinter()">Run KubeLinter On Curent Namespace</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
@@ -48,6 +49,19 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="kubeLinterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <pre id="currentKubeLinterResult"></pre> 
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
           </div>
         </div>
       </div>
@@ -135,7 +149,7 @@
     </div>
     <div id="footer" style="margin-top: 5%;">
       <div class="container text-center">
-        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9</p>
+        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: develop</p>
       </div>
     </div>
     
@@ -205,7 +219,12 @@
         $('#setChaosContainerModal').modal('hide');
         modal_opened = false;
       }
-      
+
+      function closeKubeLinterModal() {
+        $('#kubeLinterModal').modal('hide');
+        modal_opened = false;
+      }
+
       $('textarea').on('input', function() {
         $('#alert_placeholder2').text('');
       });

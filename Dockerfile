@@ -18,11 +18,14 @@ RUN luarocks install luasec
 RUN luarocks install lunajson
 
 # Install kube-linter
-RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.1.5/kube-linter-linux.tar.gz
+RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.2.4/kube-linter-linux.tar.gz
 RUN tar -xvf kube-linter-linux.tar.gz
 RUN rm -f kube-linter-linux.tar.gz
 RUN cp  kube-linter /usr/local/bin/
 RUN chmod 775 /usr/local/bin/kube-linter
+RUN mkdir /tmp/kube-linter-pods
+RUN chmod 777 /tmp/kube-linter-pods
+
 COPY kube-linter/kube-linter-parser.sh /opt/kube-linter-parser.sh
 RUN chmod +x /opt/kube-linter-parser.sh
 
@@ -42,6 +45,7 @@ COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY scripts/metrics.lua /usr/local/openresty/nginx/conf/kubeinvaders/metrics.lua
 COPY scripts/pod.lua /usr/local/openresty/nginx/conf/kubeinvaders/pod.lua
 COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
+COPY scripts/kube-linter.lua /usr/local/openresty/nginx/conf/kubeinvaders/kube-linter.lua
 COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-node.lua
 COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-containers.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua

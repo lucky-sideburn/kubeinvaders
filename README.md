@@ -32,7 +32,10 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ## Usage
 
 ### Show Special Keys
-Press 'h' or select 'Show Special Keys' from the menu
+Press 'h' or select 'Show Special Keys' from the menu.
+
+### Zoom In / Out
+Press + or - buttons to increase or decrease the game screen.
 
 ### Do Kube-linter Lint
 It is possibile using [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.

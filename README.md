@@ -58,7 +58,7 @@ Select from the menu "Set Custom Chaos Container for nodes" for use your preferr
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).
 
-## Metrics
+## Prometheus Metrics
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
 

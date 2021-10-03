@@ -32,7 +32,10 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ## Usage
 
 ### Show Special Keys
-Press 'h' or select 'Show Special Keys' from the menu
+Press 'h' or select 'Show Special Keys' from the menu.
+
+### Zoom In / Out
+Press + or - buttons to increase or decrease the game screen.
 
 ### Do Kube-linter Lint
 It is possibile using [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
@@ -62,7 +65,7 @@ Select from the menu "Set Custom Chaos Container for nodes" for use your preferr
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).
 
-## Metrics
+## Prometheus Metrics
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
 

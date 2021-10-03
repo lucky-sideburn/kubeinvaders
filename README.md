@@ -10,7 +10,8 @@
 4. [Known Problems](#Known-problems)
 5. [Metrics](#Metrics)
 6. [Security](#Security)
-
+7. [Community](#Community)
+8. [Community blogs and videos](#Community-blogs-and-videos)
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
@@ -54,8 +55,8 @@ Press the button "Hide Pods Name" or "Show Pods Name" to control labels under th
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/pods_name.png)
 
 ### Chaos Containers for masters and workers nodes
-Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
-Select from the menu "Set Custom Chaos Container for nodes" for use your preferred image or configuration for stressing Kubernetes nodes.
+- Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
+- Select from the menu "Set Custom Chaos Container for nodes" for use your preferred image or configuration for stressing Kubernetes nodes.
 
 ## Known problems
 
@@ -101,3 +102,15 @@ In order to restrict the access to the Kubeinvaders endpoint add this annotation
 ```yaml
 nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
 ```
+## Community
+
+Please reach out for news, bugs, feature requests, and other issues via:
+
+- Following us on Twitter [@kubeinvaders](https://twitter.com/kubeinvaders) & [@luckysideburn](https://twitter.com/luckysideburn)
+- New features are published on YouTube too in [this channel](https://www.youtube.com/channel/UCQ5BQ8R2fDL_WkNAllYRrpQ)
+
+### Community blogs and videos
+- Kubernetes.io blog: [KubeInvaders - Gamified Chaos Engineering Tool for Kubernetes](https://kubernetes.io/blog/2020/01/22/kubeinvaders-gamified-chaos-engineering-tool-for-kubernetes/)
+- Adrian Goins: [K8s Chaos Engineering with KubeInvaders](https://www.youtube.com/watch?v=bxT-eJCkqP8)
+- dbafromthecold: [Chaos engineering for SQL Server running on AKS using KubeInvaders](https://dbafromthecold.com/2019/07/03/chaos-engineering-for-sql-server-running-on-aks-using-kubeinvaders/)
+- Paul Klinker: [Gamification of Kubernetes Chaos Testing](https://pklinker.medium.com/gamification-of-kubernetes-chaos-testing-bd2f7a7b6037)

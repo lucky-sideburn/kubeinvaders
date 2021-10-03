@@ -1,6 +1,6 @@
 *Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/metrics.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/webui.png)
 
 # Table of Contents
 
@@ -44,16 +44,34 @@ It is possibile using [kube-linter](https://github.com/stackrox/kube-linter) thr
 
 [Example from YouTube](https://www.youtube.com/watch?v=n_EuYjq3M-A)
 
-### Commands and metrics
-At the top you will find some metrics, the start button for automatic pilot and the rand-factor bar for increasing or decreasing speed of automatic shots.
+## Commands and Metrics
+At the top you will find some metrics as described below:
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/commands.png)
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/metrics_bar.png)
 
 Current Replicas State Delay is a metric that show how much time the cluster takes to coming back at the desired state of pods replicas.
 
+This is a control-plane you can use for switch off & on various features
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/control-plane.png)
+
+### Chaos Start
+Press the button "Chaos Start" to start automatic pilot (button changed to "Stop" to disable this feature).
+### Enable Shuffle
+Press the button "Enable Shuffle" to switch randomly the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).
+### Enable Auto Jump Between Namespace
+Press the button "Auto NS Switch" to switch randomly between namespaces (button changes to "Disable Auto NS Switch" to disable this feature).
 ### Show / Hide pods name
-Press the button "Hide Pods Name" or "Show Pods Name" to control labels under the aliens.
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/pods_name.png)
+Press the button "Hide Pods Name" to hide the name of the pods under the aliens (button changes to "Show Pods Name" to disable this feature).
+### Information about current status and events
+As described below, on the game screen, near the spaceship, there are information about current cluster, namespace and some configurations
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/game-info.png)
+
+Under + and - buttons appears a bar with the latest occurred game events
+
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/game-events.png)
+
 
 ### Chaos Containers for masters and workers nodes
 - Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).

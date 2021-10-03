@@ -57,7 +57,7 @@ Press the button "Hide Pods Name" or "Show Pods Name" to control labels under th
 
 ### Chaos Containers for masters and workers nodes
 - Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
-- Select from the menu "Set Custom Chaos Container for nodes" for use your preferred image or configuration for stressing Kubernetes nodes.
+- Select from the menu "Set Custom Chaos Container for nodes" for using your preferred image or configuration against nodes.
 
 ## Known problems
 

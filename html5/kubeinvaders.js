@@ -570,12 +570,10 @@ function showPodNameControl() {
     if (showPodName) {
         showPodName = false;
         $("#buttonOnlyPodName").text("Show Pods Name");
-        $('#alert_placeholder').replaceWith(alert_div + 'Hit aliens for show name of pods</div>');
     }
     else {
         showPodName = true
         $("#buttonOnlyPodName").text("Hide Pods Name");
-        $('#alert_placeholder').replaceWith(alert_div + 'Hit aliens for kill pods</div>');
     }
 }
 

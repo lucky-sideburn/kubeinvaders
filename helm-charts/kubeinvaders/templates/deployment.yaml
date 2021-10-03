@@ -22,15 +22,18 @@ spec:
       serviceAccountName: kubeinvaders
       containers:
         - env:
-          {{ if .Values.ingress.enabled }}
+          {{- if .Values.ingress.enabled }}
           - name: ENDPOINT
             value: {{ required ".Values.ingress.hostName is required if Ingress are enabled" .Values.ingress.hostName }}
-          {{ else }}
+          {{- else }}
           - name: ENDPOINT
             value: {{ required ".Values.route_host is required if Ingress are disabled" .Values.route_host }}
-          {{ end }}
+          {{- end }}
           - name: NAMESPACE
             value: {{ .Values.target_namespace }}
+          {{- if .Values.extraEnv }}
+{{ toYaml .Values.extraEnv | indent 10 }}
+          {{- end }}
           name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}

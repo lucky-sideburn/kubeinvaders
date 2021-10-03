@@ -49,7 +49,7 @@ This is a control-plane you can use to switch off & on various features.
 [Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 ### Start The Chaos Experiment
 
-Press the button "Start" to start automatic pilot (button changed to "Stop" to disable this feature).
+Press the button "Start" to start automatic pilot (button changes to "Stop" to disable this feature).
 ### Enable Shuffle
 
 Press the button "Enable Shuffle" to switch randomly the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).

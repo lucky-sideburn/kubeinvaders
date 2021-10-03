@@ -81,6 +81,8 @@ var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; background-c
 var kubelinter = '';
 var showPodName = true
 var latestPodNameY = '';
+var namespacesJumpFlag = false;
+var namespacesJumpStaus = 'Disabled';
 
 function IsJsonString(str) {
     try {
@@ -300,17 +302,7 @@ function keyDownHandler(e) {
             shot = true
         }
         else if(e.keyCode == 78) {
-            //console.log("Change Namespace");
-            if (namespaces_index < namespaces.length-1) {
-                namespaces_index +=1 ;
-            }
-            else {
-                namespaces_index = 0;
-            }
-            namespace = namespaces[namespaces_index];
-            $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Change target namespace to ' + namespace + '</div>');
-            aliens = [];
-            pods = [];
+            switchNamespace();
         }
         else if(e.keyCode == 72) {
             if (help) {
@@ -342,6 +334,19 @@ function keyDownHandler(e) {
             }
         }
     }
+}
+
+function switchNamespace() {
+    if (namespaces_index < namespaces.length-1) {
+        namespaces_index +=1 ;
+    }
+    else {
+        namespaces_index = 0;
+    }
+    namespace = namespaces[namespaces_index];
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Change target namespace to ' + namespace + '</div>');
+    aliens = [];
+    pods = [];
 }
 
 function keyUpHandler(e) {
@@ -455,6 +460,11 @@ function drawSpaceship() {
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
+window.setInterval(function draw() {
+    if (namespacesJumpFlag){
+        randNamespaceJump(1, 10, 8);
+    }
+}, 1000)
 
 window.setInterval(function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -502,7 +512,6 @@ window.setInterval(function draw() {
                 spaceshipX -= 5;
             }
         }
-        
     }
 
     if(rightPressed) {
@@ -539,9 +548,11 @@ window.setInterval(function draw() {
     }
     ctx.fillStyle = 'white';
     ctx.font = '15px Verdana';
-    ctx.fillText('Cluster: ' + endpoint, 10, 400);
-    ctx.fillText('Current Namespace: ' + namespace, 10, 420);
-    ctx.fillText('Alien Shuffle: ' + shuffle, 10, 440);
+    ctx.fillText('Cluster: ' + endpoint, 10, 390);
+    ctx.fillText('Current Namespace: ' + namespace, 10, 410);
+    ctx.fillText('Alien Shuffle: ' + shuffle, 10, 430);
+    ctx.fillText('Auto Namespaces Switch: ' + namespacesJumpStaus, 10, 450);
+
     ctx.fillText('press \'h\' for help!', 10, 470);
 
     if (help) {
@@ -563,6 +574,20 @@ function buttonShuffleHelper() {
         shuffle = true
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Shuffle Enabled</div>');
         $("#buttonShuffle").text("Disable Shuffle");
+    }
+}
+
+function namespacesJumpControl() {
+    if (namespacesJumpFlag) {
+        namespacesJumpFlag = false;
+        $("#namespacesJumpButton").text("Enable Auto NS Switch");
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Disabled automatic switch of namespace</div>');
+        namespacesJumpStaus = 'Disabled'
+    } else {
+        namespacesJumpFlag = true;
+        $("#namespacesJumpButton").text("Disable Auto NS Switch");
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Enabled automatic switch of namespace </div>');
+        namespacesJumpStaus = 'Enabled'
     }
 }
 
@@ -594,11 +619,19 @@ function findReplace() {
     }
     return -1;
 }
-    
+
+function randNamespaceJump(min, max, jumpRandomFactor) {
+    if ((Math.random() * (max - min) + min) > jumpRandomFactor) {
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Switch Namespace</div>');
+        switchNamespace();
+    }
+}
 window.setInterval(function setAliens() {
+
     if (shuffle) {
         pods = pods.sort(() => Math.random() - 0.5)
     }
+
     aliens = [];
     //console.log("Length of aliensY array: " + aliensY.length);
     if (pods.length > 0) {

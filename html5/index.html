@@ -118,13 +118,24 @@
           <div class="row" style="margin-top: 2%;">
             <div class="row">
               <div class="col text-center">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-danger btn-sm" onclick="controlAutoPilot()">Start</button>
+                <button type="button" id="controlAutoPilotButton" class="btn btn-danger" onclick="controlAutoPilot()">Chaos Start</button>
               </div>
               <div class="col text-center">
                 <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
               </div>
               <div class="col text-center">
                 <label for="randomFactorInput">Ramdom Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+              </div>
+            </div>
+            <div class="row" style="margin-top: 1%;">
+              <div class="col text-center">
+                <button type="button" id="buttonShuffle" class="btn btn-dark btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+              </div>
+              <div class="col text-center">
+                <button type="button" id="buttonOnlyPodName" class="btn btn-dark btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+              </div>
+              <div class="col text-center">
+
               </div>
             </div>
           </div>

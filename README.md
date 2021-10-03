@@ -46,6 +46,10 @@ At the top you will find some metrics, the start button for automatic pilot and 
 
 Current Replicas State Delay is a metric that show how much time the cluster takes to coming back at the desired state of pods replicas.
 
+### Show / Hide pods name
+Press the button "Hide Pods Name" or "Show Pods Name" to control labels under the aliens.
+![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/pods_name.png)
+
 ### Chaos Containers for masters and workers nodes
 Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
 Select from the menu "Set Custom Chaos Container for nodes" for use your preferred image or configuration for stressing Kubernetes nodes.

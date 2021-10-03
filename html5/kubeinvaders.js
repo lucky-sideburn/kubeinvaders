@@ -79,6 +79,8 @@ var chaos_pods = true;
 
 var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
 var kubelinter = '';
+var showPodName = true
+var latestPodNameY = '';
 
 function IsJsonString(str) {
     try {
@@ -368,9 +370,12 @@ function drawAlien(alienX, alienY, name) {
     }
     else {
         image.src = './sprite_invader.png';
+        ctx.font = '8px Verdana';
         ctx.drawImage(image, alienX, alienY, 40, 40);
+        if (showPodName) {
+            ctx.fillText(name.substring(0, 19) + '..', alienX, alienY + 40);
+        }
     }
-    
     ctx.closePath();
 }
 
@@ -386,8 +391,6 @@ function checkRocketAlienCollision() {
                 for (k=aliens[i]["x"]; k<aliens[i]["x"]+aliensWidth; k++) {
                     rangeX.push(k);
                 }
-
-                //console.log("rangeX is:" + rangeX);
                 
                 if(contains(rangeX, rocketX)) {
                     //console.log("collision detected");
@@ -416,7 +419,6 @@ function drawRocket() {
     var image = new Image(); // Image constructor
     image.src = './kuberocket.png';
     ctx.drawImage(image, rocketX, rocketY, 20, 20);
-
     ctx.closePath();
 
     if (checkRocketAlienCollision()) {
@@ -551,6 +553,32 @@ window.setInterval(function draw() {
     }
 }, 10)
 
+function buttonShuffleHelper() {
+    if (shuffle) {
+        shuffle = false;
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Shuffle Disable</div>');
+        $("#buttonShuffle").text("Enable Shuffle");
+    }
+    else {
+        shuffle = true
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Shuffle Enabled</div>');
+        $("#buttonShuffle").text("Disable Shuffle");
+    }
+}
+
+function showPodNameControl() {
+    if (showPodName) {
+        showPodName = false;
+        $("#buttonOnlyPodName").text("Show Pods Name");
+        $('#alert_placeholder').replaceWith(alert_div + 'Hit aliens for show name of pods</div>');
+    }
+    else {
+        showPodName = true
+        $("#buttonOnlyPodName").text("Hide Pods Name");
+        $('#alert_placeholder').replaceWith(alert_div + 'Hit aliens for kill pods</div>');
+    }
+}
+
 function podExists(podName) {
     for (i=0; i<aliens.length; i++) {
         if (aliens[i]["name"] == podName) {
@@ -583,6 +611,8 @@ window.setInterval(function setAliens() {
         }
         var x = 10;
         var y = 10;
+        var yInc = false;
+
         for (i=0; i<pods.length; i++) {
             if(!podExists(pods[i])) {
                 var replaceWith = findReplace();
@@ -591,6 +621,14 @@ window.setInterval(function setAliens() {
                     cnt =+ 1;
                 }
                 else {
+                    if (!yInc) {
+                        y += 20;
+                        yInc = true;
+                    }
+                    else {
+                        y -= 20;
+                        yInc = false;
+                    }
                     aliens.push({"name": pods[i], "x": x, "y": y, "active": true});
                     cnt =+ 1;
                 }

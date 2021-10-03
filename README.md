@@ -2,6 +2,8 @@
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/webui.png)
 
+[Video HowTo of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
+
 # Table of Contents
 
 1. [Description](#Description)
@@ -32,6 +34,9 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 
 ## Usage
+
+### Watch YouTube How To
+[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 
 ### Show Special Keys
 Press 'h' or select 'Show Special Keys' from the menu.
@@ -130,11 +135,12 @@ Please reach out for news, bugs, feature requests, and other issues via:
 
 ## Community blogs and videos
 - Kubernetes.io blog: [KubeInvaders - Gamified Chaos Engineering Tool for Kubernetes](https://kubernetes.io/blog/2020/01/22/kubeinvaders-gamified-chaos-engineering-tool-for-kubernetes/)
-- Vasily Marmer:[Open Source solutions for chaos engineering in Kubernetes](https://blog.flant.com/chaos-engineering-in-kubernetes-open-source-tools/)
-- Mathias Persson: [KubeInvaders - gamified chaos engineering](https://www.reeinvent.com/blog/kubeinvaders)
+- DevNation RedHat Developer: [Twitter](https://twitter.com/sebi2706/status/1316681264179613707)
+- Flant:[Open Source solutions for chaos engineering in Kubernetes](https://blog.flant.com/chaos-engineering-in-kubernetes-open-source-tools/)
+- Reeinvent: [KubeInvaders - gamified chaos engineering](https://www.reeinvent.com/blog/kubeinvaders)
 - Adrian Goins: [K8s Chaos Engineering with KubeInvaders](https://www.youtube.com/watch?v=bxT-eJCkqP8)
 - dbafromthecold: [Chaos engineering for SQL Server running on AKS using KubeInvaders](https://dbafromthecold.com/2019/07/03/chaos-engineering-for-sql-server-running-on-aks-using-kubeinvaders/)
-- Paul Klinker: [Gamification of Kubernetes Chaos Testing](https://pklinker.medium.com/gamification-of-kubernetes-chaos-testing-bd2f7a7b6037)
+- Pklinker: [Gamification of Kubernetes Chaos Testing](https://pklinker.medium.com/gamification-of-kubernetes-chaos-testing-bd2f7a7b6037)
 - Openshift Commons Briefings: [OpenShift Commons Briefing KubeInvaders: Chaos Engineering Tool for Kubernetes](https://www.youtube.com/watch?v=3OOXOCTAYF0&t=4s)
 - Devoptribe.it: [In an awesome-kubernetes](https://devopstribe.it/archives/3254)
 - William Lam: [Interesting Kubernetes application demos](https://williamlam.com/2020/06/interesting-kubernetes-application-demos.html)

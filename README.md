@@ -2,7 +2,7 @@
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/metrics.png)
 
-[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
+[Video HowTo of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 
 # Table of Contents
 

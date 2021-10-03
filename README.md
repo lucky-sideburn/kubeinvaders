@@ -12,6 +12,7 @@
 6. [Security](#Security)
 7. [Community](#Community)
 8. [Community blogs and videos](#Community-blogs-and-videos)
+9. [License](#License)
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
@@ -109,8 +110,12 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - Following us on Twitter [@kubeinvaders](https://twitter.com/kubeinvaders) & [@luckysideburn](https://twitter.com/luckysideburn)
 - New features are published on YouTube too in [this channel](https://www.youtube.com/channel/UCQ5BQ8R2fDL_WkNAllYRrpQ)
 
-### Community blogs and videos
+## Community blogs and videos
 - Kubernetes.io blog: [KubeInvaders - Gamified Chaos Engineering Tool for Kubernetes](https://kubernetes.io/blog/2020/01/22/kubeinvaders-gamified-chaos-engineering-tool-for-kubernetes/)
 - Adrian Goins: [K8s Chaos Engineering with KubeInvaders](https://www.youtube.com/watch?v=bxT-eJCkqP8)
 - dbafromthecold: [Chaos engineering for SQL Server running on AKS using KubeInvaders](https://dbafromthecold.com/2019/07/03/chaos-engineering-for-sql-server-running-on-aks-using-kubeinvaders/)
 - Paul Klinker: [Gamification of Kubernetes Chaos Testing](https://pklinker.medium.com/gamification-of-kubernetes-chaos-testing-bd2f7a7b6037)
+
+## License
+
+KubeInvaders is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text.

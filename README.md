@@ -2,6 +2,8 @@
 
 ![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/metrics.png)
 
+[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
+
 # Table of Contents
 
 1. [Description](#Description)
@@ -32,6 +34,9 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 ```
 
 ## Usage
+
+### Watch YouTube How To
+[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 
 ### Show Special Keys
 Press 'h' or select 'Show Special Keys' from the menu.

@@ -19,3 +19,4 @@ helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2"
 | image.tag           | Specify tag of KubeInvaders to deploy  |
 | ingress.hostName    | URL used for ingress                   |
 | target_namespace    | namespaces to take under control       |
+| extraEnv            | Extra environment variables for pod    |

@@ -39,13 +39,23 @@ ingress:
   enabled: true
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-  hostName: "" 
+  hostName: ""
   tls: {}
 
 # Use route_host only if ingress is disabled
 route_host: ""
 
 legacyIngress: false
+
+extraEnv: []
+# extraEnv:
+#   - name: ALIENPROXIMITY
+#     value: "10"
+#   - name: HITSLIMIT
+#     value: "1"
+#   - name: UPDATETIME
+#     value: "0.5"
+
 resources: {}
 nodeSelector: {}
 tolerations: []

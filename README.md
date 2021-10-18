@@ -156,7 +156,7 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - LuCkySideburn: [Talk @ Codemotion](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-tool-for-kubernetes-and-openshift)
 - Chaos Carnival: [Chaos Engineering is fun!](https://www.youtube.com/watch?v=10tHPl67A9I&t=3s)
 - Kubeinvaders (old version) + OpenShift 4 Demo: [YouTube_Video](https://www.youtube.com/watch?v=kXm2uU5vlp4)
-- KubeInvaders (old version) Vs Openshift 4.1: [YouTube Video](https://www.youtube.com/watch?v=7R9ftgB-JYU)
+- KubeInvaders (old version) Vs Openshift 4.1: [YouTube_Video](https://www.youtube.com/watch?v=7R9ftgB-JYU)
 
 ## License
 

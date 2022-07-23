@@ -4,7 +4,7 @@ name: kubeinvaders
 appVersion: 1.9
 version: 1.9
 home: https://github.com/lucky-sideburn/KubeInvaders
-
+image: https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.svg
 sources:
 - https://github.com/lucky-sideburn/KubeInvaders
 maintainers:

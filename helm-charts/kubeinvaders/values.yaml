@@ -56,9 +56,21 @@ extraEnv: []
 #   - name: UPDATETIME
 #     value: "0.5"
 
+extraVolumes: []
+  # - name: tmp
+  #   emptyDir: {}
+
+extraVolumeMounts: []
+  # - name: tmp
+  #   mountPath: /usr/local/openresty
+
 resources: {}
 nodeSelector: {}
 tolerations: []
+securityContext: {}
+  # runAsUser: 999
+  # runAsGroup: 999
+  # fsGroup: 999
 
 serviceMonitor:
   enabled: false

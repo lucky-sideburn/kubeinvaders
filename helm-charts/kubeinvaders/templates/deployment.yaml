@@ -20,6 +20,9 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       serviceAccountName: kubeinvaders
+      {{- if .Values.securityContext }}
+      securityContext: {{- toYaml .Values.securityContext | nindent 8 }}
+      {{- end }}
       containers:
         - env:
           {{- if .Values.ingress.enabled }}
@@ -41,11 +44,18 @@ spec:
             - name: http
               containerPort: 8080
               protocol: TCP
+          {{- with .Values.resources }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+          {{- end }}
+          {{- with .Values.extraVolumeMounts }}
+          volumeMounts:
+          {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with.Values.extraVolumes }} 
+      volumes:
       {{- end }}
     {{- with .Values.affinity }}
       affinity:

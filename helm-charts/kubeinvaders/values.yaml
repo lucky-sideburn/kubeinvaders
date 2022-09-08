@@ -1,9 +1,17 @@
-# Default namespace target
-target_namespace: "default"
-
 # Default values for kubeinvaders.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+
+nameOverride: ""
+fullnameOverride: ""
+
+config:
+  # target_namespace where kubeinvaders should be allowed to kill pods
+  target_namespace: "default"
+  alienProximity: 10
+  hitsLimit: 1
+  updateTime: 0.5
+
 rbac:
   # Specifies whether RBAC resources should be created
   create: true
@@ -21,22 +29,33 @@ clusterRole:
   # true, a name based on fullname is generated
   name: kubeinvaders
 
-replicaCount: 1
-
-image:
-  repository: luckysideburn/kubeinvaders
-  tag: v1.9
-  pullPolicy: Always
-
-nameOverride: ""
-fullnameOverride: ""
+deployment:
+  replicaCount: 1
+  image:
+    repository: luckysideburn/kubeinvaders
+    tag: v1.9
+    pullPolicy: Always
+  extraEnv: []
+  # - name: FOO
+  #   value: "BAR"
+  extraVolumes: []
+  # - name: tmp
+  #   emptyDir: {}
+  extraVolumeMounts: []
+  # - name: tmp
+  #   mountPath: /usr/local/openresty
+  resources: {}
+  nodeSelector: {}
+  tolerations: []
+  securityContext: {}
 
 service:
   type: ClusterIP
   port: 8080
 
 ingress:
-  enabled: true
+  enabled: false
+  legacyIngress: false
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hostName: ""
@@ -44,33 +63,6 @@ ingress:
 
 # Use route_host only if ingress is disabled
 route_host: ""
-
-legacyIngress: false
-
-extraEnv: []
-# extraEnv:
-#   - name: ALIENPROXIMITY
-#     value: "10"
-#   - name: HITSLIMIT
-#     value: "1"
-#   - name: UPDATETIME
-#     value: "0.5"
-
-extraVolumes: []
-  # - name: tmp
-  #   emptyDir: {}
-
-extraVolumeMounts: []
-  # - name: tmp
-  #   mountPath: /usr/local/openresty
-
-resources: {}
-nodeSelector: {}
-tolerations: []
-securityContext: {}
-  # runAsUser: 999
-  # runAsGroup: 999
-  # fsGroup: 999
 
 serviceMonitor:
   enabled: false

@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.deployment.replicaCount }}
   selector:
     matchLabels:
       app.kubernetes.io/name: kubeinvaders
@@ -20,48 +20,58 @@ spec:
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       serviceAccountName: kubeinvaders
-      {{- if .Values.securityContext }}
-      securityContext: {{- toYaml .Values.securityContext | nindent 8 }}
+      {{- with .Values.deployment.securityContext }}
+      securityContext: 
+        {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - env:
           {{- if .Values.ingress.enabled }}
           - name: ENDPOINT
-            value: {{ required ".Values.ingress.hostName is required if Ingress are enabled" .Values.ingress.hostName }}
+            value: {{ required ".Values.ingress.hostName is required if Ingress is enabled" .Values.ingress.hostName }}
           {{- else }}
           - name: ENDPOINT
-            value: {{ required ".Values.route_host is required if Ingress are disabled" .Values.route_host }}
+            value: {{ required ".Values.route_host is required if Ingress is disabled" .Values.route_host }}
           {{- end }}
           - name: NAMESPACE
-            value: {{ .Values.target_namespace }}
-          {{- if .Values.extraEnv }}
-{{ toYaml .Values.extraEnv | indent 10 }}
+            value: {{ .Values.config.target_namespace }}
+          - name: ALIENPROXIMITY
+            value: {{ .Values.config.alienProximity }}
+          - name: HITSLIMIT
+            value: {{ .Values.config.hitsLimit }}
+          - name: UPDATETIME
+            value: {{ .Values.config.updateTime }}
+          {{- if .Values.deployment.extraEnv }}
+{{ toYaml .Values.deployment.extraEnv | indent 10 }}
           {{- end }}
           name: {{ .Chart.Name }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
+          imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
-          {{- with .Values.resources }}
+          {{- with .Values.deployment.resources }}
           resources:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.extraVolumeMounts }}
+          {{- with .Values.deployment.extraVolumeMounts }}
           volumeMounts:
+            {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.deployment.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with.Values.extraVolumes }} 
+      {{- with.Values.deployment.extraVolumes }} 
       volumes:
+        {{- toYaml . | nindent 8 }}
       {{- end }}
-    {{- with .Values.affinity }}
+      {{- with .Values.deployment.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
-    {{- end }}
-    {{- with .Values.tolerations }}
-      tolerations:
+      {{- end }}
+      {{- with .Values.deployment.tolerations }}
+      tolerations: 
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- end }}

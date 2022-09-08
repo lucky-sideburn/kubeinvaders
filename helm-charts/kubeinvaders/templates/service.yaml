@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kubeinvaders
+  name: {{ include "kubeinvaders.fullname" . }}
   labels:
     app.kubernetes.io/name: kubeinvaders
     helm.sh/chart: {{ include "kubeinvaders.chart" . }}

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kubeinvaders
+  name: {{ include "kubeinvaders.fullname" . }}
   labels:
     app.kubernetes.io/name: kubeinvaders
     helm.sh/chart: {{ include "kubeinvaders.chart" . }}
@@ -36,13 +36,13 @@ spec:
           - name: NAMESPACE
             value: {{ .Values.config.target_namespace }}
           - name: ALIENPROXIMITY
-            value: {{ .Values.config.alienProximity }}
+            value: "{{ .Values.config.alienProximity }}"
           - name: HITSLIMIT
-            value: {{ .Values.config.hitsLimit }}
+            value: "{{ .Values.config.hitsLimit }}"
           - name: UPDATETIME
-            value: {{ .Values.config.updateTime }}
-          {{- if .Values.deployment.extraEnv }}
-{{ toYaml .Values.deployment.extraEnv | indent 10 }}
+            value: "{{ .Values.config.updateTime }}"
+          {{- with .Values.deployment.extraEnv }}
+          {{ toYaml . | nindent 10 }}
           {{- end }}
           name: {{ .Chart.Name }}
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag }}"
@@ -63,7 +63,7 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with.Values.deployment.extraVolumes }} 
+      {{- with .Values.deployment.extraVolumes }} 
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}

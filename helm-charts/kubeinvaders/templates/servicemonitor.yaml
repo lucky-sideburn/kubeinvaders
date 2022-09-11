@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: kubeinvaders-metrics
+  name: {{ include "kubeinvaders.fullname" . }}
   labels:
     app.kubernetes.io/name: kubeinvaders
     helm.sh/chart: {{ include "kubeinvaders.chart" . }}

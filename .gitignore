@@ -1,4 +1,5 @@
 utils
+dev-tools/*.tgz
 .vagrant
 x86_64-darwin.zip
 x86_64-linux.zip

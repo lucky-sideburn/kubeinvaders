@@ -1,8 +1,8 @@
 apiVersion: v1
 description: A Helm chart for KubeInvaders
 name: kubeinvaders
-appVersion: 1.9
-version: 1.9
+appVersion: 1.9.2
+version: 1.9.2
 home: https://github.com/lucky-sideburn/KubeInvaders
 image: https://github.com/lucky-sideburn/KubeInvaders/blob/master/kubeinvaders.svg
 sources:

@@ -29,7 +29,7 @@ helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
 kubectl create namespace kubeinvaders
 
 helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.9
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.hostName=kubeinvaders.io --set image.tag=v1.9.2
 ```
 
 ## Usage

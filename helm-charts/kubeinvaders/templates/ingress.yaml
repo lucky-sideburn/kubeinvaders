@@ -13,6 +13,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
+  ingressClassName: {{ .Values.ingress.className }}
   tls:
     - hosts:
       - {{ .Values.ingress.hostName | quote }}
@@ -29,4 +30,3 @@ spec:
             port:
               number: 8080
 {{- end }}
-

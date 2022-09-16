@@ -56,9 +56,9 @@ service:
 ingress:
   enabled: false
   legacyIngress: false
+  className: "nginx"
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
-    kubernetes.io/ingress.class: "nginx"
   hostName: ""
   tls: {}
 

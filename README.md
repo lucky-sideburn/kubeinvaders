@@ -29,7 +29,7 @@ helm repo update
 
 kubectl create namespace kubeinvaders
 
-helm install kubeinvaders --set-string target_namespace="namespace1\,namespace2" \
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.2
 ```
 

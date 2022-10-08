@@ -9,7 +9,7 @@ var spaceshipHeight = 60;
 var spaceshipWidth = 60;
 var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
-var cluster = "CLUSTER_PLACEOLDER";
+var clu_endpoint = "endpoint_placeholder";
 var namespaces = [];
 var namespaces_index = 0;
 var namespace = namespaces[namespaces_index];
@@ -127,7 +127,7 @@ function getMetrics() {
             }
         }
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/metrics");
+    oReq.open("GET", "https://" + clu_endpoint + "/metrics");
     oReq.send();
 }
 
@@ -140,8 +140,7 @@ function runKubeLinter() {
         result_parsed = JSON.stringify(JSON.parse(kubelinter), null, 4);
         $('#currentKubeLinterResult').text(result_parsed);
     };;
-    //console.log("https://ENDPOINT_PLACEHOLDER/kube/kube-linter?namespace=" + namespace);
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/kube-linter?namespace=" + namespace);
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/kube-linter?namespace=" + namespace);
     oReq.send();
 }
 function getNamespaces() {
@@ -151,7 +150,7 @@ function getNamespaces() {
         namespaces = namespaces.split(",");
         namespace = namespaces[namespaces_index];
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/namespaces");
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/namespaces");
     oReq.send();
 }
 
@@ -160,7 +159,7 @@ function getEndpoint() {
     oReq.onload = function () {
         endpoint = this.responseText;
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/endpoint");
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/endpoint");
     oReq.send();
 }
 
@@ -172,7 +171,7 @@ function getCurrentChaosContainer() {
         $('#currentChaosContainrYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=container_definition");
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=container_definition");
     oReq.send();
 }
 
@@ -182,7 +181,7 @@ function setChaosContainer() {
     }
     else {
         var oReq = new XMLHttpRequest();
-        oReq.open("POST", "https://ENDPOINT_PLACEHOLDER/kube/chaos/containers?action=set", true);
+        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -201,7 +200,7 @@ function startChaosNode(node_name) {
         //console.log(JSON.parse(this.responseText))
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start Chaos Job on ' + node_name + '</div>');
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -211,7 +210,7 @@ function deletePods(pod_name) {
         //console.log(JSON.parse(this.responseText))
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
-    oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
+    oReq.open("GET", "https://" + clu_endpoint + "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -226,7 +225,7 @@ function getPods() {
                 pods = json_parsed["items"];
             }
         };;
-        oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/pods?action=list&namespace=" + namespace);
+        oReq.open("GET", "https://" + clu_endpoint + "/kube/pods?action=list&namespace=" + namespace);
         oReq.send();
     }
     else {
@@ -245,7 +244,7 @@ function getNodes() {
             json_parsed = JSON.parse(this.responseText);
             nodes = json_parsed["items"];
         };;
-        oReq.open("GET", "https://ENDPOINT_PLACEHOLDER/kube/nodes");
+        oReq.open("GET", "https://" + clu_endpoint + "/kube/nodes");
         oReq.send();
     }
     else {

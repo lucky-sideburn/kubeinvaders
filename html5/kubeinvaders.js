@@ -374,7 +374,7 @@ function drawAlien(alienX, alienY, name) {
     }
     else {
         image.src = './sprite_invader.png';
-        ctx.font = '8px Verdana';
+        ctx.font = '8px pixel';
         ctx.drawImage(image, alienX, alienY, 40, 40);
         if (showPodName) {
             ctx.fillText(name.substring(0, 19) + '..', alienX, alienY + 40);
@@ -546,7 +546,7 @@ window.setInterval(function draw() {
         }
     }
     ctx.fillStyle = 'white';
-    ctx.font = '15px Verdana';
+    ctx.font = '12px pixel';
     ctx.fillText('Cluster: ' + endpoint, 10, 390);
     ctx.fillText('Current Namespace: ' + namespace, 10, 410);
     ctx.fillText('Alien Shuffle: ' + shuffle, 10, 430);

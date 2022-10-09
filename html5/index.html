@@ -7,13 +7,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <style>
+      @font-face {
+        font-family: pixel;
+        src: url('./pixel.otf');
+      }
+      div {
+        font-family: pixel;
+      }
       canvas { background: #000; display: block; margin: 0 auto; border:1px solid #ffffff;}
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-li bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" style="margin-top: 0.2%;">KubeInvaders</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -21,22 +27,15 @@
           <ul class="navbar-nav">
             <li class="nav-item dropdown" style="margin-top: 0.2%;">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <font style="color: #0cf52b;">Menu</font>
+                <font style="color: #000000;">Menu</font>
               </a>
-              <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+              <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarDarkDropdownMenuLink">
                 <li><a class="dropdown-item" href="#" onclick="runKubeLinter()">Run KubeLinter On Current Namespace</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
             </li>
           </ul>
-          <li class="nav-item" style="margin-top: 1%;">
-            <span class=".navbar-text" style="color: #bbbbbb;">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
-            <span class=".navbar-text" style="color: #bbbbbb">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
-            <span class=".navbar-text" style="color: #bbbbbb">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #f1f500">0</span>&nbsp;|&nbsp;</span>
-            <span class=".navbar-text" style="color: #bbbbbb">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #f1f500">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;|&nbsp;</span>
-            <span class=".navbar-text" style="color: #bbbbbb">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #f1f500">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
-          </li>
         </div>
       </div>
     </nav>
@@ -48,7 +47,7 @@
             <pre id="currentChaosContainrYaml"></pre> 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
           </div>
         </div>
       </div>
@@ -61,7 +60,7 @@
             <pre id="currentKubeLinterResult"></pre> 
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
+            <button type="button" class="btn btn-light" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
           </div>
         </div>
       </div>
@@ -118,7 +117,7 @@
           <div class="row" style="margin-top: 2%;">
             <div class="row">
               <div class="col text-center">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-danger" onclick="controlAutoPilot()">Start</button>
+                <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
               </div>
               <div class="col text-center">
                 <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
@@ -129,15 +128,24 @@
             </div>
             <div class="row" style="margin-top: 1%;">
               <div class="col text-center">
-                <button type="button" id="buttonShuffle" class="btn btn-dark btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+                <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
               </div>
               <div class="col text-center">
-                <button type="button" id="namespacesJumpButton" class="btn btn-dark btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+                <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
               </div>
               <div class="col text-center">
-                <button type="button" id="buttonOnlyPodName" class="btn btn-dark btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+                <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
               </div>
             </div>
+          </div>
+        </div>
+        <div class="row">
+          <div style="margin-top: 1%;">
+            <span style="color: #000000;">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+            <span style="color: #000000">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+            <span style="color: #000000">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+            <span style="color: #000000">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;-&nbsp;</span>
+            <span style="color: #000000">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
           </div>
         </div>
         <div class="row">
@@ -148,8 +156,8 @@
 
           </div>
           <div class="col text-center">
-            <input type="button" style="margin-top: 2%" class="btn btn-dark" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
-            <input type="button" style="margin-top: 2%" class="btn btn-dark" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
           </div>
           <div class="col text-center">
 

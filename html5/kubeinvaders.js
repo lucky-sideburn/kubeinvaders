@@ -21,6 +21,7 @@ var spaceshipxOld = 0;
 var randomFactor = 10;
 // pods list from kubernetes
 var pods = [];
+var game_mode_switch = false;
 
 // nodes list from kubernetes
 var nodes = [];
@@ -252,13 +253,15 @@ function getNodes() {
     }
 }
 
-window.setInterval(function getKubeItems() { 
-    getNodes();
-    getPods();
+window.setInterval(function getKubeItems() {
+    if (game_mode_switch) {
+        getNodes();
+        getPods();
+    }
 }, 1000)
 
 function keyDownHandler(e) {
-    if (!modal_opened) {
+    if (!modal_opened && game_mode_switch) {
         e.preventDefault();
         if(e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
@@ -682,7 +685,9 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function metrics() {
-    getMetrics()
+    if (game_mode_switch) {
+        getMetrics()
+    }
 }, 2000)
 
 getEndpoint();

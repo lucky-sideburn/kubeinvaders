@@ -168,7 +168,27 @@
           <form>
             <div class="form-group">
               <label for="exampleFormControlTextarea1"></label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="20"></textarea>
+              <textarea class="form-control" id="exampleFormControlTextarea1" rows="20" style="font-family: Courier, monospace;">
+jobs:
+cpu_attack: 
+  from: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: ["stress-ng", "--cpu", "4", "--io", "2", "--vm", "1", "--vm-bytes", "1G", "--timeout", "10s", "--metrics-brief"]
+mem_attack: 
+  from: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: ["stress-ng", "--vm 2", "-–vm-bytes", "1G"]
+
+experiments:
+- name: cpu_attack
+  loop: 5
+  check_url: https://google.it
+  check_payload: ''
+  check_tls_ignore: true
+- name: mem_attack
+  loop: 5
+  check_url: https://google.it
+  check_payload: ''
+  check_tls_ignore: true          
+              </textarea>
             </div>
           </form>
         </div>

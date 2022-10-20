@@ -11,3 +11,9 @@ end
 
 local token = os.getenv("TOKEN")
 local arg = ngx.req.get_uri_args()
+local body_data = ngx.req.get_body_data() 
+file = io.open("/tmp/experiments.yaml", "w")
+io.output(file)
+io.write(body_data)
+io.close(file)
+

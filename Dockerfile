@@ -48,6 +48,7 @@ COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
 COPY scripts/kube-linter.lua /usr/local/openresty/nginx/conf/kubeinvaders/kube-linter.lua
 COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-node.lua
 COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-containers.lua
+COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/programming_mode.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d

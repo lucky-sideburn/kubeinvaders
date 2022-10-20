@@ -118,16 +118,27 @@
             
             <div class="row" style="margin-bottom: 1%;">
               <div class="col text-center">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
+                <button type="button" id="gameModeButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
               </div>
               <div class="col text-center">
-                <p>KubeInvaders</p>
+                <div id="programming-mode-buttons" style="display: none;">
+                  <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
+                </div>
               </div>
               <div class="col text-center">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="startProgrammingMode()">Programming Mode</button>
+                <button type="button" id="programmingModeButton" class="btn btn-light" onclick="startProgrammingMode()">Programming Mode</button>
               </div>
             </div>
-
+            <div id="programming-mode-buttons" style="display: none;">
+              <div class="row">
+                <div class="col text-center">
+                </div>
+                <div class="col text-center">
+                </div>
+                <div class="col text-center">
+                </div>
+              </div>
+            </div>
             <div id="game-buttons" style="display: none;">
               <div class="row">
                 <div class="col text-center">
@@ -164,33 +175,45 @@
           </div>
         </div>
 
-        <div class="row" style="margin-top: 1%;">
-          <form>
-            <div class="form-group">
-              <label for="exampleFormControlTextarea1"></label>
-              <textarea class="form-control" id="exampleFormControlTextarea1" rows="20" style="font-family: Courier, monospace;">
+        <div id="chaos-program-screen" style="display: none;">
+          <div class="row" style="margin-top: 1%;">
+            <form>
+              <div id="alert_placeholder" style="margin-top: 3%;"></div>
+              <div class="form-group">
+                <label for="chaosProgramTextArea"></label>
+                <textarea class="form-control" id="chaosProgramTextArea" rows="20" style="font-family: Courier, monospace;">
 jobs:
-cpu_attack: 
-  from: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-  command: ["stress-ng", "--cpu", "4", "--io", "2", "--vm", "1", "--vm-bytes", "1G", "--timeout", "10s", "--metrics-brief"]
-mem_attack: 
-  from: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-  command: ["stress-ng", "--vm 2", "-–vm-bytes", "1G"]
+cpu-attack:
+  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: "stress-ng"
+  args:
+    - --help
+
+mem-attack:
+  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: "stress-ng"
+  args:
+    - --help
 
 experiments:
-- name: cpu_attack
+- name: cpu-attack-exp
+  job: cpu-attack
   loop: 5
-  check_url: https://google.it
-  check_payload: ''
-  check_tls_ignore: true
-- name: mem_attack
+  after:
+    check_url: https://google.it
+    check_payload: ''
+    check_tls_ignore: true
+- name: mem-attack-exp
+  job: mem-attack
   loop: 5
-  check_url: https://google.it
-  check_payload: ''
-  check_tls_ignore: true          
-              </textarea>
-            </div>
-          </form>
+  after:
+    check_url: https://google.it
+    check_payload: ''
+    check_tls_ignore: true       
+                </textarea>
+              </div>
+            </form>
+          </div>
         </div>
 
         <div id="game-screen" style="display: none;">
@@ -210,9 +233,8 @@ experiments:
             </div>
           </div>
         </div>
-
+        <div id="alert_placeholder" style="margin-top: 3%;"></div>
       </div>
-      <div id="alert_placeholder" style="margin-top: 3%;"></div>
     </div>
     <div id="footer" style="margin-top: 5%;">
       <div class="container text-center">
@@ -259,11 +281,8 @@ experiments:
         }
       }
       
-      /* TODO: Improve this function... */
       function startGameMode() {
-        var game_buttons = document.getElementById("game-buttons");
-        var game_screen = document.getElementById("game-screen");
-
+        
         if (game_mode_switch) {
           game_mode_switch = false;
         } else {
@@ -275,11 +294,35 @@ experiments:
         } else {
           game_buttons.style.display = "none";
         }
+
         if (game_screen.style.display === "none") {
           game_screen.style.display = "block";
         } else {
           game_screen.style.display = "none";
         }
+
+        chaos_program_screen.style.display = "none";
+        programming_mode_buttons.style.display = "none";
+
+      }
+
+      function startProgrammingMode() {
+
+        if (chaos_program_screen.style.display === "none") {
+          chaos_program_screen.style.display = "block";
+        } else {
+          chaos_program_screen.style.display = "none";
+        }
+
+        if (programming_mode_buttons.style.display === "none") {
+          programming_mode_buttons.style.display = "block";
+        } else {
+          programming_mode_buttons.style.display = "none";
+        }
+
+        game_buttons.style.display = "none";
+        game_screen.style.display = "none";
+
       }
 
       function showSpecialKeys() {

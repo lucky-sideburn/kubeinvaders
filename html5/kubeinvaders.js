@@ -23,6 +23,11 @@ var randomFactor = 10;
 var pods = [];
 var game_mode_switch = false;
 
+var game_buttons = document.getElementById("game-buttons");
+var game_screen = document.getElementById("game-screen");
+var chaos_program_screen = document.getElementById("chaos-program-screen");
+var programming_mode_buttons = document.getElementById("programming-mode-buttons");
+
 // nodes list from kubernetes
 var nodes = [];
 
@@ -193,6 +198,19 @@ function setChaosContainer() {
         oReq.setRequestHeader("Content-Type", "application/json");
         oReq.send($('#currentChaosContainerJsonTextArea').val());
     }
+}
+
+function runChaosProgram() {
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode", true);
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            //console.log(this.responseText);
+            $('#alert_placeholder2').text('New Chaos Program has been started.');
+        }
+    };;
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send($('#chaosProgramTextArea').val());
 }
 
 function startChaosNode(node_name) {

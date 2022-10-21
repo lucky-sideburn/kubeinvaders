@@ -1,12 +1,9 @@
 *Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
-## Kill Pods
-
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/webui.png)
-
+![Alt Text](./images/webui.png)
 ## Define Chaos Experiments
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/programming_mode.png)
+![Alt Text](./images/programming_mode.png)
 
 [Video HowTo of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 

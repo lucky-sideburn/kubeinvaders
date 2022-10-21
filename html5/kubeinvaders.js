@@ -23,7 +23,7 @@ var randomFactor = 10;
 var pods = [];
 var game_mode_switch = false;
 var programming_mode_switch = false; 
-
+var now = "";
 var game_buttons = document.getElementById("game-buttons");
 var game_screen = document.getElementById("game-screen");
 var chaos_program_screen = document.getElementById("chaos-program-screen");
@@ -132,6 +132,9 @@ function getMetrics() {
             else if (metric[0] == "pods_not_running_on_selected_ns") {
                 $('#pods_not_running_on').text(metric[1]);            
             }
+	    else if (metric[0] == "chaos_jobs_current") {
+	        $('#chaos_jobs_current').text(metric[1]);
+	    }
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/metrics");
@@ -207,7 +210,8 @@ function runChaosProgram() {
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);
-            $('#alert_placeholder').text(this.responseText);
+            now = new Date().toLocaleString().replace(',','')
+            $('#alert_placeholder').replaceWith(alert_div + 'Executed Chaos Program at ' + now + ' </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");

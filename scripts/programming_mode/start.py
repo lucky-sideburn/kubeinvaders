@@ -79,38 +79,39 @@ for job in parsed_yaml["jobs"]:
     logging.info(f"Found job {job}")
 
 for exp in parsed_yaml["experiments"]:
-    logging.info(f"Processing the experiment {exp}")
-    job_attrs = parsed_yaml["jobs"][exp["job"]]
-    args = []
-    for arg in job_attrs['args']:
-        args.append(str(arg))
+    for _ in range(exp["loop"]):
+        logging.info(f"Processing the experiment {exp}")
+        job_attrs = parsed_yaml["jobs"][exp["job"]]
+        args = []
+        for arg in job_attrs['args']:
+            args.append(str(arg))
 
-    logging.info(f"args = {args}")
-    logging.info(f"command = {job_attrs['command']}")
+        logging.info(f"args = {args}")
+        logging.info(f"command = {job_attrs['command']}")
 
-    container = create_container(
-        image = job_attrs['image'], 
-        name = exp['name'],
-        command = [job_attrs['command']],
-        args = args
-    )
-    
-    letters = string.ascii_lowercase
-    rand_suffix = ''.join(random.choice(letters) for i in range(5))
-    job_name = f"{exp['name']}-{rand_suffix}"
-    pod_template = create_pod_template(exp["name"], container)
-    logging.info(f"Creating job {job_name}")
-    job_def = create_job(job_name, pod_template)
+        container = create_container(
+            image = job_attrs['image'], 
+            name = exp['name'],
+            command = [job_attrs['command']],
+            args = args
+        )
+        
+        letters = string.ascii_lowercase
+        rand_suffix = ''.join(random.choice(letters) for i in range(5))
+        job_name = f"{exp['name']}-{rand_suffix}"
+        pod_template = create_pod_template(exp["name"], container)
+        logging.info(f"Creating job {job_name}")
+        job_def = create_job(job_name, pod_template)
 
-    try:
-      batch_api.create_namespaced_job('kubeinvaders', job_def)
-    except ApiException as e:
-        logging.info(e)
-        quit()
-    
-    if r.exists('chaos_node_jobs_total') == 1:
-      r.incr('chaos_node_jobs_total')
-    else:
-      r.set("chaos_node_jobs_total", 1)
+        try:
+            batch_api.create_namespaced_job('kubeinvaders', job_def)
+        except ApiException as e:
+            logging.info(e)
+            quit()
+        
+        if r.exists('chaos_node_jobs_total') == 1:
+            r.incr('chaos_node_jobs_total')
+        else:
+            r.set("chaos_node_jobs_total", 1)
 
 os.remove(sys.argv[1])

@@ -1,3 +1,4 @@
-yaml
+redis
+pyyaml
 requests
 kubernetes

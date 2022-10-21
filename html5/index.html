@@ -178,38 +178,38 @@
         <div id="chaos-program-screen" style="display: none;">
           <div class="row" style="margin-top: 1%;">
             <form>
-              <div id="alert_placeholder" style="margin-top: 3%;"></div>
+              <div id="alert_placeholder" style="margin-top: 1%;"></div>
               <div class="form-group">
                 <label for="chaosProgramTextArea"></label>
                 <textarea class="form-control" id="chaosProgramTextArea" rows="20" style="font-family: Courier, monospace;">
 jobs:
-cpu-attack:
-  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-  command: "stress-ng"
-  args:
-    - --help
+  cpu-attack:
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
 
-mem-attack:
-  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-  command: "stress-ng"
-  args:
-    - --help
+  mem-attack:
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
 
 experiments:
-- name: cpu-attack-exp
-  job: cpu-attack
-  loop: 5
-  after:
-    check_url: https://google.it
-    check_payload: ''
-    check_tls_ignore: true
-- name: mem-attack-exp
-  job: mem-attack
-  loop: 5
-  after:
-    check_url: https://google.it
-    check_payload: ''
-    check_tls_ignore: true       
+  - name: cpu-attack-exp
+    job: cpu-attack
+    loop: 5
+    after:
+      check_url: https://google.it
+      check_payload: ''
+      check_tls_ignore: true
+  - name: mem-attack-exp
+    job: mem-attack
+    loop: 5
+    after:
+      check_url: https://google.it
+      check_payload: ''
+      check_tls_ignore: true       
                 </textarea>
               </div>
             </form>
@@ -217,7 +217,7 @@ experiments:
         </div>
 
         <div id="game-screen" style="display: none;">
-          <div class="row">
+          <div class="row" style="margin-top: 2%;">
             <canvas id="myCanvas" width="720" height="480"></canvas>
           </div>
           <div class="row">
@@ -307,6 +307,12 @@ experiments:
       }
 
       function startProgrammingMode() {
+
+	if (programming_mode_switch) {
+          programming_mode_switch = false;
+        } else {
+          programming_mode_switch = true;
+        }
 
         if (chaos_program_screen.style.display === "none") {
           chaos_program_screen.style.display = "block";

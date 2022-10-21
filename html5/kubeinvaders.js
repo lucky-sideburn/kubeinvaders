@@ -22,6 +22,7 @@ var randomFactor = 10;
 // pods list from kubernetes
 var pods = [];
 var game_mode_switch = false;
+var programming_mode_switch = false; 
 
 var game_buttons = document.getElementById("game-buttons");
 var game_screen = document.getElementById("game-screen");
@@ -206,7 +207,7 @@ function runChaosProgram() {
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);
-            $('#alert_placeholder2').text('New Chaos Program has been started.');
+            $('#alert_placeholder').text(this.responseText);
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
@@ -703,7 +704,7 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function metrics() {
-    if (game_mode_switch) {
+    if (game_mode_switch || programming_mode_switch) {
         getMetrics()
     }
 }, 2000)

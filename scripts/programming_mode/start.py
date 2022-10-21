@@ -2,12 +2,14 @@ from asyncio.log import logger
 import yaml
 import logging
 import os
+import sys
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 import requests
 from string import Template
 import string
 import random
+import redis
 
 def create_container(image, name, command, args):
     container = client.V1Container(
@@ -50,17 +52,19 @@ def create_job(job_name, pod_template):
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logging.info('Starting script for KubeInvaders programming mode')
 
-with open("./experiments.yaml", 'r') as stream:
+with open(sys.argv[1], 'r') as stream:
     try:
         parsed_yaml=yaml.safe_load(stream)
         logging.info(f"Parsed yaml => {parsed_yaml}")
     except yaml.YAMLError as exc:
         print(exc)
 
+r = redis.Redis(unix_socket_path='/tmp/redis.sock')
+
 configuration = client.Configuration()
 token = os.environ["TOKEN"]
 configuration.api_key = {"authorization": f"Bearer {token}"}
-configuration.host = os.environ["ENDPOINT"]
+configuration.host = sys.argv[2]
 configuration.insecure_skip_tls_verify = True
 configuration.verify_ssl = False
 
@@ -97,4 +101,16 @@ for exp in parsed_yaml["experiments"]:
     pod_template = create_pod_template(exp["name"], container)
     logging.info(f"Creating job {job_name}")
     job_def = create_job(job_name, pod_template)
-    batch_api.create_namespaced_job('kubeinvaders', job_def)
+
+    try:
+      batch_api.create_namespaced_job('kubeinvaders', job_def)
+    except ApiException as e:
+        logging.info(e)
+        quit()
+    
+    if r.exists('chaos_node_jobs_total') == 1:
+      r.incr('chaos_node_jobs_total')
+    else:
+      r.set("chaos_node_jobs_total", 1)
+
+os.remove(sys.argv[1])

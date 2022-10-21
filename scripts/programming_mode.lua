@@ -21,12 +21,15 @@ local body_data = ngx.req.get_body_data()
 
 ngx.log(ngx.ERR, "[programming_mode]" .. body_data)
 
-file = io.open("/tmp/experiments.yaml", "w")
+math.randomseed(os.clock()*100000000000)
+local rand = math.random(999, 9999)
+file_name = "/tmp/experiments-".. rand ..".yaml"
+file = io.open(file_name, "w")
 io.output(file)
 io.write(body_data)
 io.close(file)
 
-local handle = io.popen("python3 /opt/programming_mode/start.py")
+local handle = io.popen("python3 /opt/programming_mode/start.py " .. file_name .. " " .. k8s_url)
 local result = handle:read("*a")
 
 ngx.say("Chaos program has been started...")

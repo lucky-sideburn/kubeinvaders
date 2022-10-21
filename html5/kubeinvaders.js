@@ -21,6 +21,12 @@ var spaceshipxOld = 0;
 var randomFactor = 10;
 // pods list from kubernetes
 var pods = [];
+var game_mode_switch = false;
+
+var game_buttons = document.getElementById("game-buttons");
+var game_screen = document.getElementById("game-screen");
+var chaos_program_screen = document.getElementById("chaos-program-screen");
+var programming_mode_buttons = document.getElementById("programming-mode-buttons");
 
 // nodes list from kubernetes
 var nodes = [];
@@ -194,6 +200,19 @@ function setChaosContainer() {
     }
 }
 
+function runChaosProgram() {
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode", true);
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            //console.log(this.responseText);
+            $('#alert_placeholder2').text('New Chaos Program has been started.');
+        }
+    };;
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send($('#chaosProgramTextArea').val());
+}
+
 function startChaosNode(node_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
@@ -252,13 +271,15 @@ function getNodes() {
     }
 }
 
-window.setInterval(function getKubeItems() { 
-    getNodes();
-    getPods();
+window.setInterval(function getKubeItems() {
+    if (game_mode_switch) {
+        getNodes();
+        getPods();
+    }
 }, 1000)
 
 function keyDownHandler(e) {
-    if (!modal_opened) {
+    if (!modal_opened && game_mode_switch) {
         e.preventDefault();
         if(e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
@@ -682,7 +703,9 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function metrics() {
-    getMetrics()
+    if (game_mode_switch) {
+        getMetrics()
+    }
 }, 2000)
 
 getEndpoint();

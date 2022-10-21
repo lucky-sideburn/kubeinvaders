@@ -115,26 +115,52 @@
       <div class="starter-template">
         <div class="container" style="margin-bottom: 2%;">
           <div class="row" style="margin-top: 2%;">
-            <div class="row">
+            
+            <div class="row" style="margin-bottom: 1%;">
               <div class="col text-center">
-                <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
+                <button type="button" id="gameModeButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
               </div>
               <div class="col text-center">
-                <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
+                <div id="programming-mode-buttons" style="display: none;">
+                  <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
+                </div>
               </div>
               <div class="col text-center">
-                <label for="randomFactorInput">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+                <button type="button" id="programmingModeButton" class="btn btn-light" onclick="startProgrammingMode()">Programming Mode</button>
               </div>
             </div>
-            <div class="row" style="margin-top: 1%;">
-              <div class="col text-center">
-                <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+            <div id="programming-mode-buttons" style="display: none;">
+              <div class="row">
+                <div class="col text-center">
+                </div>
+                <div class="col text-center">
+                </div>
+                <div class="col text-center">
+                </div>
               </div>
-              <div class="col text-center">
-                <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+            </div>
+            <div id="game-buttons" style="display: none;">
+              <div class="row">
+                <div class="col text-center">
+                  <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
+                </div>
+                <div class="col text-center">
+                  <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
+                </div>
+                <div class="col text-center">
+                  <label for="randomFactorInput">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+                </div>
               </div>
-              <div class="col text-center">
-                <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+              <div class="row" style="margin-top: 1%;">
+                <div class="col text-center">
+                  <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+                </div>
+                <div class="col text-center">
+                  <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+                </div>
+                <div class="col text-center">
+                  <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+                </div>
               </div>
             </div>
           </div>
@@ -148,23 +174,67 @@
             <span style="color: #000000">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
           </div>
         </div>
-        <div class="row">
-          <canvas id="myCanvas" width="720" height="480"></canvas>
-        </div>
-        <div class="row">
-          <div class="col text-center">
 
-          </div>
-          <div class="col text-center">
-            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
-            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
-          </div>
-          <div class="col text-center">
+        <div id="chaos-program-screen" style="display: none;">
+          <div class="row" style="margin-top: 1%;">
+            <form>
+              <div id="alert_placeholder" style="margin-top: 3%;"></div>
+              <div class="form-group">
+                <label for="chaosProgramTextArea"></label>
+                <textarea class="form-control" id="chaosProgramTextArea" rows="20" style="font-family: Courier, monospace;">
+jobs:
+cpu-attack:
+  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: "stress-ng"
+  args:
+    - --help
 
+mem-attack:
+  image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  command: "stress-ng"
+  args:
+    - --help
+
+experiments:
+- name: cpu-attack-exp
+  job: cpu-attack
+  loop: 5
+  after:
+    check_url: https://google.it
+    check_payload: ''
+    check_tls_ignore: true
+- name: mem-attack-exp
+  job: mem-attack
+  loop: 5
+  after:
+    check_url: https://google.it
+    check_payload: ''
+    check_tls_ignore: true       
+                </textarea>
+              </div>
+            </form>
           </div>
         </div>
+
+        <div id="game-screen" style="display: none;">
+          <div class="row">
+            <canvas id="myCanvas" width="720" height="480"></canvas>
+          </div>
+          <div class="row">
+            <div class="col text-center">
+
+            </div>
+            <div class="col text-center">
+              <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+              <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+            </div>
+            <div class="col text-center">
+
+            </div>
+          </div>
+        </div>
+        <div id="alert_placeholder" style="margin-top: 3%;"></div>
       </div>
-      <div id="alert_placeholder" style="margin-top: 3%;"></div>
     </div>
     <div id="footer" style="margin-top: 5%;">
       <div class="container text-center">
@@ -211,6 +281,50 @@
         }
       }
       
+      function startGameMode() {
+        
+        if (game_mode_switch) {
+          game_mode_switch = false;
+        } else {
+          game_mode_switch = true;
+        }
+
+        if (game_buttons.style.display === "none") {
+          game_buttons.style.display = "block";
+        } else {
+          game_buttons.style.display = "none";
+        }
+
+        if (game_screen.style.display === "none") {
+          game_screen.style.display = "block";
+        } else {
+          game_screen.style.display = "none";
+        }
+
+        chaos_program_screen.style.display = "none";
+        programming_mode_buttons.style.display = "none";
+
+      }
+
+      function startProgrammingMode() {
+
+        if (chaos_program_screen.style.display === "none") {
+          chaos_program_screen.style.display = "block";
+        } else {
+          chaos_program_screen.style.display = "none";
+        }
+
+        if (programming_mode_buttons.style.display === "none") {
+          programming_mode_buttons.style.display = "block";
+        } else {
+          programming_mode_buttons.style.display = "none";
+        }
+
+        game_buttons.style.display = "none";
+        game_screen.style.display = "none";
+
+      }
+
       function showSpecialKeys() {
         $('#showSpecialKeysModal').modal('show');
         modal_opened = true;

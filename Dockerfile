@@ -11,7 +11,7 @@ RUN apt-get -y install --no-install-recommends wget gnupg ca-certificates jq ope
 RUN wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
 RUN codename=`grep -Po 'VERSION="[0-9]+ \(\K[^)]+' /etc/os-release` && echo "deb http://openresty.org/package/debian $codename openresty" | tee /etc/apt/sources.list.d/openresty.list
 RUN apt-get update
-RUN apt-get -y install openresty luarocks libssl-dev git vim lua-json lua-socket
+RUN apt-get -y install openresty luarocks libssl-dev git vim lua-json lua-socket python3 python3-pip
 RUN apt-get update --fix-missing
 RUN chmod 777 /usr/local/openresty/nginx
 RUN luarocks install luasec 
@@ -50,6 +50,8 @@ COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-n
 COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-containers.lua
 COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/programming_mode.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
+COPY scripts/programming_mode /opt/programming_mode/
+RUN pip3 install -r /opt/programming_mode/requirements.txt
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d
 

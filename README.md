@@ -1,9 +1,11 @@
 *Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
 
-![Alt Text](./images/webui.png)
-## Define Chaos Experiments
 
+## Define Chaos Experiments
 ![Alt Text](./images/programming_mode.png)
+
+## Play Chaos Engineering
+![Alt Text](./images/webui.png)
 
 [Video HowTo of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 

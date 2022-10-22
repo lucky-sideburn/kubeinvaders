@@ -132,8 +132,8 @@ function getMetrics() {
             else if (metric[0] == "pods_not_running_on_selected_ns") {
                 $('#pods_not_running_on').text(metric[1]);            
             }
-	    else if (metric[0] == "chaos_jobs_current") {
-	        $('#chaos_jobs_current').text(metric[1]);
+	    else if (metric[0] == "current_chaos_job_pod") {
+	        $('#current_chaos_job_pod').text(metric[1]);
 	    }
         }
     };;
@@ -178,7 +178,7 @@ function getCurrentChaosContainer() {
     oReq.onload = function () {
         //console.log(this.responseText);
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
-        $('#currentChaosContainrYaml').text(job_parsed);
+        $('#currentChaosContainerYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=container_definition");

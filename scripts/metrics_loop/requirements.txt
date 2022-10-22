@@ -1,0 +1,4 @@
+redis
+pyyaml
+requests
+kubernetes

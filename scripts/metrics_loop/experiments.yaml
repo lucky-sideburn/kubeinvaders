@@ -1,0 +1,53 @@
+jobs:
+  # cpu-attack:
+  #   image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  #   command: "stress-ng"
+  #   args:
+  #     - --cpu
+  #     - 4
+  #     - --io
+  #     - 2
+  #     - --vm
+  #     - 1
+  #     - --vm-bytes
+  #     - 1G
+  #     - --timeout
+  #     - 10s
+  #     - --metrics-brief
+
+  # mem-attack:
+  #   image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+  #   command: "stress-ng"
+  #   args:
+  #     - --vm
+  #     - 2
+  #     - --vm-bytes
+  #     - 1G
+
+  cpu-attack:
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
+
+  mem-attack:
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
+
+experiments:
+  - name: cpu-attack-exp
+    job: cpu-attack
+    loop: 5
+    after:
+      check_url: https://google.it
+      check_payload: ''
+      check_tls_ignore: true
+  - name: mem-attack-exp
+    job: mem-attack
+    loop: 5
+    after:
+      check_url: https://google.it
+      check_payload: ''
+      check_tls_ignore: true

@@ -41,7 +41,6 @@ RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf
 RUN mkdir /usr/local/openresty/nginx/conf/kubeinvaders
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
 COPY scripts/metrics.lua /usr/local/openresty/nginx/conf/kubeinvaders/metrics.lua
 COPY scripts/pod.lua /usr/local/openresty/nginx/conf/kubeinvaders/pod.lua
 COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
@@ -51,7 +50,11 @@ COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/c
 COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/programming_mode.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
 COPY scripts/programming_mode /opt/programming_mode/
+COPY scripts/metrics_loop /opt/metrics_loop/
+
 RUN pip3 install -r /opt/programming_mode/requirements.txt
+RUN pip3 install -r /opt/programming_mode/requirements.txt
+
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d
 

@@ -132,12 +132,22 @@ function getMetrics() {
             else if (metric[0] == "pods_not_running_on_selected_ns") {
                 $('#pods_not_running_on').text(metric[1]);            
             }
-	    else if (metric[0] == "chaos_jobs_current") {
-	        $('#chaos_jobs_current').text(metric[1]);
+	    else if (metric[0] == "current_chaos_job_pod") {
+	        $('#current_chaos_job_pod').text(metric[1]);
 	    }
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/metrics");
+    oReq.send();
+}
+
+function getChaosJobsLogs() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+	document.getElementById("chaosJobLogsDiv").innerHTML = "";    
+	document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
+    };;	    
+    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs.html");
     oReq.send();
 }
 
@@ -178,7 +188,7 @@ function getCurrentChaosContainer() {
     oReq.onload = function () {
         //console.log(this.responseText);
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
-        $('#currentChaosContainrYaml').text(job_parsed);
+        $('#currentChaosContainerYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=container_definition");
@@ -710,6 +720,10 @@ window.setInterval(function setAliens() {
 window.setInterval(function metrics() {
     if (game_mode_switch || programming_mode_switch) {
         getMetrics()
+    }
+    
+    if (programming_mode_switch) {
+	getChaosJobsLogs()
     }
 }, 2000)
 

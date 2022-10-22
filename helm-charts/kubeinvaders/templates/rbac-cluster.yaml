@@ -12,12 +12,12 @@ metadata:
 rules:
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
-  verbs: ["get", "watch", "list", "delete"]
+  verbs: ["delete"]
 - apiGroups: ["batch", "extensions"]
   resources: ["jobs"]
   verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-- apiGroups: [""]
-  resources: ["nodes"]
+- apiGroups: ["*"]
+  resources: ["*"]
   verbs: ["get", "watch", "list"]
 {{- end -}}
 {{- if or .Values.clusterRole.create .Values.clusterRole.name }}

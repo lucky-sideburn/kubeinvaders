@@ -12,5 +12,8 @@ redis-server /etc/redis/redis.conf &
 
 # TODO: use a sidecar
 bash /opt/metrics_loop/start.sh &
+bash /opt/logs_loop/start.sh &
+
+echo '<p>waiting for logs...</p>' > /var/www/html/chaoslogs.html
 
 nginx -c /etc/nginx/nginx.conf -g 'daemon off;'

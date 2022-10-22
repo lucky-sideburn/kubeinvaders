@@ -8,4 +8,4 @@ else
   export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
 
-python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}
+python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}

@@ -141,6 +141,16 @@ function getMetrics() {
     oReq.send();
 }
 
+function getChaosJobsLogs() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+	document.getElementById("chaosJobLogsDiv").innerHTML = "";    
+	document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
+    };;	    
+    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs.html");
+    oReq.send();
+}
+
 function runKubeLinter() {
     $('#kubeLinterModal').modal('show');
     modal_opened = true;
@@ -710,6 +720,10 @@ window.setInterval(function setAliens() {
 window.setInterval(function metrics() {
     if (game_mode_switch || programming_mode_switch) {
         getMetrics()
+    }
+    
+    if (programming_mode_switch) {
+	getChaosJobsLogs()
     }
 }, 2000)
 

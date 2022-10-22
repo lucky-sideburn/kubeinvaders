@@ -51,6 +51,7 @@ COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/p
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
 COPY scripts/programming_mode /opt/programming_mode/
 COPY scripts/metrics_loop /opt/metrics_loop/
+COPY scripts/logs_loop /opt/logs_loop/
 
 RUN pip3 install -r /opt/programming_mode/requirements.txt
 RUN pip3 install -r /opt/programming_mode/requirements.txt

@@ -29,6 +29,8 @@ var game_screen = document.getElementById("game-screen");
 var chaos_program_screen = document.getElementById("chaos-program-screen");
 var programming_mode_buttons = document.getElementById("programming-mode-buttons");
 var log_tail_switch = false;
+var log_tail_div = document.getElementById("podLogsDiv");
+
 // nodes list from kubernetes
 var nodes = [];
 

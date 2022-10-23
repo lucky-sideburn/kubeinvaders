@@ -248,7 +248,7 @@ experiments:
         </div>
       </div>
       <div class="row">
-        <div id="podLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:700px;"></div>
+        <div id="podLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
@@ -305,10 +305,12 @@ experiments:
           $("#logConsoleButton").text("Start Logs Tail");
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Stopping log tail</div>');
           log_tail_switch = false;
+          log_tail_div.style.display = "none";
         } else {
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Starting log tail</div>');
           $("#logConsoleButton").text("Stop Logs Tail");
           log_tail_switch = true;
+          log_tail_div.style.display = "block";
         }
       }
       

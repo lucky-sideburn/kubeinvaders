@@ -49,7 +49,7 @@ namespace = "kubeinvaders"
 while True:
     webtail_pods = []
     final_pod_list = []
-    if r.exists("log_pod_regex") and r.exists('logs_enabled')
+    if r.exists("log_pod_regex") and r.exists('logs_enabled'):
         if r.get("logs_enabled") == 1:
             logging.info("Found regex log_pod_regex in Redis. Logs from all pods should be collected")
             log_pod_regex = r.get("log_pod_regex")

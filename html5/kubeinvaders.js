@@ -155,8 +155,8 @@ function getChaosJobsLogs() {
     }
 
     if (log_tail_switch) {
-        document.getElementById("podLogsDiv").innerHTML = "";    
-        document.getElementById("podLogsDiv").innerHTML = this.responseText;
+        document.getElementById("logTailDiv").innerHTML = "";    
+        document.getElementById("logTailDiv").innerHTML = this.responseText;
     }
 
     };;	    

@@ -213,7 +213,7 @@ function setRedisLogRegex() {
 
     if (log_tail_switch) { 
         var oReq = new XMLHttpRequest();
-        oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=disabled_logs_tail", true);
+        oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_logs_tail", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -225,7 +225,7 @@ function setRedisLogRegex() {
 
     } else {
         var oReq = new XMLHttpRequest();
-        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enabled_logs_tail", true);
+        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_logs_tail", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {

@@ -208,34 +208,47 @@ function getCurrentChaosContainer() {
     oReq.send();
 }
 
-function setRedisLogRegex() {
-    $('#alert_placeholder3').replaceWith(alert_div + 'Setting Regular Expression for filtering log source (by pod name)</div>');
+function enableLogTail() {
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_logs_tail", true);
 
-    if (log_tail_switch) { 
-        var oReq = new XMLHttpRequest();
-        oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_logs_tail", true);
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started </div>');
+        }
+    };;
+    oReq.setRequestHeader("Content-Type", "application/json");
+    // TODO: send payload for auth...
+    oReq.send({});
+}
 
-        oReq.onreadystatechange = function () {
-            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail stopped </div>');
-            }
-        };;
+function disableLogTail() {
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail", true);
 
-        oReq.send()
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail stopped </div>');
+        }
+    };;
+    oReq.setRequestHeader("Content-Type", "application/json");
+    // TODO: send payload for auth...
+    oReq.send({});
+}
 
-    } else {
-        var oReq = new XMLHttpRequest();
-        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_logs_tail", true);
+function setLogRegex() {
+    $('#alert_placeholder3').replaceWith(alert_div + 'Setting regex for filtering log source (by pod name)</div>');
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_regex", true);
 
-        oReq.onreadystatechange = function () {
-            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started</div>');
-            }
-        };;
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started</div>');
+        }
+    };;
 
-        oReq.setRequestHeader("Content-Type", "application/json");
-        oReq.send($('#logConsoleRegex').val())
-    }
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send($('#logConsoleRegex').val());
 }
 
 function setChaosContainer() {

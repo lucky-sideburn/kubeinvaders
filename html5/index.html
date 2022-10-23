@@ -244,7 +244,7 @@ experiments:
       </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setRedisLogRegex()">Set Regex</button>
+          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
         </div>
       </div>
       <div class="row">
@@ -306,12 +306,14 @@ experiments:
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Stopping log tail</div>');
           log_tail_switch = false;
           log_tail_div.style.display = "none";
+          disableLogTail();
         } else {
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Starting log tail</div>');
           $("#logConsoleButton").text("Stop Logs Tail");
           log_tail_switch = true;
           log_tail_div.style.display = "block";
-          setRedisLogRegex();
+          setLogRegex();
+          enableTail();
         }
       }
       

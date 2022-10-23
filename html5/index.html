@@ -232,7 +232,7 @@ experiments:
       </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="startLogConsole()">Enable Logs Tail</button>
+          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="startLogConsole()">Start Logs Tail</button>
         </div>
       </div>
       <div class="row" style="margin-top: 1%;">
@@ -294,6 +294,14 @@ experiments:
         programming_mode_buttons.style.display = "none"; 
         game_screen.style.display = "none";
         game_buttons.style.display = "none";
+
+        if (log_tail_switch) {
+          $("#logConsoleButton").text("Start Logs Tail");
+          log_tail_switch = false;
+        } else {
+          $("#logConsoleButton").text("Stop Logs Tail");
+          log_tail_switch = true;
+        }
       }
       
       function startGameMode() {

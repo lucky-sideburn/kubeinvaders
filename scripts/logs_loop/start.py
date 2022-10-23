@@ -49,18 +49,19 @@ namespace = "kubeinvaders"
 while True:
     webtail_pods = []
     final_pod_list = []
-    if r.exists("log_pod_regex"):
-        logging.info("Found regex log_pod_regex in Redis. Logs from all pods should be collected")
-        log_pod_regex = r.get("log_pod_regex")
-        try:
-            api_response = api_instance.list_pod_for_all_namespaces()
-        except ApiException as e:
-            logging.info(e)
-        logging.info(f"Going to search pod compliant with the regex on {len(api_response.items)} pods")
-        for pod in api_response.items:
-            if re.search(f"{log_pod_regex}", pod.metadata.name):
-                webtail_pods.append(pod)
-                logging.info(f"Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
+    if r.exists("log_pod_regex") and r.exists('logs_enabled')
+        if r.get("logs_enabled") == 1:
+            logging.info("Found regex log_pod_regex in Redis. Logs from all pods should be collected")
+            log_pod_regex = r.get("log_pod_regex")
+            try:
+                api_response = api_instance.list_pod_for_all_namespaces()
+            except ApiException as e:
+                logging.info(e)
+            logging.info(f"Going to search pod compliant with the regex on {len(api_response.items)} pods")
+            for pod in api_response.items:
+                if re.search(f"{log_pod_regex}", pod.metadata.name):
+                    webtail_pods.append(pod)
+                    logging.info(f"Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
 
     try:
         api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")

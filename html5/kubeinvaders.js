@@ -28,7 +28,7 @@ var game_buttons = document.getElementById("game-buttons");
 var game_screen = document.getElementById("game-screen");
 var chaos_program_screen = document.getElementById("chaos-program-screen");
 var programming_mode_buttons = document.getElementById("programming-mode-buttons");
-
+var log_tail_switch = false;
 // nodes list from kubernetes
 var nodes = [];
 
@@ -196,8 +196,36 @@ function getCurrentChaosContainer() {
 }
 
 function setLogRegex() {
+    if (log_tail_switch) { 
+        var oReq = new XMLHttpRequest();
+        oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=disabled_logs_tail", true);
+
+        oReq.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log("logs tails disabled");
+            }
+        };;
+
+        oReq.send()
+
+    } else {
+        var oReq = new XMLHttpRequest();
+        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enabled_logs_tail", true);
+
+        oReq.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                console.log("logs tails enabled");
+            }
+        };;
+
+        oReq.setRequestHeader("Content-Type", "application/json");
+        oReq.send($('#logConsoleRegex').val())
+    }
+}
+
+function setLogRegex() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_pod_regex", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enabled_logs_tail", true);
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -208,6 +236,7 @@ function setLogRegex() {
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.send($('#logConsoleRegex').val())
 }
+
 
 function setChaosContainer() {
     if (!IsJsonString($('#currentChaosContainerJsonTextArea').val())) {

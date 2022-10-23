@@ -321,8 +321,10 @@ experiments:
         
         if (game_mode_switch) {
           game_mode_switch = false;
+          $("#gameModeButton").text("Enable Game Mode");
         } else {
           game_mode_switch = true;
+          $("#gameModeButton").text("Disable Game Mode");
         }
 
         if (game_buttons.style.display === "none") {
@@ -346,8 +348,10 @@ experiments:
 
 	      if (programming_mode_switch) {
           programming_mode_switch = false;
+          $("#programmingModeButton").text("Enable Prog. Mode");
         } else {
           programming_mode_switch = true;
+          $("#programmingModeButton").text("Disable Prog. Mode");
         }
 
         if (chaos_program_screen.style.display === "none") {

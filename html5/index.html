@@ -311,6 +311,7 @@ experiments:
           $("#logConsoleButton").text("Stop Logs Tail");
           log_tail_switch = true;
           log_tail_div.style.display = "block";
+          setRedisLogRegex();
         }
       }
       

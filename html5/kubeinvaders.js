@@ -195,6 +195,20 @@ function getCurrentChaosContainer() {
     oReq.send();
 }
 
+function setLogRegex() {
+    var oReq = new XMLHttpRequest();
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_pod_regex", true);
+
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            $('#alert_placeholder2').text('New regex (pods name) for web tail has been saved.');
+        }
+    };;
+
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send($('#logConsoleRegex').val())
+}
+
 function setChaosContainer() {
     if (!IsJsonString($('#currentChaosContainerJsonTextArea').val())) {
         $('#alert_placeholder2').text('JSON syntax not valid.');

@@ -12,6 +12,7 @@ import string
 import random
 import redis
 import time
+import re
 
 file = pathlib.Path('/tmp/redis.sock')
 if file.exists():
@@ -42,10 +43,24 @@ namespace = "kubeinvaders"
 #    r.delete(key)
 
 while True:
+    pods_items = []
+    if r.exists("log_pod_regex"):
+        log_pod_regex = r.get("log_pod_regex")
+        try:
+            api_response = api_instance.list_pod_for_all_namespaces()
+        except ApiException as e:
+            logging.info(e)
+
+        for pod in api_response.items:
+            if re.search(log_pod_regex, pod.metadata.name):
+                pods_items.append(pod)
+
     try:
         api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")
     except ApiException as e:
         logging.info(e)
+
+    pods_items = pods_items + api_response.items
 
     for pod in api_response.items:
         if pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending":

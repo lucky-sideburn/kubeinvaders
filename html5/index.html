@@ -79,7 +79,8 @@
                 <p id="alert_placeholder2" style="color: black; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
               </div>
               <div class="modal-footer">
-                <button type="submit" class="btn btn-primary" onclick="setChaosContainer()">Save</button>
+                <button type="
+                " class="btn btn-primary" onclick="setChaosContainer()">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
               </div>
             </form>
@@ -115,7 +116,6 @@
       <div class="starter-template">
         <div class="container" style="margin-bottom: 2%;">
           <div class="row" style="margin-top: 2%;">
-            
             <div class="row" style="margin-bottom: 1%;">
               <div class="col text-center">
                 <button type="button" id="gameModeButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
@@ -207,7 +207,7 @@ experiments:
                 </textarea>
               </div>
             </form>
-	    <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:700px;"></div>
+	        <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:700px;"></div>
           </div>
         </div>
 
@@ -229,6 +229,20 @@ experiments:
           </div>
         </div>
         <div id="alert_placeholder" style="margin-top: 3%;"></div>
+      </div>
+      <div class="row" style="margin-top: 1%;">
+        <div class="col text-center">
+          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="startLogConsole()">Enable Logs Tail</button>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 1%;">
+        <p>Regular Expression - PODs name</p>
+        <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex"/>
+      </div>
+      <div class="row" style="margin-top: 1%;">
+        <div class="col text-center">
+          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
+        </div>
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
@@ -275,6 +289,12 @@ experiments:
           $("#controlAutoPilotButton").text("Stop");
         }
       }
+      function startLogConsole() {
+        chaos_program_screen.style.display = "none";
+        programming_mode_buttons.style.display = "none"; 
+        game_screen.style.display = "none";
+        game_buttons.style.display = "none";
+      }
       
       function startGameMode() {
         
@@ -303,7 +323,7 @@ experiments:
 
       function startProgrammingMode() {
 
-	if (programming_mode_switch) {
+	      if (programming_mode_switch) {
           programming_mode_switch = false;
         } else {
           programming_mode_switch = true;

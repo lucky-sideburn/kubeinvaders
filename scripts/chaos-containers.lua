@@ -33,4 +33,9 @@ elseif ngx.var.request_method == "POST" and action == 'set' then
   red:set("chaos_container", body_data)
   ngx.say("New chaos container definition has been configured in Redis")
   return ngx.exit(ngx.status)
+elseif  ngx.var.request_method == "POST" and action == "set_log_pod_regex" then
+  local body_data = ngx.req.get_body_data()  
+  red:set("log_pod_regex", body_data)
+  ngx.say("New container definition has been saved in Redis")
+  return ngx.exit(ngx.status)
 end

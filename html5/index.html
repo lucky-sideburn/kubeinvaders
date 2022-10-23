@@ -230,9 +230,12 @@ experiments:
         </div>
         <div id="alert_placeholder" style="margin-top: 3%;"></div>
       </div>
+      <div class="row">
+        <div id="alert_placeholder3" style="margin-top: 3%;"></div>
+      </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="startLogConsole()">Start Logs Tail</button>
+          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
         </div>
       </div>
       <div class="row" style="margin-top: 1%;">
@@ -241,7 +244,7 @@ experiments:
       </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
+          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setRedisLogRegex()">Set Regex</button>
         </div>
       </div>
     </div>
@@ -289,7 +292,7 @@ experiments:
           $("#controlAutoPilotButton").text("Stop");
         }
       }
-      function startLogConsole() {
+      function setLogConsole() {
         chaos_program_screen.style.display = "none";
         programming_mode_buttons.style.display = "none"; 
         game_screen.style.display = "none";
@@ -297,8 +300,10 @@ experiments:
 
         if (log_tail_switch) {
           $("#logConsoleButton").text("Start Logs Tail");
+          $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Stopping log tail</div>');
           log_tail_switch = false;
         } else {
+          $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Starting log tail</div>');
           $("#logConsoleButton").text("Stop Logs Tail");
           log_tail_switch = true;
         }

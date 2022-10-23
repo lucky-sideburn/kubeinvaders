@@ -85,6 +85,8 @@ var chaos_nodes = true;
 var chaos_pods = true;
 
 var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
+var alert_div_webtail = '<div id="alert_placeholder3" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
+
 var kubelinter = '';
 var showPodName = true
 var latestPodNameY = '';
@@ -195,14 +197,16 @@ function getCurrentChaosContainer() {
     oReq.send();
 }
 
-function setLogRegex() {
+function setRedisLogRegex() {
+    $('#alert_placeholder3').replaceWith(alert_div + 'Setting Regular Expression for filtering log source (by pod name)</div>');
+
     if (log_tail_switch) { 
         var oReq = new XMLHttpRequest();
         oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=disabled_logs_tail", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                console.log("logs tails disabled");
+                $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail stopped </div>');
             }
         };;
 
@@ -214,7 +218,7 @@ function setLogRegex() {
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                console.log("logs tails enabled");
+                $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started</div>');
             }
         };;
 
@@ -222,21 +226,6 @@ function setLogRegex() {
         oReq.send($('#logConsoleRegex').val())
     }
 }
-
-function setLogRegex() {
-    var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enabled_logs_tail", true);
-
-    oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            $('#alert_placeholder2').text('New regex (pods name) for web tail has been saved.');
-        }
-    };;
-
-    oReq.setRequestHeader("Content-Type", "application/json");
-    oReq.send($('#logConsoleRegex').val())
-}
-
 
 function setChaosContainer() {
     if (!IsJsonString($('#currentChaosContainerJsonTextArea').val())) {

@@ -39,7 +39,7 @@ elseif  ngx.var.request_method == "POST" and action == "enabled_logs_tail" then
   red:set("logs_enabled", "1")
   ngx.say("New container definition has been saved in Redis")
   return ngx.exit(ngx.status)
-elseif  ngx.var.request_method == "POST" and action == "disabled_logs_tail" then
+elseif  ngx.var.request_method == "GET" and action == "disable_logs_tail" then
   red:set("logs_enabled", "0")
   ngx.say("New container definition has been saved in Redis")
   return ngx.exit(ngx.status)

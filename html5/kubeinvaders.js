@@ -214,7 +214,7 @@ function enableLogTail() {
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started </div>');
+            $('#alert_placeholder3').replaceWith(log_tail_div + 'Logs tail started </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
@@ -228,7 +228,7 @@ function disableLogTail() {
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail stopped </div>');
+            $('#alert_placeholder3').replaceWith(log_tail_div + 'Logs tail stopped </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
@@ -237,13 +237,13 @@ function disableLogTail() {
 }
 
 function setLogRegex() {
-    $('#alert_placeholder3').replaceWith(alert_div + 'Setting regex for filtering log source (by pod name)</div>');
+    $('#alert_placeholder3').replaceWith(log_tail_div + 'Setting regex for filtering log source (by pod name)</div>');
     var oReq = new XMLHttpRequest();
     oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_regex", true);
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            $('#alert_placeholder3').replaceWith(alert_div + 'Logs tail started</div>');
+            $('#alert_placeholder3').replaceWith(log_tail_div + 'Regex has been configured...</div>');
         }
     };;
 

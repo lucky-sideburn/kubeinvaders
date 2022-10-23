@@ -146,8 +146,17 @@ function getMetrics() {
 function getChaosJobsLogs() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-	document.getElementById("chaosJobLogsDiv").innerHTML = "";    
-	document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
+
+    if (programming_mode_switch) {
+        document.getElementById("chaosJobLogsDiv").innerHTML = "";    
+        document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
+    }
+
+    if (log_tail_switch) {
+        document.getElementById("podLogsDiv").innerHTML = "";    
+        document.getElementById("podLogsDiv").innerHTML = this.responseText;
+    }
+
     };;	    
     oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs.html");
     oReq.send();
@@ -757,8 +766,8 @@ window.setInterval(function metrics() {
         getMetrics()
     }
     
-    if (programming_mode_switch) {
-	getChaosJobsLogs()
+    if (programming_mode_switch || log_tail_switch) {
+	    getChaosJobsLogs()
     }
 }, 2000)
 

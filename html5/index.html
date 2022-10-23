@@ -249,7 +249,7 @@ experiments:
         </div>
       </div>
       <div class="row">
-        <div id="podLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
+        <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
@@ -314,7 +314,7 @@ experiments:
           log_tail_switch = true;
           log_tail_div.style.display = "block";
           setLogRegex();
-          enableTail();
+          enableLogTail();
         }
       }
       

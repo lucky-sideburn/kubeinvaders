@@ -40,12 +40,12 @@ elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
   ngx.say("New container definition has been saved in Redis")
   return ngx.exit(ngx.status)
 
-elseif  ngx.var.request_method == "POST" and action == "enable_logs_tail" then
+elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled", "1")
   return ngx.exit(ngx.status)
 
-elseif  ngx.var.request_method == "POST" and action == "disable_logs_tail" then
+elseif  ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("logs_enabled", "0")
   return ngx.exit(ngx.status)
 end

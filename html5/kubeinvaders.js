@@ -210,7 +210,7 @@ function getCurrentChaosContainer() {
 
 function enableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_logs_tail", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_log_tail", true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail started </div>');

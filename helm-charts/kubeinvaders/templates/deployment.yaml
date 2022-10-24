@@ -7,6 +7,9 @@ metadata:
     helm.sh/chart: {{ include "kubeinvaders.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.additionalLabels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
 spec:
   replicas: {{ .Values.deployment.replicaCount }}
   selector:
@@ -18,6 +21,9 @@ spec:
       labels:
         app.kubernetes.io/name: kubeinvaders
         app.kubernetes.io/instance: {{ .Release.Name }}
+        {{- with .Values.additionalLabels }}
+        {{- . | toYaml | nindent 8 }}
+        {{- end }}
     spec:
       serviceAccountName: kubeinvaders
       {{- with .Values.deployment.securityContext }}

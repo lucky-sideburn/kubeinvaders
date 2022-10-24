@@ -67,3 +67,8 @@ route_host: ""
 
 serviceMonitor:
   enabled: false
+
+# Create Grafana Dashboard CRD and configmap for Grafana operator
+grafanaDashboard:
+  enabled: false
+  labels: {} # Labels configured in Grafana operator as dashboardLabelSelector

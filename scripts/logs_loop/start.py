@@ -79,6 +79,12 @@ namespace = "kubeinvaders"
 #    r.delete(key)
 
 while True:
+    if not r.exists("log_cleaner"):
+        if pathlib.Path("/var/www/html/chaoslogs.html").exists():
+            os.remove("/var/www/html/chaoslogs.html")
+        r.set(f"log_cleaner", "foobar")
+        r.expire(f"log_cleaner", 30)
+
     logging.info("Loop iteration...")
     file = pathlib.Path('/var/www/html/chaoslogs.html')
     if not file.exists():

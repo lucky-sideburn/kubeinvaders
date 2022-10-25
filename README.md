@@ -1,17 +1,4 @@
 *Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
-
-
-## Define Chaos Experiments
-![Alt Text](./images/programming_mode.png)
-
-## Watch Kubernetes logs through web tail console
-![Alt Text](./images/webtail.png)
-
-## Play Chaos Engineering
-![Alt Text](./images/webui.png)
-
-[Video HowTo of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
-
 # Table of Contents
 
 1. [Description](#Description)
@@ -23,6 +10,16 @@
 7. [Community](#Community)
 8. [Community blogs and videos](#Community-blogs-and-videos)
 9. [License](#License)
+
+### Define Chaos Experiments
+![Alt Text](./images/programming_mode.png)
+
+### Watch Kubernetes logs through web tail console
+![Alt Text](./images/webtail.png)
+
+### Play Chaos Engineering
+![Alt Text](./images/webui.png)
+
 ## Description
 
 Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.

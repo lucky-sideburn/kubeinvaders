@@ -8,6 +8,9 @@ metadata:
     helm.sh/chart: {{ include "kubeinvaders.chart" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
     app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.additionalLabels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}

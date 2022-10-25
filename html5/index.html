@@ -238,16 +238,18 @@ experiments:
           <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
         </div>
       </div>
-      <div class="row" style="margin-top: 2%;">
-        <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value=".*"/>
-      </div>
-      <div class="row" style="margin-top: 1%;">
-        <div class="col text-center">
-          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Regex (Pod name)</button>
-	</div>
-      </div>
-      <div class="row">
-        <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
+      <div id="logTailScreen" style="display: none;">
+        <div class="row" style="margin-top: 2%;">
+          <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod:".*", "namespace":".*", "labels":".*", "annotations":".*"}'/>
+        </div>
+        <div class="row" style="margin-top: 1%;">
+          <div class="col text-center">
+            <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
+          </div>
+        </div>
+        <div class="row">
+          <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
+        </div>
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
@@ -306,19 +308,20 @@ experiments:
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Stopping log tail</div>');
           log_tail_switch = false;
           log_tail_div.style.display = "none";
+          log_tail_screen.style.display = "none"
           disableLogTail();
         } else {
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Starting log tail</div>');
           $("#logConsoleButton").text("Stop Logs Tail");
           log_tail_switch = true;
           log_tail_div.style.display = "block";
+          log_tail_screen.style.display = "block"
           setLogRegex();
           enableLogTail();
         }
       }
       
       function startGameMode() {
-        
         if (game_mode_switch) {
           game_mode_switch = false;
           $("#gameModeButton").text("Enable Game Mode");
@@ -326,26 +329,21 @@ experiments:
           game_mode_switch = true;
           $("#gameModeButton").text("Disable Game Mode");
         }
-
         if (game_buttons.style.display === "none") {
           game_buttons.style.display = "block";
         } else {
           game_buttons.style.display = "none";
         }
-
         if (game_screen.style.display === "none") {
           game_screen.style.display = "block";
         } else {
           game_screen.style.display = "none";
         }
-
         chaos_program_screen.style.display = "none";
         programming_mode_buttons.style.display = "none";
-
       }
 
       function startProgrammingMode() {
-
 	      if (programming_mode_switch) {
           programming_mode_switch = false;
           $("#programmingModeButton").text("Enable Prog. Mode");
@@ -353,22 +351,18 @@ experiments:
           programming_mode_switch = true;
           $("#programmingModeButton").text("Disable Prog. Mode");
         }
-
         if (chaos_program_screen.style.display === "none") {
           chaos_program_screen.style.display = "block";
         } else {
           chaos_program_screen.style.display = "none";
         }
-
         if (programming_mode_buttons.style.display === "none") {
           programming_mode_buttons.style.display = "block";
         } else {
           programming_mode_buttons.style.display = "none";
         }
-
         game_buttons.style.display = "none";
         game_screen.style.display = "none";
-
       }
 
       function showSpecialKeys() {

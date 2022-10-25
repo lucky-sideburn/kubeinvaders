@@ -4,6 +4,7 @@ import logging
 import os
 import pathlib
 import sys
+import json
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 import requests
@@ -21,7 +22,10 @@ def line_prepender(filename, line):
     if not log_html_file.exists():
         with open(log_html_file, "w") as myfile:
             myfile.write('')
-
+        for key in r.scan_iter("log_time:*"):
+            r.delete(key)
+        for key in r.scan_iter("log:*"):
+            r.delete(key)
     with open(filename, 'r+') as f:
         content = f.read()
         f.seek(0, 0)
@@ -49,7 +53,7 @@ if r.exists("log_pod_regex"):
    logging.info("The Redis key log_pod_regex exists...") 
 else:
    logging.info("The Redis key log_pod_regex does NOT exists...")    
-   r.set("log_pod_regex", ".*")
+   r.set("log_pod_regex", '{"pod:".*", "namespace":".*", "labels":".*", "annotations":".*"}')
 
 if r.exists('logs_enabled'):
    logging.info("The Redis key logs_enabled exists...")
@@ -93,8 +97,21 @@ while True:
             except ApiException as e:
                 logging.info(e)
             logging.info(f"Going to search pod compliant with the regex on {len(api_response.items)} pods")
+
+            json_regex = json.loads(log_pod_regex)
+            pod_re = json_regex["pod"]
+            namespace_re = json_regex["namespace"]
+            annotations_re = json_regex["annotations"]
+            labels_re = json_regex["labels"]
+
+            logging.info(f"Gobal Json Regex is #{json_re}")
+            logging.info(f"Regex for pod name is #{pod_re}")
+            logging.info(f"Regex namespace name #{namespace_re}")
+            logging.info(f"Regex for labels is #{labels_re}")
+            logging.info(f"Regex for annotation is #{annotations_re}")
+
             for pod in api_response.items:
-                if re.search(f"{log_pod_regex}", pod.metadata.name):
+                if re.search(f"{pod_re}", pod.metadata.name) and re.search(f"{namespace_re}", pod.metadata.namespace) and re.search(f"{labels_re}", str(pod.metadata.labels)) and re.search(f"{annotations_re}", str(pod.metadata.annotations)):
                     webtail_pods.append(pod)
                     logging.info(f"Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
 

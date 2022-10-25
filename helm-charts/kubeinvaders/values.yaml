@@ -5,6 +5,9 @@
 nameOverride: ""
 fullnameOverride: ""
 
+# Additional labels for resources
+additionalLabels: {}
+
 config:
   # target_namespace where kubeinvaders should be allowed to kill pods
   target_namespace: "default"

@@ -37,15 +37,20 @@ elseif ngx.var.request_method == "POST" and action == 'set' then
 elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
   local body_data = ngx.req.get_body_data()  
   red:set("log_pod_regex", body_data)
-  ngx.say("New container definition has been saved in Redis")
+  os.execute("> /var/www/html/chaoslogs.html")
+  ngx.say("New container definition has been saved in Redis => " .. body_data)
   return ngx.exit(ngx.status)
 
 elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled", "1")
+  os.execute("> /var/www/html/chaoslogs.html")
+  ngx.say("Enable Log Tail")
   return ngx.exit(ngx.status)
 
 elseif  ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("logs_enabled", "0")
+  os.execute("> /var/www/html/chaoslogs.html")
+  ngx.say("Disable Log Tail")
   return ngx.exit(ngx.status)
 end

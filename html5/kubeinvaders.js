@@ -245,7 +245,7 @@ function setLogRegex() {
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
-    oReq.send($('#logConsoleRegex').val());
+    oReq.send($('#logTailRegex').val());
 }
 
 function setChaosContainer() {

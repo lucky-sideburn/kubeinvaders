@@ -13,6 +13,23 @@ import random
 import redis
 import time
 import re
+from hashlib import sha256
+import time
+
+def line_prepender(filename, line):
+    log_html_file = pathlib.Path(filename)
+    if not log_html_file.exists():
+        with open(log_html_file, "w") as myfile:
+            myfile.write('')
+
+    with open(filename, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(line.rstrip('\r\n') + '\n' + content)
+
+# create logger
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.info('Starting script for KubeInvaders taking logs from pods...')
 
 file = pathlib.Path('/tmp/redis.sock')
 
@@ -22,11 +39,22 @@ else:
     r = redis.Redis("127.0.0.1", charset="utf-8", decode_responses=True)
 
 if os.environ.get("DEV"):
+    logging.info("Setting env var for dev...")
     r.set("log_pod_regex", ".*")
-    
-# create logger
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
-logging.info('Starting script for KubeInvaders programming mode')
+    r.set("logs_enabled", 1)
+    logging.info(r.get("log_pod_regex"))
+    logging.info(r.get("logs_enabled"))
+
+if r.exists("log_pod_regex"): 
+   logging.info("The Redis key log_pod_regex exists...") 
+else:
+   logging.info("The Redis key log_pod_regex does NOT exists...")    
+   r.set("log_pod_regex", ".*")
+
+if r.exists('logs_enabled'):
+   logging.info("The Redis key logs_enabled exists...")
+else:
+   logging.info("The Redis key logs_enabled does NOT exists...")
 
 configuration = client.Configuration()
 token = os.environ["TOKEN"]
@@ -47,10 +75,17 @@ namespace = "kubeinvaders"
 #    r.delete(key)
 
 while True:
+    logging.info("Loop iteration...")
+    file = pathlib.Path('/var/www/html/chaoslogs.html')
+    if not file.exists():
+        for key in r.scan_iter("log:*"):
+            r.delete(key)
+
     webtail_pods = []
     final_pod_list = []
     if r.exists("log_pod_regex") and r.exists('logs_enabled'):
-        if r.get("logs_enabled") == 1:
+        logging.info("Found Redis keys for log tail...")
+        if r.get("logs_enabled") == "1":
             logging.info("Found regex log_pod_regex in Redis. Logs from all pods should be collected")
             log_pod_regex = r.get("log_pod_regex")
             try:
@@ -68,16 +103,57 @@ while True:
     except ApiException as e:
         logging.info(e)
 
+    webtail_switch = False
+
     final_pod_list = webtail_pods + api_response.items
+    if len(webtail_pods) > 0:
+        webtail_switch = True
 
     for pod in final_pod_list:
-        if ((pod.metadata.name in webtail_pods) or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending")):
+        if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):
             try:
+                latest_log_tail = r.get(f"log_time:{pod.metadata.name}")
                 logging.info(f"Reading logs of {pod.metadata.name} on {pod.metadata.namespace}")
-                api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace)
-                logrow = f"<div class='row'><div style='margin-top: 2%; background-color:#400075; color: #e9f0ef; text-align: center;' class='alert' role='alert'>Pod Name: {pod.metadata.name} (Log TTL: 30sec)</div><div style='margin-top: 1.5px; background-color:#000000; color: #e9f0ef; font-size: 12px; font-family: Courier New, Courier, monospace;' class='alert' role='alert'>{api_response}</div></div>"
-                r.set(f"log:{pod.metadata.name}", logrow)
-                r.expire(f"log:{pod.metadata.name}", 30)
+                
+                if r.exists(f"log_time:{pod.metadata.name}"):
+                    latest_log_tail_time = r.get(f"log_time:{pod.metadata.name}")
+                else:
+                    latest_log_tail_time = time.time()
+                logging.info(f"Latest latest_log_tail for {pod.metadata.name} is {latest_log_tail_time}. Current Unix Time is {time.time()}")
+
+                since = int(time.time() - float(latest_log_tail_time))
+
+                logging.info(f"Diff from time.time() and latest_log_tail_time for {pod.metadata.name} is {since}")
+
+                if since == 0:
+                    since = 1
+
+                api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, tail_lines=1, since_seconds=since)
+
+                if api_response == "":
+                    continue
+                logging.info(f"API Response: {api_response}")
+                
+                logrow = f"<div class='row' style='margin-top: 2%; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-family: Courier New, Courier, monospace;'>>>>{api_response}</div>"
+
+                store = False
+                sha256log = sha256(logrow.encode('utf-8')).hexdigest()
+
+                if r.exists(f"log:{pod.metadata.name}:{sha256log}"):
+                    current_row = r.get(f"log:{pod.metadata.name}:{sha256log}")
+                    if current_row != logrow:
+                        store = True
+                
+                if not r.exists(f"log:{pod.metadata.name}:{sha256log}") or store:
+                    file = pathlib.Path('/var/www/html')
+                    if file.exists():
+                        log_html_file = pathlib.Path('/var/www/html/chaoslogs.html')
+                        line_prepender(log_html_file, logrow)
+
+                r.set(f"log:{pod.metadata.name}:{sha256log}", logrow)
+                r.set(f"log_time:{pod.metadata.name}", time.time())
+                r.expire(f"log:{pod.metadata.name}:{sha256log}", 30)
+
                 logging.info(f"Phase of {pod.metadata.name} is {pod.status.phase}")   
                 if pod.status.phase == "Succeeded" and pod.metadata.labels['approle'] == 'chaosnode':
                     try:
@@ -87,13 +163,4 @@ while True:
                         logging.info(e)
             except ApiException as e:
                 logging.info(e)
-    file = pathlib.Path('/var/www/html')
-    if file.exists():
-        log_html_file = pathlib.Path('/var/www/html/chaoslogs.html')
-        if log_html_file.exists():
-            with open("/var/www/html/chaoslogs.html", "w") as myfile:
-                myfile.write('')
-        for key in r.scan_iter("log:*"):
-            with open("/var/www/html/chaoslogs.html", "a") as myfile:
-                myfile.write(str(r.get(key)))
-    time.sleep(1)
+    time.sleep(0.5)

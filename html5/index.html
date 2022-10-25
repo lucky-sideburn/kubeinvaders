@@ -239,13 +239,12 @@ experiments:
         </div>
       </div>
       <div class="row" style="margin-top: 2%;">
-        <p>Regular Expression - PODs name</p>
         <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value=".*"/>
       </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
-        </div>
+          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Regex (Pod name)</button>
+	</div>
       </div>
       <div class="row">
         <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
@@ -295,6 +294,7 @@ experiments:
           $("#controlAutoPilotButton").text("Stop");
         }
       }
+
       function setLogConsole() {
         chaos_program_screen.style.display = "none";
         programming_mode_buttons.style.display = "none"; 

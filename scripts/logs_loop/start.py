@@ -53,7 +53,7 @@ if r.exists("log_pod_regex"):
    logging.info("The Redis key log_pod_regex exists...") 
 else:
    logging.info("The Redis key log_pod_regex does NOT exists...")    
-   r.set("log_pod_regex", '{"pod:".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+   r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
 
 if r.exists('logs_enabled'):
    logging.info("The Redis key logs_enabled exists...")
@@ -98,17 +98,18 @@ while True:
         if r.get("logs_enabled") == "1":
             logging.info("Found regex log_pod_regex in Redis. Logs from all pods should be collected")
             log_pod_regex = r.get("log_pod_regex")
+            logging.info(f"log_pod_regex is => |{log_pod_regex}|")
             try:
                 api_response = api_instance.list_pod_for_all_namespaces()
             except ApiException as e:
                 logging.info(e)
             logging.info(f"Going to search pod compliant with the regex on {len(api_response.items)} pods")
 
-            json_regex = json.loads(log_pod_regex)
-            pod_re = json_regex["pod"]
-            namespace_re = json_regex["namespace"]
-            annotations_re = json_regex["annotations"]
-            labels_re = json_regex["labels"]
+            json_re = json.loads(log_pod_regex)
+            pod_re = json_re["pod"]
+            namespace_re = json_re["namespace"]
+            annotations_re = json_re["annotations"]
+            labels_re = json_re["labels"]
 
             logging.info(f"Gobal Json Regex is #{json_re}")
             logging.info(f"Regex for pod name is #{pod_re}")
@@ -129,6 +130,7 @@ while True:
     webtail_switch = False
 
     final_pod_list = webtail_pods + api_response.items
+
     if len(webtail_pods) > 0:
         webtail_switch = True
 

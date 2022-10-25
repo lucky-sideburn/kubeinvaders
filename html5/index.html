@@ -238,15 +238,16 @@ experiments:
           <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
         </div>
       </div>
-      <div id="logTailScreen" style="display: none;">
+      <div id="logTailRegexInput" style="display: block;">
         <div class="row" style="margin-top: 2%;">
-          <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod:".*", "namespace":".*", "labels":".*", "annotations":".*"}'/>
+          <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}'/>
         </div>
         <div class="row" style="margin-top: 1%;">
           <div class="col text-center">
             <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
           </div>
         </div>
+    <div id="logTailScreen" style="display: none;">
         <div class="row">
           <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
         </div>

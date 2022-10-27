@@ -185,12 +185,16 @@
                 <textarea class="form-control" id="chaosProgramTextArea" rows="20" style="font-family: Courier, monospace;">
 jobs:
   cpu-attack:
+    additional-labels:
+      test-label: "test"
     image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
     command: "stress-ng"
     args:
       - --help
 
   mem-attack:
+    additional-labels:
+      test-label: "test"
     image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
     command: "stress-ng"
     args:

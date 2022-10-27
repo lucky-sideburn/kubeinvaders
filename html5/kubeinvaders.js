@@ -31,6 +31,7 @@ var programming_mode_buttons = document.getElementById("programming-mode-buttons
 var log_tail_switch = false;
 var log_tail_div = document.getElementById("logTailDiv");
 var log_tail_screen = document.getElementById("logTailScreen");
+var random_code = (Math.random() + 1).toString(36).substring(7);
 
 // nodes list from kubernetes
 var nodes = [];
@@ -143,7 +144,7 @@ function getChaosJobsLogs() {
    	    }
 	}
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs.html");
+    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs" + random_code + ".html");
     oReq.send();
 }
 
@@ -193,7 +194,7 @@ function getCurrentChaosContainer() {
 
 function enableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_log_tail", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail started </div>');
@@ -206,7 +207,7 @@ function enableLogTail() {
 
 function disableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail=id" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail stopped </div>');

@@ -27,12 +27,14 @@ def create_container(image, name, command, args):
 
     return container
 
-def create_pod_template(pod_name, container):
+def create_pod_template(pod_name, additional_labels, container):
+    pod_labels = { "app": "kubeinvaders", "pod_name": pod_name, "approle": "chaosnode" }
+    pod_labels.update(additional_labels)
     pod_template = client.V1PodTemplateSpec(
         spec=client.V1PodSpec(restart_policy="Never", containers=[container]),
-        metadata=client.V1ObjectMeta(name=pod_name, labels={"app": "kubeinvaders", "pod_name": pod_name, "approle": "chaosnode"}),
+        metadata=client.V1ObjectMeta(name=pod_name, labels=pod_labels),
     )
-
+    #logging.info(f"pod_template {pod_template}")
     return pod_template
 
 def create_job(job_name, pod_template):
@@ -99,7 +101,11 @@ for exp in parsed_yaml["experiments"]:
         letters = string.ascii_lowercase
         rand_suffix = ''.join(random.choice(letters) for i in range(5))
         job_name = f"{exp['name']}-{rand_suffix}"
-        pod_template = create_pod_template(exp["name"], container)
+        if 'additional-labels' in job_attrs:
+            logging.info(f"additional-labels = {job_attrs['additional-labels']}")
+            pod_template = create_pod_template(exp["name"], job_attrs['additional-labels'], container)
+        else:
+            pod_template = create_pod_template(exp["name"], {}, container)
         logging.info(f"Creating job {job_name}")
         job_def = create_job(job_name, pod_template)
 

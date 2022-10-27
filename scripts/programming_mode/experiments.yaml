@@ -33,6 +33,8 @@ jobs:
   mem-attack:
     image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
     command: "stress-ng"
+    additional-labels:
+      test-label: "test"
     args:
       - --help
 

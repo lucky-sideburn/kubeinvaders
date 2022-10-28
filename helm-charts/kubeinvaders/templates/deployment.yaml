@@ -21,6 +21,7 @@ spec:
       labels:
         app.kubernetes.io/name: kubeinvaders
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app.kubernetes.io/managed-by: {{ .Release.Service }}
         {{- with .Values.additionalLabels }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}

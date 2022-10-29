@@ -4,7 +4,7 @@
 1. [Description](#Description)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
-4. [Known Problems](#Known-problems)
+4. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
 5. [Metrics](#Metrics)
 6. [Security](#Security)
 7. [Community](#Community)
@@ -95,9 +95,14 @@ Press + or - buttons to increase or decrease the game screen.
 
 - Select from the menu "Set Custom Chaos Container for nodes" for using your preferred image or configuration against nodes.
 
-## Known problems
+## Known problems and troubleshooting
 
-* It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount. Work in progress!
+* It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount.
+* I have tested KubeInvaders only with a Kubernetes cluster installed through KubeSpray
+* If you don't see aliens please do the following steps:
+1. Open a terminal and do "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
+2. Execute from another terminal curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k
+3. Open an issue with attached logs
 
 ## Hands-on Tutorial
 

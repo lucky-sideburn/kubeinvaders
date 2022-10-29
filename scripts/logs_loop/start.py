@@ -33,11 +33,14 @@ def line_prepender(filename, line, logid):
         for key in r.scan_iter(f"log:{logid}:*"):
             logging.info(f"[logid:{logid}] Delete key {key}")
             r.delete(key)
-    with open(filename, 'r+') as f:
-        logging.info(f"[logid:{logid}] Insert in the head of {filename} the line: {line}")
-        content = f.read()
-        f.seek(0, 0)
-        f.write(line.rstrip('\r\n') + '\n' + content)
+    try:
+        with open(filename, 'r+') as f:
+            logging.info(f"[logid:{logid}] Insert in the head of {filename} the line: {line}")
+            content = f.read()
+            f.seek(0, 0)
+            f.write(line.rstrip('\r\n') + '\n' + content)
+    except:
+        logging.info(f"[logid:{logid}] Some i/o problem occurred in function line_prepender")
 
 # create logger
 logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
@@ -54,6 +57,7 @@ if os.environ.get("DEV"):
     logging.info("Setting env var for dev...")
     r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
     r.set("logs_enabled:aaaa", 1)
+    r.set("programming_mode", 0)
     logging.info(r.get("log_pod_regex:aaaa"))
     logging.info(r.get("logs_enabled:aaaa"))
 
@@ -72,6 +76,9 @@ api_instance = client.CoreV1Api()
 batch_api = client.BatchV1Api()
 namespace = "kubeinvaders"
 
+if not r.exists("programming_mode"):
+    r.set("programming_mode", 0)
+
 while True:
     logging.info(f"Looking for Redis keys logs_enabled:*")
     for key in r.scan_iter("logs_enabled:*"):
@@ -89,13 +96,19 @@ while True:
             if r.exists(f"logs_enabled:{logid}"):
                 logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
             else:
-                logging.info(f"[logid:{logid}]The Redis key logs_enabled does NOT exists...")
+                logging.info(f"[logid:{logid}] The Redis key logs_enabled does NOT exists...")
 
-            if not r.exists("log_cleaner:{logid}"):
+            logging.info(f"[logid:{logid}] Checking log_cleaner Redis key")
+
+            if not r.exists(f"log_cleaner:{logid}"):
+                logging.info(f"[logid:{logid}] The key log_cleaner:{logid} does not exists")
                 if pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html").exists():
+                    logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
                 r.set(f"log_cleaner:{logid}", "1")
                 r.expire(f"log_cleaner:{logid}", 30)
+            else:
+                logging.info(f"[logid:{logid}] The key log_cleaner:{logid} esists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
 
             logging.info(f"Loop iteration for log id {logid}")
 
@@ -107,7 +120,7 @@ while True:
 
             webtail_pods = []
             final_pod_list = []
-            if r.exists(f"log_pod_regex:{logid}") and r.exists(f"logs_enabled:{logid}"):
+            if r.exists(f"log_pod_regex:{logid}") and r.exists(f"logs_enabled:{logid}") and r.get("programming_mode") == "0":
                 logging.info(f"[logid:{logid}] Found Redis keys for log tail")
                 if r.get(f"logs_enabled:{logid}") == "1":
                     logging.info(f"[logid:{logid}] Found regex log_pod_regex in Redis. Logs from all pods should be collected")
@@ -146,10 +159,12 @@ while True:
 
             webtail_switch = False
 
-            final_pod_list = webtail_pods + api_response.items
-
-            if len(webtail_pods) > 0:
-                webtail_switch = True
+            if  r.get("programming_mode") == "0":
+                final_pod_list = webtail_pods + api_response.items
+                if len(webtail_pods) > 0:
+                    webtail_switch = True
+            else:
+                final_pod_list = api_response.items
 
             for pod in final_pod_list:
                 if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):

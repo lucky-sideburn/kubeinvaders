@@ -2,6 +2,15 @@ local https = require "ssl.https"
 local ltn12 = require "ltn12"
 local json = require 'lunajson'
 local redis = require "resty.redis"
+local red = redis:new()
+local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+
+if okredis then
+  ngx.log(ngx.ERR, "Connection to Redis is ok")
+else
+  ngx.log(ngx.ERR, "Connection to Redis is not ok")
+  ngx.log(ngx.ERR, errredis)
+end
 
 if os.getenv("KUBERNETES_SERVICE_HOST") then
   k8s_url = "https://" .. os.getenv("KUBERNETES_SERVICE_HOST") .. ":" .. os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
@@ -28,6 +37,15 @@ file = io.open(file_name, "w")
 io.output(file)
 io.write(body_data)
 io.close(file)
+
+ngx.log(ngx.ERR, "[programming_mode] set programming_mode Redis key")
+red:set("programming_mode", "1")
+
+ngx.log(ngx.ERR, "[programming_mode] remove log_cleaner:" ..arg['id'] .. " Redis key")
+red:del("log_cleaner:" .. arg['id'])
+
+ngx.log(ngx.ERR, "[programming_mode] set logs_enabled:" .. arg['id'] .. " Redis key")
+red:set("logs_enabled:" .. arg['id'])
 
 local handle = io.popen("python3 /opt/programming_mode/start.py " .. file_name .. " " .. k8s_url)
 local result = handle:read("*a")

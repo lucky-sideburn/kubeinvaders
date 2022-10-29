@@ -37,7 +37,8 @@ elseif ngx.var.request_method == "POST" and action == 'set' then
 elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
   local body_data = ngx.req.get_body_data()  
   red:set("log_pod_regex:" .. arg['id'], body_data)
-  os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
+  red:set("programming_mode", "0")
+  -- os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
   ngx.say("Regex has been set => " .. body_data)
   ngx.log(ngx.ERR, "Set Regex for web log tail. log id " .. arg['id'])
   return ngx.exit(ngx.status)
@@ -45,14 +46,16 @@ elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
 elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled:" .. arg['id'], "1")
-  os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
+  red:set("programming_mode", "0")
+  -- os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
   ngx.log(ngx.ERR, "Enable Log Tail for log id " .. arg['id'])
   ngx.say("Enable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 
 elseif  ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("logs_enabled:" .. arg['id'], "0")
-  os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
+  red:set("programming_mode", "0")
+  -- os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")
   ngx.say("Disable Log Tail for log id " .. arg['id'])
   ngx.log(ngx.ERR, "Disable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)

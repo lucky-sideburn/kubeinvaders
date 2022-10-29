@@ -256,7 +256,7 @@ function runChaosProgram() {
     $('#alert_placeholder').replaceWith(alert_div + 'Loading chaos program...</div>');
 
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode?id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);

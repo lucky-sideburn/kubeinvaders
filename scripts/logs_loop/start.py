@@ -22,7 +22,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 def compute_line(api_response_line, api_instance):
     logging.info(f"[logid:{logid}] API Response: {api_response_line}")
 
-    logrow = f"<div class='row' style='margin-top: 2%; font-size: 75%; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 75%; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
+    logrow = f"<div class='row' style='margin-top: 2%; font-size: 12px; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
 
     #store = False
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()

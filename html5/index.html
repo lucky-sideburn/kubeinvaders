@@ -7,6 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <style>
+      .btn-light  {
+        border-color: #000000;
+       }
+      .btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.active, .open .dropdown-toggle.btn-default {
+        background-color: #5a078b;
+        color:#FFF;
+        border-color: #000000;
+      }
+
+      .btn-light:hover {
+        transform: scale(1.05);
+      }
       @font-face {
         font-family: pixel;
         src: url('./fonts/pixel.otf');
@@ -18,7 +30,7 @@
     </style>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-li bg-light">
+    <nav class="navbar navbar-expand-lg navbar-li bg-dark">
       <div class="container-fluid">
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -26,8 +38,8 @@
         <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
           <ul class="navbar-nav">
             <li class="nav-item dropdown" style="margin-top: 0.2%;">
-              <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <font style="color: #000000;">Menu</font>
+              <a class="nav-link" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <font style="color: #ffffff;">Menu</font>
               </a>
               <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarDarkDropdownMenuLink">
                 <li><a class="dropdown-item" href="#" onclick="runKubeLinter()">Run KubeLinter On Current Namespace</a></li>
@@ -258,11 +270,13 @@ experiments:
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
+      <div align="center" style="margin-top: 20%;">
+        <img src="images/kubeinvaders_spaceship.png">
+      </div>
       <div class="container text-center">
         <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9.5</p>
       </div>
     </div>
-    
 
     <script src="kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
@@ -349,7 +363,7 @@ experiments:
       }
 
       function startProgrammingMode() {
-	if (programming_mode_switch) {
+        if (programming_mode_switch) {
           programming_mode_switch = false;
           $("#programmingModeButton").text("Enable Prog. Mode");
         } else {
@@ -362,50 +376,50 @@ experiments:
           chaos_program_screen.style.display = "none";
         }
         if (programming_mode_buttons.style.display === "none") {
-          programming_mode_buttons.style.display = "block";
+           programming_mode_buttons.style.display = "block";
         } else {
           programming_mode_buttons.style.display = "none";
         }
-        game_buttons.style.display = "none";
-        game_screen.style.display = "none";
-      }
+          game_buttons.style.display = "none";
+          game_screen.style.display = "none";
+        }
 
-      function showSpecialKeys() {
-        $('#showSpecialKeysModal').modal('show');
-        modal_opened = true;
-      }
+        function showSpecialKeys() {
+          $('#showSpecialKeysModal').modal('show');
+          modal_opened = true;
+        }
 
-      function showCurrentChaosContainer() {
-        getCurrentChaosContainer();
-        $('#currentChaosContainerModal').modal('show');
-        modal_opened = true;
-      }
+        function showCurrentChaosContainer() {
+          getCurrentChaosContainer();
+          $('#currentChaosContainerModal').modal('show');
+          modal_opened = true;
+        }
 
-      function closeCurrentChaosJobModal() {
-        $('#currentChaosContainerModal').modal('hide');
-        modal_opened = false;
-      }
+        function closeCurrentChaosJobModal() {
+          $('#currentChaosContainerModal').modal('hide');
+          modal_opened = false;
+        }
 
-      function showSetCurrentChaosContainer() {
-        $('#alert_placeholder2').text('');
-        getCurrentChaosContainer();
-        $('#setChaosContainerModal').modal('show');
-        modal_opened = true;
-      }
+        function showSetCurrentChaosContainer() {
+          $('#alert_placeholder2').text('');
+          getCurrentChaosContainer();
+          $('#setChaosContainerModal').modal('show');
+          modal_opened = true;
+        }
 
-      function closeSetChaosContainerModal() {
-        $('#setChaosContainerModal').modal('hide');
-        modal_opened = false;
-      }
+        function closeSetChaosContainerModal() {
+          $('#setChaosContainerModal').modal('hide');
+          modal_opened = false;
+        }
 
-      function closeKubeLinterModal() {
-        $('#kubeLinterModal').modal('hide');
-        modal_opened = false;
-      }
+        function closeKubeLinterModal() {
+          $('#kubeLinterModal').modal('hide');
+          modal_opened = false;
+        }
 
-      $('textarea').on('input', function() {
-        $('#alert_placeholder2').text('');
-      });
+        $('textarea').on('input', function() {
+          $('#alert_placeholder2').text('');
+        });
 
     </script>
   </body>

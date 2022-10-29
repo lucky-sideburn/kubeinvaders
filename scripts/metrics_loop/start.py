@@ -83,7 +83,6 @@ while True:
 
     for pod in api_response.items:
         if pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode':
-            logging.info(pod.status.phase)
             if pod.status.phase == "Pending" or pod.status.phase == "Running":
                 r.incr('current_chaos_job_pod')
     time.sleep(1)

@@ -34,7 +34,7 @@ elseif ngx.var.request_method == "POST" and action == 'set' then
   ngx.say("New chaos container definition has been configured in Redis")
   return ngx.exit(ngx.status)
 
-elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
+elseif ngx.var.request_method == "POST" and action == "set_log_regex" then
   local body_data = ngx.req.get_body_data()  
   red:set("log_pod_regex:" .. arg['id'], body_data)
   red:set("programming_mode", "0")
@@ -43,7 +43,7 @@ elseif  ngx.var.request_method == "POST" and action == "set_log_regex" then
   ngx.log(ngx.ERR, "Set Regex for web log tail. log id " .. arg['id'])
   return ngx.exit(ngx.status)
 
-elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
+elseif ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled:" .. arg['id'], "1")
   red:set("programming_mode", "0")
@@ -52,7 +52,7 @@ elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
   ngx.say("Enable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 
-elseif  ngx.var.request_method == "POST" and action == "disable_log_tail" then
+elseif ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("logs_enabled:" .. arg['id'], "0")
   red:set("programming_mode", "0")
   -- os.execute("> /var/www/html/chaoslogs-" .. arg['id'] .. ".html")

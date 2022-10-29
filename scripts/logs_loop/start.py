@@ -19,6 +19,39 @@ import time
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+def compute_line(api_response_line, api_instance):
+    logging.info(f"[logid:{logid}] API Response: {api_response_line}")
+
+    logrow = f"<div class='row' style='margin-top: 2%; font-size: 75%; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 75%; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
+
+    store = False
+    sha256log = sha256(logrow.encode('utf-8')).hexdigest()
+
+    if r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
+        current_row = r.get(f"log:{logid}:{pod.metadata.name}:{sha256log}")
+        if current_row != logrow:
+            store = True
+
+    if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}") or store:
+        logging.info(f"[logid:{logid}] The key log:{logid}:{pod.metadata.name}:{sha256log} does not exists. Preparing to store log content")
+        file = pathlib.Path('/var/www/html')
+        if file.exists():
+            log_html_file = pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html")
+            line_prepender(log_html_file, logrow, logid)
+
+    r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
+    r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
+    r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 60)
+
+    logging.info(f"[logid:{logid}] Phase of {pod.metadata.name} is {pod.status.phase}")   
+    if pod.status.phase == "Succeeded" and pod.metadata.labels['approle'] == 'chaosnode':
+        try:
+            api_instance.delete_namespaced_pod(pod.metadata.name, namespace = pod.metadata.namespace)
+            logging.info(f"[logid:{logid}] Deleted pod {pod.metadata.name}")
+        except ApiException as e:
+            logging.info(e)
+
+
 def line_prepender(filename, line, logid):
     logging.info(f"[logid:{logid}] Entering in line_prepender function")
     log_html_file = pathlib.Path(filename)
@@ -106,7 +139,7 @@ while True:
                     logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
                 r.set(f"log_cleaner:{logid}", "1")
-                r.expire(f"log_cleaner:{logid}", 30)
+                r.expire(f"log_cleaner:{logid}", 60)
             else:
                 logging.info(f"[logid:{logid}] The key log_cleaner:{logid} esists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
 
@@ -160,7 +193,7 @@ while True:
             webtail_switch = False
 
             if  r.get("programming_mode") == "0":
-                final_pod_list = webtail_pods + api_response.items
+                final_pod_list = webtail_pods
                 if len(webtail_pods) > 0:
                     webtail_switch = True
             else:
@@ -185,40 +218,18 @@ while True:
                         if since == 0:
                             since = 1
 
-                        api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, tail_lines=1, since_seconds=since)
+                        api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since)
+                        r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
 
                         if api_response == "":
                             continue
-                        logging.info(f"[logid:{logid}] API Response: {api_response}")
-                        
-                        logrow = f"<div class='row' style='margin-top: 2%; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-family: Courier New, Courier, monospace;'>>>>{api_response}</div>"
 
-                        store = False
-                        sha256log = sha256(logrow.encode('utf-8')).hexdigest()
+                        if api_response.__class__.__name__ == "list":
+                            for api_response_line in api_response:
+                                compute_line(api_response_line, api_instance)
+                        else:
+                            compute_line(api_response, api_instance)
 
-                        if r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
-                            current_row = r.get(f"log:{logid}:{pod.metadata.name}:{sha256log}")
-                            if current_row != logrow:
-                                store = True
-                        
-                        if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}") or store:
-                            logging.info(f"[logid:{logid}] The key log:{logid}:{pod.metadata.name}:{sha256log} does not exists. Preparing to store log content")
-                            file = pathlib.Path('/var/www/html')
-                            if file.exists():
-                                log_html_file = pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html")
-                                line_prepender(log_html_file, logrow, logid)
-
-                        r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
-                        r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
-                        r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 30)
-
-                        logging.info(f"[logid:{logid}] Phase of {pod.metadata.name} is {pod.status.phase}")   
-                        if pod.status.phase == "Succeeded" and pod.metadata.labels['approle'] == 'chaosnode':
-                            try:
-                                api_response = api_instance.delete_namespaced_pod(pod.metadata.name, namespace = pod.metadata.namespace)
-                                logging.info(f"[logid:{logid}] Deleted pod {pod.metadata.name}")
-                            except ApiException as e:
-                                logging.info(e)
                     except ApiException as e:
                         logging.info(e)
     time.sleep(0.5)

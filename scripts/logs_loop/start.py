@@ -72,23 +72,25 @@ api_instance = client.CoreV1Api()
 batch_api = client.BatchV1Api()
 namespace = "kubeinvaders"
 
-for key in r.scan_iter("logs_enabled:*"):
-    if r.get(key) == "1":
+while True:
+    logging.info(f"Looking for Redis keys logs_enabled:*")
+    for key in r.scan_iter("logs_enabled:*"):
+        if r.get(key) == "1":
 
-        logid = key.split(":")[1]
+            logging.info(f"Found key {key} and it is enabled!")
+            logid = key.split(":")[1]
 
-        if r.exists(f"log_pod_regex:{logid}"):
-            logging.info(f"[logid:{logid}] The Redis key log_pod_regex exists...")
-        else:
-            logging.info(f"[logid:{logid}] The Redis key log_pod_regex does NOT exists...")
-            r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+            if r.exists(f"log_pod_regex:{logid}"):
+                logging.info(f"[logid:{logid}] The Redis key log_pod_regex exists...")
+            else:
+                logging.info(f"[logid:{logid}] The Redis key log_pod_regex does NOT exists...")
+                r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
 
-        if r.exists(f"logs_enabled:{logid}"):
-            logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
-        else:
-            logging.info(f"[logid:{logid}]The Redis key logs_enabled does NOT exists...")
+            if r.exists(f"logs_enabled:{logid}"):
+                logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
+            else:
+                logging.info(f"[logid:{logid}]The Redis key logs_enabled does NOT exists...")
 
-        while True:
             if not r.exists("log_cleaner:{logid}"):
                 if pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html").exists():
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
@@ -204,4 +206,4 @@ for key in r.scan_iter("logs_enabled:*"):
                                 logging.info(e)
                     except ApiException as e:
                         logging.info(e)
-            time.sleep(0.5)
+    time.sleep(0.5)

@@ -24,15 +24,15 @@ def compute_line(api_response_line, api_instance):
 
     logrow = f"<div class='row' style='margin-top: 2%; font-size: 75%; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 75%; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
 
-    store = False
+    #store = False
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
-    if r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
-        current_row = r.get(f"log:{logid}:{pod.metadata.name}:{sha256log}")
-        if current_row != logrow:
-            store = True
+    #if r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
+    #    current_row = r.get(f"log:{logid}:{pod.metadata.name}:{sha256log}")
+    #    if current_row != logrow:
+    #        store = True
 
-    if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}") or store:
+    if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
         logging.info(f"[logid:{logid}] The key log:{logid}:{pod.metadata.name}:{sha256log} does not exists. Preparing to store log content")
         file = pathlib.Path('/var/www/html')
         if file.exists():
@@ -183,7 +183,7 @@ while True:
                     for pod in api_response.items:
                         if re.search(f"{pod_re}", pod.metadata.name) and re.search(f"{namespace_re}", pod.metadata.namespace) and re.search(f"{labels_re}", str(pod.metadata.labels)) and re.search(f"{annotations_re}", str(pod.metadata.annotations)):
                             webtail_pods.append(pod)
-                            logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
+                            #logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
 
             try:
                 api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")
@@ -203,17 +203,17 @@ while True:
                 if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):
                     try:
                         latest_log_tail = r.get(f"log_time:{pod.metadata.name}")
-                        logging.info(f"[logid:{logid}] Reading logs of {pod.metadata.name} on {pod.metadata.namespace}")
+                        #logging.info(f"[logid:{logid}] Reading logs of {pod.metadata.name} on {pod.metadata.namespace}")
                         
                         if r.exists(f"log_time:{logid}:{pod.metadata.name}"):
                             latest_log_tail_time = r.get(f"log_time:{logid}:{pod.metadata.name}")
                         else:
                             latest_log_tail_time = time.time()
-                        logging.info(f"[logid:{logid}] Latest latest_log_tail for {pod.metadata.name} is {latest_log_tail_time}. Current Unix Time is {time.time()}")
+                        #logging.info(f"[logid:{logid}] Latest latest_log_tail for {pod.metadata.name} is {latest_log_tail_time}. Current Unix Time is {time.time()}")
 
-                        since = int(time.time() - float(latest_log_tail_time))
+                        since = int(time.time() - float(latest_log_tail_time)) + 1
 
-                        logging.info(f"[logid:{logid}] Diff from time.time() and latest_log_tail_time for {pod.metadata.name} is {since}")
+                        #logging.info(f"[logid:{logid}] Diff from time.time() and latest_log_tail_time for {pod.metadata.name} is {since}")
 
                         if since == 0:
                             since = 1
@@ -224,12 +224,13 @@ while True:
                         if api_response == "":
                             continue
 
-                        if api_response.__class__.__name__ == "list":
+                        if type(api_response) is list:
                             for api_response_line in api_response:
                                 compute_line(api_response_line, api_instance)
                         else:
-                            compute_line(api_response, api_instance)
+                            for api_response_line in api_response.splitlines():
+                                compute_line(api_response_line, api_instance)
 
                     except ApiException as e:
                         logging.info(e)
-    time.sleep(0.5)
+    time.sleep(1)

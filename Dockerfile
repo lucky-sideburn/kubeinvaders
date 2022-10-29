@@ -57,7 +57,8 @@ RUN pip3 install -r /opt/programming_mode/requirements.txt
 RUN pip3 install -r /opt/programming_mode/requirements.txt
 
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
-RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /var/www/html /etc/nginx/conf.d
+RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /etc/nginx/conf.d
+RUN chmod 777 /var/www/html
 
 EXPOSE 8080
 

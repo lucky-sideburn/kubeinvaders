@@ -8,4 +8,4 @@ else
   export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
 export PYTHONWARNINGS="ignore:Unverified HTTPS request"
-python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &> /tmp/foo.log
+python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}

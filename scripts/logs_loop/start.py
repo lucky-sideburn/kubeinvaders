@@ -20,15 +20,21 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def line_prepender(filename, line, logid):
+    logging.info(f"[logid:{logid}] Entering in line_prepender function")
     log_html_file = pathlib.Path(filename)
     if not log_html_file.exists():
+        logging.info(f"[logid:{logid}] {log_html_file} does not exists. Going to reset Redis keys")
         with open(log_html_file, "w") as myfile:
+            logging.info(f"[logid:{logid}] {log_html_file.exists} does not exists. Create new blank file {log_html_file}")
             myfile.write('')
         for key in r.scan_iter(f"log_time:{logid}:*"):
+            logging.info(f"[logid:{logid}] Delete key {key}")
             r.delete(key)
         for key in r.scan_iter(f"log:{logid}:*"):
+            logging.info(f"[logid:{logid}] Delete key {key}")
             r.delete(key)
     with open(filename, 'r+') as f:
+        logging.info(f"[logid:{logid}] Insert in the head of {filename} the line: {line}")
         content = f.read()
         f.seek(0, 0)
         f.write(line.rstrip('\r\n') + '\n' + content)
@@ -84,14 +90,14 @@ for key in r.scan_iter("logs_enabled:*"):
 
         while True:
             if not r.exists("log_cleaner:{logid}"):
-                if pathlib.Path(f"/var/www/html/chaoslogs{logid}.html").exists():
-                    os.remove(f"/var/www/html/chaoslogs{logid}.html")
+                if pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html").exists():
+                    os.remove(f"/var/www/html/chaoslogs-{logid}.html")
                 r.set(f"log_cleaner:{logid}", "1")
                 r.expire(f"log_cleaner:{logid}", 30)
 
             logging.info(f"Loop iteration for log id {logid}")
 
-            file = pathlib.Path(f"/var/www/html/chaoslogs{logid}.html")
+            file = pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html")
 
             if not file.exists():
                 for key in r.scan_iter(f"log:{logid}:*"):
@@ -120,11 +126,11 @@ for key in r.scan_iter("logs_enabled:*"):
                     annotations_re = json_re["annotations"]
                     labels_re = json_re["labels"]
 
-                    logging.info(f"Gobal Json Regex is #{json_re}")
-                    logging.info(f"Regex for pod name is #{pod_re}")
-                    logging.info(f"Regex namespace name #{namespace_re}")
-                    logging.info(f"Regex for labels is #{labels_re}")
-                    logging.info(f"Regex for annotation is #{annotations_re}")
+                    logging.info(f"[logid:{logid}] Gobal Json Regex is {json_re}")
+                    logging.info(f"[logid:{logid}] Regex for pod name is {pod_re}")
+                    logging.info(f"[logid:{logid}] Regex namespace name {namespace_re}")
+                    logging.info(f"[logid:{logid}] Regex for labels is {labels_re}")
+                    logging.info(f"[logid:{logid}] Regex for annotation is {annotations_re}")
 
                     for pod in api_response.items:
                         if re.search(f"{pod_re}", pod.metadata.name) and re.search(f"{namespace_re}", pod.metadata.namespace) and re.search(f"{labels_re}", str(pod.metadata.labels)) and re.search(f"{annotations_re}", str(pod.metadata.annotations)):
@@ -179,9 +185,10 @@ for key in r.scan_iter("logs_enabled:*"):
                                 store = True
                         
                         if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}") or store:
+                            logging.info(f"[logid:{logid}] The key log:{logid}:{pod.metadata.name}:{sha256log} does not exists. Preparing to store log content")
                             file = pathlib.Path('/var/www/html')
                             if file.exists():
-                                log_html_file = pathlib.Path(f"/var/www/html/chaoslogs{logid}.html")
+                                log_html_file = pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html")
                                 line_prepender(log_html_file, logrow, logid)
 
                         r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)

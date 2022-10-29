@@ -144,7 +144,7 @@ function getChaosJobsLogs() {
    	    }
 	}
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs" + random_code + ".html");
+    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs-" + random_code + ".html");
     oReq.send();
 }
 

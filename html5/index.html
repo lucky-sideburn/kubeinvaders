@@ -254,6 +254,19 @@ experiments:
           <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
         </div>
       </div>
+      <div class="row">
+        <div class="col text-center">
+
+        </div>
+        <div class="col text-center">
+          <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
+          <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
+        </div>
+        <div class="col text-center">
+
+        </div>
+      </div>      
+  
       <div id="logTailRegexInput" style="display: block;">
         <div class="row" style="margin-top: 2%;">
           <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}'/>
@@ -295,6 +308,8 @@ experiments:
         document.getElementById("gameContainer").style.height = "100%";
         document.getElementById("zoomInGameScreenInput").disabled = true;
         document.getElementById("zoomOutGameScreenInput").disabled = false; 
+        document.getElementById("zoomInGameScreenInput2").disabled = true;
+        document.getElementById("zoomOutGameScreenInput2").disabled = false; 
       }
 
       function zoomOut() {
@@ -303,7 +318,9 @@ experiments:
         document.getElementById("gameContainer").style.width = "50%"
         document.getElementById("gameContainer").style.height = "50%"
         document.getElementById("zoomInGameScreenInput").disabled = false; 
-        document.getElementById("zoomOutGameScreenInput").disabled = true; 
+        document.getElementById("zoomOutGameScreenInput").disabled = true;
+        document.getElementById("zoomInGameScreenInput2").disabled = false; 
+        document.getElementById("zoomOutGameScreenInput2").disabled = true; 
       }
 
       function controlAutoPilot() {

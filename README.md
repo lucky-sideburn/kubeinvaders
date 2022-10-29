@@ -1,4 +1,5 @@
-*Gamified chaos engineering tool for Kubernetes. It is like Space Invaders but the aliens are pods or worker nodes.*
+*Gamified chaos engineering tool and log viewer for Kubernetes*
+
 # Table of Contents
 
 1. [Description](#Description)

@@ -1,6 +1,0 @@
-images {
-  image: "/assets/sprite_invader_pod_not_running.png"
-}
-margin: 0
-extrude_borders: 0
-inner_padding: 0

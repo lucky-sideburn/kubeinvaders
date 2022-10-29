@@ -12,13 +12,13 @@
 9. [License](#License)
 
 ### Define Chaos Experiments
-![Alt Text](./images/programming_mode.png)
+![Alt Text](./doc_images/programming_mode.png)
 
 ### Watch Kubernetes logs through web tail console
-![Alt Text](./images/webtail.png)
+![Alt Text](./doc_images/webtail.png)
 
 ### Play Chaos Engineering
-![Alt Text](./images/webui.png)
+![Alt Text](./doc_images/webui.png)
 
 ## Description
 
@@ -42,13 +42,13 @@ helm install kubeinvaders --set-string config.target_namespace="namespace1\,name
 
 At the top you will find some metrics as described below:
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/metrics_bar.png)
+![Alt Text](./doc_images/metrics_bar.png)
 
 **Current Replicas State Delay** is a metric that show how much time the cluster takes to coming back at the desired state of pods replicas.
 
 This is a control-plane you can use to switch off & on various features.
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/control-plane.png)
+![Alt Text](./doc_images/control-plane.png)
 
 ### YouTube HowTo
 
@@ -69,11 +69,11 @@ Press the button "Hide Pods Name" to hide the name of the pods under the aliens 
 
 As described below, on the game screen, near the spaceship, there are details about current cluster, namespace and some configurations.
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/game-info.png)
+![Alt Text](./doc_images/game-info.png)
 
 Under + and - buttons appears a bar with the latest occurred game events.
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/game-events.png)
+![Alt Text](./doc_images/game-events.png)
 
 ### Do Kube-linter Lint
 
@@ -130,11 +130,11 @@ Example of metrics
 |     deleted_pods_total 16                                  | Total number of deleted pods                                                               |
 |     deleted_namespace_pods_count{namespace=myawesomenamespace}           |Total number of deleted pods per namespace                                    |                                     
 
-![Download Grafana dashboard](https://github.com/lucky-sideburn/KubeInvaders/blob/master/grafana/KubeInvadersDashboard.json)
+![Download Grafana dashboard](./grafana/KubeInvadersDashboard.json)
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana1.png)
+![Alt Text](./doc_images/grafana1.png)
 
-![Alt Text](https://github.com/lucky-sideburn/KubeInvaders/blob/master/images/grafana2.png)
+![Alt Text](./doc_images/grafana2.png)
 
 
 ## Security

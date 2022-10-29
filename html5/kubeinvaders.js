@@ -445,11 +445,11 @@ document.addEventListener("keyup", keyUpHandler, false);
 function drawAlien(alienX, alienY, name) {
     var image = new Image(); // Image constructor
     if (contains(nodes, name)) {
-        image.src = './k8s_node.png';
+        image.src = './images/k8s_node.png';
         ctx.drawImage(image, alienX, alienY, 30, 40);
     }
     else {
-        image.src = './sprite_invader.png';
+        image.src = './images/sprite_invader.png';
         ctx.font = '8px pixel';
         ctx.drawImage(image, alienX, alienY, 40, 40);
         if (showPodName) {
@@ -497,7 +497,7 @@ function shuffleAliens() {
 }
 function drawRocket() {
     var image = new Image(); // Image constructor
-    image.src = './kuberocket.png';
+    image.src = './images/kuberocket.png';
     ctx.drawImage(image, rocketX, rocketY, 20, 20);
     ctx.closePath();
 
@@ -527,7 +527,7 @@ function drawRocket() {
 
 function drawSpaceship() {
     var image = new Image(); // Image constructor
-    image.src = './spaceship.png';
+    image.src = './images/spaceship.png';
     ctx.drawImage(image, spaceshipX, spaceshipY, 60, 60);
     ctx.closePath();
 }

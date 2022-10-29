@@ -45,12 +45,12 @@ elseif  ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled:" .. arg['id'], "1")
   --os.execute("> /var/www/html/chaoslogs" .. arg['id'] .. ".html")
-  ngx.say("Enable Log Tail")
+  ngx.say("Enable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 
 elseif  ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("logs_enabled:" .. arg['id'], "0")
   --os.execute("> /var/www/html/chaoslogs" .. arg['id'] .. ".html")
-  ngx.say("Disable Log Tail")
+  ngx.say("Disable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 end

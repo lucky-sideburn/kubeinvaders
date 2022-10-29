@@ -11,6 +11,8 @@ import string
 import random
 import redis
 import time
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def create_container(image, name, command, args):
     container = client.V1Container(

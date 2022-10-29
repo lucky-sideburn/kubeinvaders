@@ -207,7 +207,7 @@ function enableLogTail() {
 
 function disableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail=id" + random_code, true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail stopped </div>');
@@ -222,7 +222,7 @@ function setLogRegex() {
     log_tail_div.style.display = "block";
     $('#alert_placeholder3').replaceWith(log_tail_alert + 'Setting regex for filtering log source (by pod name)</div>');
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_regex", true);
+    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Regex has been configured...</div>');

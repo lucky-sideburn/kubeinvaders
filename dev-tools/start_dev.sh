@@ -1,5 +1,5 @@
 #!/bin/bash
-
+docker system prune -a -f
 docker build . -t docker.io/luckysideburn/kubeinvaders:develop
 docker push luckysideburn/kubeinvaders:develop
 kubectl create namespace kubeinvaders

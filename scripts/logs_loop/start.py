@@ -16,15 +16,17 @@ import time
 import re
 from hashlib import sha256
 import time
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def line_prepender(filename, line):
+def line_prepender(filename, line, logid):
     log_html_file = pathlib.Path(filename)
     if not log_html_file.exists():
         with open(log_html_file, "w") as myfile:
             myfile.write('')
-        for key in r.scan_iter("log_time:*"):
+        for key in r.scan_iter(f"log_time:{logid}:*"):
             r.delete(key)
-        for key in r.scan_iter("log:*"):
+        for key in r.scan_iter(f"log:{logid}:*"):
             r.delete(key)
     with open(filename, 'r+') as f:
         content = f.read()
@@ -44,21 +46,10 @@ else:
 
 if os.environ.get("DEV"):
     logging.info("Setting env var for dev...")
-    r.set("log_pod_regex", ".*")
-    r.set("logs_enabled", 1)
-    logging.info(r.get("log_pod_regex"))
-    logging.info(r.get("logs_enabled"))
-
-if r.exists("log_pod_regex"): 
-   logging.info("The Redis key log_pod_regex exists...") 
-else:
-   logging.info("The Redis key log_pod_regex does NOT exists...")    
-   r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
-
-if r.exists('logs_enabled'):
-   logging.info("The Redis key logs_enabled exists...")
-else:
-   logging.info("The Redis key logs_enabled does NOT exists...")
+    r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+    r.set("logs_enabled:aaaa", 1)
+    logging.info(r.get("log_pod_regex:aaaa"))
+    logging.info(r.get("logs_enabled:aaaa"))
 
 configuration = client.Configuration()
 token = os.environ["TOKEN"]
@@ -79,6 +70,17 @@ for key in r.scan_iter("logs_enabled:*"):
     if r.get(key) == "1":
 
         logid = key.split(":")[1]
+
+        if r.exists(f"log_pod_regex:{logid}"):
+            logging.info(f"[logid:{logid}] The Redis key log_pod_regex exists...")
+        else:
+            logging.info(f"[logid:{logid}] The Redis key log_pod_regex does NOT exists...")
+            r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+
+        if r.exists(f"logs_enabled:{logid}"):
+            logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
+        else:
+            logging.info(f"[logid:{logid}]The Redis key logs_enabled does NOT exists...")
 
         while True:
             if not r.exists("log_cleaner:{logid}"):
@@ -102,7 +104,7 @@ for key in r.scan_iter("logs_enabled:*"):
                 if r.get(f"logs_enabled:{logid}") == "1":
                     logging.info(f"[logid:{logid}] Found regex log_pod_regex in Redis. Logs from all pods should be collected")
 
-                    log_pod_regex = r.get(f"log_pod_regex:{logid]}")
+                    log_pod_regex = r.get(f"log_pod_regex:{logid}")
 
                     logging.info(f"[logid:{logid}] log_pod_regex is => |{log_pod_regex}|")
 
@@ -180,7 +182,7 @@ for key in r.scan_iter("logs_enabled:*"):
                             file = pathlib.Path('/var/www/html')
                             if file.exists():
                                 log_html_file = pathlib.Path(f"/var/www/html/chaoslogs{logid}.html")
-                                line_prepender(log_html_file, logrow)
+                                line_prepender(log_html_file, logrow, logid)
 
                         r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
                         r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())

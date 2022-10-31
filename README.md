@@ -101,6 +101,7 @@ Press + or - buttons to increase or decrease the game screen.
 ## Known problems and troubleshooting
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount.
+* At moment is not supported the installation of KubeInvaders into a namespace that is not named "kubeinvaders"
 * I have tested KubeInvaders only with a Kubernetes cluster installed through KubeSpray
 * If you don't see aliens please do the following steps:
 1. Open a terminal and do "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"

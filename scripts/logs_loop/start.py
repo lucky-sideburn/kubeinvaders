@@ -20,19 +20,9 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def compute_line(api_response_line, api_instance, container):
-    logging.info(f"[logid:{logid}] API Response: {api_response_line}")
-    logrow = f""""
-<div class='row' style='margin-top: 2%; color: #1d1919;'>
-    <div class='row' style="font-size: 12px">-----------------------</div>
-    <div class='row' style="font-size: 12px">Namespace:{pod.metadata.namespace}</div>
-    <div class='row' style="font-size: 12px">Pod:{pod.metadata.name}</div>
-    <div class='row' style="font-size: 12px">Container:{container}</div>
-</div>
-<div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
-    >>>{api_response_line}
-</div>
-<div class='row' style="font-size: 12px">-----------------------</div>
-    """
+    #api_response_line = api_response_line.encode('utf-8', 'xmlcharrefreplace')
+    logging.info(f"[logid:{logid}] API Response: ||{api_response_line}||")
+    logrow = f"<div class='row' style='margin-top: 2%; color: #1d1919;'><div class='row' style='font-size: 12px'>-----------------------</div><div class='row' style='font-size: 12px'>Namespace:&nbsp;{pod.metadata.namespace}</div><div class='row' style='font-size: 12px'>Pod:&nbsp;{pod.metadata.name}</div><div class='row' style='font-size: 12px'>Container:&nbsp;{container}</div></div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
     #store = False
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
@@ -97,7 +87,7 @@ else:
 
 if os.environ.get("DEV"):
     logging.info("Setting env var for dev...")
-    r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+    r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}')
     r.set("logs_enabled:aaaa", 1)
     r.set("programming_mode", 0)
     logging.info(r.get("log_pod_regex:aaaa"))

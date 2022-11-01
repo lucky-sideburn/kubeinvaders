@@ -40,6 +40,13 @@ kubectl create namespace kubeinvaders
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
 ```
+
+### SCC for Openshift
+
+```bash
+oc adm policy add-scc-to-user anyuid -z kubeinvaders
+```
+
 ### Route for Openshift
 
 I should add this to the helm chart...

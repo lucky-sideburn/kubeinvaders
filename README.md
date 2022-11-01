@@ -40,6 +40,23 @@ kubectl create namespace kubeinvaders
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
 ```
+### Route for Openshift
+
+I should add this to the helm chart...
+
+```bash
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: kubeinvaders
+  namespace: "kubeinvaders"
+spec:
+  host: "kubeinvaders.io"
+  to:
+    name: kubeinvaders
+  tls:
+    termination: Edge
+ ```
 
 ## Usage
 

@@ -200,6 +200,11 @@ while True:
                 final_pod_list = api_response.items
 
             for pod in final_pod_list:
+                container_list = []
+                for container in pod.spec.containers:
+                    container_list.append(container.name)
+                logging.info(container_list)
+                r.set("containers:{pod.metadata.name}", str(container_list))
                 if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):
                     try:
                         latest_log_tail = r.get(f"log_time:{pod.metadata.name}")

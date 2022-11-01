@@ -291,6 +291,20 @@ experiments:
       </div>
     </div>
 
+    <div class='row' style='margin-top: 2%; color: #1d1919;'>
+      <div class='row' style="font-size: 12px">-----------------------</div>
+      <div class='row' style="font-size: 12px">Namespace:{pod.metadata.namespace}</div>
+      <div class='row' style="font-size: 12px">Pod:{pod.metadata.name}</div>
+      <div class='row' style="font-size: 12px">Container:{pod.metadata.name}</div>
+    </div>
+    <div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
+      >>>{api_response_line}
+    </div>
+    <div class='row' style="font-size: 12px">-----------------------</div>
+
+
+
+
     <script src="kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

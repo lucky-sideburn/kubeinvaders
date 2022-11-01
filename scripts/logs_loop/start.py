@@ -19,11 +19,20 @@ import time
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def compute_line(api_response_line, api_instance):
+def compute_line(api_response_line, api_instance, container):
     logging.info(f"[logid:{logid}] API Response: {api_response_line}")
-
-    logrow = f"<div class='row' style='margin-top: 2%; font-size: 12px; color: #400075;'>[namespace:{pod.metadata.namespace}][pod:{pod.metadata.name}]</div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
-
+    logrow = f""""
+<div class='row' style='margin-top: 2%; color: #1d1919;'>
+    <div class='row' style="font-size: 12px">-----------------------</div>
+    <div class='row' style="font-size: 12px">Namespace:{pod.metadata.namespace}</div>
+    <div class='row' style="font-size: 12px">Pod:{pod.metadata.name}</div>
+    <div class='row' style="font-size: 12px">Container:{container}</div>
+</div>
+<div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
+    >>>{api_response_line}
+</div>
+<div class='row' style="font-size: 12px">-----------------------</div>
+    """
     #store = False
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
@@ -124,7 +133,7 @@ while True:
                 logging.info(f"[logid:{logid}] The Redis key log_pod_regex exists...")
             else:
                 logging.info(f"[logid:{logid}] The Redis key log_pod_regex does NOT exists...")
-                r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*"}')
+                r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}')
 
             if r.exists(f"logs_enabled:{logid}"):
                 logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
@@ -173,6 +182,7 @@ while True:
                     namespace_re = json_re["namespace"]
                     annotations_re = json_re["annotations"]
                     labels_re = json_re["labels"]
+                    containers_re = json_re["containers"]
 
                     logging.info(f"[logid:{logid}] Gobal Json Regex is {json_re}")
                     logging.info(f"[logid:{logid}] Regex for pod name is {pod_re}")
@@ -202,40 +212,41 @@ while True:
             for pod in final_pod_list:
                 container_list = []
                 for container in pod.spec.containers:
-                    container_list.append(container.name)
-                logging.info(container_list)
-                r.set("containers:{pod.metadata.name}", str(container_list))
-                if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):
-                    try:
-                        latest_log_tail = r.get(f"log_time:{pod.metadata.name}")
-                        #logging.info(f"[logid:{logid}] Reading logs of {pod.metadata.name} on {pod.metadata.namespace}")
-                        
-                        if r.exists(f"log_time:{logid}:{pod.metadata.name}"):
-                            latest_log_tail_time = r.get(f"log_time:{logid}:{pod.metadata.name}")
-                        else:
-                            latest_log_tail_time = time.time()
-                        #logging.info(f"[logid:{logid}] Latest latest_log_tail for {pod.metadata.name} is {latest_log_tail_time}. Current Unix Time is {time.time()}")
+                    if re.search(f"{containers_re}", container.name):
+                        container_list.append(container.name)
 
-                        since = int(time.time() - float(latest_log_tail_time)) + 1
+                for container in container_list:
+                    if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):
+                        try:
+                            latest_log_tail = r.get(f"log_time:{pod.metadata.name}")
+                            #logging.info(f"[logid:{logid}] Reading logs of {pod.metadata.name} on {pod.metadata.namespace}")
+                            
+                            if r.exists(f"log_time:{logid}:{pod.metadata.name}"):
+                                latest_log_tail_time = r.get(f"log_time:{logid}:{pod.metadata.name}")
+                            else:
+                                latest_log_tail_time = time.time()
+                            #logging.info(f"[logid:{logid}] Latest latest_log_tail for {pod.metadata.name} is {latest_log_tail_time}. Current Unix Time is {time.time()}")
 
-                        #logging.info(f"[logid:{logid}] Diff from time.time() and latest_log_tail_time for {pod.metadata.name} is {since}")
+                            since = int(time.time() - float(latest_log_tail_time)) + 1
 
-                        if since == 0:
-                            since = 1
+                            #logging.info(f"[logid:{logid}] Diff from time.time() and latest_log_tail_time for {pod.metadata.name} is {since}")
 
-                        api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since)
-                        r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
+                            if since == 0:
+                                since = 1
 
-                        if api_response == "":
-                            continue
+                            api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
+                            r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
 
-                        if type(api_response) is list:
-                            for api_response_line in api_response:
-                                compute_line(api_response_line, api_instance)
-                        else:
-                            for api_response_line in api_response.splitlines():
-                                compute_line(api_response_line, api_instance)
+                            if api_response == "":
+                                continue
 
-                    except ApiException as e:
-                        logging.info(e)
+                            if type(api_response) is list:
+                                for api_response_line in api_response:
+                                    compute_line(api_response_line, api_instance, container)
+                            else:
+                                for api_response_line in api_response.splitlines():
+                                    compute_line(api_response_line, api_instance, container)
+
+                        except ApiException as e:
+                            logging.info(e)
     time.sleep(1)

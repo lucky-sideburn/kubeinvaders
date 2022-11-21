@@ -25,6 +25,10 @@ spec:
         {{- with .Values.additionalLabels }}
         {{- . | toYaml | nindent 8 }}
         {{- end }}
+      {{-  with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       serviceAccountName: kubeinvaders
       {{- with .Values.deployment.securityContext }}

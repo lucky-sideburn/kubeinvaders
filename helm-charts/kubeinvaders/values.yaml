@@ -14,7 +14,8 @@ config:
   alienProximity: 10
   hitsLimit: 1
   updateTime: 0.5
-
+podAnnotations:
+  prometheus.io/scrape: "true"
 rbac:
   # Specifies whether RBAC resources should be created
   create: true

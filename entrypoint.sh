@@ -9,8 +9,6 @@ fi
 
 # TODO: use a sidecar
 redis-server /etc/redis/redis.conf &
-
-# TODO: use a sidecar
 bash /opt/metrics_loop/start.sh &
 bash /opt/logs_loop/start.sh &
 

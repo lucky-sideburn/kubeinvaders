@@ -70,15 +70,33 @@ var shuffle = true;
 var help = false;
 var chaos_nodes = true;
 var chaos_pods = true;
-var log_tail_alert = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
-var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; margin-bottom: 1%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
-var alert_div_webtail = '<div id="alert_placeholder3" style="margin-top: 2%; background-color:#000000; color: #0cf52b" class="alert" role="alert">';
+var log_tail_alert = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
+var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
+var alert_div_webtail = '<div id="alert_placeholder3" style="margin-top: 2%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
 
 var kubelinter = '';
 var showPodName = true
 var latestPodNameY = '';
 var namespacesJumpFlag = false;
 var namespacesJumpStaus = 'Disabled';
+
+function drawChaosProgramDiagram() {
+    var chaosProgram = "";
+    chaosProgram = $('#chaosProgramTextArea').text();
+    var oReq = new XMLHttpRequest();
+
+    oReq.open("POST", "https://" + clu_endpoint + "/chaos/programs/json-flow", true);
+
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            console.log(this.responseText);
+            $('#chaosProgramDiagram').html(this.responseText);
+        }
+    };;
+
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send(chaosProgram);
+}
 
 function IsJsonString(str) {
     try {
@@ -160,6 +178,7 @@ function runKubeLinter() {
     oReq.open("GET", "https://" + clu_endpoint + "/kube/kube-linter?namespace=" + namespace);
     oReq.send();
 }
+
 function getNamespaces() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
@@ -701,6 +720,7 @@ function randNamespaceJump(min, max, jumpRandomFactor) {
         switchNamespace();
     }
 }
+
 window.setInterval(function setAliens() {
 
     if (shuffle) {
@@ -757,7 +777,12 @@ window.setInterval(function setAliens() {
     }
 }, 1000)
 
+window.setInterval(function chaosProgram() {
+    drawChaosProgramDiagram();
+}, 2000)
+
 window.setInterval(function metrics() {
+
     if (game_mode_switch || programming_mode_switch) {
         getMetrics()
     }

@@ -7,9 +7,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <style>
+
+      .chaos-prog-area {
+        border: 7px solid #feb515;
+        border-radius: 5px;
+        -moz-border-radius: 15px;
+        -webkit-border-radius: 15px;
+        /* width: 500px;
+        height: 100px; */
+        padding: 5px;
+        border-image-slice: 5;
+      }
+        
       .btn-light  {
         border-color: #000000;
        }
+
       .btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.active, .open .dropdown-toggle.btn-default {
         background-color: #5a078b;
         color:#FFF;
@@ -19,14 +32,18 @@
       .btn-light:hover {
         transform: scale(1.05);
       }
+
       @font-face {
         font-family: pixel;
         src: url('./fonts/pixel.otf');
       }
+
       div {
         font-family: pixel;
       }
-      canvas { background: #000; display: block; margin: 0 auto; border:1px solid #ffffff;}
+      
+      canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}
+
     </style>
   </head>
   <body>
@@ -46,6 +63,19 @@
                 <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Consul</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Elasticsearch</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Etcd3</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Http</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Jira</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Kafka</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Kubernetes</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Mongodb</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Mysql</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Nomad</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Postgresql</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Prometheus</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Vault</a></li>
             </li>
           </ul>
         </div>
@@ -88,7 +118,7 @@
                 <textarea class="form-control" id="currentChaosContainerJsonTextArea" rows="20"></textarea>
               </div>
               <div class="form-group">
-                <p id="alert_placeholder2" style="color: black; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
               </div>
               <div class="modal-footer">
                 <button type="
@@ -190,11 +220,12 @@
 
         <div id="chaos-program-screen" style="display: none;">
           <div class="row" style="margin-top: 1%;">
-            <form>
+            <div class="col">
+              <form>
               <div id="alert_placeholder" style="margin-top: 1%;"></div>
               <div class="form-group">
                 <label for="chaosProgramTextArea"></label>
-                <textarea class="form-control" id="chaosProgramTextArea" rows="20" style="font-family: Courier, monospace;">
+                <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="font-family: Courier, monospace;">
 jobs:
   cpu-attack:
     additional-labels:
@@ -222,8 +253,13 @@ experiments:
     loop: 5
                 </textarea>
               </div>
-            </form>
-	        <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:1000px;"></div>
+              </form>
+	            <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:1000px;"></div>
+            </div>
+            <div class="col">
+              <div id="chaosProgramDiagram">
+              </div>
+            </div>
           </div>
         </div>
 
@@ -286,25 +322,10 @@ experiments:
       <div align="center" style="margin-top: 20%;">
         <img src="images/kubeinvaders_spaceship.png">
       </div>
-      <div class="container text-center">
+      <div class="container text-center" style="margin-top: 2%;">
         <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9.5</p>
       </div>
     </div>
-
-    <div class='row' style='margin-top: 2%; color: #1d1919;'>
-      <div class='row' style="font-size: 12px">-----------------------</div>
-      <div class='row' style="font-size: 12px">Namespace:{pod.metadata.namespace}</div>
-      <div class='row' style="font-size: 12px">Pod:{pod.metadata.name}</div>
-      <div class='row' style="font-size: 12px">Container:{pod.metadata.name}</div>
-    </div>
-    <div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
-      >>>{api_response_line}
-    </div>
-    <div class='row' style="font-size: 12px">-----------------------</div>
-
-
-
-
     <script src="kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

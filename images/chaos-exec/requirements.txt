@@ -1,0 +1,14 @@
+atlassian-api-py
+python-consul
+elasticsearch
+etcd3
+hvac
+jira
+kubernetes
+mysql.connector
+nomad
+prometheus_client
+psycopg2
+pymongo
+requests
+kafka

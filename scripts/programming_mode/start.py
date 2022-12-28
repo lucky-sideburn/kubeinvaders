@@ -101,11 +101,13 @@ for exp in parsed_yaml["experiments"]:
         letters = string.ascii_lowercase
         rand_suffix = ''.join(random.choice(letters) for i in range(5))
         job_name = f"{exp['name']}-{rand_suffix}"
+
         if 'additional-labels' in job_attrs:
             logging.info(f"additional-labels = {job_attrs['additional-labels']}")
             pod_template = create_pod_template(exp["name"], job_attrs['additional-labels'], container)
         else:
             pod_template = create_pod_template(exp["name"], {}, container)
+        
         logging.info(f"Creating job {job_name}")
         job_def = create_job(job_name, pod_template)
 

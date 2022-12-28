@@ -158,7 +158,7 @@ Example of metrics
 |     deleted_pods_total 16                                  | Total number of deleted pods                                                               |
 |     deleted_namespace_pods_count{namespace=myawesomenamespace}           |Total number of deleted pods per namespace                                    |                                     
 
-![Download Grafana dashboard](./grafana/KubeInvadersDashboard.json)
+![Download Grafana dashboard](./confs/grafana/KubeInvadersDashboard.json)
 
 ![Alt Text](./doc_images/grafana1.png)
 

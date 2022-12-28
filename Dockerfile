@@ -16,6 +16,7 @@ RUN apt-get update --fix-missing
 RUN chmod 777 /usr/local/openresty/nginx
 RUN luarocks install luasec 
 RUN luarocks install lunajson
+RUN luarocks install lyaml
 
 # Install kube-linter
 RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.2.4/kube-linter-linux.tar.gz
@@ -34,7 +35,7 @@ COPY html5/ /var/www/html
 
 # Install Redis
 RUN apt-get install redis -y
-COPY redis/redis.conf /etc/redis/redis.conf
+COPY confs/redis/redis.conf /etc/redis/redis.conf
 
 # Configure Nginx
 RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf

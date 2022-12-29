@@ -8,4 +8,13 @@ else
   export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
 export PYTHONWARNINGS="ignore:Unverified HTTPS request"
-python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}
+
+python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &
+
+# WORK AROUND...
+while true
+do
+  ( ps -ef | grep start.py | grep logs_loop | grep -v grep ) || ( python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
+  echo "[WORK AROUND] Chefking if logs_loop is still alive..."
+  sleep 2
+done

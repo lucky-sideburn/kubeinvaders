@@ -84,7 +84,7 @@ else:
 
 if os.environ.get("DEV"):
     logging.info("Setting env var for dev...")
-    r.set("log_pod_regex", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}')
+    r.set("log_pod_regex", '{"pod":".*", "namespace":"namespace1", "labels":".*", "annotations":".*", "containers": ".*"}')
     r.set("logs_enabled:aaaa", 1)
     r.set("programming_mode", 0)
     logging.info(r.get("log_pod_regex:aaaa"))

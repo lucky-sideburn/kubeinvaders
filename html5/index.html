@@ -35,7 +35,8 @@
 
       @font-face {
         font-family: pixel;
-        src: url('./fonts/pixel.otf');
+        src: url('./fonts/DotGothic16-Regular.ttf');
+        font-size-adjust: inherit;
       }
 
       div {
@@ -94,7 +95,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Modal -->
     <div class="modal" id="kubeLinterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -107,7 +108,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Modal -->
     <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -130,7 +131,7 @@
         </div>
       </div>
     </div>
-
+    <!-- Modal -->
     <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -148,6 +149,9 @@
                   c => Activate or deactivate chaos engineering against nodes
                 </p>
               </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeSpecialKeysModal()">Close</button>
             </div>
           </div>
         </div>
@@ -225,7 +229,7 @@
               <div id="alert_placeholder" style="margin-top: 1%;"></div>
               <div class="form-group">
                 <label for="chaosProgramTextArea"></label>
-                <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="font-family: Courier, monospace;">
+                <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
 jobs:
   cpu-attack:
     additional-labels:
@@ -256,8 +260,10 @@ experiments:
               </form>
 	            <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:1000px;"></div>
             </div>
-            <div class="col">
-              <div id="chaosProgramDiagram">
+            <div class="col" style="margin-top: 4%;">
+              <div id="chaosProgramFlow">
+                <div class="row"><div class="alert alert-dark" role="alert">test attack</div></div>
+                <img src="images/down-arrow.png" width="30" height="30">
               </div>
             </div>
           </div>
@@ -292,17 +298,15 @@ experiments:
       </div>
       <div class="row">
         <div class="col text-center">
-
         </div>
         <div class="col text-center">
           <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
           <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
         </div>
         <div class="col text-center">
-
         </div>
-      </div>      
-  
+      </div> 
+
       <div id="logTailRegexInput" style="display: block;">
         <div class="row" style="margin-top: 2%;">
           <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}'/>
@@ -319,10 +323,10 @@ experiments:
       </div>
     </div>
     <div id="footer" style="margin-top: 5%;">
-      <div align="center" style="margin-top: 20%;">
+      <div align="center" style="margin-top: 10%;">
         <img src="images/kubeinvaders_spaceship.png">
       </div>
-      <div class="container text-center" style="margin-top: 2%;">
+      <div class="container text-center" style="margin-top: 1%;">
         <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9.5</p>
       </div>
     </div>
@@ -332,7 +336,6 @@ experiments:
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <script>
-
       function changeRandomFactor() {
         randomFactor = $("#randomFactorInput").val();
         $("#currentRandomFactor").text(randomFactor);
@@ -391,14 +394,18 @@ experiments:
           enableLogTail();
         }
       }
-      
+
       function startGameMode() {
         if (game_mode_switch) {
           game_mode_switch = false;
           $("#gameModeButton").text("Enable Game Mode");
         } else {
           game_mode_switch = true;
+          document.getElementById("gameContainer").style.width = "50%";
+          document.getElementById("gameContainer").style.height = "50%";
           $("#gameModeButton").text("Disable Game Mode");
+          $("#programmingModeButton").text("Enable Prog. Mode");
+          programming_mode_switch = false;
         }
         if (game_buttons.style.display === "none") {
           game_buttons.style.display = "block";
@@ -419,7 +426,11 @@ experiments:
           programming_mode_switch = false;
           $("#programmingModeButton").text("Enable Prog. Mode");
         } else {
+          document.getElementById("gameContainer").style.width = "100%";
+          document.getElementById("gameContainer").style.height = "100%";
           programming_mode_switch = true;
+          game_mode_switch = false;
+          $("#gameModeButton").text("Enable Game Mode");
           $("#programmingModeButton").text("Disable Prog. Mode");
         }
         if (chaos_program_screen.style.display === "none") {
@@ -428,51 +439,55 @@ experiments:
           chaos_program_screen.style.display = "none";
         }
         if (programming_mode_buttons.style.display === "none") {
-           programming_mode_buttons.style.display = "block";
+            programming_mode_buttons.style.display = "block";
         } else {
           programming_mode_buttons.style.display = "none";
         }
-          game_buttons.style.display = "none";
-          game_screen.style.display = "none";
-        }
+        game_buttons.style.display = "none";
+        game_screen.style.display = "none";
+      }
 
-        function showSpecialKeys() {
-          $('#showSpecialKeysModal').modal('show');
-          modal_opened = true;
-        }
+      function showSpecialKeys() {
+        $('#showSpecialKeysModal').modal('show');
+        modal_opened = true;
+      }
 
-        function showCurrentChaosContainer() {
-          getCurrentChaosContainer();
-          $('#currentChaosContainerModal').modal('show');
-          modal_opened = true;
-        }
+      function showCurrentChaosContainer() {
+        getCurrentChaosContainer();
+        $('#currentChaosContainerModal').modal('show');
+        modal_opened = true;
+      }
 
-        function closeCurrentChaosJobModal() {
-          $('#currentChaosContainerModal').modal('hide');
-          modal_opened = false;
-        }
+      function closeCurrentChaosJobModal() {
+        $('#currentChaosContainerModal').modal('hide');
+        modal_opened = false;
+      }
 
-        function showSetCurrentChaosContainer() {
-          $('#alert_placeholder2').text('');
-          getCurrentChaosContainer();
-          $('#setChaosContainerModal').modal('show');
-          modal_opened = true;
-        }
+      function showSetCurrentChaosContainer() {
+        $('#alert_placeholder2').text('');
+        getCurrentChaosContainer();
+        $('#setChaosContainerModal').modal('show');
+        modal_opened = true;
+      }
 
-        function closeSetChaosContainerModal() {
-          $('#setChaosContainerModal').modal('hide');
-          modal_opened = false;
-        }
+      function closeSetChaosContainerModal() {
+        $('#setChaosContainerModal').modal('hide');
+        modal_opened = false;
+      }
 
-        function closeKubeLinterModal() {
-          $('#kubeLinterModal').modal('hide');
-          modal_opened = false;
-        }
+      function closeSpecialKeysModal() {
+        $('#showSpecialKeysModal').modal('hide');
+        modal_opened = false;
+      }
 
-        $('textarea').on('input', function() {
-          $('#alert_placeholder2').text('');
-        });
+      function closeKubeLinterModal() {
+        $('#kubeLinterModal').modal('hide');
+        modal_opened = false;
+      }
 
+      $('textarea').on('input', function() {
+        $('#alert_placeholder2').text('');
+      });
     </script>
   </body>
 </html>

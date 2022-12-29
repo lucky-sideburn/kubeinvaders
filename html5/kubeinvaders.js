@@ -80,7 +80,16 @@ var latestPodNameY = '';
 var namespacesJumpFlag = false;
 var namespacesJumpStaus = 'Disabled';
 
-function drawChaosProgramDiagram() {
+function isJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
+
+function drawChaosProgramFlow() {
     var chaosProgram = "";
     chaosProgram = $('#chaosProgramTextArea').text();
     var oReq = new XMLHttpRequest();
@@ -90,7 +99,28 @@ function drawChaosProgramDiagram() {
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             console.log(this.responseText);
-            $('#chaosProgramDiagram').html(this.responseText);
+            if (isJsonString(this.responseText)){
+                var flow = JSON.parse(this.responseText);
+                console.log(flow)
+                var flow_html = "";
+
+                let i = 0;
+
+                while (i < flow["experiments"].length) {
+                    flow_html = flow_html + '<div class="row"><div class="alert alert-dark" role="alert">' + flow["experiments"][i]["name"] + '(x' +  flow["experiments"][i]["loop"] +')</div></div>'
+                    if (i < flow["experiments"].length - 1 ) {
+                        flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30">'
+                    }
+                    i++;
+                }
+
+                console.log("FLOWHTML" + flow_html);
+
+                $('#chaosProgramFlow').html(flow_html);
+            }
+            else {
+                $('#chaosProgramFlow').html(this.responseText);  
+            }
         }
     };;
 
@@ -153,9 +183,9 @@ function getChaosJobsLogs() {
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
    	    if (programming_mode_switch) {
-            	document.getElementById("chaosJobLogsDiv").innerHTML = "";
+            document.getElementById("chaosJobLogsDiv").innerHTML = "";
         	document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
-    	     }
+    	}
 	    if (log_tail_switch) {
             	document.getElementById("logTailDiv").innerHTML = "";
                	document.getElementById("logTailDiv").innerHTML = this.responseText;
@@ -514,6 +544,7 @@ function checkRocketAlienCollision() {
 function shuffleAliens() {
     pods = pods.sort(() => Math.random() - 0.5)
 }
+
 function drawRocket() {
     var image = new Image(); // Image constructor
     image.src = './images/kuberocket.png';
@@ -641,7 +672,8 @@ window.setInterval(function draw() {
         }
     }
     ctx.fillStyle = 'white';
-    ctx.font = '12px pixel';
+    ctx.font = '16px pixel';
+
     ctx.fillText('Cluster: ' + endpoint, 10, 390);
     ctx.fillText('Current Namespace: ' + namespace, 10, 410);
     ctx.fillText('Alien Shuffle: ' + shuffle, 10, 430);
@@ -778,7 +810,9 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function chaosProgram() {
-    drawChaosProgramDiagram();
+    if (programming_mode_switch) {
+        drawChaosProgramFlow();
+    }
 }, 2000)
 
 window.setInterval(function metrics() {

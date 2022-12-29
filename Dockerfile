@@ -3,6 +3,7 @@ FROM nginx:stable
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
 RUN apt-get -y install procps git vim wget gnupg ca-certificates jq openssl task-spooler at curl apt-transport-https python3 python3-pip redis libssl-dev
+RUN pip3 install pyyaml
 # --no-install-recommends
 
 # Install kubectl

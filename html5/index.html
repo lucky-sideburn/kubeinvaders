@@ -264,7 +264,6 @@ experiments:
               </textarea>
             </div>
             </form>
-            <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:100px;"></div>
           </div>
           <div class="col" style="margin-top: 4%; overflow-y: scroll;  height:900px;">
             <div id="chaosProgramFlow">
@@ -351,6 +350,7 @@ experiments:
     <script src="./js/popper.min.js"></script>
 
     <script>
+
       function changeRandomFactor() {
         randomFactor = $("#randomFactorInput").val();
         $("#currentRandomFactor").text(randomFactor);
@@ -503,6 +503,7 @@ experiments:
       $('textarea').on('input', function() {
         $('#alert_placeholder2').text('');
       });
+
     </script>
   </body>
 </html>

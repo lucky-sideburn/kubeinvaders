@@ -26,11 +26,6 @@ def compute_line(api_response_line, api_instance, container):
     #store = False
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
-    #if r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
-    #    current_row = r.get(f"log:{logid}:{pod.metadata.name}:{sha256log}")
-    #    if current_row != logrow:
-    #        store = True
-
     if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
         logging.info(f"[logid:{logid}] The key log:{logid}:{pod.metadata.name}:{sha256log} does not exists. Preparing to store log content")
         file = pathlib.Path('/var/www/html')
@@ -75,7 +70,9 @@ def line_prepender(filename, line, logid):
         logging.info(f"[logid:{logid}] Some i/o problem occurred in function line_prepender")
 
 # create logger
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(filename='/tmp/example.log', encoding='utf-8', level=os.environ.get("LOGLEVEL", "INFO"))
+
 logging.info('Starting script for KubeInvaders taking logs from pods...')
 
 file = pathlib.Path('/tmp/redis.sock')

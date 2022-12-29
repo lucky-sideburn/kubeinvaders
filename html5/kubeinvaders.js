@@ -182,15 +182,11 @@ function getChaosJobsLogs() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-   	    if (programming_mode_switch) {
-            document.getElementById("chaosJobLogsDiv").innerHTML = "";
-        	document.getElementById("chaosJobLogsDiv").innerHTML = this.responseText;
-    	}
-	    if (log_tail_switch) {
-            	document.getElementById("logTailDiv").innerHTML = "";
-               	document.getElementById("logTailDiv").innerHTML = this.responseText;
-   	    }
-	}
+            if (log_tail_switch) {
+                    document.getElementById("logTailDiv").innerHTML = "";
+                    document.getElementById("logTailDiv").innerHTML = this.responseText;
+            }
+        }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs-" + random_code + ".html");
     oReq.send();

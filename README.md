@@ -17,9 +17,6 @@
 ### Watch Kubernetes logs through web tail console
 ![Alt Text](./doc_images/webtail.png)
 
-### Play Chaos Engineering
-![Alt Text](./doc_images/webui.png)
-
 ### Define Chaos Experiments
 ![Alt Text](./doc_images/programming_mode.png)
 

@@ -7,21 +7,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <style>
-
       .chaos-prog-area {
         border: 7px solid #feb515;
         border-radius: 5px;
         -moz-border-radius: 15px;
         -webkit-border-radius: 15px;
-        /* width: 500px;
-        height: 100px; */
         padding: 5px;
         border-image-slice: 5;
       }
-        
+
       .btn-light  {
         border-color: #000000;
-       }
+      }
 
       .btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.active, .open .dropdown-toggle.btn-default {
         background-color: #5a078b;
@@ -42,7 +39,7 @@
       div {
         font-family: pixel;
       }
-      
+
       canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}
 
     </style>
@@ -64,7 +61,7 @@
                 <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
-                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Consul</a></li>
+                <!-- <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Consul</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Elasticsearch</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Etcd3</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Http</a></li>
@@ -76,7 +73,7 @@
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Nomad</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Postgresql</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Prometheus</a></li>
-                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Vault</a></li>
+                <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Load Vault</a></li> -->
             </li>
           </ul>
         </div>
@@ -122,8 +119,7 @@
                 <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
               </div>
               <div class="modal-footer">
-                <button type="
-                " class="btn btn-primary" onclick="setChaosContainer()">Save</button>
+                <button type="button" class="btn btn-primary" onclick="setChaosContainer()">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
               </div>
             </form>
@@ -157,79 +153,89 @@
         </div>
       </div>
     </div>
-
     <div class="container" id="gameContainer" style="width: 50%; height: 50%;">
-      <div class="starter-template">
-        <div class="container" style="margin-bottom: 2%;">
-          <div class="row" style="margin-top: 2%;">
-            <div class="row" style="margin-bottom: 1%;">
-              <div class="col text-center">
-                <button type="button" id="gameModeButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
-              </div>
-              <div class="col text-center">
-                <div id="programming-mode-buttons" style="display: none;">
-                  <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
-                </div>
-              </div>
-              <div class="col text-center">
-                <button type="button" id="programmingModeButton" class="btn btn-light" onclick="startProgrammingMode()">Programming Mode</button>
-              </div>
-            </div>
-            <div id="programming-mode-buttons" style="display: none;">
-              <div class="row">
-                <div class="col text-center">
-                </div>
-                <div class="col text-center">
-                </div>
-                <div class="col text-center">
-                </div>
-              </div>
-            </div>
-            <div id="game-buttons" style="display: none;">
-              <div class="row">
-                <div class="col text-center">
-                  <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
-                </div>
-                <div class="col text-center">
-                  <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
-                </div>
-                <div class="col text-center">
-                  <label for="randomFactorInput">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
-                </div>
-              </div>
-              <div class="row" style="margin-top: 1%;">
-                <div class="col text-center">
-                  <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
-                </div>
-                <div class="col text-center">
-                  <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
-                </div>
-                <div class="col text-center">
-                  <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div style="margin-top: 1%;">
-            <span style="color: #000000;">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
-            <span style="color: #000000">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
-            <span style="color: #000000">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>	    
-            <span style="color: #000000">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
-            <span style="color: #000000">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;-&nbsp;</span>
-            <span style="color: #000000">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
-          </div>
-        </div>
 
-        <div id="chaos-program-screen" style="display: none;">
-          <div class="row" style="margin-top: 1%;">
-            <div class="col">
-              <form>
-              <div id="alert_placeholder" style="margin-top: 1%;"></div>
-              <div class="form-group">
-                <label for="chaosProgramTextArea"></label>
-                <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
+      <!-- START FIRST ROW -->
+      <div class="row" style="margin-top: 2%;">
+        <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
+        <div class="row" style="margin-bottom: 1%;">
+          <div class="col text-center">
+            <button type="button" id="gameModeButton" class="btn btn-light" onclick="startGameMode()">Game Mode</button>
+          </div>
+          <div class="col text-center">
+            <div id="programming-mode-buttons" style="display: none;">
+              <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
+            </div>
+          </div>
+          <div class="col text-center">
+            <button type="button" id="programmingModeButton" class="btn btn-light" onclick="startProgrammingMode()">Programming Mode</button>
+          </div>
+        </div>
+        <!-- END SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
+
+        <!-- START CHAOS PROGRAM BUTTONS -->
+        <div id="programming-mode-buttons" style="display: none;">
+          <div class="row">
+            <div class="col text-center">
+            </div>
+            <div class="col text-center">
+            </div>
+            <div class="col text-center">
+            </div>
+          </div>
+        <!-- END CHAOS PROGRAMM BUTTONS -->
+      </div>
+      <!-- END FIRST ROW -->
+
+      <!-- START GAME MODE BUTTONS -->
+      <div id="game-buttons" style="display: none;">
+        <div class="row">
+          <div class="col text-center">
+            <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
+          </div>
+          <div class="col text-center">
+            <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
+          </div>
+          <div class="col text-center">
+            <label for="randomFactorInput">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 1%;">
+          <div class="col text-center">
+            <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+          </div>
+          <div class="col text-center">
+            <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+          </div>
+          <div class="col text-center">
+            <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+          </div>
+        </div>
+      </div>
+      <!-- END GAME MODE BUTTONS -->
+
+      <!-- START METRICS ROW -->
+      <div class="row">
+        <div style="margin-top: 1%;">
+          <span style="color: #000000;">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+          <span style="color: #000000">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+          <span style="color: #000000">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>	    
+          <span style="color: #000000">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #8f00bb">0</span>&nbsp;-&nbsp;</span>
+          <span style="color: #000000">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;-&nbsp;</span>
+          <span style="color: #000000">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
+        </div>
+      </div>
+      <!-- END METRICS ROW -->
+
+      <!-- START CHAOS PROGRAMMING MODE SCREEN -->
+      <div id="chaos-program-screen" style="display: none;">
+        <div class="row" style="margin-top: 1%;">
+          <div class="col">
+            <form>
+            <div id="alert_placeholder" style="margin-top: 1%;"></div>
+            <div class="form-group">
+              <label for="chaosProgramTextArea"></label>
+              <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
 jobs:
   cpu-attack:
     additional-labels:
@@ -255,73 +261,81 @@ experiments:
   - name: mem-attack-exp
     job: mem-attack
     loop: 5
-                </textarea>
-              </div>
-              </form>
-	            <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:1000px;"></div>
+              </textarea>
             </div>
-            <div class="col" style="margin-top: 4%;">
-              <div id="chaosProgramFlow">
-                <div class="row"><div class="alert alert-dark" role="alert">test attack</div></div>
-                <img src="images/down-arrow.png" width="30" height="30">
-              </div>
+            </form>
+            <div id="chaosJobLogsDiv" style="margin-top: 2%; overflow-y: scroll; height:100px;"></div>
+          </div>
+          <div class="col" style="margin-top: 4%; overflow-y: scroll;  height:900px;">
+            <div id="chaosProgramFlow">
+              <div class="row"><div class="alert alert-dark" role="alert">test attack 1</div></div>
+              <img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">
+              <div class="row"><div class="alert alert-dark" role="alert">test attack 2</div></div>
             </div>
           </div>
         </div>
-
-        <div id="game-screen" style="display: none;">
-          <div class="row" style="margin-top: 2%;">
-            <canvas id="myCanvas" width="720" height="480"></canvas>
-          </div>
-          <div class="row">
-            <div class="col text-center">
-
-            </div>
-            <div class="col text-center">
-              <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
-              <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
-            </div>
-            <div class="col text-center">
-
-            </div>
-          </div>
-        </div>
-        <div id="alert_placeholder" style="margin-top: 3%;"></div>
       </div>
-      <div class="row">
-        <div id="alert_placeholder3" style="margin-top: 3%;"></div>
+      <!-- END CHAOS PROGRAMMING MODE SCREEN -->
+
+      <!-- START GAME MODE SCREEN -->
+      <div id="game-screen" style="display: none;">
+        <div class="row" style="margin-top: 2%;">
+          <canvas id="myCanvas" width="720" height="480"></canvas>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+          </div>
+          <div class="col text-center">
+            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+            <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+          </div>
+          <div class="col text-center">
+          </div>
+        </div>
+      </div>
+      <!-- END GAME MODE SCREEN -->
+   
+    <!-- HELPER ALERT -->
+    <div class="row">
+      <div id="alert_placeholder" style="margin-top: 3%;"></div>
+      <div id="alert_placeholder3" style="margin-top: 3%;"></div>
+    </div>
+
+    <!-- LOG TAIL ROW -->
+    <div class="row" style="margin-top: 1%;">
+      <div class="col text-center">
+        <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-center">
+      </div>
+      <div class="col text-center">
+        <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
+        <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
+      </div>
+      <div class="col text-center">
+      </div>
+    </div> 
+  
+    <div id="logTailRegexInput" style="display: block;">
+      <div class="row" style="margin-top: 2%;">
+        <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}'/>
       </div>
       <div class="row" style="margin-top: 1%;">
         <div class="col text-center">
-          <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col text-center">
-        </div>
-        <div class="col text-center">
-          <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
-          <input type="button" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
-        </div>
-        <div class="col text-center">
-        </div>
-      </div> 
-
-      <div id="logTailRegexInput" style="display: block;">
-        <div class="row" style="margin-top: 2%;">
-          <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}'/>
-        </div>
-        <div class="row" style="margin-top: 1%;">
-          <div class="col text-center">
-            <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
-          </div>
-        </div>
-    <div id="logTailScreen" style="display: none;">
-        <div class="row">
-          <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
+          <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
         </div>
       </div>
     </div>
+
+    <div id="logTailScreen" style="display: none;">
+      <div class="row">
+        <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none;"></div>
+      </div>
+    </div>
+
     <div id="footer" style="margin-top: 5%;">
       <div align="center" style="margin-top: 10%;">
         <img src="images/kubeinvaders_spaceship.png">
@@ -330,10 +344,11 @@ experiments:
         <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9.5</p>
       </div>
     </div>
+
     <script src="kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/popper.min.js"></script>
 
     <script>
       function changeRandomFactor() {
@@ -376,13 +391,13 @@ experiments:
         programming_mode_buttons.style.display = "none"; 
         game_screen.style.display = "none";
         game_buttons.style.display = "none";
+        game_mode_switch = false;
+        $("#programmingModeButton").text("Enable Prog. Mode");
 
         if (log_tail_switch) {
           $("#logConsoleButton").text("Start Logs Tail");
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Stopping log tail</div>');
           log_tail_switch = false;
-          //log_tail_div.style.display = "none";
-          //log_tail_screen.style.display = "none"
           disableLogTail();
         } else {
           $('#alert_placeholder3').replaceWith(alert_div_webtail + 'Starting log tail</div>');

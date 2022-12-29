@@ -109,7 +109,7 @@ function drawChaosProgramFlow() {
                 while (i < flow["experiments"].length) {
                     flow_html = flow_html + '<div class="row"><div class="alert alert-dark" role="alert">' + flow["experiments"][i]["name"] + '(x' +  flow["experiments"][i]["loop"] +')</div></div>'
                     if (i < flow["experiments"].length - 1 ) {
-                        flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30">'
+                        flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">'
                     }
                     i++;
                 }

@@ -93,7 +93,7 @@ function loadSavedPreset(tool, lang) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            if (this.responseText != "null") {
+            if (this.responseText != "") {
                 $("#currentLoadTest").text(this.responseText);
             } 
         }
@@ -120,7 +120,7 @@ function savePreset() {
 jobs:
   ${presetName}:
     additional-labels:
-      create-by: "kubeinvaders"
+      create-by: kubeinvaders
       load-preset: ${presetName}
       preset-lang: ${presetLang}
     image: docker.io/luckysideburn/chaos-exec:latest

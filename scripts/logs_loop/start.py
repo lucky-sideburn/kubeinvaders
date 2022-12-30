@@ -35,7 +35,7 @@ def compute_line(api_response_line, api_instance, container):
 
     r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
     r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
-    r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 10)
+    r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 30)
 
     logging.info(f"[logid:{logid}] Phase of {pod.metadata.name} is {pod.status.phase}")   
     if pod.status.phase == "Succeeded" and pod.metadata.labels['approle'] == 'chaosnode':
@@ -136,7 +136,7 @@ while True:
                     logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
                 r.set(f"log_cleaner:{logid}", "1")
-                r.expire(f"log_cleaner:{logid}", 10)
+                r.expire(f"log_cleaner:{logid}", 30)
             else:
                 logging.info(f"[logid:{logid}] The key log_cleaner:{logid} esists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
 

@@ -6,7 +6,7 @@
 1. [Description](#Description)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
-4. [Persistence][#Persistence]
+4. [Persistence](#Persistence)
 5. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
 6. [Metrics](#Metrics)
 7. [Security](#Security)

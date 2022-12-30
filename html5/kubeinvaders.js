@@ -96,9 +96,9 @@ function loadSavedPreset(tool, lang, defaultpreset) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            console.log("response of loadSavedPreset: " + this.responseText);
-            if (this.responseText != "nil") {
-                $("#currentLoadTest").val(this.responseText);
+            console.log("response of loadSavedPreset: ||" + this.responseText + "||");
+            if (this.responseText.trim() != "nil") {
+                $("#currentLoadTest").val(this.responseText.trim());
             } else {
                 $("#currentLoadTest").val(defaultpreset);
             }
@@ -122,16 +122,17 @@ function savePreset(action) {
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && action == "apply") {
             // console.log(this.responseText);
-            $('#alert_placeholder').replaceWith(this.responseText);
+            // $('#alert_placeholder').replaceWith(this.responseText);
             presetBody = $('#chaosProgramTextArea').text(`jobs:
   ${presetName}:
     additional-labels:
-      create-by: kubeinvaders
-      load-preset: ${presetName}
-      preset-lang: ${presetLang}
+      created-by: kubeinvaders
+      lang: ${presetLang}
+      type: loadtest
     image: docker.io/luckysideburn/chaos-exec:latest
+    command: ./start.sh
     args:
-    - http://kubeinvaders
+    - http://kubeinvaders:8080
     - ${presetName}
 experiments:
 - name: ${presetName}
@@ -144,7 +145,7 @@ experiments:
     oReq.send(presetBody);
     closeSetLoadTestModal();
 
-    if (action == "apply"){
+    if (action == "apply" && programming_mode_switch == false){
         startProgrammingMode();
     }
 }
@@ -371,7 +372,7 @@ function setChaosContainer() {
 
 function runChaosProgram() {
 
-    $('#alert_placeholder').replaceWith(alert_div + 'Loading chaos program...</div>');
+    $('#alert_placeholder4').replaceWith(alert_div + 'Loading chaos program...</div>');
 
     var oReq = new XMLHttpRequest();
     oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode?id=" + random_code, true);
@@ -379,7 +380,7 @@ function runChaosProgram() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);
             now = new Date().toLocaleString().replace(',','')
-            $('#alert_placeholder').replaceWith(alert_div + 'Executed Chaos Program at ' + now + ' </div>');
+            $('#alert_placeholder4').replaceWith(alert_div + 'Executed Chaos Program at ' + now + ' </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");

@@ -167,7 +167,7 @@
                 <label for="presetLangText">Programing Language</label>
                 <input type="text" id="presetLang" value="Python3" readonly="true" style="margin-bottom: 1%;">
 
-                <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-weight: bold; font-family: 'Courier New', Courier, monospace;"></textarea>
+                <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea>
 
               </div>
               <div class="form-group">
@@ -285,24 +285,26 @@
             <span style="color: #000000">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #8f00bb">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span>
 
         </div>
-        <div class="custom-btn-group">
-          <div class="row">
+        <div class="">
+          <div class="row" style="margin-top: 2%;">
             <font size="2">Load Testing Presets</font>
           </div>
-          <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 680px; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
-            <button type="button" id="loadConsul" class="btn btn-light btn-sm" onclick="loadPreset('consul', 'python')">Consul</button>
-            <button type="button" id="loadElasticsearch" class="btn btn-light btn-sm" onclick="loadPreset('elasticsearch', 'python')">Elasticsearch</button>
-            <button type="button" id="loadEtcd3" class="btn btn-light btn-sm" onclick="loadPreset('etcd3', 'python')">Etcd3</button>
-            <button type="button" id="loadHttp" class="btn btn-light btn-sm" onclick="loadPreset('http', 'python')">Http</button>
-            <button type="button" id="loadJira" class="btn btn-light btn-sm" onclick="loadPreset('jira', 'python')">Jira</button>
-            <button type="button" id="loadKafka" class="btn btn-light btn-sm" onclick="loadPreset('kafka', 'python')">Kafka</button>
-            <button type="button" id="loadKubernetes" class="btn btn-light btn-sm" onclick="loadPreset('kubernetes', 'python')">Kubernetes</button>
-            <button type="button" id="loadMongodb" class="btn btn-light btn-sm" onclick="loadPreset('mongodb', 'python')">Mongodb</button>
-            <button type="button" id="loadMysql" class="btn btn-light btn-sm" onclick="loadPreset('mysql', 'python')">Mysql</button>
-            <button type="button" id="loadNomad" class="btn btn-light btn-sm" onclick="loadPreset('nomad', 'python')">Nomad</button>
-            <button type="button" id="loadPostgresql" class="btn btn-light btn-sm" onclick="loadPreset('postgresql', 'python')">Postgresql</button>
-            <button type="button" id="loadPrometheus" class="btn btn-light btn-sm" onclick="loadPreset('prometheus', 'python')">Prometheus</button>
-            <button type="button" id="loadVault" class="btn btn-light btn-sm" onclick="loadPreset('vault', 'python')">Vault</button>
+          <div class="row">
+              <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
+                <button type="button" id="loadConsul" class="btn btn-light btn-sm" onclick="loadPreset('consul', 'python')">Consul</button>
+                <button type="button" id="loadElasticsearch" class="btn btn-light btn-sm" onclick="loadPreset('elasticsearch', 'python')">Elasticsearch</button>
+                <button type="button" id="loadEtcd3" class="btn btn-light btn-sm" onclick="loadPreset('etcd3', 'python')">Etcd3</button>
+                <button type="button" id="loadHttp" class="btn btn-light btn-sm" onclick="loadPreset('http', 'python')">Http</button>
+                <button type="button" id="loadJira" class="btn btn-light btn-sm" onclick="loadPreset('jira', 'python')">Jira</button>
+                <button type="button" id="loadKafka" class="btn btn-light btn-sm" onclick="loadPreset('kafka', 'python')">Kafka</button>
+                <button type="button" id="loadKubernetes" class="btn btn-light btn-sm" onclick="loadPreset('kubernetes', 'python')">Kubernetes</button>
+                <button type="button" id="loadMongodb" class="btn btn-light btn-sm" onclick="loadPreset('mongodb', 'python')">Mongodb</button>
+                <button type="button" id="loadMysql" class="btn btn-light btn-sm" onclick="loadPreset('mysql', 'python')">Mysql</button>
+                <button type="button" id="loadNomad" class="btn btn-light btn-sm" onclick="loadPreset('nomad', 'python')">Nomad</button>
+                <button type="button" id="loadPostgresql" class="btn btn-light btn-sm" onclick="loadPreset('postgresql', 'python')">Postgresql</button>
+                <button type="button" id="loadPrometheus" class="btn btn-light btn-sm" onclick="loadPreset('prometheus', 'python')">Prometheus</button>
+                <button type="button" id="loadVault" class="btn btn-light btn-sm" onclick="loadPreset('vault', 'python')">Vault</button>
+              </div>
         </div>
         </div>
       </div>
@@ -311,9 +313,9 @@
       <!-- START CHAOS PROGRAMMING MODE SCREEN -->
       <div id="chaos-program-screen" style="display: none;">
         <div class="row" style="margin-top: 1%;">
+          <div id="alert_placeholder4" style="margin-top: 1%;"></div>
           <div class="col">
             <form>
-            <div id="alert_placeholder" style="margin-top: 1%;"></div>
             <div class="form-group">
               <label for="chaosProgramTextArea"></label>
               <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
@@ -457,8 +459,7 @@ experiments:
 
       function loadPreset(tool, lang) {
         let decodedStringAtoB = "";
-        console.log("Loaded preset for " + tool);
-        startProgrammingMode();
+        console.log("Loaded preset for " + tool);        
         loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson); 
         decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
         loadSavedPreset(tool, lang, decodedStringAtoB);
@@ -472,6 +473,9 @@ experiments:
         log_tail_div.style.display = "none";
         log_tail_screen.style.display = "none"
         $("#logConsoleButton").text("Start Logs Tail");
+        if (programming_mode_switch == false) {
+          startProgrammingMode();
+        }
       }
 
       function changeRandomFactor() {

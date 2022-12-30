@@ -1,6 +1,3 @@
-* KubeInvaders a.k.a kInv
-* Gamified chaos engineering tool and log viewer for Kubernetes*
-
 # Table of Contents
 
 1. [Description](#Description)

@@ -46,6 +46,7 @@ red:del("log_cleaner:" .. arg['id'])
 
 ngx.log(ngx.ERR, "[programming_mode] set logs_enabled:" .. arg['id'] .. " Redis key")
 red:set("logs_enabled:" .. arg['id'], "1")
+red:expire("logs_enabled:" .. arg['id'], "10")
 
 local handle = io.popen("python3 /opt/programming_mode/start.py " .. file_name .. " " .. k8s_url)
 local result = handle:read("*a")

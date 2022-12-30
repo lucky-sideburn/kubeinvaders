@@ -89,6 +89,58 @@ function isJsonString(str) {
     return true;
 }
 
+function loadSavedPreset(tool, lang) {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            if (this.responseText != "null") {
+                $("#currentLoadTest").text(this.responseText);
+            } 
+        }
+    };;
+    oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset?name=" + tool + "&lang=" + lang);
+    oReq.send();
+}
+
+function savePreset() {
+    var presetName = "";
+    presetBody = $('#currentLoadTest').text();
+    presetLang = $('#presetLang').val();
+    presetName = $('#presetName').val();
+
+    var oReq = new XMLHttpRequest();
+
+    oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
+
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // console.log(this.responseText);
+            $('#alert_placeholder').replaceWith(this.responseText);
+            presetBody = $('#chaosProgramTextArea').text(`
+jobs:
+  ${presetName}:
+    additional-labels:
+      create-by: "kubeinvaders"
+      load-preset: ${presetName}
+      preset-lang: ${presetLang}
+    image: docker.io/luckysideburn/chaos-exec:latest
+    args:
+    - http://kubeinvaders
+    - ${presetName}
+experiments:
+- name: ${presetName}
+  job: ${presetName}
+  loop: 5
+            `);
+        }
+    };;
+
+    oReq.setRequestHeader("Content-Type", "application/json");
+    oReq.send(presetBody);
+    closeSetLoadTestModal();
+    startProgrammingMode();
+}
+
 function drawChaosProgramFlow() {
     var chaosProgram = "";
     chaosProgram = $('#chaosProgramTextArea').text();
@@ -98,10 +150,10 @@ function drawChaosProgramFlow() {
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            console.log(this.responseText);
+            // console.log(this.responseText);
             if (isJsonString(this.responseText)){
                 var flow = JSON.parse(this.responseText);
-                console.log(flow)
+                //console.log(flow)
                 var flow_html = "";
 
                 let i = 0;
@@ -114,7 +166,7 @@ function drawChaosProgramFlow() {
                     i++;
                 }
 
-                console.log("FLOWHTML" + flow_html);
+                //console.log("FLOWHTML" + flow_html);
 
                 $('#chaosProgramFlow').html(flow_html);
             }
@@ -189,6 +241,19 @@ function getChaosJobsLogs() {
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs-" + random_code + ".html");
+    oReq.send();
+    keepAliveJobsLogs();
+}
+
+function keepAliveJobsLogs() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            // TO DO..
+            //$('#alert_placeholder').replaceWith("Sent keepalive for logs current session...");
+        }
+    };;
+    oReq.open("GET", "https://" + clu_endpoint + "/chaos/logs/keepalive?logid=" + random_code);
     oReq.send();
 }
 
@@ -805,20 +870,17 @@ window.setInterval(function setAliens() {
     }
 }, 1000)
 
-window.setInterval(function chaosProgram() {
-    if (programming_mode_switch) {
-        drawChaosProgramFlow();
-    }
-}, 2000)
-
-window.setInterval(function metrics() {
-
+window.setInterval(function backgroundTasks() {
     if (game_mode_switch || programming_mode_switch) {
         getMetrics()
     }
     
-    if (programming_mode_switch || log_tail_switch) {
+    if (log_tail_switch) {
 	    getChaosJobsLogs()
+    }
+    
+    if (programming_mode_switch) {
+        drawChaosProgramFlow();
     }
 }, 2000)
 

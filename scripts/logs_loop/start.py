@@ -35,7 +35,7 @@ def compute_line(api_response_line, api_instance, container):
 
     r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
     r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
-    r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 60)
+    r.expire(f"log:{logid}:{pod.metadata.name}:{sha256log}", 10)
 
     logging.info(f"[logid:{logid}] Phase of {pod.metadata.name} is {pod.status.phase}")   
     if pod.status.phase == "Succeeded" and pod.metadata.labels['approle'] == 'chaosnode':
@@ -86,6 +86,7 @@ if os.environ.get("DEV"):
     logging.info("Setting env var for dev...")
     r.set("log_pod_regex", '{"pod":".*", "namespace":"namespace1", "labels":".*", "annotations":".*", "containers": ".*"}')
     r.set("logs_enabled:aaaa", 1)
+    r.expire("logs_enabled:aaaa", 10)
     r.set("programming_mode", 0)
     logging.info(r.get("log_pod_regex:aaaa"))
     logging.info(r.get("logs_enabled:aaaa"))
@@ -135,7 +136,7 @@ while True:
                     logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
                 r.set(f"log_cleaner:{logid}", "1")
-                r.expire(f"log_cleaner:{logid}", 60)
+                r.expire(f"log_cleaner:{logid}", 10)
             else:
                 logging.info(f"[logid:{logid}] The key log_cleaner:{logid} esists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
 

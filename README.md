@@ -1,16 +1,18 @@
-*Gamified chaos engineering tool and log viewer for Kubernetes*
+* KubeInvaders a.k.a kInv
+* Gamified chaos engineering tool and log viewer for Kubernetes*
 
 # Table of Contents
 
 1. [Description](#Description)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
-4. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
-5. [Metrics](#Metrics)
-6. [Security](#Security)
-7. [Community](#Community)
-8. [Community blogs and videos](#Community-blogs-and-videos)
-9. [License](#License)
+4. [Persistence][#Persistence]
+5. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
+6. [Metrics](#Metrics)
+7. [Security](#Security)
+8. [Community](#Community)
+9. [Community blogs and videos](#Community-blogs-and-videos)
+10. [License](#License)
 
 ![Alt Text](./doc_images/dashboard.png)
 
@@ -118,6 +120,12 @@ Press + or - buttons to increase or decrease the game screen.
 - Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
 
 - Select from the menu "Set Custom Chaos Container for nodes" for using your preferred image or configuration against nodes.
+
+## Persistence
+
+"Kinv" uses Redis for save and manage data. Redis is configured with "appendonly".
+
+At moment the helm chart does not support PersistentVolumes but this task is in the to do list...
 
 ## Known problems and troubleshooting
 

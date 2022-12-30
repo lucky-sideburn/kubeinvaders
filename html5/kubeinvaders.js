@@ -80,6 +80,9 @@ var latestPodNameY = '';
 var namespacesJumpFlag = false;
 var namespacesJumpStaus = 'Disabled';
 
+var latest_preset_name = "";
+var latest_preset_lang = "";
+
 function isJsonString(str) {
     try {
         JSON.parse(str);
@@ -89,35 +92,38 @@ function isJsonString(str) {
     return true;
 }
 
-function loadSavedPreset(tool, lang) {
+function loadSavedPreset(tool, lang, defaultpreset) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            if (this.responseText != "") {
-                $("#currentLoadTest").text(this.responseText);
-            } 
+            console.log("response of loadSavedPreset: " + this.responseText);
+            if (this.responseText != "nil") {
+                $("#currentLoadTest").val(this.responseText);
+            } else {
+                $("#currentLoadTest").val(defaultpreset);
+            }
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset?name=" + tool + "&lang=" + lang);
     oReq.send();
 }
 
-function savePreset() {
+function savePreset(action) {
     var presetName = "";
-    presetBody = $('#currentLoadTest').text();
-    presetLang = $('#presetLang').val();
-    presetName = $('#presetName').val();
+    presetBody = $("#currentLoadTest").val();
+    presetLang = latest_preset_lang;
+    presetName = latest_preset_name;
 
+    console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);
     var oReq = new XMLHttpRequest();
 
     oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
 
     oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && action == "apply") {
             // console.log(this.responseText);
             $('#alert_placeholder').replaceWith(this.responseText);
-            presetBody = $('#chaosProgramTextArea').text(`
-jobs:
+            presetBody = $('#chaosProgramTextArea').text(`jobs:
   ${presetName}:
     additional-labels:
       create-by: kubeinvaders
@@ -130,15 +136,17 @@ jobs:
 experiments:
 - name: ${presetName}
   job: ${presetName}
-  loop: 5
-            `);
+  loop: 5`);
         }
     };;
 
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.send(presetBody);
     closeSetLoadTestModal();
-    startProgrammingMode();
+
+    if (action == "apply"){
+        startProgrammingMode();
+    }
 }
 
 function drawChaosProgramFlow() {

@@ -10,7 +10,7 @@
 
       .custom-btn-group {
         margin-top: 2%;
-        border: 5px solid #feb515;
+        border: 5px solid #969696;
         border-radius: 5px;
         -moz-border-radius: 15px;
         -webkit-border-radius: 15px;
@@ -20,7 +20,7 @@
 
       .logtail-group {
         margin-top: 0%;
-        border: 5px solid #feb515;
+        border: 5px solid #969696;
         border-radius: 5px;
         -moz-border-radius: 15px;
         -webkit-border-radius: 15px;
@@ -29,7 +29,7 @@
       }
 
       .chaos-prog-area {
-        border: 7px solid #feb515;
+        border: 5px solid #969696;
         border-radius: 5px;
         -moz-border-radius: 15px;
         -webkit-border-radius: 15px;
@@ -159,7 +159,7 @@
             <form>
               <div class="form-group">
                 
-                <label for="exampleFormControlTextarea1" style="margin-bottom: 1%;">Set load test code</label><br>
+                <label for="exampleFormControlTextarea1" style="margin-bottom: 1%;">Load Test Code</label><br>
 
                 <label for="presetName">Name</label>
                 <input type="text" id="presetName" value="foobar" readonly="true" style="margin-bottom: 1%;"><br>
@@ -167,14 +167,15 @@
                 <label for="presetLangText">Programing Language</label>
                 <input type="text" id="presetLang" value="Python3" readonly="true" style="margin-bottom: 1%;">
 
-                <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea>
+                <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-weight: bold; font-family: 'Courier New', Courier, monospace;"></textarea>
+
               </div>
               <div class="form-group">
                 <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-light" onclick="savePreset()">Save and apply</button>
-                <button type="button" class="btn btn-light" onclick="savePreset()">Save</button>
+                <button type="button" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
+                <button type="button" class="btn btn-light" onclick="savePreset('save')">Save</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
               </div>
             </form>
@@ -460,8 +461,9 @@ experiments:
         startProgrammingMode();
         loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson); 
         decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
-        $("#currentLoadTest").text(decodedStringAtoB);
-        loadSavedPreset(tool, lang)
+        loadSavedPreset(tool, lang, decodedStringAtoB);
+        latest_preset_name = tool;
+        latest_preset_lang = lang;
         $("#presetLang").val(lang);
         $("#presetName").val(tool);
         $('#setLoadTestModal').modal('show');

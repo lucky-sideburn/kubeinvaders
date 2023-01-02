@@ -10,7 +10,7 @@ RUN /usr/local/bin/python -m pip install --upgrade pip
 
 RUN pip3 install "setuptools<58.0"
 RUN pip3 install opster==4.2
-#RUN pip3 install -r requirements.txt
+RUN pip3 install -r requirements.txt
 
 RUN apt-get update -y && apt-get install -y curl
 

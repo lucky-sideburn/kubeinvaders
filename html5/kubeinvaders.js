@@ -129,11 +129,12 @@ function savePreset(action) {
       created-by: kubeinvaders
       lang: ${presetLang}
       type: loadtest
-    image: docker.io/luckysideburn/chaos-exec:latest
-    command: ./start.sh
+    image: docker.io/luckysideburn/chaos-exec:v1.0.0
+    command: bash
     args:
-    - http://kubeinvaders:8080
-    - ${presetName}
+    - start.sh
+    - ${presetLang}
+    - http://kubeinvaders:8080/${presetLang}_${presetName}
 experiments:
 - name: ${presetName}
   job: ${presetName}
@@ -372,7 +373,8 @@ function setChaosContainer() {
 
 function runChaosProgram() {
 
-    $('#alert_placeholder4').replaceWith(alert_div + 'Loading chaos program...</div>');
+    var now = new Date().toLocaleString().replace(',','')
+    $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
 
     var oReq = new XMLHttpRequest();
     oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode?id=" + random_code, true);
@@ -380,7 +382,7 @@ function runChaosProgram() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);
             now = new Date().toLocaleString().replace(',','')
-            $('#alert_placeholder4').replaceWith(alert_div + 'Executed Chaos Program at ' + now + ' </div>');
+            $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program completed at ' + now + ' </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");

@@ -27,8 +27,8 @@ def create_container(image, name, command, args):
 
     return container
 
-def create_pod_template(pod_name, additional_labels, container):
-    pod_labels = { "app": "kubeinvaders", "pod_name": pod_name, "approle": "chaosnode" }
+def create_pod_template(pod_name, additional_labels, container, exp_name):
+    pod_labels = {"app": "kubeinvaders", "approle": "chaosnode", "experiment-name": exp_name}
     pod_labels.update(additional_labels)
     pod_template = client.V1PodTemplateSpec(
         spec=client.V1PodSpec(restart_policy="Never", containers=[container]),
@@ -38,7 +38,7 @@ def create_pod_template(pod_name, additional_labels, container):
     return pod_template
 
 def create_job(job_name, pod_template):
-    metadata = client.V1ObjectMeta(name=job_name, labels={"job_name": job_name, "approle": "chaosnode"})
+    metadata = client.V1ObjectMeta(name=job_name, labels={"job-name": job_name, "approle": "chaosnode"})
 
     job = client.V1Job(
         api_version="batch/v1",
@@ -100,13 +100,13 @@ for exp in parsed_yaml["experiments"]:
         
         letters = string.ascii_lowercase
         rand_suffix = ''.join(random.choice(letters) for i in range(5))
-        job_name = f"{exp['name']}-{rand_suffix}"
+        job_name = f"{exp['job']}-{rand_suffix}"
 
         if 'additional-labels' in job_attrs:
             logging.info(f"additional-labels = {job_attrs['additional-labels']}")
-            pod_template = create_pod_template(exp["name"], job_attrs['additional-labels'], container)
+            pod_template = create_pod_template(f"{exp['name']}-exec", job_attrs['additional-labels'], container, exp["name"])
         else:
-            pod_template = create_pod_template(exp["name"], {}, container)
+            pod_template = create_pod_template(f"{exp['name']}-exec", {}, container, exp["name"])
         
         logging.info(f"Creating job {job_name}")
         job_def = create_job(job_name, pod_template)
@@ -116,6 +116,10 @@ for exp in parsed_yaml["experiments"]:
         except ApiException as e:
             logging.info(e)
             quit()
+        
+        if 'additional-labels' in job_attrs and 'chaos-codename' in job_attrs['additional-labels']:
+            codename = job_attrs['additional-labels']['chaos-codename']
+            r.set(f"chaos_jobs_status:{codename}:{exp['name']}:{exp['job']}", "Created")
         
         if r.exists('chaos_node_jobs_total') == 1:
             r.incr('chaos_node_jobs_total')

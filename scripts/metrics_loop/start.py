@@ -30,16 +30,16 @@ def create_container(image, name, command, args):
 
     return container
 
-def create_pod_template(pod_name, container):
+def create_pod_template(pod_name, container, job_name):
     pod_template = client.V1PodTemplateSpec(
         spec=client.V1PodSpec(restart_policy="Never", containers=[container]),
-        metadata=client.V1ObjectMeta(name=pod_name, labels={"pod_name": pod_name, "approle": "chaosnode"}),
+        metadata=client.V1ObjectMeta(name=pod_name, labels={"pod-name-prefix": pod_name, "approle": "chaosnode", "job-name": job_name}),
     )
 
     return pod_template
 
 def create_job(job_name, pod_template):
-    metadata = client.V1ObjectMeta(name=job_name, labels={"job_name": job_name, "approle": "chaosnode"})
+    metadata = client.V1ObjectMeta(name=job_name, labels={"job-name": job_name, "approle": "chaosnode"})
 
     job = client.V1Job(
         api_version="batch/v1",
@@ -85,4 +85,10 @@ while True:
         if pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode':
             if pod.status.phase == "Pending" or pod.status.phase == "Running":
                 r.incr('current_chaos_job_pod')
+        if pod.metadata.labels.get('chaos-codename') != None:
+            codename = pod.metadata.labels.get('chaos-codename')
+            job_name = pod.metadata.labels.get('job-name')
+            exp_name = pod.metadata.labels.get('experiment-name')
+            r.set(f"chaos_jobs_status:{codename}:{exp_name}:{job_name}", pod.status.phase)
+
     time.sleep(1)

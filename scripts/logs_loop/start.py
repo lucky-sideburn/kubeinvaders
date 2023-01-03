@@ -200,8 +200,9 @@ while True:
             for pod in final_pod_list:
                 container_list = []
                 for container in pod.spec.containers:
-                    if re.search(f"{containers_re}", container.name):
-                        container_list.append(container.name)
+                    if "containers_re" in locals() or "containers_re" in globals():
+                        if re.search(f"{containers_re}", container.name):
+                            container_list.append(container.name)
 
                 for container in container_list:
                     if webtail_switch or (pod.metadata.labels.get('approle') != None and pod.metadata.labels['approle'] == 'chaosnode' and pod.status.phase != "Pending"):

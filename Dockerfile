@@ -43,7 +43,7 @@ COPY confs/redis/redis.conf /etc/redis/redis.conf
 
 # Configure Nginx and KubeInvaders conf
 RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf
-RUN mkdir /usr/local/openresty/nginx/conf/kubeinvaders
+RUN mkdir -p /usr/local/openresty/nginx/conf/kubeinvaders/data
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /etc/nginx/conf.d
@@ -58,6 +58,7 @@ COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-n
 COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-containers.lua
 COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/programming_mode.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
+COPY scripts/data/codenames.txt /usr/local/openresty/nginx/conf/kubeinvaders/data/codenames.txt
 
 # Copy Python helpers
 COPY scripts/programming_mode /opt/programming_mode/

@@ -82,6 +82,11 @@ var namespacesJumpStaus = 'Disabled';
 
 var latest_preset_name = "";
 var latest_preset_lang = "";
+var codename = getCodeName();
+const codename_regex = /chaos-codename:\ [a-zA-Z_]*/g;
+const chaos_job_regex = /chaos_jobs_status.*/g;
+var codename_configured = false;
+var chaos_jobs_status = new Map();
 
 function isJsonString(str) {
     try {
@@ -92,11 +97,26 @@ function isJsonString(str) {
     return true;
 }
 
+function getCodeName() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            codename = this.responseText.trim();
+            if (codename == "") {
+                $('#alert_placeholder').replaceWith(alert_div + 'Error getting codename from backend. </div>');
+                codename = "error_fix_getcodename_from_backend";
+            }
+        }
+    };;
+    oReq.open("GET", "https://" + clu_endpoint + "/codename");
+    oReq.send();
+}
+
 function loadSavedPreset(tool, lang, defaultpreset) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            console.log("response of loadSavedPreset: ||" + this.responseText + "||");
+            //console.log("response of loadSavedPreset: ||" + this.responseText + "||");
             if (this.responseText.trim() != "nil") {
                 $("#currentLoadTest").val(this.responseText.trim());
             } else {
@@ -114,7 +134,7 @@ function savePreset(action) {
     presetLang = latest_preset_lang;
     presetName = latest_preset_name;
 
-    console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);
+    //console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);
     var oReq = new XMLHttpRequest();
 
     oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
@@ -123,12 +143,13 @@ function savePreset(action) {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && action == "apply") {
             // console.log(this.responseText);
             // $('#alert_placeholder').replaceWith(this.responseText);
-            presetBody = $('#chaosProgramTextArea').text(`jobs:
-  ${presetName}:
+            presetBody = $('#chaosProgramTextArea').val(`chaos-codename: ${codename}\njobs:
+  ${presetName}-job:
     additional-labels:
-      created-by: kubeinvaders
-      lang: ${presetLang}
-      type: loadtest
+      chaos-controller: kubeinvaders
+      chaos-lang: ${presetLang}
+      chaos-type: loadtest
+      chaos-codename: ${codename}
     image: docker.io/luckysideburn/chaos-exec:v1.0.0
     command: bash
     args:
@@ -136,8 +157,8 @@ function savePreset(action) {
     - ${presetLang}
     - http://kubeinvaders:8080/${presetLang}_${presetName}
 experiments:
-- name: ${presetName}
-  job: ${presetName}
+- name: ${presetName}-exp
+  job: ${presetName}-job
   loop: 5`);
         }
     };;
@@ -154,30 +175,44 @@ experiments:
 function drawChaosProgramFlow() {
     var chaosProgram = "";
     chaosProgram = $('#chaosProgramTextArea').text();
-    var oReq = new XMLHttpRequest();
 
+    // var chaosProgramWithCodename = chaosProgram.replace('CODENAME_PLACEHOLDER', codename);
+    // console.log(chaosProgramWithCodename);
+    // $('#chaosProgramTextArea').val(chaosProgramWithCodename);
+
+    var oReq = new XMLHttpRequest();
     oReq.open("POST", "https://" + clu_endpoint + "/chaos/programs/json-flow", true);
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            // console.log(this.responseText);
             if (isJsonString(this.responseText)){
                 var flow = JSON.parse(this.responseText);
-                //console.log(flow)
                 var flow_html = "";
-
                 let i = 0;
+                var times = "";
+                $('#chaosProgramFlow').html("");
 
                 while (i < flow["experiments"].length) {
-                    flow_html = flow_html + '<div class="row"><div class="alert alert-dark" role="alert">' + flow["experiments"][i]["name"] + '(x' +  flow["experiments"][i]["loop"] +')</div></div>'
-                    if (i < flow["experiments"].length - 1 ) {
-                        flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">'
+                    if (flow["experiments"][i]["loop"] == 1){
+                        times = "once";
+                    }
+                    else if (flow["experiments"][i]["loop"] == 2) {
+                        times = "twice"
+                    }
+                    else {
+                        times = "times"
+                    }
+
+                    flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert">Do ' + flow["experiments"][i]["name"] + ' ' + flow["experiments"][i]["loop"] + ' ' + times + '</div></div>';
+                    search_job = codename + ":" + flow["experiments"][i]["name"]
+                    //console.log("Search " + search_job);
+                    for (let [key, value] of chaos_jobs_status) {
+                        if (key.search(search_job)) {
+                            flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
+                        }
                     }
                     i++;
                 }
-
-                //console.log("FLOWHTML" + flow_html);
-
                 $('#chaosProgramFlow').html(flow_html);
             }
             else {
@@ -230,6 +265,13 @@ function getMetrics() {
             }
             else if (metric[0] == "pods_not_running_on_selected_ns") {
                 $('#pods_not_running_on').text(metric[1]);            
+            }
+            else if (metric[0].match(chaos_job_regex)) {
+                metrics_split = metric[0].split(":");
+                chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
+                // for (let [key, value] of chaos_jobs_status) {
+                //     console.log(key + " = " + value);
+                // }
             }
 	    else if (metric[0] == "current_chaos_job_pod") {
 	        $('#current_chaos_job_pod').text(metric[1]);
@@ -372,6 +414,11 @@ function setChaosContainer() {
 }
 
 function runChaosProgram() {
+
+    chaosProgram = $('#chaosProgramTextArea').val();
+    chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
+    $('#chaosProgramTextArea').val(chaosProgramWithCodename);
+    codename_configured = true;
 
     var now = new Date().toLocaleString().replace(',','')
     $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
@@ -882,6 +929,14 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function backgroundTasks() {
+
+    if (!codename_configured) {
+        chaosProgram = $('#chaosProgramTextArea').val();
+        chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
+        $('#chaosProgramTextArea').val(chaosProgramWithCodename);
+        codename_configured = true;
+    }
+
     if (game_mode_switch || programming_mode_switch) {
         getMetrics()
     }

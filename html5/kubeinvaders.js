@@ -174,7 +174,7 @@ experiments:
 
 function drawChaosProgramFlow() {
     var chaosProgram = "";
-    chaosProgram = $('#chaosProgramTextArea').text();
+    chaosProgram = $('#chaosProgramTextArea').val();
 
     // var chaosProgramWithCodename = chaosProgram.replace('CODENAME_PLACEHOLDER', codename);
     // console.log(chaosProgramWithCodename);
@@ -200,15 +200,18 @@ function drawChaosProgramFlow() {
                         times = "twice"
                     }
                     else {
-                        times = "times"
+                        times = flow["experiments"][i]["loop"] + " times"
                     }
 
-                    flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert">Do ' + flow["experiments"][i]["name"] + ' ' + flow["experiments"][i]["loop"] + ' ' + times + '</div></div>';
+                    flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert" style="border-color: #000000; border-width: 1.5px;">Do ' + flow["experiments"][i]["name"] + ' ' + times + '</div></div>';
                     search_job = codename + ":" + flow["experiments"][i]["name"]
+
+                    flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">';
+
                     //console.log("Search " + search_job);
                     for (let [key, value] of chaos_jobs_status) {
                         if (key.search(search_job)) {
-                            flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
+                            flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert" style="border-color: #000000; border-width: 1.5px;">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
                         }
                     }
                     i++;

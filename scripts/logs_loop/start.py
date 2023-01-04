@@ -179,7 +179,7 @@ while True:
                     logging.info(f"[logid:{logid}] Regex for annotation is {annotations_re}")
 
                     for pod in api_response.items:
-                        if re.search(f"{pod_re}", pod.metadata.name) and re.search(f"{namespace_re}", pod.metadata.namespace) and re.search(f"{labels_re}", str(pod.metadata.labels)) and re.search(f"{annotations_re}", str(pod.metadata.annotations)):
+                        if re.search(r"{pod_re}", pod.metadata.name) and re.search(r"{namespace_re}", pod.metadata.namespace) and re.search(r"{labels_re}", str(pod.metadata.labels)) and re.search(r"{annotations_re}", str(pod.metadata.annotations)):
                             webtail_pods.append(pod)
                             #logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
 

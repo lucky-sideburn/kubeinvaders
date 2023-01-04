@@ -210,7 +210,7 @@ function drawChaosProgramFlow() {
 
                     //console.log("Search " + search_job);
                     for (let [key, value] of chaos_jobs_status) {
-                        if (key.search(search_job)) {
+                        if (key.search(search_job) != -1 ) {
                             flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert" style="border-color: #000000; border-width: 1.5px;">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
                         }
                     }

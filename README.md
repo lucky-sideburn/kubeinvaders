@@ -21,7 +21,7 @@
 
 ## Description
 
-Through KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
+Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
 
 ## Installation
 ### Install to Kubernetes with Helm (v3+)

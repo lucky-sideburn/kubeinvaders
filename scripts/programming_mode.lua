@@ -41,10 +41,11 @@ io.close(file)
 ngx.log(ngx.ERR, "[programming_mode] set programming_mode Redis key")
 red:set("programming_mode", "1")
 
-ngx.log(ngx.ERR, "[programming_mode] remove log_cleaner:" ..arg['id'] .. " Redis key")
-red:del("log_cleaner:" .. arg['id'])
+--ngx.log(ngx.ERR, "[programming_mode] remove do_not_clean_log:" ..arg['id'] .. " Redis key")
+--red:del("do_not_clean_log:" .. arg['id'])
 
 ngx.log(ngx.ERR, "[programming_mode] set logs_enabled:" .. arg['id'] .. " Redis key")
+
 red:set("logs_enabled:" .. arg['id'], "1")
 red:expire("logs_enabled:" .. arg['id'], "10")
 

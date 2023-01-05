@@ -128,17 +128,17 @@ while True:
             else:
                 logging.info(f"[logid:{logid}] The Redis key logs_enabled does NOT exists...")
 
-            logging.info(f"[logid:{logid}] Checking log_cleaner Redis key")
+            logging.info(f"[logid:{logid}] Checking do_not_clean_log Redis key")
 
-            if not r.exists(f"log_cleaner:{logid}"):
-                logging.info(f"[logid:{logid}] The key log_cleaner:{logid} does not exists")
+            if not r.exists(f"do_not_clean_log:{logid}"):
+                logging.info(f"[logid:{logid}] The key do_not_clean_log:{logid} does not exists")
                 if pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html").exists():
                     logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
-                r.set(f"log_cleaner:{logid}", "1")
-                r.expire(f"log_cleaner:{logid}", 30)
+                r.set(f"do_not_clean_log:{logid}", "1")
+                r.expire(f"do_not_clean_log:{logid}", 30)
             else:
-                logging.info(f"[logid:{logid}] The key log_cleaner:{logid} esists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
+                logging.info(f"[logid:{logid}] The key do_not_clean_log:{logid} exists. Clean /var/www/html/chaoslogs-{logid}.html is not needed")
 
             logging.info(f"Loop iteration for log id {logid}")
 
@@ -172,16 +172,36 @@ while True:
                     labels_re = json_re["labels"]
                     containers_re = json_re["containers"]
 
-                    logging.info(f"[logid:{logid}] Gobal Json Regex is {json_re}")
-                    logging.info(f"[logid:{logid}] Regex for pod name is {pod_re}")
-                    logging.info(f"[logid:{logid}] Regex namespace name {namespace_re}")
-                    logging.info(f"[logid:{logid}] Regex for labels is {labels_re}")
-                    logging.info(f"[logid:{logid}] Regex for annotation is {annotations_re}")
+                    logging.info(f"[logid:{logid}] Gobal Json Regex is |{json_re}|")
+                    logging.info(f"[logid:{logid}] Regex for pod name is |{pod_re}|")
+                    logging.info(f"[logid:{logid}] Regex namespace name |{namespace_re}|")
+                    logging.info(f"[logid:{logid}] Regex for labels is |{labels_re}|")
+                    logging.info(f"[logid:{logid}] Regex for annotation is |{annotations_re}|")
 
                     for pod in api_response.items:
-                        if re.search(r"{pod_re}", pod.metadata.name) and re.search(r"{namespace_re}", pod.metadata.namespace) and re.search(r"{labels_re}", str(pod.metadata.labels)) and re.search(r"{annotations_re}", str(pod.metadata.annotations)):
-                            webtail_pods.append(pod)
-                            #logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
+                        logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}|")
+                        logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}|")
+                        logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
+                        logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
+
+                        if re.search(f"{pod_re}", pod.metadata.name):
+                            logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
+                            if re.search(f"{namespace_re}", pod.metadata.namespace):
+                                logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
+                                if re.search(f"{labels_re}", str(pod.metadata.labels)):
+                                    logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
+                                    if re.search(f"{annotations_re}", str(pod.metadata.annotations)):
+                                        logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
+                                        webtail_pods.append(pod)
+                                        logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
+                        #             else:
+                        #                 logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT FAILED!")
+                        #         else:
+                        #             logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: FAILED!")
+                        #     else:
+                        #         logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: FAILED!")
+                        # else:
+                        #     logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT FAILED!")
 
             try:
                 api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")
@@ -190,7 +210,7 @@ while True:
 
             webtail_switch = False
 
-            if  r.get("programming_mode") == "0":
+            if r.get("programming_mode") == "0":
                 final_pod_list = webtail_pods
                 if len(webtail_pods) > 0:
                     webtail_switch = True

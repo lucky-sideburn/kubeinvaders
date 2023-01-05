@@ -1,0 +1,17 @@
+import gitlab
+import requests
+import time
+
+gl = gitlab.Gitlab('https://gitlab.example.com', private_token='my_private_token')
+
+def create_project():
+    project = gl.projects.create({'name': 'My Project'})
+    print("Created project: ", project.name)
+
+def main():
+    for i in range(1000):
+        create_project()
+        time.sleep(0.001)
+
+if __name__ == "__main__":
+    main()

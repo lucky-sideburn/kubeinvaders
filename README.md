@@ -7,9 +7,10 @@
 5. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
 6. [Metrics](#Metrics)
 7. [Security](#Security)
-8. [Community](#Community)
-9. [Community blogs and videos](#Community-blogs-and-videos)
-10. [License](#License)
+8. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)
+9. [Community](#Community)
+10. [Community blogs and videos](#Community-blogs-and-videos)
+11. [License](#License)
 
 ![Alt Text](./doc_images/dashboard.png)
 
@@ -175,7 +176,7 @@ In order to restrict the access to the Kubeinvaders endpoint add this annotation
 nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
 ```
 
-## Test Loading and Chaos Experiment Presets - Python Code orchestrated by Kubeinvaders
+## Test Loading and Chaos Experiment Presets
 ### Cassandra
 ```python
 from cassandra.cluster import Cluster

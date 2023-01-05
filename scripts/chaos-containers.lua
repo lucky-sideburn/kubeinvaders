@@ -39,7 +39,11 @@ elseif ngx.var.request_method == "POST" and action == "set_log_regex" then
   red:set("log_pod_regex:" .. arg['id'], body_data)
   red:set("programming_mode", "0")
   ngx.say("Regex has been set => " .. body_data)
-  ngx.log(ngx.ERR, "Set Regex for web log tail. log id " .. arg['id'])
+  ngx.log(ngx.ERR, "Set Regex for web log tail. Log id " .. arg['id'])
+  --local redis_del_cmd = "(redis-cli KEYS 'regex_cmp:'" .. arg['id'] .. "| xargs redis-cli DEL) || echo"
+  --local handle = io.popen(redis_del_cmd)
+  --local result = handle:read("*a")
+  --local rc = handle:close()
   return ngx.exit(ngx.status)
 
 elseif ngx.var.request_method == "POST" and action == "enable_log_tail" then

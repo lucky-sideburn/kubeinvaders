@@ -71,6 +71,8 @@ var help = false;
 var chaos_nodes = true;
 var chaos_pods = true;
 var log_tail_alert = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
+var log_tail_alert_no_pixel = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff; font-family: Courier, monospace;" class="alert" role="alert">';
+
 var alert_div = '<div id="alert_placeholder" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
 var alert_div_webtail = '<div id="alert_placeholder3" style="margin-top: 2%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
 
@@ -304,8 +306,9 @@ function keepAliveJobsLogs() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            // TO DO..
-            //$('#alert_placeholder').replaceWith("Sent keepalive for logs current session...");
+            if (!this.responseText.toLowerCase().match(/.*null.*/)) {
+                $('#alert_placeholder3').replaceWith(log_tail_alert_no_pixel + this.responseText.replace("nil", "") + '</div>');
+            }
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/chaos/logs/keepalive?logid=" + random_code);

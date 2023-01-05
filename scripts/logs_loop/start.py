@@ -118,10 +118,13 @@ while True:
             logid = key.split(":")[1]
 
             if r.exists(f"log_pod_regex:{logid}"):
+                current_regex = r.get(f"log_pod_regex:{logid}")
+                r.set(f"log_status:{logid}", f"Regex for this logging session is {current_regex}")
                 logging.info(f"[logid:{logid}] The Redis key log_pod_regex exists...")
             else:
                 logging.info(f"[logid:{logid}] The Redis key log_pod_regex does NOT exists...")
                 r.set(f"log_pod_regex:{logid}", '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}')
+                r.set(f"log_status:{logid}", "Regex for this logging session not found using default {\"pod\":\".*\", \"namespace\":\".*\", \"labels\":\".*\", \"annotations\":\".*\", \"containers\":\".*\"}")
 
             if r.exists(f"logs_enabled:{logid}"):
                 logging.info(f"[logid:{logid}] The Redis key logs_enabled exists...")
@@ -163,9 +166,13 @@ while True:
                         api_response = api_instance.list_pod_for_all_namespaces()
                     except ApiException as e:
                         logging.info(e)
-                    logging.info(f"[logid:{logid}] Going to search pod compliant with the regex on {len(api_response.items)} pods")
+                    
+                    pods_found_info = f"[logid:{logid}] Looking for pods compliant with the current regex. Scanning {len(api_response.items)} pods"
+                    logging.info(pods_found_info)
+                    r.set(f"log_status:{logid}", pods_found_info)
 
                     json_re = json.loads(log_pod_regex)
+                    regexsha = sha256(log_pod_regex.encode('utf-8')).hexdigest()
                     pod_re = json_re["pod"]
                     namespace_re = json_re["namespace"]
                     annotations_re = json_re["annotations"]
@@ -178,30 +185,51 @@ while True:
                     logging.info(f"[logid:{logid}] Regex for labels is |{labels_re}|")
                     logging.info(f"[logid:{logid}] Regex for annotation is |{annotations_re}|")
 
-                    for pod in api_response.items:
-                        logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}|")
-                        logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}|")
-                        logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
-                        logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
+                    for pod in api_response.items:   
+                        if r.exists(f"regex_cmp:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"):
+                            cached_regex_match = r.get(f"regex_cmp:{logid}:{pod.metadata.namespace}:{pod.metadata.name}")
+                            if cached_regex_match == "maching":
+                                webtail_pods.append(pod)
+                                regex_match_info = f"[logid:{logid}] Taking logs of {pod.metadata.name}. Redis has cached that {log_pod_regex} is good for {pod.metadata.name}"
+                                logging.info(regex_match_info)
+                                r.set(f"log_status:{logid}", regex_match_info)
+                            else:
+                                regex_match_info = f"[logid:{logid}] SKIPPING logs of {pod.metadata.name}. Redis has cached that {log_pod_regex} is not good for {pod.metadata.name}"
+                                logging.info(regex_match_info)
+                                r.set(f"log_status:{logid}", regex_match_info)
+                        else:
+                            logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}|")
+                            logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}|")
+                            logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
+                            logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
 
-                        if re.search(f"{pod_re}", pod.metadata.name):
-                            logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
-                            if re.search(f"{namespace_re}", pod.metadata.namespace):
-                                logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
-                                if re.search(f"{labels_re}", str(pod.metadata.labels)):
-                                    logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
-                                    if re.search(f"{annotations_re}", str(pod.metadata.annotations)):
-                                        logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
-                                        webtail_pods.append(pod)
-                                        logging.info(f"[logid:{logid}] Taking log of {pod.metadata.name} because it is compliant with the regex {log_pod_regex}")
-                        #             else:
-                        #                 logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT FAILED!")
-                        #         else:
-                        #             logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: FAILED!")
-                        #     else:
-                        #         logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: FAILED!")
-                        # else:
-                        #     logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT FAILED!")
+                            if re.search(f"{pod_re}", pod.metadata.name):
+                                logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
+                                regex_key_name = "regex_cmp:{regexsha}:{regexsha}:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"
+
+                                if re.search(f"{namespace_re}", pod.metadata.namespace):
+                                    logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
+                                    if re.search(f"{labels_re}", str(pod.metadata.labels)):
+                                        logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
+                                        if re.search(f"{annotations_re}", str(pod.metadata.annotations)):
+                                            logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
+                                            webtail_pods.append(pod)
+                                            regex_match_info = f"[logid:{logid}] Taking logs from {pod.metadata.name}. It is compliant with the Regex {log_pod_regex}"
+                                            r.set(regex_key_name, "maching")
+                                            logging.info(regex_match_info)
+                                            r.set(f"log_status:{logid}", regex_match_info)
+                                        else:
+                                            logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT FAILED!")
+                                            r.set(regex_key_name, "not_maching")
+                                    else:
+                                        logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: FAILED!")
+                                        r.set(regex_key_name, "not_maching")
+                                else:
+                                    logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: FAILED!")
+                                    r.set(regex_key_name, "not_maching")
+                            else:
+                                logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT FAILED!")
+                                r.set(regex_key_name, "not_maching")
 
             try:
                 api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")

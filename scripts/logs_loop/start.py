@@ -153,7 +153,8 @@ while True:
 
             webtail_pods = []
             final_pod_list = []
-            if r.exists(f"log_pod_regex:{logid}") and r.exists(f"logs_enabled:{logid}") and r.get("programming_mode") == "0":
+            if r.exists(f"log_pod_regex:{logid}") and r.exists(f"logs_enabled:{logid}"):
+                # and r.get("programming_mode") == "0":
                 logging.info(f"[logid:{logid}] Found Redis keys for log tail")
                 if r.get(f"logs_enabled:{logid}") == "1":
                     logging.info(f"[logid:{logid}] Found regex log_pod_regex in Redis. Logs from all pods should be collected")
@@ -203,15 +204,15 @@ while True:
                             logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
                             logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
 
-                            if re.search(f"{pod_re}", pod.metadata.name):
+                            if re.search(f"{pod_re}", pod.metadata.name) or re.search(r"{pod_re}", pod.metadata.name):
                                 logging.info(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
-                                regex_key_name = "regex_cmp:{regexsha}:{regexsha}:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"
+                                regex_key_name = f"regex_cmp:{regexsha}:{regexsha}:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"
 
-                                if re.search(f"{namespace_re}", pod.metadata.namespace):
+                                if re.search(f"{namespace_re}", pod.metadata.namespace) or re.search(r"{namespace_re}", pod.metadata.namespace):
                                     logging.info(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
-                                    if re.search(f"{labels_re}", str(pod.metadata.labels)):
+                                    if re.search(f"{labels_re}", str(pod.metadata.labels)) or re.search(r"{labels_re}", str(pod.metadata.labels)):
                                         logging.info(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
-                                        if re.search(f"{annotations_re}", str(pod.metadata.annotations)):
+                                        if re.search(f"{annotations_re}", str(pod.metadata.annotations)) or re.search(r"{annotations_re}", str(pod.metadata.annotations)):
                                             logging.info(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
                                             webtail_pods.append(pod)
                                             regex_match_info = f"[logid:{logid}] Taking logs from {pod.metadata.name}. It is compliant with the Regex {log_pod_regex}"

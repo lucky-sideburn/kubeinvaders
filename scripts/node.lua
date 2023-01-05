@@ -3,6 +3,8 @@ local ltn12 = require "ltn12"
 local json = require 'lunajson'
 local redis = require "resty.redis"
 
+k8s_url = ""
+
 if os.getenv("KUBERNETES_SERVICE_HOST") then
   k8s_url = "https://" .. os.getenv("KUBERNETES_SERVICE_HOST") .. ":" .. os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
 else

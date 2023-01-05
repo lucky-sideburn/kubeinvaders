@@ -174,6 +174,501 @@ In order to restrict the access to the Kubeinvaders endpoint add this annotation
 ```yaml
 nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
 ```
+
+## Test Loading and Chaos Experiment Presets - Python Code orchestrated by Kubeinvaders
+### Cassandra
+```python
+from cassandra.cluster import Cluster
+from random import randint
+import time
+
+def main():
+    cluster = Cluster(['127.0.0.1'])
+    session = cluster.connect()
+
+    session.execute("CREATE KEYSPACE IF NOT EXISTS test WITH REPLICATION = { 'class': 'SimpleStrategy', 'replication_factor': 1 }")
+    session.execute("CREATE TABLE IF NOT EXISTS test.messages (id int PRIMARY KEY, message text)")
+
+    for i in range(1000):
+        session.execute("INSERT INTO test.messages (id, message) VALUES (%s, '%s')" % (i, str(randint(0, 1000))))
+        time.sleep(0.001)
+
+    cluster.shutdown()
+
+if __name__ == "__main__":
+    main()
+```
+
+
+### Consul
+```python
+import time
+import consul
+
+# Connect to the Consul cluster
+client = consul.Consul()
+
+# Continuously register and deregister a service
+while True:
+    # Register the service
+    client.agent.service.register(
+        "stress-test-service",
+        port=8080,
+        tags=["stress-test"],
+        check=consul.Check().tcp("localhost", 8080, "10s")
+    )
+
+    # Deregister the service
+    client.agent.service.deregister("stress-test-service")
+
+    time.sleep(1)
+
+
+```
+
+
+### Elasticsearch
+```python
+import time
+from elasticsearch import Elasticsearch
+
+# Connect to the Elasticsearch cluster
+es = Elasticsearch(["localhost"])
+
+# Continuously index and delete documents
+while True:
+    # Index a document
+    es.index(index="test-index", doc_type="test-type", id=1, body={"test": "test"})
+
+    # Delete the document
+    es.delete(index="test-index", doc_type="test-type", id=1)
+
+    time.sleep(1)
+
+
+```
+
+
+### Etcd3
+```python
+import time
+import etcd3
+
+# Connect to the etcd3 cluster
+client = etcd3.client()
+
+# Continuously set and delete keys
+while True:
+    # Set a key
+    client.put("/stress-test-key", "stress test value")
+
+    # Delete the key
+    client.delete("/stress-test-key")
+
+    time.sleep(1)
+
+
+```
+
+
+### Gitlab
+```python
+import gitlab
+import requests
+import time
+
+gl = gitlab.Gitlab('https://gitlab.example.com', private_token='my_private_token')
+
+def create_project():
+    project = gl.projects.create({'name': 'My Project'})
+    print("Created project: ", project.name)
+
+def main():
+    for i in range(1000):
+        create_project()
+        time.sleep(0.001)
+
+if __name__ == "__main__":
+    main()
+```
+
+
+### Http
+```python
+import time
+import requests
+
+# Set up the URL to send requests to
+url = 'http://localhost:8080/'
+
+# Set up the number of requests to send
+num_requests = 10000
+
+# Set up the payload to send
+payload = {'key': 'value'}
+
+# Send the requests
+start_time = time.time()
+for i in range(num_requests):
+    requests.post(url, json=payload)
+end_time = time.time()
+
+# Calculate the throughput
+throughput = num_requests / (end_time - start_time)
+print(f'Throughput: {throughput} requests/second')
+
+
+```
+
+
+### Jira
+```python
+import time
+from jira import JIRA
+
+# Connect to the Jira instance
+jira = JIRA(
+    server="https://jira.example.com",
+    basic_auth=("user", "password")
+)
+
+# Continuously create and delete issues
+while True:
+    # Create an issue
+    issue = jira.create_issue(
+        project="PROJECT",
+        summary="Stress test issue",
+        description="This is a stress test issue.",
+        issuetype={"name": "Bug"}
+    )
+
+    # Delete the issue
+    jira.delete_issue(issue)
+
+    time.sleep(1)
+
+
+```
+
+
+### Kafka
+```python
+import time
+import random
+
+from kafka import KafkaProducer
+
+# Set up the Kafka producer
+producer = KafkaProducer(bootstrap_servers=['localhost:9092'])
+
+# Set up the topic to send messages to
+topic = 'test'
+
+# Set up the number of messages to send
+num_messages = 10000
+
+# Set up the payload to send
+payload = b'a' * 1000000
+
+# Send the messages
+start_time = time.time()
+for i in range(num_messages):
+    producer.send(topic, payload)
+end_time = time.time()
+
+# Calculate the throughput
+throughput = num_messages / (end_time - start_time)
+print(f'Throughput: {throughput} messages/second')
+
+# Flush and close the producer
+producer.flush()
+producer.close()
+
+```
+
+
+### Kubernetes
+```python
+import time
+import kubernetes
+
+# Create a Kubernetes client
+client = kubernetes.client.CoreV1Api()
+
+# Continuously create and delete pods
+while True:
+    # Create a pod
+    pod = kubernetes.client.V1Pod(
+        metadata=kubernetes.client.V1ObjectMeta(name="stress-test-pod"),
+        spec=kubernetes.client.V1PodSpec(
+            containers=[kubernetes.client.V1Container(
+                name="stress-test-container",
+                image="nginx:latest"
+            )]
+        )
+    )
+    client.create_namespaced_pod(namespace="default", body=pod)
+
+    # Delete the pod
+    client.delete_namespaced_pod(name="stress-test-pod", namespace="default")
+
+    time.sleep(1)
+
+
+```
+
+
+### Mongodb
+```python
+import time
+import random
+from pymongo import MongoClient
+
+# Set up the MongoDB client
+client = MongoClient('mongodb://localhost:27017/')
+
+# Set up the database and collection to use
+db = client['test']
+collection = db['test']
+
+# Set up the number of documents to insert
+num_documents = 10000
+
+# Set up the payload to insert
+payload = {'key': 'a' * 1000000}
+
+# Insert the documents
+start_time = time.time()
+for i in range(num_documents):
+    collection.insert_one(payload)
+end_time = time.time()
+
+# Calculate the throughput
+throughput = num_documents / (end_time - start_time)
+print(f'Throughput: {throughput} documents/second')
+
+# Close the client
+client.close()
+
+
+```
+
+
+### Mysql
+```python
+import time
+import mysql.connector
+
+# Connect to the MySQL database
+cnx = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="password",
+    database="test"
+)
+cursor = cnx.cursor()
+
+# Continuously insert rows into the "test_table" table
+while True:
+    cursor.execute("INSERT INTO test_table (col1, col2) VALUES (%s, %s)", (1, 2))
+    cnx.commit()
+    time.sleep(1)
+
+# Close the database connection
+cnx.close()
+
+
+```
+
+
+### Nomad
+```python
+import time
+import nomad
+
+# Create a Nomad client
+client = nomad.Nomad()
+
+# Create a batch of jobs to submit to Nomad
+jobs = [{
+    "Name": "stress-test-job",
+    "Type": "batch",
+    "Datacenters": ["dc1"],
+    "TaskGroups": [{
+        "Name": "stress-test-task-group",
+        "Tasks": [{
+            "Name": "stress-test-task",
+            "Driver": "raw_exec",
+            "Config": {
+                "command": "sleep 10"
+            },
+            "Resources": {
+                "CPU": 500,
+                "MemoryMB": 512
+            }
+        }]
+    }]
+}]
+
+# Continuously submit the batch of jobs to Nomad
+while True:
+    for job in jobs:
+        client.jobs.create(job)
+    time.sleep(1)
+
+
+```
+
+
+### Postgresql
+```python
+import time
+import random
+import psycopg2
+
+# Set up the connection parameters
+params = {
+    'host': 'localhost',
+    'port': '5432',
+    'database': 'test',
+    'user': 'postgres',
+    'password': 'password'
+}
+
+# Connect to the database
+conn = psycopg2.connect(**params)
+
+# Set up the cursor
+cur = conn.cursor()
+
+# Set up the table and payload to insert
+table_name = 'test'
+payload = 'a' * 1000000
+
+# Set up the number of rows to insert
+num_rows = 10000
+
+# Insert the rows
+start_time = time.time()
+for i in range(num_rows):
+    cur.execute(f"INSERT INTO {table_name} (col) VALUES ('{payload}')")
+conn.commit()
+end_time = time.time()
+
+# Calculate the throughput
+throughput = num_rows / (end_time - start_time)
+print(f'Throughput: {throughput} rows/second')
+
+# Close the cursor and connection
+cur.close()
+conn.close()
+
+
+```
+
+
+### Prometheus
+```python
+import time
+import random
+from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
+
+# Set up the metrics registry
+registry = CollectorRegistry()
+
+# Set up the metric to push
+gauge = Gauge('test_gauge', 'A test gauge', registry=registry)
+
+# Set up the push gateway URL
+push_gateway = 'http://localhost:9091'
+
+# Set up the number of pushes to send
+num_pushes = 10000
+
+# Set up the metric value to push
+value = random.random()
+
+# Push the metric
+start_time = time.time()
+for i in range(num_pushes):
+    gauge.set(value)
+    push_to_gateway(push_gateway, job='test_job', registry=registry)
+end_time = time.time()
+
+# Calculate the throughput
+throughput = num_pushes / (end_time - start_time)
+print(f'Throughput: {throughput} pushes/second')
+
+
+```
+
+
+### Rabbit
+```python
+import pika
+import time
+
+def send_message(channel, message):
+    channel.basic_publish(exchange='', routing_key='test_queue', body=message)
+    print("Sent message: ", message)
+
+def main():
+    connection = pika.BlockingConnection(pika.ConnectionParameters('localhost'))
+    channel = connection.channel()
+    channel.queue_declare(queue='test_queue')
+
+    for i in range(1000):
+        send_message(channel, str(i))
+        time.sleep(0.001)
+
+    connection.close()
+
+if __name__ == "__main__":
+    main()
+```
+
+
+### Ssh
+```python
+import paramiko
+
+# Define servers array
+servers = ['server1', 'server2', 'server3']
+
+for server in servers:
+    public_key = paramiko.RSAKey(data=b'your-public-key-string')
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(hostname='your-server-name', username='your-username', pkey=public_key)
+    stdin, stdout, stderr = ssh.exec_command('your-command')
+    print(stdout.read())
+    ssh.close()
+
+```
+
+
+### Vault
+```python
+import time
+import hvac
+
+# Connect to the Vault instance
+client = hvac.Client()
+client.auth_approle(approle_id="approle-id", secret_id="secret-id")
+
+# Continuously read and write secrets
+while True:
+    # Write a secret
+    client.write("secret/stress-test", value="secret value")
+
+    # Read the secret
+    client.read("secret/stress-test")
+
+    time.sleep(1)
+
+
+```
+
 ## Community
 
 Please reach out for news, bugs, feature requests, and other issues via:

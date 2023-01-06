@@ -10,6 +10,16 @@ var spaceshipWidth = 60;
 var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
 var clu_endpoint = "endpoint_placeholder";
+var clu_insicure = "insecure_endpoint_placeholder";
+var k8s_url = "";
+
+if (clu_insicure == "true") {
+    k8s_url = "http://" + clu_endpoint;
+}
+else {
+    k8s_url = "https://" + clu_endpoint;
+}
+
 var namespaces = [];
 var namespaces_index = 0;
 var namespace = namespaces[namespaces_index];
@@ -110,7 +120,7 @@ function getCodeName() {
             }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/codename");
+    oReq.open("GET", k8s_url + "/codename");
     oReq.send();
 }
 
@@ -135,7 +145,7 @@ function getSavedPresets() {
             }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset/savedpresets");
+    oReq.open("GET", k8s_url + "/chaos/loadpreset/savedpresets");
     oReq.send();
 }
 
@@ -151,7 +161,7 @@ function loadSavedPreset(tool, lang, defaultpreset) {
             }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset?name=" + tool + "&lang=" + lang);
+    oReq.open("GET", k8s_url + "/chaos/loadpreset?name=" + tool + "&lang=" + lang);
     oReq.send()
     var now = new Date().toLocaleString().replace(',','')
     $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
@@ -176,7 +186,7 @@ function resetPreset() {
 
         }
     };;
-    oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/reset?name="+ latest_preset_name + "&lang="+ latest_preset_lang);
+    oReq.open("POST", k8s_url + "/chaos/loadpreset/reset?name="+ latest_preset_name + "&lang="+ latest_preset_lang);
     oReq.send({});
 }
 
@@ -189,7 +199,7 @@ function savePreset(action) {
     //console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);
     var oReq = new XMLHttpRequest();
 
-    oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
+    oReq.open("POST", k8s_url + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && action == "apply") {
@@ -235,7 +245,7 @@ function drawChaosProgramFlow() {
     // $('#chaosProgramTextArea').val(chaosProgramWithCodename);
 
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/chaos/programs/json-flow", true);
+    oReq.open("POST", k8s_url + "/chaos/programs/json-flow", true);
 
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -335,7 +345,7 @@ function getMetrics() {
 	    }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/metrics");
+    oReq.open("GET", k8s_url + "/metrics");
     oReq.send();
 }
 
@@ -349,7 +359,7 @@ function getChaosJobsLogs() {
             }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaoslogs-" + random_code + ".html");
+    oReq.open("GET", k8s_url + "/chaoslogs-" + random_code + ".html");
     oReq.send();
     keepAliveJobsLogs();
 }
@@ -363,7 +373,7 @@ function keepAliveJobsLogs() {
             }
         }
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/chaos/logs/keepalive?logid=" + random_code);
+    oReq.open("GET", k8s_url + "/chaos/logs/keepalive?logid=" + random_code);
     oReq.send();
 }
 
@@ -376,7 +386,7 @@ function runKubeLinter() {
         result_parsed = JSON.stringify(JSON.parse(kubelinter), null, 4);
         $('#currentKubeLinterResult').text(result_parsed);
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/kube-linter?namespace=" + namespace);
+    oReq.open("GET", k8s_url + "/kube/kube-linter?namespace=" + namespace);
     oReq.send();
 }
 
@@ -387,7 +397,7 @@ function getNamespaces() {
         namespaces = namespaces.split(",");
         namespace = namespaces[namespaces_index];
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/namespaces");
+    oReq.open("GET", k8s_url + "/kube/namespaces");
     oReq.send();
 }
 
@@ -396,7 +406,7 @@ function getEndpoint() {
     oReq.onload = function () {
         endpoint = this.responseText;
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/endpoint");
+    oReq.open("GET", k8s_url + "/kube/endpoint");
     oReq.send();
 }
 
@@ -408,13 +418,13 @@ function getCurrentChaosContainer() {
         $('#currentChaosContainerYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
     };;
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/containers?action=container_definition");
+    oReq.open("GET", k8s_url + "/kube/chaos/containers?action=container_definition");
     oReq.send();
 }
 
 function enableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=enable_log_tail&id=" + random_code, true);
+    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=enable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail started </div>');
@@ -427,7 +437,7 @@ function enableLogTail() {
 
 function disableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=disable_log_tail&id=" + random_code, true);
+    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=disable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail stopped </div>');
@@ -442,7 +452,7 @@ function setLogRegex() {
     log_tail_div.style.display = "block";
     $('#alert_placeholder3').replaceWith(log_tail_alert + 'Setting regex for filtering log source (by pod name)</div>');
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
+    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Regex has been configured...</div>');
@@ -458,7 +468,7 @@ function setChaosContainer() {
     }
     else {
         var oReq = new XMLHttpRequest();
-        oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/containers?action=set", true);
+        oReq.open("POST", k8s_url + "/kube/chaos/containers?action=set", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -481,7 +491,7 @@ function runChaosProgram() {
     $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
 
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", "https://" + clu_endpoint + "/kube/chaos/programming_mode?id=" + random_code, true);
+    oReq.open("POST", k8s_url + "/kube/chaos/programming_mode?id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             //console.log(this.responseText);
@@ -499,7 +509,7 @@ function startChaosNode(node_name) {
         //console.log(JSON.parse(this.responseText))
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start Chaos Job on ' + node_name + '</div>');
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
+    oReq.open("GET", k8s_url + "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -509,7 +519,7 @@ function deletePods(pod_name) {
         //console.log(JSON.parse(this.responseText))
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
-    oReq.open("GET", "https://" + clu_endpoint + "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
+    oReq.open("GET", k8s_url + "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -524,7 +534,7 @@ function getPods() {
                 pods = json_parsed["items"];
             }
         };;
-        oReq.open("GET", "https://" + clu_endpoint + "/kube/pods?action=list&namespace=" + namespace);
+        oReq.open("GET", k8s_url + "/kube/pods?action=list&namespace=" + namespace);
         oReq.send();
     }
     else {
@@ -543,7 +553,7 @@ function getNodes() {
             json_parsed = JSON.parse(this.responseText);
             nodes = json_parsed["items"];
         };;
-        oReq.open("GET", "https://" + clu_endpoint + "/kube/nodes");
+        oReq.open("GET", k8s_url + "/kube/nodes");
         oReq.send();
     }
     else {

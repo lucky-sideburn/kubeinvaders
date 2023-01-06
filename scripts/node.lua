@@ -23,10 +23,10 @@ if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/ch
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
   if okredis then
-    ngx.log(ngx.ERR, "Connection to Redis is ok")
+    ngx.log(ngx.INFO, "Connection to Redis is ok")
   else
-    ngx.log(ngx.ERR, "Connection to Redis is not ok")
-    ngx.log(ngx.ERR, errredis)
+    ngx.log(ngx.INFO, "Connection to Redis is not ok")
+    ngx.log(ngx.INFO, errredis)
   end
   -- Count the total of chaos jobs launched against nodes
   local chaos_node_res, err = red:get("chaos_node_jobs_total")
@@ -57,7 +57,7 @@ ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
 ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range'
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 
-ngx.log(ngx.ERR, "Requesting nodes using this url: " .. url)
+ngx.log(ngx.INFO, "Requesting nodes using this url: " .. url)
 
 local headers = {
   ["Accept"] = "application/json",
@@ -74,20 +74,20 @@ local ok, statusCode, headers, statusText = https.request{
   sink = ltn12.sink.table(resp)
 }
 
-ngx.log(ngx.ERR, "REQUEST LOGS...")
-ngx.log(ngx.ERR, ok)
-ngx.log(ngx.ERR, statusCode)
-ngx.log(ngx.ERR, statusText)
+ngx.log(ngx.INFO, "REQUEST LOGS...")
+ngx.log(ngx.INFO, ok)
+ngx.log(ngx.INFO, statusCode)
+ngx.log(ngx.INFO, statusText)
 
 nodes["items"] = {}
 for k,v in ipairs(resp) do
-  ngx.log(ngx.ERR, k)
+  ngx.log(ngx.INFO, k)
   decoded = json.decode(v)
   if decoded["kind"] == "NodeList" then
     for k2,v2 in ipairs(decoded["items"]) do
       -- TODO: masters should be included?
       -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
-      ngx.log(ngx.ERR, "found node " .. v2["metadata"]["name"])
+      ngx.log(ngx.INFO, "found node " .. v2["metadata"]["name"])
       table.insert(nodes["items"], v2["metadata"]["name"])
       --end
     end

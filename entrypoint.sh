@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+set -m
 if [ ! -z "$K8S_TOKEN" ];then
   echo 'Found K8S_TOKEN... using K8S_TOKEN instead of TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)'
   export TOKEN=$K8S_TOKEN
@@ -7,11 +8,7 @@ else
   export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
 
-# TODO: use a sidecar
 redis-server /etc/redis/redis.conf &
 bash /opt/metrics_loop/start.sh &
 bash /opt/logs_loop/start.sh &
-
-echo '<p>waiting for logs...</p>' > /var/www/html/chaoslogs.html
-
 nginx -c /etc/nginx/nginx.conf -g 'daemon off;'

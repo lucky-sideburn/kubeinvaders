@@ -9,10 +9,10 @@ if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/ch
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
   
   if okredis then
-    ngx.log(ngx.ERR, "Connection to Redis is ok")
+    ngx.log(ngx.INFO, "Connection to Redis is ok")
   else
-    ngx.log(ngx.ERR, "Connection to Redis is not ok")
-    ngx.log(ngx.ERR, errredis)
+    ngx.log(ngx.INFO, "Connection to Redis is not ok")
+    ngx.log(ngx.INFO, errredis)
   end
   -- Count the total of chaos jobs launched against nodes
   local chaos_node_res, err = red:get("chaos_node_jobs_total")
@@ -38,7 +38,7 @@ if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/ch
 
 elseif ngx.var.request_method == "GET" and ngx.var.request_uri == "/metrics" then
   for i, res in ipairs(red:keys("*")) do
-    ngx.log(ngx.ERR, res)
+    ngx.log(ngx.INFO, res)
     ngx.say(res ..  " " .. red:get(res))
   end
 end

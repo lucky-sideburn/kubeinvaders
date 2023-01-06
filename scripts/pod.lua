@@ -32,10 +32,10 @@ if action == "delete" then
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
   if okredis then
-    ngx.log(ngx.ERR, "Connection to Redis is ok")
+    ngx.log(ngx.INFO, "Connection to Redis is ok")
   else
-    ngx.log(ngx.ERR, "Connection to Redis is not ok")
-    ngx.log(ngx.ERR, errredis)
+    ngx.log(ngx.INFO, "Connection to Redis is not ok")
+    ngx.log(ngx.INFO, errredis)
   end
   -- Count the total of deleted pods
 
@@ -43,11 +43,11 @@ if action == "delete" then
 
   if res == ngx.null then
     ngx.say(err)
-    ngx.log(ngx.ERR, "deleted_pods_total is not present on Redis. Creating it..")
+    ngx.log(ngx.INFO, "deleted_pods_total is not present on Redis. Creating it..")
     red:set("deleted_pods_total", 1)
   else
       incr = res + 1
-      ngx.log(ngx.ERR, "deleted_pods_total is present on Redis. Incrementing it..")
+      ngx.log(ngx.INFO, "deleted_pods_total is present on Redis. Incrementing it..")
       red:set("deleted_pods_total", incr)      
   end
 
@@ -75,9 +75,9 @@ else
   ngx.exit(ngx.OK)
 end
 
---ngx.log(ngx.ERR, "token: " .. token)
-ngx.log(ngx.ERR, "url: " .. url)
-ngx.log(ngx.ERR, "namespace: " .. namespace)
+--ngx.log(ngx.INFO, "token: " .. token)
+ngx.log(ngx.INFO, "url: " .. url)
+ngx.log(ngx.INFO, "namespace: " .. namespace)
 
 local headers = {
   ["Accept"] = "application/json",
@@ -94,10 +94,10 @@ local ok, statusCode, headers, statusText = https.request{
   sink = ltn12.sink.table(resp)
 }
 
-ngx.log(ngx.ERR, "REQUEST LOGS...")
-ngx.log(ngx.ERR, ok)
-ngx.log(ngx.ERR, statusCode)
-ngx.log(ngx.ERR, statusText)
+ngx.log(ngx.INFO, "REQUEST LOGS...")
+ngx.log(ngx.INFO, ok)
+ngx.log(ngx.INFO, statusCode)
+ngx.log(ngx.INFO, statusText)
 
 if action == "list" then
   local i = 1
@@ -108,7 +108,7 @@ if action == "list" then
     if decoded["kind"] == "PodList" then
       for k2,v2 in ipairs(decoded["items"]) do
         if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["approle"] ~= "chaosnode" then
-          ngx.log(ngx.ERR, "found pod " .. v2["metadata"]["name"])
+          ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
           pods["items"][i] = v2["metadata"]["name"]
           i = i + 1
           pods_not_found = false;
@@ -130,7 +130,7 @@ if action == "list" then
   local latest_fewer_replicas_seconds, err = red:get("latest_fewer_replicas_seconds")
   local fewer_replicas_time, err = red:get("fewer_replicas_time")
 
-  ngx.log(ngx.ERR, "[METRICS] pods_not_running_on=" .. pods_not_running_on)
+  ngx.log(ngx.INFO, "[METRICS] pods_not_running_on=" .. pods_not_running_on)
 
   if fewer_replicas_seconds == ngx.null then
     red:set("fewer_replicas_seconds", 0)
@@ -156,7 +156,7 @@ if action == "list" then
   end
 
   if pods_not_found then
-    ngx.log(ngx.ERR, "No pods found into the namespace " .. namespace)
+    ngx.log(ngx.INFO, "No pods found into the namespace " .. namespace)
     ngx.say("{\"items\": []}")
   else
     ngx.say(json.encode(pods))

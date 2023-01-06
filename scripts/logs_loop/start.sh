@@ -11,7 +11,6 @@ export PYTHONWARNINGS="ignore:Unverified HTTPS request"
 
 python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &
 
-# WORK AROUND...
 while true
 do
   ( ps -ef | grep start.py | grep logs_loop | grep -v grep ) || ( python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )

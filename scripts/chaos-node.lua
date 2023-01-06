@@ -39,10 +39,10 @@ local resp = {}
 if ngx.var.request_method == "GET" then
 
   if okredis then
-    ngx.log(ngx.ERR, "Connection to Redis is ok")
+    ngx.log(ngx.INFO, "Connection to Redis is ok")
   else
-    ngx.log(ngx.ERR, "Connection to Redis is not ok")
-    ngx.log(ngx.ERR, errredis)
+    ngx.log(ngx.INFO, "Connection to Redis is not ok")
+    ngx.log(ngx.INFO, errredis)
   end
   -- Count the total of chaos jobs launched against nodes
   local chaos_node_res, err = red:get("chaos_node_jobs_total")
@@ -81,11 +81,11 @@ headers = {
 local res, err = red:get("chaos_container")
   
 if res ~= ngx.null then
-  ngx.log(ngx.ERR, "Found chaos_container defined in Redis!")
-  ngx.log(ngx.ERR, res)
+  ngx.log(ngx.INFO, "Found chaos_container defined in Redis!")
+  ngx.log(ngx.INFO, res)
   chaos_container = res
 else
-  ngx.log(ngx.ERR, "Using default chaos container")
+  ngx.log(ngx.INFO, "Using default chaos container")
   chaos_container = config["default_chaos_container"]
 end
 
@@ -126,7 +126,7 @@ local headers2 = {
 }
 
 url = k8s_url .. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
-ngx.log(ngx.ERR, "Creating chaos_node job kubeinvaders-chaos-" ..rand)
+ngx.log(ngx.INFO, "Creating chaos_node job kubeinvaders-chaos-" ..rand)
 
 local ok, statusCode, headers, statusText = https.request{
   url = url,
@@ -136,12 +136,12 @@ local ok, statusCode, headers, statusText = https.request{
   source = ltn12.source.string(body)
 }
 
-ngx.log(ngx.ERR, ok)
-ngx.log(ngx.ERR, statusCode)
-ngx.log(ngx.ERR, statusText)
+ngx.log(ngx.INFO, ok)
+ngx.log(ngx.INFO, statusCode)
+ngx.log(ngx.INFO, statusText)
 
 local url = k8s_url.. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
-ngx.log(ngx.ERR, "Getting JobList" .. rand)
+ngx.log(ngx.INFO, "Getting JobList" .. rand)
 
 local ok, statusCode, headers, statusText = https.request{
   url = url,
@@ -150,9 +150,9 @@ local ok, statusCode, headers, statusText = https.request{
   sink = ltn12.sink.table(resp)
 }
 
-ngx.log(ngx.ERR, ok)
-ngx.log(ngx.ERR, statusCode)
-ngx.log(ngx.ERR, statusText)
+ngx.log(ngx.INFO, ok)
+ngx.log(ngx.INFO, statusCode)
+ngx.log(ngx.INFO, statusText)
 
 for k,v in ipairs(resp) do
   decoded = json.decode(v)
@@ -160,14 +160,14 @@ for k,v in ipairs(resp) do
     for k2,v2 in ipairs(decoded["items"]) do
       if v2["status"]["succeeded"] == 1 and v2["metadata"]["labels"]["approle"] == "chaosnode" then
         delete_job = "kubectl delete job " .. v2["metadata"]["name"] .. " --token=" .. token .. " --server=" .. k8s_url .. " --insecure-skip-tls-verify=true -n " .. namespace
-        ngx.log(ngx.ERR, delete_pod)
+        ngx.log(ngx.INFO, delete_pod)
       end
     end
   end
 end
 
 local url = k8s_url.. "/api/v1/namespaces/" .. namespace  .. "/pods"
-ngx.log(ngx.ERR, "Getting PodList" .. rand)
+ngx.log(ngx.INFO, "Getting PodList" .. rand)
 
 local ok, statusCode, headers, statusText = https.request{
   url = url,
@@ -176,9 +176,9 @@ local ok, statusCode, headers, statusText = https.request{
   sink = ltn12.sink.table(resp)
 }
 
-ngx.log(ngx.ERR, ok)
-ngx.log(ngx.ERR, statusCode)
-ngx.log(ngx.ERR, statusText)
+ngx.log(ngx.INFO, ok)
+ngx.log(ngx.INFO, statusCode)
+ngx.log(ngx.INFO, statusText)
 
 for k,v in ipairs(resp) do
   decoded = json.decode(v)
@@ -186,7 +186,7 @@ for k,v in ipairs(resp) do
     for k2,v2 in ipairs(decoded["items"]) do
       if v2["status"]["phase"] == "Succeeded" and v2["metadata"]["labels"]["approle"] == "chaosnode" then
         delete_pod = "kubectl delete pod " .. v2["metadata"]["name"] .. " --token=" .. token .. " --server=" .. k8s_url .. " --insecure-skip-tls-verify=true -n " .. namespace
-        ngx.log(ngx.ERR, delete_pod)
+        ngx.log(ngx.INFO, delete_pod)
       end
     end
   end

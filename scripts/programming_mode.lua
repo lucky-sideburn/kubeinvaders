@@ -6,10 +6,10 @@ local red = redis:new()
 local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
 if okredis then
-  ngx.log(ngx.ERR, "Connection to Redis is ok")
+  ngx.log(ngx.INFO, "Connection to Redis is ok")
 else
-  ngx.log(ngx.ERR, "Connection to Redis is not ok")
-  ngx.log(ngx.ERR, errredis)
+  ngx.log(ngx.INFO, "Connection to Redis is not ok")
+  ngx.log(ngx.INFO, errredis)
 end
 
 local k8s_url = ""
@@ -30,7 +30,7 @@ local token = os.getenv("TOKEN")
 local arg = ngx.req.get_uri_args()
 local body_data = ngx.req.get_body_data() 
 
-ngx.log(ngx.ERR, "[programming_mode]" .. body_data)
+ngx.log(ngx.INFO, "[programming_mode]" .. body_data)
 
 math.randomseed(os.clock()*100000000000)
 local rand = math.random(999, 9999)
@@ -40,13 +40,13 @@ io.output(file)
 io.write(body_data)
 io.close(file)
 
-ngx.log(ngx.ERR, "[programming_mode] set programming_mode Redis key")
+ngx.log(ngx.INFO, "[programming_mode] set programming_mode Redis key")
 red:set("programming_mode", "1")
 
---ngx.log(ngx.ERR, "[programming_mode] remove do_not_clean_log:" ..arg['id'] .. " Redis key")
+--ngx.log(ngx.INFO, "[programming_mode] remove do_not_clean_log:" ..arg['id'] .. " Redis key")
 --red:del("do_not_clean_log:" .. arg['id'])
 
-ngx.log(ngx.ERR, "[programming_mode] set logs_enabled:" .. arg['id'] .. " Redis key")
+ngx.log(ngx.INFO, "[programming_mode] set logs_enabled:" .. arg['id'] .. " Redis key")
 
 red:set("logs_enabled:" .. arg['id'], "1")
 red:expire("logs_enabled:" .. arg['id'], "10")

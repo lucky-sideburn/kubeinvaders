@@ -6,10 +6,10 @@ local red = redis:new()
 local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
 if okredis then
-  ngx.log(ngx.ERR, "Connection to Redis is ok")
+  ngx.log(ngx.INFO, "Connection to Redis is ok")
 else
-  ngx.log(ngx.ERR, "Connection to Redis is not ok")
-  ngx.log(ngx.ERR, errredis)
+  ngx.log(ngx.INFO, "Connection to Redis is not ok")
+  ngx.log(ngx.INFO, errredis)
 end
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
@@ -18,18 +18,18 @@ ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range'
 
 if ngx.var.request_method == "GET" and action == 'container_definition' then
-    ngx.log(ngx.ERR, "Received request for getting chaos container definition")
+    ngx.log(ngx.INFO, "Received request for getting chaos container definition")
     local res, err = red:get("chaos_container")
     if res == ngx.null then
-      ngx.log(ngx.ERR, "There is no chaos_container key set in Redis. Taking default chaos container definition")
+      ngx.log(ngx.INFO, "There is no chaos_container key set in Redis. Taking default chaos container definition")
       ngx.say(config['default_chaos_container'])
     else
-      ngx.log(ngx.ERR, "There is chaos_container key set in Redis. Taking custom chaos container definition")
+      ngx.log(ngx.INFO, "There is chaos_container key set in Redis. Taking custom chaos container definition")
       ngx.say(res)
     end
 elseif ngx.var.request_method == "POST" and action == 'set' then
   local body_data = ngx.req.get_body_data()  
-  ngx.log(ngx.ERR, "Received new yaml definition for chaos container: " .. body_data)
+  ngx.log(ngx.INFO, "Received new yaml definition for chaos container: " .. body_data)
   red:set("chaos_container", body_data)
   ngx.say("New chaos container definition has been configured in Redis")
   return ngx.exit(ngx.status)
@@ -39,7 +39,7 @@ elseif ngx.var.request_method == "POST" and action == "set_log_regex" then
   red:set("log_pod_regex:" .. arg['id'], body_data)
   red:set("programming_mode", "0")
   ngx.say("Regex has been set => " .. body_data)
-  ngx.log(ngx.ERR, "Set Regex for web log tail. Log id " .. arg['id'])
+  ngx.log(ngx.INFO, "Set Regex for web log tail. Log id " .. arg['id'])
   --local redis_del_cmd = "(redis-cli KEYS 'regex_cmp:'" .. arg['id'] .. "| xargs redis-cli DEL) || echo"
   --local handle = io.popen(redis_del_cmd)
   --local result = handle:read("*a")
@@ -51,13 +51,13 @@ elseif ngx.var.request_method == "POST" and action == "enable_log_tail" then
   red:set("logs_enabled:" .. arg['id'], "1")
   red:expire("logs_enabled:" .. arg['id'], "10")
   red:set("programming_mode", "0")
-  ngx.log(ngx.ERR, "Enable Log Tail for log id " .. arg['id'])
+  ngx.log(ngx.INFO, "Enable Log Tail for log id " .. arg['id'])
   ngx.say("Enable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 
 elseif ngx.var.request_method == "POST" and action == "disable_log_tail" then
   red:set("programming_mode", "0")
   ngx.say("Disable Log Tail for log id " .. arg['id'])
-  ngx.log(ngx.ERR, "Disable Log Tail for log id " .. arg['id'])
+  ngx.log(ngx.INFO, "Disable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)
 end

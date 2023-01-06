@@ -25,6 +25,20 @@
 Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
 
 ## Installation
+
+### Try with Docker (only for development purpose)
+
+```bash
+docker run -p 8080:8080 \
+--env K8S_TOKEN=<k8s_token>  \
+--env ENDPOINT=localhost:8080 \
+--env INSECURE_ENDPOINT=true \
+--env KUBERNETES_SERVICE_HOST=<k8s_ip> \
+--env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
+--env NAMESPACE=namespace1 \
+luckysideburn/kubeinvaders:develop
+```
+
 ### Install to Kubernetes with Helm (v3+)
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 

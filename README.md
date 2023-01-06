@@ -30,12 +30,12 @@ Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a f
 
 ```bash
 docker run -p 8080:8080 \
---env K8S_TOKEN=<k8s_token>  \
+--env K8S_TOKEN=<k8s_service_account_token>  \
 --env ENDPOINT=localhost:8080 \
 --env INSECURE_ENDPOINT=true \
---env KUBERNETES_SERVICE_HOST=<k8s_ip> \
---env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
---env NAMESPACE=namespace1 \
+--env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
+--env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
+--env NAMESPACE=<comma_separated_namespaces_to_stress> \
 luckysideburn/kubeinvaders:develop
 ```
 

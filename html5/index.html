@@ -47,6 +47,13 @@
         border-color: #000000;
       }
 
+      .btn-light-saved {
+        color: #fff;
+        background-color: #771996;
+        border-width: 1.5px;
+        border-color: #000000;
+      }
+
       .btn-light:hover {
         transform: scale(1.05);
       }
@@ -194,6 +201,7 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
                 <button type="button" class="btn btn-light" onclick="savePreset('save')">Save</button>
+                <button type="button" class="btn btn-danger" onclick="resetPreset('reset')">Reset to default</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
               </div>
             </form>
@@ -336,6 +344,7 @@
       <div id="chaos-program-screen" style="display: none;">
         <div class="row" style="margin-top: 1%;">
           <div id="alert_placeholder4" style="margin-top: 1%;"></div>
+          <div id="alert_placeholder_programming_mode" style="margin-top: 1%;"></div>
           <div class="col">
             <form>
             <div class="form-group">
@@ -489,8 +498,8 @@ experiments:
 
       function loadPreset(tool, lang) {
         let decodedStringAtoB = "";
-        console.log("Loaded preset for " + tool);        
-        loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson); 
+        console.log("[GET-PRESETS] Loaded preset for " + tool);
+        loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson);
         decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
         loadSavedPreset(tool, lang, decodedStringAtoB);
         latest_preset_name = tool;

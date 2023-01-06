@@ -114,6 +114,31 @@ function getCodeName() {
     oReq.send();
 }
 
+function getSavedPresets() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            if ((this.responseText.trim() != "nil") && (this.responseText.trim() != "")) {
+                console.log("[GET-PRESETS] Response from backend: <" + this.responseText.trim() + ">");
+                var savedPresets = this.responseText.split(",");
+                for (i = 0; i < savedPresets.length; i++) {
+                    var currentPresetName = savedPresets[i].split("_")[1];
+                    currentPresetName = currentPresetName.charAt(0).toUpperCase() + currentPresetName.slice(1);
+                    console.log("[GET-PRESETS] currentPresetName: " + currentPresetName);
+                    var buttonId = "load" + currentPresetName.trim();
+                    console.log("[GET-PRESETS] Change border color of buttonId: " + buttonId);
+                    document.getElementById(buttonId).classList.remove('btn-light');
+                    document.getElementById(buttonId).classList.add('btn-light-saved');
+                }
+            } else {
+                console.log("[GET-PRESETS] There is no saved presets in Redis");
+            }
+        }
+    };;
+    oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset/savedpresets");
+    oReq.send();
+}
+
 function loadSavedPreset(tool, lang, defaultpreset) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
@@ -127,7 +152,32 @@ function loadSavedPreset(tool, lang, defaultpreset) {
         }
     };;
     oReq.open("GET", "https://" + clu_endpoint + "/chaos/loadpreset?name=" + tool + "&lang=" + lang);
-    oReq.send();
+    oReq.send()
+    var now = new Date().toLocaleString().replace(',','')
+    $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
+    $('#alert_placeholder').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
+
+}
+
+function resetPreset() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            let capitalizedPreset = latest_preset_name.charAt(0).toUpperCase() + latest_preset_name.slice(1);
+            let buttonId = "load" + capitalizedPreset;
+            document.getElementById(buttonId).classList.remove('btn-light-saved');
+            document.getElementById(buttonId).classList.add('btn-light');
+            closeSetLoadTestModal();
+            getSavedPresets();
+            console.log("[RESET-PRESETS] " + latest_preset_name + " restored with default preset");
+            var now = new Date().toLocaleString().replace(',','')
+            $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
+            $('#alert_placeholder').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
+
+        }
+    };;
+    oReq.open("POST", "https://" + clu_endpoint + "/chaos/loadpreset/reset?name="+ latest_preset_name + "&lang="+ latest_preset_lang);
+    oReq.send({});
 }
 
 function savePreset(action) {
@@ -168,6 +218,8 @@ experiments:
     oReq.setRequestHeader("Content-Type", "application/json");
     oReq.send(presetBody);
     closeSetLoadTestModal();
+    
+    getSavedPresets();
 
     if (action == "apply" && programming_mode_switch == false){
         startProgrammingMode();
@@ -420,7 +472,6 @@ function setChaosContainer() {
 }
 
 function runChaosProgram() {
-
     chaosProgram = $('#chaosProgramTextArea').val();
     chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
     $('#chaosProgramTextArea').val(chaosProgramWithCodename);
@@ -954,7 +1005,9 @@ window.setInterval(function backgroundTasks() {
     if (programming_mode_switch) {
         drawChaosProgramFlow();
     }
+
 }, 2000)
 
 getEndpoint();
 getNamespaces();
+getSavedPresets()

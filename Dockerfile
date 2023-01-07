@@ -69,6 +69,9 @@ RUN pip3 install -r /opt/programming_mode/requirements.txt
 EXPOSE 8080
 
 ENV PATH=/usr/local/openresty/nginx/sbin:$PATH
+
 COPY ./entrypoint.sh /
+
 RUN chmod a+rwx ./entrypoint.sh
+
 ENTRYPOINT ["/entrypoint.sh"]

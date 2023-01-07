@@ -152,13 +152,13 @@ while True:
             final_pod_list = []
             if r.exists(f"log_pod_regex:{logid}") and r.exists(f"logs_enabled:{logid}"):
                 # and r.get("programming_mode") == "0":
-                logging.info(f"[logid:{logid}] Found Redis keys for log tail")
+                #logging.info(f"[logid:{logid}] Found Redis keys for log tail")
                 if r.get(f"logs_enabled:{logid}") == "1":
-                    logging.info(f"[logid:{logid}] Found regex log_pod_regex in Redis. Logs from all pods should be collected")
+                    #logging.info(f"[logid:{logid}] Found regex log_pod_regex in Redis. Logs from all pods should be collected")
 
                     log_pod_regex = r.get(f"log_pod_regex:{logid}")
 
-                    logging.info(f"[logid:{logid}] log_pod_regex is => |{log_pod_regex}|")
+                    #logging.info(f"[logid:{logid}] log_pod_regex is => |{log_pod_regex}|")
 
                     try:
                         api_response = api_instance.list_pod_for_all_namespaces()
@@ -166,7 +166,7 @@ while True:
                         logging.info(e)
                     
                     pods_found_info = f"[logid:{logid}] Looking for pods compliant with the current regex. Scanning {len(api_response.items)} pods"
-                    logging.info(pods_found_info)
+                    #logging.info(pods_found_info)
                     r.set(f"log_status:{logid}", pods_found_info)
 
                     json_re = json.loads(log_pod_regex)
@@ -177,11 +177,11 @@ while True:
                     labels_re = json_re["labels"]
                     containers_re = json_re["containers"]
 
-                    logging.info(f"[logid:{logid}] Gobal Json Regex is |{json_re}|")
-                    logging.info(f"[logid:{logid}] Regex for pod name is |{pod_re}|")
-                    logging.info(f"[logid:{logid}] Regex namespace name |{namespace_re}|")
-                    logging.info(f"[logid:{logid}] Regex for labels is |{labels_re}|")
-                    logging.info(f"[logid:{logid}] Regex for annotation is |{annotations_re}|")
+                    # logging.info(f"[logid:{logid}] Gobal Json Regex is |{json_re}|")
+                    # logging.info(f"[logid:{logid}] Regex for pod name is |{pod_re}|")
+                    # logging.info(f"[logid:{logid}] Regex namespace name |{namespace_re}|")
+                    # logging.info(f"[logid:{logid}] Regex for labels is |{labels_re}|")
+                    # logging.info(f"[logid:{logid}] Regex for annotation is |{annotations_re}|")
 
                     for pod in api_response.items:   
                         if r.exists(f"regex_cmp:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"):
@@ -195,37 +195,37 @@ while True:
                                 logging.debug(regex_match_info)
                                 r.set(f"log_status:{logid}", regex_match_info)
                         else:
-                            logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}|")
-                            logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}|")
-                            logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
-                            logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
+                            # logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}|")
+                            # logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}|")
+                            # logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}|")
+                            # logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}|")
 
                             if re.search(f"{pod_re}", pod.metadata.name) or re.search(r"{pod_re}", pod.metadata.name):
-                                logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
+                                #logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT: OK")
                                 regex_key_name = f"regex_cmp:{regexsha}:{regexsha}:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"
 
                                 if re.search(f"{namespace_re}", pod.metadata.namespace) or re.search(r"{namespace_re}", pod.metadata.namespace):
-                                    logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
+                                    #logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: OK")
                                     if re.search(f"{labels_re}", str(pod.metadata.labels)) or re.search(r"{labels_re}", str(pod.metadata.labels)):
-                                        logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
+                                        #logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: OK")
                                         if re.search(f"{annotations_re}", str(pod.metadata.annotations)) or re.search(r"{annotations_re}", str(pod.metadata.annotations)):
-                                            logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
+                                            #logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT: OK")
                                             webtail_pods.append(pod)
                                             regex_match_info = f"[logid:{logid}] Taking logs from {pod.metadata.name}. It is compliant with the Regex {log_pod_regex}"
                                             r.set(regex_key_name, "maching")
-                                            logging.debug(regex_match_info)
+                                            #logging.debug(regex_match_info)
                                             r.set(f"log_status:{logid}", regex_match_info)
                                         else:
-                                            logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT FAILED!")
+                                            #logging.debug(f"[logid:{logid}] Regex comparison |{annotations_re}| |{str(pod.metadata.annotations)}| RESULT FAILED!")
                                             r.set(regex_key_name, "not_maching")
                                     else:
-                                        logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: FAILED!")
+                                        #logging.debug(f"[logid:{logid}] Regex comparison |{labels_re}| |{str(pod.metadata.labels)}| RESULT: FAILED!")
                                         r.set(regex_key_name, "not_maching")
                                 else:
-                                    logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: FAILED!")
+                                    #logging.debug(f"[logid:{logid}] Regex comparison |{namespace_re}| |{pod.metadata.namespace}| RESULT: FAILED!")
                                     r.set(regex_key_name, "not_maching")
                             else:
-                                logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT FAILED!")
+                                #logging.debug(f"[logid:{logid}] Regex comparison |{pod_re}| |{pod.metadata.name}| RESULT FAILED!")
                                 r.set(regex_key_name, "not_maching")
 
             try:

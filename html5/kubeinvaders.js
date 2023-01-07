@@ -240,10 +240,6 @@ function drawChaosProgramFlow() {
     var chaosProgram = "";
     chaosProgram = $('#chaosProgramTextArea').val();
 
-    // var chaosProgramWithCodename = chaosProgram.replace('CODENAME_PLACEHOLDER', codename);
-    // console.log(chaosProgramWithCodename);
-    // $('#chaosProgramTextArea').val(chaosProgramWithCodename);
-
     var oReq = new XMLHttpRequest();
     oReq.open("POST", k8s_url + "/chaos/programs/json-flow", true);
 
@@ -313,7 +309,6 @@ function contains(a, obj) {
 function getMetrics() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        //console.log(this.responseText);
         var lines = this.responseText.split('\n');
         for (var i = 0;i < lines.length;i++){
             metric = lines[i].split(' ');
@@ -336,9 +331,6 @@ function getMetrics() {
             else if (metric[0].match(chaos_job_regex)) {
                 metrics_split = metric[0].split(":");
                 chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
-                // for (let [key, value] of chaos_jobs_status) {
-                //     console.log(key + " = " + value);
-                // }
             }
 	    else if (metric[0] == "current_chaos_job_pod") {
 	        $('#current_chaos_job_pod').text(metric[1]);
@@ -413,7 +405,6 @@ function getEndpoint() {
 function getCurrentChaosContainer() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        //console.log(this.responseText);
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
         $('#currentChaosContainerYaml').text(job_parsed);
         $('#currentChaosContainerJsonTextArea').val(job_parsed);
@@ -472,7 +463,6 @@ function setChaosContainer() {
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-                //console.log(this.responseText);
                 $('#alert_placeholder2').text('New container definition has been saved.');
             }
         };;
@@ -494,7 +484,6 @@ function runChaosProgram() {
     oReq.open("POST", k8s_url + "/kube/chaos/programming_mode?id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            //console.log(this.responseText);
             now = new Date().toLocaleString().replace(',','')
             $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program completed at ' + now + ' </div>');
         }
@@ -506,9 +495,9 @@ function runChaosProgram() {
 function startChaosNode(node_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        //console.log(JSON.parse(this.responseText))
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Launched chaos job against ' + node_name + '</div>');
     };;
-    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start Chaos Job on ' + node_name + '</div>');
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start chaos job against ' + node_name + '</div>');
     oReq.open("GET", k8s_url + "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -516,9 +505,8 @@ function startChaosNode(node_name) {
 function deletePods(pod_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        //console.log(JSON.parse(this.responseText))
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
     };;
-    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
     oReq.open("GET", k8s_url + "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
@@ -573,42 +561,27 @@ function keyDownHandler(e) {
         e.preventDefault();
         if(e.key == "Right" || e.key == "ArrowRight") {
             rightPressed = true;
-            //console.log("Go right");
-            //console.log("Spaceship Y:" + spaceshipY);
-            //console.log("Spaceship X: " + spaceshipX);
         }
         else if(e.key == "Left" || e.key == "ArrowLeft") {
             leftPressed = true;
-            //console.log("Go left");
-            //console.log("Spaceship Y:" + spaceshipY);
-            //console.log("Spaceship X: " + spaceshipX);
         }
         if(e.key == "Up" || e.key == "ArrowUp") {
             upPressed = true;
-            //console.log("Go up");
-            //console.log("Spaceship Y:" + spaceshipY);
-            //console.log("Spaceship X: " + spaceshipX);
         }
         else if(e.key == "Down" || e.key == "ArrowDown") {
             downPressed = true;
-            //console.log("Go down");
-            //console.log("Spaceship Y: " + spaceshipY);
-            //console.log("Spaceship X: " + spaceshipX);
         }
         else if(e.keyCode == 83) {
             if (shuffle) {
                 shuffle = false;
                 $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Disable shuffle</div>');
-                //console.log("Deactivate shuffle");
             }
             else {
                 shuffle = true
-                //console.log("Activate shuffle");
                 $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Enable shuffle</div>');
             }
         }
         else if(e.keyCode == 32) {
-            //console.log("Shot");
             shot = true
         }
         else if(e.keyCode == 78) {
@@ -696,7 +669,6 @@ function drawAlien(alienX, alienY, name) {
 
 function checkRocketAlienCollision() {
     if (contains(aliensY, rocketY)) {
-        //console.log("The y of rocket is the same of an alien. rocketY=" + rocketY + " List of aliensY:" + aliensY);
         var i;
         for (i=aliens.length - 1; i >= 0; i--) {
             if (aliens[i]["active"] && (rocketY - aliens[i]["y"] < 5)) {
@@ -708,7 +680,6 @@ function checkRocketAlienCollision() {
                 }
                 
                 if(contains(rangeX, rocketX)) {
-                    //console.log("collision detected");
                     collisionDetected = true;
                     aliens[i]["active"] = false;
                     if (contains(nodes, aliens[i]["name"])) {
@@ -746,7 +717,6 @@ function drawRocket() {
 
     if(shot && rocketLaunched) {
         if (rocketY < 0) {
-            //console.log("Rocket arrived to the end of canvas");
             shot = false;
             rocketLaunched = false;
         }
@@ -946,7 +916,6 @@ window.setInterval(function setAliens() {
     }
 
     aliens = [];
-    //console.log("Length of aliensY array: " + aliensY.length);
     if (pods.length > 0) {
         for (k=10; k>0; k--) {
             if (!contains(aliensY, k)) {
@@ -977,7 +946,6 @@ window.setInterval(function setAliens() {
                     cnt =+ 1;
                 }
                 if (aliens.length % 12 == 0) {
-                    //console.log("we need another line of aliens for Y="+aliensIncrementY);
                     x = 10;
                     y += aliensIncrementY;
                     for (k=y+10; k>=y; k--) {
@@ -985,7 +953,6 @@ window.setInterval(function setAliens() {
                             aliensY.push(k);
                         }
                     }
-                    //console.log("aliensY contains new Y for detecting eventual collisions. aliensY="+aliensY);
                 }
                 else {
                     x += 60;

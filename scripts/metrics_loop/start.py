@@ -75,7 +75,6 @@ namespace = "kubeinvaders"
 while True:
     try:
         api_response = api_instance.list_namespaced_pod(namespace="kubeinvaders")
-        #logging.info(api_response)
     except ApiException as e:
         logging.info(e)
 

@@ -134,7 +134,7 @@ function getSavedPresets() {
                 for (i = 0; i < savedPresets.length; i++) {
                     var currentPresetName = savedPresets[i].split("_")[1];
                     currentPresetName = currentPresetName.charAt(0).toUpperCase() + currentPresetName.slice(1);
-                    console.log("[GET-PRESETS] currentPresetName: " + currentPresetName);
+                    //console.log("[GET-PRESETS] computing preset: " + currentPresetName);
                     var buttonId = "load" + currentPresetName.trim();
                     console.log("[GET-PRESETS] Change border color of buttonId: " + buttonId);
                     document.getElementById(buttonId).classList.remove('btn-light');
@@ -229,6 +229,11 @@ experiments:
     oReq.send(presetBody);
     closeSetLoadTestModal();
     
+    let presetNameCapitalized = presetName.charAt(0).toUpperCase() + presetName.slice(1);
+    var buttonId = "load" + presetNameCapitalized.trim();
+    document.getElementById(buttonId).classList.remove('btn-light');
+    document.getElementById(buttonId).classList.add('btn-light-saved');
+
     getSavedPresets();
 
     if (action == "apply" && programming_mode_switch == false){

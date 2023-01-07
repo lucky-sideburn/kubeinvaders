@@ -501,9 +501,9 @@ experiments:
         console.log("[GET-PRESETS] Loaded preset for " + tool);
         loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson);
         decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
-        loadSavedPreset(tool, lang, decodedStringAtoB);
         latest_preset_name = tool;
         latest_preset_lang = lang;
+        loadSavedPreset(tool, lang, decodedStringAtoB);
         $("#presetLang").val(lang);
         $("#presetName").val(tool);
         $('#setLoadTestModal').modal('show');

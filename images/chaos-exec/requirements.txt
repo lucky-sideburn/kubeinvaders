@@ -1,8 +1,9 @@
- gitlab
+confluent-kafka
+kafka-python
+python-gitlab
 cassandra-driver
 pika
 paramiko
-setuptools<58.0
 atlassian-api-py
 python-consul
 elasticsearch
@@ -11,10 +12,8 @@ hvac
 jira
 kubernetes
 mysql.connector
-nomad
+python-nomad
 prometheus_client
 psycopg2
 pymongo
 requests
-confluent-kafka
-kafka-python

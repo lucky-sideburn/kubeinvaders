@@ -1,0 +1,83 @@
+.transition {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 1.0s linear;
+}
+
+.custom-btn-group {
+  margin-top: 2%;
+  border: 5px solid #b2afaf;
+  border-radius: 5px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  padding: 5px;
+  border-image-slice: 5;    
+}
+
+.logtail-group {
+  margin-top: 0%;
+  border: 5px solid #b2afaf;
+  border-radius: 5px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  padding: 5px;
+  border-image-slice: 5;    
+}
+
+.chaos-prog-area {
+  border: 5px solid #b2afaf;
+  border-radius: 5px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  padding: 5px;
+  border-image-slice: 5;
+}
+
+.btn-light  {
+  border-color: #000000;
+}
+
+.btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.active, .open .dropdown-toggle.btn-default {
+  background-color: #06812f;
+  color:#FFF;
+  border-color: #000000;
+}
+
+.btn-light-saved {
+  color: #fff;
+  background-color: #771996;
+  border-width: 1.5px;
+  border-color: #000000;
+}
+
+.btn-light:hover {
+  transform: scale(1.05);
+}
+
+@font-face {
+  font-family: pixel;
+  src: url('./fonts/pixel.otf');
+  font-size-adjust: inherit;
+}
+
+body {
+  background-color: #ffffff;
+}
+
+.modal-content {
+  background-color: #ffffff;
+}
+
+.modal-content {
+  background-color: #ffffff;
+}
+
+.modal-dialog {
+  background-color: #ffffff;
+}
+
+div {
+  font-family: pixel;
+}
+
+canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}

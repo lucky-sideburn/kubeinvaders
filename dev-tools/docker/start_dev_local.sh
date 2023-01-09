@@ -11,4 +11,5 @@ docker run -p 8080:8080 \
 --env KUBERNETES_SERVICE_HOST=$KINV_K8S_IP \
 --env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
 --env NAMESPACE=namespace1 \
+-v html5:/var/www/test \
 luckysideburn/kubeinvaders:develop_local

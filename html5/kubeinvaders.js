@@ -992,4 +992,16 @@ window.setInterval(function backgroundTasks() {
 
 getEndpoint();
 getNamespaces();
-getSavedPresets()
+getSavedPresets();
+// document.getElementById("gameContainer").style.display = "none";
+// document.getElementById("metricsPresetsRow").style.display = "none"
+
+document.getElementById("gameContainer").style.visibility = "hidden";
+document.getElementById("metricsPresetsRow").style.visibility = "hidden";
+document.getElementById("gameContainer").style.opacity = 0;
+document.getElementById("metricsPresetsRow").style.opacity = 0;
+
+document.getElementById("gameContainer").style.visibility = "visible";
+document.getElementById("metricsPresetsRow").style.visibility = "visible";
+document.getElementById("gameContainer").style.opacity = 1;
+document.getElementById("metricsPresetsRow").style.opacity = 1;

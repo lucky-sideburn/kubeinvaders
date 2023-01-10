@@ -49,8 +49,7 @@ elseif ngx.var.request_method == "POST" and action == "set_log_regex" then
 elseif ngx.var.request_method == "POST" and action == "enable_log_tail" then
   local body_data = ngx.req.get_body_data()  
   red:set("logs_enabled:" .. arg['id'], "1")
-  red:expire("logs_enabled:" .. arg['id'], "10")
-  red:set("programming_mode", "0")
+  red:expire("logs_enabled:" .. arg['id'], "30")
   ngx.log(ngx.INFO, "Enable Log Tail for log id " .. arg['id'])
   ngx.say("Enable Log Tail for log id " .. arg['id'])
   return ngx.exit(ngx.status)

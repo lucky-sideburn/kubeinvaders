@@ -165,8 +165,7 @@ function loadSavedPreset(tool, lang, defaultpreset) {
     oReq.send()
     var now = new Date().toLocaleString().replace(',','')
     $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
-    $('#alert_placeholder').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
-
+    //$('#alert_placeholder').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
 }
 
 function resetPreset() {
@@ -182,8 +181,7 @@ function resetPreset() {
             console.log("[RESET-PRESETS] " + latest_preset_name + " restored with default preset");
             var now = new Date().toLocaleString().replace(',','')
             $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
-            $('#alert_placeholder').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
-
+            //$('#alert_placeholder').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
         }
     };;
     oReq.open("POST", k8s_url + "/chaos/loadpreset/reset?name="+ latest_preset_name + "&lang="+ latest_preset_lang);
@@ -431,8 +429,8 @@ function enableLogTail() {
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
-    // TODO: send payload for auth...
-    oReq.send("foobar");
+    oReq.send("{}");
+    setLogRegex();
 }
 
 function disableLogTail() {
@@ -455,7 +453,7 @@ function setLogRegex() {
     oReq.open("POST", k8s_url + "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            $('#alert_placeholder3').replaceWith(log_tail_alert + 'Regex has been configured...</div>');
+            $('#alert_placeholder3').replaceWith(log_tail_alert + 'New regex has been configured</div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");
@@ -487,14 +485,14 @@ function runChaosProgram() {
     codename_configured = true;
 
     var now = new Date().toLocaleString().replace(',','')
-    $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
+    $('#alert_placeholder_programming_mode').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
 
     var oReq = new XMLHttpRequest();
     oReq.open("POST", k8s_url + "/kube/chaos/programming_mode?id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             now = new Date().toLocaleString().replace(',','')
-            $('#alert_placeholder4').replaceWith(alert_div + 'Chaos Program completed at ' + now + ' </div>');
+            $('#alert_placeholder_programming_mode').replaceWith(alert_div + 'Chaos Program completed at ' + now + ' </div>');
         }
     };;
     oReq.setRequestHeader("Content-Type", "application/json");

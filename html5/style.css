@@ -4,6 +4,41 @@
   transition: visibility 0s, opacity 1.0s linear;
 }
 
+hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-top: 2px solid rgba(66, 2, 119, 0.588);
+}
+
+.alert-logs-namespace {
+  background-color: #7116d8;
+  color: #ffffff;
+  border-color: #FFF;
+  border-radius: 1px;
+  font-size: 14px; 
+  font-family: Courier New, Courier, monospace;
+}
+
+.alert-logs-pod {
+  background-color: #7116d8;
+  color: #ffffff;
+  border-color: #FFF;
+  border-radius: 1px;
+  font-size: 14px; 
+  font-family: Courier New, Courier, monospace;
+}
+
+.alert-logs-container {
+  background-color: #7116d8;
+  color: #ffffff;
+  border-color: #FFF;
+  border-radius: 1px;
+  font-size: 14px; 
+  font-family: Courier New, Courier, monospace;
+}
+
+
 .custom-btn-group {
   margin-top: 2%;
   border: 5px solid #b2afaf;

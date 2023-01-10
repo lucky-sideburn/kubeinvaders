@@ -21,7 +21,36 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def compute_line(api_response_line, api_instance, container):
     logging.debug(f"[logid:{logid}] API Response: ||{api_response_line}||")
-    logrow = f"<div class='row' style='margin-top: 2%; color: #1d1919;'><div class='row' style='font-size: 12px'>-----------------------</div><div class='row' style='font-size: 12px'>Namespace:&nbsp;{pod.metadata.namespace}</div><div class='row' style='font-size: 12px'>Pod:&nbsp;{pod.metadata.name}</div><div class='row' style='font-size: 12px'>Container:&nbsp;{container}</div></div><div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>>>>{api_response_line}</div>"
+    logrow = f"""
+<div class='row' style='margin-top: 2%; color: #1d1919;'>
+    <div class='row' style='font-size: 12px'>
+        <hr/>
+    </div>
+    <div class='row'>
+        <div class='col'>
+            Namespace:
+            <span class="badge rounded-pill alert-logs-namespace">
+                {pod.metadata.namespace}
+            </span>
+        </div>
+        <div class='col'>
+            Pod:
+            <span class="badge rounded-pill alert-logs-pod">
+                {pod.metadata.name}
+            </span>
+        </div>
+        <div class='col'>
+            Container:
+            <span class="badge rounded-pill alert-logs-container">
+                {container}
+            </span>
+        </div>
+    </div>
+</div>
+<div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
+    >>> {api_response_line}
+</div>
+"""
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
     if not r.exists(f"log:{logid}:{pod.metadata.name}:{sha256log}"):
@@ -30,6 +59,9 @@ def compute_line(api_response_line, api_instance, container):
         if file.exists():
             log_html_file = pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html")
             line_prepender(log_html_file, logrow, logid)
+        old_rows = r.get(f"logs:chaoslogs-{logid}")
+        logrow = f"{old_rows}\n{logrow}"
+        r.set(f"logs:chaoslogs-{logid}", logrow)
 
     r.set(f"log:{logid}{pod.metadata.name}:{sha256log}", logrow)
     r.set(f"log_time:{logid}:{pod.metadata.name}", time.time())
@@ -135,6 +167,10 @@ while True:
                 if pathlib.Path(f"/var/www/html/chaoslogs-{logid}.html").exists():
                     logging.info(f"[logid:{logid}] Remove /var/www/html/chaoslogs-{logid}.html")
                     os.remove(f"/var/www/html/chaoslogs-{logid}.html")
+
+                if r.exists(f"logs:chaoslogs-{logid}"):
+                    r.set(f"logs:chaoslogs-{logid}", "Logs has been cleaned")
+
                 r.set(f"do_not_clean_log:{logid}", "1")
                 r.expire(f"do_not_clean_log:{logid}", 30)
             else:
@@ -147,6 +183,9 @@ while True:
             if not file.exists():
                 for key in r.scan_iter(f"log:{logid}:*"):
                     r.delete(key)
+            
+            if r.get(f"log_pod_regex:{logid}") == '{"pod":".*", "namespace":".*", "labels":".*", "annotations":".*", "containers": ".*"}':
+                r.set(f"log_status:{logid}", "ATTENION! The curent regex will match all pods! It can generate a lot of workload")
 
             webtail_pods = []
             final_pod_list = []

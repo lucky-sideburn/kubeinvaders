@@ -5,6 +5,7 @@ local incr = 0
 -- TO DO put all metrics into this metrics.lua. Actually in pod.lua are written other metrics in Redis
 
 if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/chaos[-]node.*$") then
+  ngx.log(ngx.INFO, "[kinv][get-metrics] Find metrics ^.*/chaos[-]node.*$ in Redis")
   local red = redis:new()
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
   
@@ -37,8 +38,9 @@ if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/ch
   end
 
 elseif ngx.var.request_method == "GET" and ngx.var.request_uri == "/metrics" then
+  ngx.log(ngx.INFO, "[kinv][get-metrics] Find metrics globally in Redis")
   for i, res in ipairs(red:keys("*")) do
-    ngx.log(ngx.INFO, res)
+    ngx.log(ngx.INFO, "[kinv][get-metrics] Sending this res: " .. res)
     ngx.say(res ..  " " .. red:get(res))
   end
 end

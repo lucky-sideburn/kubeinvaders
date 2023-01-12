@@ -210,6 +210,7 @@ while True:
                 r.set(f"logs:chaoslogs-{logid}", f"<br> [k-inv] K-inv found {webtail_pods_len} pods to read logs from <br> {old_logs}")
 
             r.set(f"logs:webtail_pods_len:{logid}", webtail_pods_len)
+            r.set(f"pods_match_regex:{logid}", webtail_pods_len)
 
             for pod in webtail_pods:
                 container_list = []

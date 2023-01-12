@@ -331,13 +331,16 @@ function getMetrics() {
             else if (metric[0] == "pods_not_running_on_selected_ns") {
                 $('#pods_not_running_on').text(metric[1]);            
             }
+            else if (metric[0] == "pods_match_regex:" + random_code) {
+                $('#pods_match_regex').text(metric[1]);            
+            }
             else if (metric[0].match(chaos_job_regex)) {
                 metrics_split = metric[0].split(":");
                 chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
             }
-	    else if (metric[0] == "current_chaos_job_pod") {
-	        $('#current_chaos_job_pod').text(metric[1]);
-	    }
+            else if (metric[0] == "current_chaos_job_pod") {
+                $('#current_chaos_job_pod').text(metric[1]);
+            }
         }
     };;
     oReq.open("GET", k8s_url + "/metrics");
@@ -978,7 +981,7 @@ window.setInterval(function backgroundTasks() {
         codename_configured = true;
     }
 
-    if (game_mode_switch || programming_mode_switch) {
+    if (game_mode_switch || programming_mode_switch || log_tail_switch) {
         getMetrics()
     }
     

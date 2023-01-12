@@ -11,7 +11,7 @@ local chaos_container = ""
 local red = redis:new()
 local okredis, errredis = red:connect("unix:/tmp/redis.sock")
 
-function read_all(file)
+local function read_all(file)
     local f = assert(io.open(file, "rb"))
     local content = f:read("*all")
     f:close()
@@ -89,23 +89,21 @@ else
   chaos_container = config["default_chaos_container"]
 end
 
-body = [[
+local body = [[
 {
   "apiVersion": "batch/v1",
   "kind": "Job",
   "metadata": {
     "name": "kubeinvaders-chaos-]] .. rand .. [[",
     "labels": {
-      "app": "kubeinvaders",
-      "approle": "chaosnode"
+      "chaos-controller": "kubeinvaders"
     }
   },
   "spec": {
     "template": {
       "metadata": {
         "labels": {
-          "app": "kubeinvaders",
-          "approle": "chaosnode"
+          "chaos-controller": "kubeinvaders"
         }
       },
       "spec": {
@@ -125,7 +123,7 @@ local headers2 = {
   ["Content-Length"] = string.len(body)
 }
 
-url = k8s_url .. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
+local url = k8s_url .. "/apis/batch/v1/namespaces/" .. namespace  .. "/jobs"
 ngx.log(ngx.INFO, "Creating chaos_node job kubeinvaders-chaos-" ..rand)
 
 local ok, statusCode, headers, statusText = https.request{
@@ -158,7 +156,7 @@ for k,v in ipairs(resp) do
   decoded = json.decode(v)
   if decoded["kind"] == "JobList" then
     for k2,v2 in ipairs(decoded["items"]) do
-      if v2["status"]["succeeded"] == 1 and v2["metadata"]["labels"]["approle"] == "chaosnode" then
+      if v2["status"]["succeeded"] == 1 and v2["metadata"]["labels"]["chaos-controller"] == "kubeinvaders" then
         delete_job = "kubectl delete job " .. v2["metadata"]["name"] .. " --token=" .. token .. " --server=" .. k8s_url .. " --insecure-skip-tls-verify=true -n " .. namespace
         ngx.log(ngx.INFO, delete_pod)
       end
@@ -184,7 +182,7 @@ for k,v in ipairs(resp) do
   decoded = json.decode(v)
   if decoded["kind"] == "PodList" then
     for k2,v2 in ipairs(decoded["items"]) do
-      if v2["status"]["phase"] == "Succeeded" and v2["metadata"]["labels"]["approle"] == "chaosnode" then
+      if v2["status"]["phase"] == "Succeeded" and v2["metadata"]["labels"]["chaos-controller"] == "kubeinvaders" then
         delete_pod = "kubectl delete pod " .. v2["metadata"]["name"] .. " --token=" .. token .. " --server=" .. k8s_url .. " --insecure-skip-tls-verify=true -n " .. namespace
         ngx.log(ngx.INFO, delete_pod)
       end

@@ -37,12 +37,12 @@ def create_pod_list(logid, api_response_items, current_regex):
                 webtail_pods.append(pod)
                 regex_match_info = f"[logid:{logid}][k-inv][logs-loop] Taking logs of {pod.metadata.name}. Redis has cached that {current_regex} is good for {pod.metadata.name}"
                 r.set(f"log_status:{logid}", regex_match_info)
-                logging.info(f"[logid:{logid}][k-in][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| IS CHACHED IN REDIS")
+                logging.info(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
 
             else:
-                regex_match_info = f"[logid:{logid}][logs-loop] Skipping logs of {pod.metadata.name}. Redis has cached that {current_regex} is not good for {pod.metadata.name}"
+                regex_match_info = f"[logs-loop][logid:{logid}] Skipping logs of {pod.metadata.name}. Redis has cached that {current_regex} is not good for {pod.metadata.name}"
                 logging.debug(regex_match_info)
-                logging.info(f"[logid:{logid}][k-inv][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| IS CHACHED IN REDIS")
+                logging.info(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
 
         else:
             if re.search(f"{pod_re}", pod.metadata.name) or re.search(r"{pod_re}", pod.metadata.name):
@@ -138,14 +138,6 @@ def compute_line(api_response_line, container):
     r.set(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}", logrow)
     r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
     r.expire(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}", 30)
-
-    # logging.info(f"[logid:{logid}] Phase of {pod.metadata.name} is {pod.status.phase}")   
-    # if pod.status.phase == "Succeeded" and 'approle' in  pod.metadata.labels and pod.metadata.labels['approle'] == 'chaosnode':
-    #     try:
-    #         api_instance.delete_namespaced_pod(pod.metadata.name, namespace = pod.metadata.namespace)
-    #         logging.info(f"[logid:{logid}] Deleted pod {pod.metadata.name}")
-    #     except ApiException as e:
-    #         logging.info(e)
 
 logging.basicConfig(level=logging.INFO)
 

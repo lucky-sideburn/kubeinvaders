@@ -28,7 +28,7 @@ def create_container(image, name, command, args):
     return container
 
 def create_pod_template(pod_name, additional_labels, container, exp_name):
-    pod_labels = {"app": "kubeinvaders", "approle": "chaosnode", "experiment-name": exp_name}
+    pod_labels = {"chaos-controller": "kubeinvaders", "experiment-name": exp_name}
     pod_labels.update(additional_labels)
     pod_template = client.V1PodTemplateSpec(
         spec=client.V1PodSpec(restart_policy="Never", containers=[container]),
@@ -38,7 +38,7 @@ def create_pod_template(pod_name, additional_labels, container, exp_name):
     return pod_template
 
 def create_job(job_name, pod_template):
-    metadata = client.V1ObjectMeta(name=job_name, labels={"job-name": job_name, "approle": "chaosnode"})
+    metadata = client.V1ObjectMeta(name=job_name, labels={"chaos-controller": "kubeinvaders"})
 
     job = client.V1Job(
         api_version="batch/v1",

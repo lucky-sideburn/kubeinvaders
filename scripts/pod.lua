@@ -107,7 +107,7 @@ if action == "list" then
     decoded = json.decode(v)
     if decoded["kind"] == "PodList" then
       for k2,v2 in ipairs(decoded["items"]) do
-        if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["approle"] ~= "chaosnode" then
+        if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
           ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
           pods["items"][i] = v2["metadata"]["name"]
           i = i + 1

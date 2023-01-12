@@ -13,7 +13,7 @@ python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_
 
 while true
 do
-  ( ps -ef | grep start.py | grep logs_loop | grep -v grep ) || echo "Error. Logs Loop is down..."
-  ( ps -ef | grep start.py | grep logs_loop | grep -v grep ) || ( python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
+  ( ps -ef | grep start.py | grep logs_loop | grep -v grep &> /dev/null) || echo "Error. Logs Loop is down..."
+  ( ps -ef | grep start.py | grep logs_loop | grep -v grep &> /dev/null) || ( python3 /opt/logs_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
   sleep 2
 done

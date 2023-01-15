@@ -146,6 +146,11 @@ function createChaosProgramButton(name, lang) {
     document.getElementById("loadButtonGroup").scrollLeft = document.getElementById("loadButtonGroup").scrollWidth;
 }
 
+function deleteChaosProgramButton(name) {
+    let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+    document.getElementById("loadButtonGroup").removeChild(document.getElementById("load" + capitalizedName)); 
+}
+
 function getSavedPresets() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
@@ -196,7 +201,7 @@ function loadSavedPreset(tool, lang, defaultpreset) {
     //$('#alert_placeholder').replaceWith(alert_div + '[' + now + '] Open preset for ' + tool + '</div>');
 }
 
-function resetPreset() {
+function resetPreset(kind) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -206,13 +211,22 @@ function resetPreset() {
             // document.getElementById(buttonId).classList.add('btn-light');
             closeSetLoadTestModal();
             getSavedPresets();
-            console.log("[RESET-PRESETS] " + latest_preset_name + " restored with default preset");
+            if (kind == 'k-inv') {
+                console.log("[DELETE-K-INV-PROGRAM] " + latest_preset_name + " deleted");
+                deleteChaosProgramButton(latest_preset_name);
+            }
+            else {
+                console.log("[RESET-PRESETS] " + latest_preset_name + " restored with default preset");
+            }
             var now = new Date().toLocaleString().replace(',','')
             $('#alert_placeholder_programming_mode').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
             //$('#alert_placeholder').replaceWith(alert_div + '[' + now + '] ' + latest_preset_name + ' preset has been restored with default code</div>');
         }
     };;
-    oReq.open("POST", k8s_url + "/chaos/loadpreset/reset?name="+ latest_preset_name + "&lang="+ latest_preset_lang);
+    if (kind == 'k-inv') {
+        console.log("[RESET-PRESETS] Deleting " + latest_preset_name + " lang " + latest_preset_lang);
+    }
+    oReq.open("POST", k8s_url + "/chaos/loadpreset/reset?name="+ latest_preset_name.toLowerCase() + "&lang="+ latest_preset_lang);
     oReq.send({});
 }
 
@@ -229,6 +243,7 @@ function savePreset(action) {
         console.log("[SAVE-PRESET-CHAOSPROGRAM] lang: " + presetLang + " name:" + presetName);
         presetBody =  $('#chaosProgramTextArea').val();
         document.getElementById("resetToDefaultButton").style.display = "none";
+        document.getElementById("deleteChaosProgramButton").style.display = "block";
     }
     else if (latest_preset_lang == "k-inv") {
         presetLang = "k-inv";
@@ -237,11 +252,13 @@ function savePreset(action) {
         console.log("[SAVE-PRESET-CHAOSPROGRAM] lang: " + presetLang + " name:" + codename);
         presetBody = $('#currentLoadTest').val();
         document.getElementById("resetToDefaultButton").style.display = "none";
+        document.getElementById("deleteChaosProgramButton").style.display = "block";
     }
     else {
         presetLang = latest_preset_lang;
         presetName = latest_preset_name;    
         document.getElementById("resetToDefaultButton").style.display = "block";
+        document.getElementById("deleteChaosProgramButton").style.display = "none";
     }
 
     //console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);

@@ -106,7 +106,8 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
                 <button type="button" class="btn btn-light" onclick="savePreset('save')">Save</button>
-                <button type="button" id="resetToDefaultButton" class="btn btn-light-saved" onclick="resetPreset('reset')">Reset to default</button>
+                <button type="button" id="resetToDefaultButton" class="btn btn-light-saved" onclick="resetPreset('preset')">Reset to default</button>
+                <button type="button" id="deleteChaosProgramButton" class="btn btn-dark" onclick="resetPreset('k-inv')">Delete</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
               </div>
             </form>
@@ -222,6 +223,7 @@
             </div>
             <div class="row">
                 <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
+                  <button type="button" id="loadCassandra" class="btn btn-light btn-sm" onclick="loadPreset('default', 'k-inv')">Default</button>
                   <button type="button" id="loadCassandra" class="btn btn-light btn-sm" onclick="loadPreset('cassandra', 'python')">Cassandra</button>
                   <button type="button" id="loadConsul" class="btn btn-light btn-sm" onclick="loadPreset('consul', 'python')">Consul</button>
                   <button type="button" id="loadElasticsearch" class="btn btn-light btn-sm" onclick="loadPreset('elasticsearch', 'python')">Elasticsearch</button>

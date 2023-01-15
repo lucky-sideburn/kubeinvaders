@@ -1,4 +1,5 @@
 loadPresetsCodeJson = `{
+    "default": "Y2hhb3MtY29kZW5hbWU6IGxpdGhpdW0Kam9iczoKICBjcHUtYXR0YWNrLWpvYjoKICAgIGFkZGl0aW9uYWwtbGFiZWxzOgogICAgICBjaGFvcy1jb250cm9sbGVyOiBrdWJlaW52YWRlcnMKICAgICAgY2hhb3MtdHlwZTogc3RyZXNzLW5nCiAgICAgIGNoYW9zLWNvZGVuYW1lOiBsaXRoaXVtCiAgICBpbWFnZTogZG9ja2VyLmlvL2x1Y2t5c2lkZWJ1cm4va3ViZWludmFkZXJzLXN0cmVzcy1uZzpsYXRlc3QKICAgIGNvbW1hbmQ6ICJzdHJlc3MtbmciCiAgICBhcmdzOgogICAgICAtIC0taGVscAoKICBtZW0tYXR0YWNrLWpvYjoKICAgIGFkZGl0aW9uYWwtbGFiZWxzOgogICAgICBjaGFvcy1jb250cm9sbGVyOiBrdWJlaW52YWRlcnMKICAgICAgY2hhb3MtdHlwZTogc3RyZXNzLW5nCiAgICAgIGNoYW9zLWNvZGVuYW1lOiBsaXRoaXVtCiAgICBpbWFnZTogZG9ja2VyLmlvL2x1Y2t5c2lkZWJ1cm4va3ViZWludmFkZXJzLXN0cmVzcy1uZzpsYXRlc3QKICAgIGNvbW1hbmQ6ICJzdHJlc3MtbmciCiAgICBhcmdzOgogICAgICAtIC0taGVscAoKZXhwZXJpbWVudHM6CiAgLSBuYW1lOiBjcHUtYXR0YWNrLWV4cAogICAgam9iOiBjcHUtYXR0YWNrLWpvYgogICAgbG9vcDogNQoKICAtIG5hbWU6IG1lbS1hdHRhY2stZXhwCiAgICBqb2I6IG1lbS1hdHRhY2stam9iCiAgICBsb29wOiA1CiAK",
     "cassandra": "ZnJvbSBjYXNzYW5kcmEuY2x1c3RlciBpbXBvcnQgQ2x1c3Rlcgpmcm9tIHJhbmRvbSBpbXBvcnQgcmFuZGludAppbXBvcnQgdGltZQoKZGVmIG1haW4oKToKICAgIGNsdXN0ZXIgPSBDbHVzdGVyKFsnMTI3LjAuMC4xJ10pCiAgICBzZXNzaW9uID0gY2x1c3Rlci5jb25uZWN0KCkKCiAgICBzZXNzaW9uLmV4ZWN1dGUoIkNSRUFURSBLRVlTUEFDRSBJRiBOT1QgRVhJU1RTIHRlc3QgV0lUSCBSRVBMSUNBVElPTiA9IHsgJ2NsYXNzJzogJ1NpbXBsZVN0cmF0ZWd5JywgJ3JlcGxpY2F0aW9uX2ZhY3Rvcic6IDEgfSIpCiAgICBzZXNzaW9uLmV4ZWN1dGUoIkNSRUFURSBUQUJMRSBJRiBOT1QgRVhJU1RTIHRlc3QubWVzc2FnZXMgKGlkIGludCBQUklNQVJZIEtFWSwgbWVzc2FnZSB0ZXh0KSIpCgogICAgZm9yIGkgaW4gcmFuZ2UoMTAwMCk6CiAgICAgICAgc2Vzc2lvbi5leGVjdXRlKCJJTlNFUlQgSU5UTyB0ZXN0Lm1lc3NhZ2VzIChpZCwgbWVzc2FnZSkgVkFMVUVTICglcywgJyVzJykiICUgKGksIHN0cihyYW5kaW50KDAsIDEwMDApKSkpCiAgICAgICAgdGltZS5zbGVlcCgwLjAwMSkKCiAgICBjbHVzdGVyLnNodXRkb3duKCkKCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICBtYWluKCk=",
     "consul": "aW1wb3J0IHRpbWUKaW1wb3J0IGNvbnN1bAoKIyBDb25uZWN0IHRvIHRoZSBDb25zdWwgY2x1c3RlcgpjbGllbnQgPSBjb25zdWwuQ29uc3VsKCkKCiMgQ29udGludW91c2x5IHJlZ2lzdGVyIGFuZCBkZXJlZ2lzdGVyIGEgc2VydmljZQp3aGlsZSBUcnVlOgogICAgIyBSZWdpc3RlciB0aGUgc2VydmljZQogICAgY2xpZW50LmFnZW50LnNlcnZpY2UucmVnaXN0ZXIoCiAgICAgICAgInN0cmVzcy10ZXN0LXNlcnZpY2UiLAogICAgICAgIHBvcnQ9ODA4MCwKICAgICAgICB0YWdzPVsic3RyZXNzLXRlc3QiXSwKICAgICAgICBjaGVjaz1jb25zdWwuQ2hlY2soKS50Y3AoImxvY2FsaG9zdCIsIDgwODAsICIxMHMiKQogICAgKQoKICAgICMgRGVyZWdpc3RlciB0aGUgc2VydmljZQogICAgY2xpZW50LmFnZW50LnNlcnZpY2UuZGVyZWdpc3Rlcigic3RyZXNzLXRlc3Qtc2VydmljZSIpCgogICAgdGltZS5zbGVlcCgxKQoK",
     "elasticsearch": "aW1wb3J0IHRpbWUKZnJvbSBlbGFzdGljc2VhcmNoIGltcG9ydCBFbGFzdGljc2VhcmNoCgojIENvbm5lY3QgdG8gdGhlIEVsYXN0aWNzZWFyY2ggY2x1c3RlcgplcyA9IEVsYXN0aWNzZWFyY2goWyJsb2NhbGhvc3QiXSkKCiMgQ29udGludW91c2x5IGluZGV4IGFuZCBkZWxldGUgZG9jdW1lbnRzCndoaWxlIFRydWU6CiAgICAjIEluZGV4IGEgZG9jdW1lbnQKICAgIGVzLmluZGV4KGluZGV4PSJ0ZXN0LWluZGV4IiwgZG9jX3R5cGU9InRlc3QtdHlwZSIsIGlkPTEsIGJvZHk9eyJ0ZXN0IjogInRlc3QifSkKCiAgICAjIERlbGV0ZSB0aGUgZG9jdW1lbnQKICAgIGVzLmRlbGV0ZShpbmRleD0idGVzdC1pbmRleCIsIGRvY190eXBlPSJ0ZXN0LXR5cGUiLCBpZD0xKQoKICAgIHRpbWUuc2xlZXAoMSkKCg==",
@@ -33,7 +34,13 @@ loadPresetsCodeJson = `{
 
     if (lang == "k-inv") {
       loadSavedPreset(tool, lang, $('#chaosProgramTextArea').text());
-      document.getElementById("resetToDefaultButton").style.display = "none";
+      if (tool.toLowerCase() == "default") {
+        document.getElementById("resetToDefaultButton").style.display = "none";
+        document.getElementById("deleteChaosProgramButton").style.display = "none";
+      } else {
+        document.getElementById("resetToDefaultButton").style.display = "none";
+        document.getElementById("deleteChaosProgramButton").style.display = "block";
+      }
     } else {
       console.log("[GET-PRESETS] foo Loaded preset for " + tool + " with lang " + lang);
       console.log("[GET-PRESET] loadPresetsCodeJson " +loadPresetsCodeJson);
@@ -41,6 +48,7 @@ loadPresetsCodeJson = `{
       decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
       loadSavedPreset(tool, lang, decodedStringAtoB);
       document.getElementById("resetToDefaultButton").style.display = "block";
+      document.getElementById("deleteChaosProgramButton").style.display = "none";
     }
     $("#presetLang").val(lang);
     $("#presetName").val(tool);

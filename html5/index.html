@@ -106,7 +106,7 @@
               <div class="modal-footer">
                 <button type="button" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
                 <button type="button" class="btn btn-light" onclick="savePreset('save')">Save</button>
-                <button type="button" class="btn btn-danger" onclick="resetPreset('reset')">Reset to default</button>
+                <button type="button" id="resetToDefaultButton" class="btn btn-light-saved" onclick="resetPreset('reset')">Reset to default</button>
                 <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
               </div>
             </form>
@@ -151,7 +151,7 @@
             </div>
             <div class="col text-center">
               <div id="programming-mode-buttons" style="display: none;">
-                <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
+                <!-- <button type="button" id="runProgrammingModeButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button> -->
               </div>
             </div>
             <div class="col text-center">
@@ -218,7 +218,7 @@
           </div>
           <div class="">
             <div class="row" style="margin-top: 2%;">
-              <font size="2">Load Testing Presets</font>
+              <font size="2">Load Testing Presets & Chaos Programs</font>
             </div>
             <div class="row">
                 <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
@@ -240,6 +240,10 @@
                   <button type="button" id="loadSSH" class="btn btn-light btn-sm" onclick="loadPreset('SSH', 'python')">SSH</button>
                   <button type="button" id="loadVault" class="btn btn-light btn-sm" onclick="loadPreset('vault', 'python')">Vault</button>
                 </div>
+            </div>
+            <div class="row">
+              <div class="btn-group" id="loadChaosProgramButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2.0%; padding-top: 0.5%; scrollbar-color: dark;">
+              </div>
           </div>
           </div>
         </div>
@@ -248,42 +252,50 @@
         <!-- START CHAOS PROGRAMMING MODE SCREEN -->
         <div id="chaos-program-screen" style="display: none;">
           <div class="row" style="margin-top: 1%;">
-            <div id="alert_placeholder4" style="margin-top: 1%;"></div>
-            <div id="alert_placeholder_programming_mode" style="margin-top: 1%;"></div>
+            <div id="alert_placeholder_programming_mode" style="margin-top: 1%; margin-bottom: 1%;"></div>
             <div class="col">
+              <div class="row" width="10px">
+                <div class="col text-center">
+                  <button type="button" id="saveChaosProgramButton" class="btn btn-light btn-sm" style="width: 50%;" onclick="savePreset('save-chaos-program')">SAVE</button>
+                </div>
+                <div class="col text-center">
+                  <button type="button" id="runChaosProgramButton" class="btn btn-dark" style="width: 50%;" onclick="runChaosProgram()">RUN</button>
+                </div>
+              </div>
               <form>
               <div class="form-group">
                 <label for="chaosProgramTextArea"></label>
                 <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
-  jobs:
-    cpu-attack-job:
-      additional-labels:
-        chaos-controller: kubeinvaders
-        chaos-type: stress-ng
-        chaos-codename: CODENAME_PLACEHOLDER
-      image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-      command: "stress-ng"
-      args:
-        - --help
+chaos-codename: CODENAME_PLACEHOLDER
+jobs:
+  cpu-attack-job:
+    additional-labels:
+      chaos-controller: kubeinvaders
+      chaos-type: stress-ng
+      chaos-codename: CODENAME_PLACEHOLDER
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
 
-    mem-attack-job:
-      additional-labels:
-        chaos-controller: kubeinvaders
-        chaos-type: stress-ng
-        chaos-codename: CODENAME_PLACEHOLDER
-      image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
-      command: "stress-ng"
-      args:
-        - --help
+  mem-attack-job:
+    additional-labels:
+      chaos-controller: kubeinvaders
+      chaos-type: stress-ng
+      chaos-codename: CODENAME_PLACEHOLDER
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --help
 
-  experiments:
-    - name: cpu-attack-exp
-      job: cpu-attack-job
-      loop: 5
+experiments:
+  - name: cpu-attack-exp
+    job: cpu-attack-job
+    loop: 5
 
-    - name: mem-attack-exp
-      job: mem-attack-job
-      loop: 5
+  - name: mem-attack-exp
+    job: mem-attack-job
+    loop: 5
                 </textarea>
               </div>
               </form>

@@ -25,12 +25,23 @@ loadPresetsCodeJson = `{
 
   function loadPreset(tool, lang) {
     let decodedStringAtoB = "";
-    console.log("[GET-PRESETS] Loaded preset for " + tool);
-    loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson);
-    decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
+    console.log("[GET-PRESETS] Loaded preset for " + tool + " with lang " + lang);
+
     latest_preset_name = tool;
     latest_preset_lang = lang;
-    loadSavedPreset(tool, lang, decodedStringAtoB);
+    console.log("[GET-PRESETS] |" + lang + "|");
+
+    if (lang == "k-inv") {
+      loadSavedPreset(tool, lang, $('#chaosProgramTextArea').text());
+      document.getElementById("resetToDefaultButton").style.display = "none";
+    } else {
+      console.log("[GET-PRESETS] foo Loaded preset for " + tool + " with lang " + lang);
+      console.log("[GET-PRESET] loadPresetsCodeJson " +loadPresetsCodeJson);
+      loadPresetsCodeParsed = JSON.parse(loadPresetsCodeJson);
+      decodedStringAtoB = atob(loadPresetsCodeParsed[tool]);
+      loadSavedPreset(tool, lang, decodedStringAtoB);
+      document.getElementById("resetToDefaultButton").style.display = "block";
+    }
     $("#presetLang").val(lang);
     $("#presetName").val(tool);
     $('#setLoadTestModal').modal('show');
@@ -190,7 +201,3 @@ loadPresetsCodeJson = `{
     $('#kubeLinterModal').modal('hide');
     modal_opened = false;
   }
-
-//   $('textarea').on('input', function() {
-//     $('#alert_placeholder2').text('');
-//   });

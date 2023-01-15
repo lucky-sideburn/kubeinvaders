@@ -100,6 +100,10 @@ const chaos_job_regex = /chaos_jobs_status.*/g;
 var codename_configured = false;
 var chaos_jobs_status = new Map();
 
+function rand_id() {
+    return getRandomInt(9999);
+}
+
 function isJsonString(str) {
     try {
         JSON.parse(str);
@@ -124,6 +128,24 @@ function getCodeName() {
     oReq.send();
 }
 
+function createChaosProgramButton(name, lang) {
+    let btn = document.createElement("button");
+    let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+    console.log("[CREATE-CHAOS-PROGRAM] Creating button for " + name);
+    btn.innerHTML = capitalizedName;
+    btn.type = "button";
+    btn.name = "load" + capitalizedName;
+    btn.id = "load" + capitalizedName;
+    if (document.getElementById("load" + capitalizedName)) {
+        return;
+    }
+    btn.style = "padding: 0% 2%;"
+    btn.classList = "btn btn-light btn-sm";
+    btn.addEventListener("click", function(){ loadPreset(name, lang); });
+    document.getElementById("loadButtonGroup").appendChild(btn); 
+    document.getElementById("loadButtonGroup").scrollLeft = document.getElementById("loadButtonGroup").scrollWidth;
+}
+
 function getSavedPresets() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
@@ -136,9 +158,16 @@ function getSavedPresets() {
                     currentPresetName = currentPresetName.charAt(0).toUpperCase() + currentPresetName.slice(1);
                     //console.log("[GET-PRESETS] computing preset: " + currentPresetName);
                     var buttonId = "load" + currentPresetName.trim();
-                    console.log("[GET-PRESETS] Change border color of buttonId: " + buttonId);
-                    document.getElementById(buttonId).classList.remove('btn-light');
-                    document.getElementById(buttonId).classList.add('btn-light-saved');
+                    // console.log("[GET-PRESETS] Change border color of buttonId: " + buttonId);
+                    // console.log(document.getElementById(buttonId));
+                    if (document.getElementById(buttonId) == null){
+                        console.log("[GET-PRESETS] Appending button to loadButtonGroup. id: " + buttonId + " presetname: " + currentPresetName.trim());
+                        latest_preset_lang = "k-inv";
+                        createChaosProgramButton(currentPresetName.trim(), latest_preset_lang);                      
+                    } else {
+                        // document.getElementById(buttonId).classList.remove('btn-light');
+                        // document.getElementById(buttonId).classList.add('btn-light-saved');
+                    }
                 }
             } else {
                 console.log("[GET-PRESETS] There is no saved presets in Redis");
@@ -153,7 +182,6 @@ function loadSavedPreset(tool, lang, defaultpreset) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            //console.log("response of loadSavedPreset: ||" + this.responseText + "||");
             if (this.responseText.trim() != "nil") {
                 $("#currentLoadTest").val(this.responseText.trim());
             } else {
@@ -174,8 +202,8 @@ function resetPreset() {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             let capitalizedPreset = latest_preset_name.charAt(0).toUpperCase() + latest_preset_name.slice(1);
             let buttonId = "load" + capitalizedPreset;
-            document.getElementById(buttonId).classList.remove('btn-light-saved');
-            document.getElementById(buttonId).classList.add('btn-light');
+            // document.getElementById(buttonId).classList.remove('btn-light-saved');
+            // document.getElementById(buttonId).classList.add('btn-light');
             closeSetLoadTestModal();
             getSavedPresets();
             console.log("[RESET-PRESETS] " + latest_preset_name + " restored with default preset");
@@ -189,10 +217,32 @@ function resetPreset() {
 }
 
 function savePreset(action) {
+    console.log("[SAVE-PRESET-CHAOSPROGRAM] Saving item...");
     var presetName = "";
     presetBody = $("#currentLoadTest").val();
-    presetLang = latest_preset_lang;
-    presetName = latest_preset_name;
+    console.log("[SAVE-PRESET-CHAOSPROGRAM] Saving " + presetBody);
+
+    if (action == "save-chaos-program") {
+        presetLang = "k-inv";
+        presetName = codename + "-" + rand_id();
+        latest_preset_lang = "k-inv";
+        console.log("[SAVE-PRESET-CHAOSPROGRAM] lang: " + presetLang + " name:" + presetName);
+        presetBody =  $('#chaosProgramTextArea').val();
+        document.getElementById("resetToDefaultButton").style.display = "none";
+    }
+    else if (latest_preset_lang == "k-inv") {
+        presetLang = "k-inv";
+        presetName = codename;
+        latest_preset_lang = "k-inv";
+        console.log("[SAVE-PRESET-CHAOSPROGRAM] lang: " + presetLang + " name:" + codename);
+        presetBody = $('#currentLoadTest').val();
+        document.getElementById("resetToDefaultButton").style.display = "none";
+    }
+    else {
+        presetLang = latest_preset_lang;
+        presetName = latest_preset_name;    
+        document.getElementById("resetToDefaultButton").style.display = "block";
+    }
 
     //console.log("Saving preset. name:" + presetName + ", lang:" + presetName + ", body: " + presetBody);
     var oReq = new XMLHttpRequest();
@@ -200,26 +250,38 @@ function savePreset(action) {
     oReq.open("POST", k8s_url + "/chaos/loadpreset/save?name=" + presetName + "&lang=" + presetLang, true);
 
     oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && action == "apply") {
-            // console.log(this.responseText);
-            // $('#alert_placeholder').replaceWith(this.responseText);
-            presetBody = $('#chaosProgramTextArea').val(`chaos-codename: ${codename}\njobs:
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && (action == "apply" || action == "save-chaos-program")) {
+            if (latest_preset_lang == "k-inv") {
+                console.log("[SAVE-PRESET-CHAOSPROGRAM] Payload: " + $('#currentLoadTest').val());
+                if ($('#currentLoadTest').val() != "") {
+                    presetBody = $('#currentLoadTest').val();
+                } 
+                   
+                //$('#chaosProgramTextArea').val(presetBody);
+                
+                document.getElementById("chaosProgramTextArea").value = presetBody;
+            } 
+            else {
+                presetBody = $('#chaosProgramTextArea').val(`chaos-codename: ${codename}
+jobs:
   ${presetName}-job:
     additional-labels:
-      chaos-controller: kubeinvaders
-      chaos-lang: ${presetLang}
-      chaos-type: loadtest
-      chaos-codename: ${codename}
-    image: docker.io/luckysideburn/chaos-exec:v1.0.0
+        chaos-controller: kubeinvaders
+        chaos-lang: ${presetLang}
+        chaos-type: loadtest
+        chaos-codename: ${codename}
+    image: docker.io/luckysideburn/chaos-exec:v1.0.4
     command: bash
     args:
     - start.sh
     - ${presetLang}
-    - http://kubeinvaders:8080/${presetLang}_${presetName}
+    - code=${btoa(presetBody).trim()}
+
 experiments:
 - name: ${presetName}-exp
   job: ${presetName}-job
   loop: 5`);
+            }
         }
     };;
 
@@ -227,10 +289,16 @@ experiments:
     oReq.send(presetBody);
     closeSetLoadTestModal();
     
-    let presetNameCapitalized = presetName.charAt(0).toUpperCase() + presetName.slice(1);
-    var buttonId = "load" + presetNameCapitalized.trim();
-    document.getElementById(buttonId).classList.remove('btn-light');
-    document.getElementById(buttonId).classList.add('btn-light-saved');
+    if (action != "save-chaos-program") {
+        let presetNameCapitalized = presetName.charAt(0).toUpperCase() + presetName.slice(1);
+        var buttonId = "load" + presetNameCapitalized.trim();
+        // document.getElementById(buttonId).classList.remove('btn-light');
+        // document.getElementById(buttonId).classList.add('btn-light-saved');
+    }
+    else {
+        console.log("[SAVE-PRESET-CHAOSPROGRAM] Creating new button for lang: " + presetLang + " name:" + presetName);
+        createChaosProgramButton(presetName, 'k-inv'); 
+    }
 
     getSavedPresets();
 

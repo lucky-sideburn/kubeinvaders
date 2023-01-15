@@ -37,40 +37,40 @@ def create_pod_list(logid, api_response_items, current_regex):
                 webtail_pods.append(pod)
                 regex_match_info = f"[logid:{logid}][k-inv][logs-loop] Taking logs of {pod.metadata.name}. Redis has cached that {current_regex} is good for {pod.metadata.name}"
                 r.set(f"log_status:{logid}", regex_match_info)
-                logging.info(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
+                #logging.debug(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
 
             else:
                 regex_match_info = f"[logs-loop][logid:{logid}] Skipping logs of {pod.metadata.name}. Redis has cached that {current_regex} is not good for {pod.metadata.name}"
-                logging.debug(regex_match_info)
-                logging.info(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
+                #logging.debug(regex_match_info)
+                #logging.debug(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
 
         else:
             if re.search(f"{pod_re}", pod.metadata.name) or re.search(r"{pod_re}", pod.metadata.name):
-                logging.info(f"[logid:{logid}][k-in][regexmatch] |{pod_re}| |{pod.metadata.name}| MATCHED")
+                #logging.debug(f"[logid:{logid}][k-in][regexmatch] |{pod_re}| |{pod.metadata.name}| MATCHED")
                 regex_key_name = f"regex_cmp:{regexsha}:{logid}:{pod.metadata.namespace}:{pod.metadata.name}"
 
                 if re.search(f"{namespace_re}", pod.metadata.namespace) or re.search(r"{namespace_re}", pod.metadata.namespace):
-                    logging.info(f"[logid:{logid}][k-inv][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| MATCHED")
+                    #logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| MATCHED")
                     if re.search(f"{labels_re}", str(pod.metadata.labels)) or re.search(r"{labels_re}", str(pod.metadata.labels)):
-                        logging.info(f"[logid:{logid}][k-inv][regexmatch] |{labels_re}| |{str(pod.metadata.labels)}| MATCHED")
+                        #logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{labels_re}| |{str(pod.metadata.labels)}| MATCHED")
                         if re.search(f"{annotations_re}", str(pod.metadata.annotations)) or re.search(r"{annotations_re}", str(pod.metadata.annotations)):
-                            logging.info(f"[logid:{logid}][k-inv][regexmatch] |{annotations_re}| |{str(pod.metadata.annotations)}| MATCHED")
+                            #logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{annotations_re}| |{str(pod.metadata.annotations)}| MATCHED")
                             webtail_pods.append(pod)
                             regex_match_info = f"[logid:{logid}] Taking logs from {pod.metadata.name}. It is compliant with the Regex {current_regex}"
                             r.set(regex_key_name, "maching")
-                            logging.info(regex_match_info)
+                            logging.debug(regex_match_info)
                             r.set(f"log_status:{logid}", regex_match_info)
                         else:
-                            logging.info(f"[logid:{logid}][k-inv][regexmatch] |{annotations_re}| |{str(pod.metadata.annotations)}| FAILED")
+                            logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{annotations_re}| |{str(pod.metadata.annotations)}| FAILED")
                             r.set(regex_key_name, "not_maching")
                     else:
-                        logging.info(f"[logid:{logid}][k-inv][regexmatch] |{labels_re}| |{str(pod.metadata.labels)}| FAILED")
+                        logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{labels_re}| |{str(pod.metadata.labels)}| FAILED")
                         r.set(regex_key_name, "not_maching")
                 else:
-                    logging.info(f"[logid:{logid}][k-inv][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| FAILED")
+                    logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{namespace_re}| |{pod.metadata.namespace}| FAILED")
                     r.set(regex_key_name, "not_maching")
             else:
-                logging.info(f"[logid:{logid}][k-inv][regexmatch] |{pod_re}| |{pod.metadata.name}| FAILED")
+                logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{pod_re}| |{pod.metadata.name}| FAILED")
                 r.set(regex_key_name, "not_maching")
     return webtail_pods
                             
@@ -130,7 +130,7 @@ def compute_line(api_response_line, container):
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
 
     if not r.exists(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}"):
-        logging.info(f"[logid:{logid}][k-inv][logs-loop] The key log:{logid}:{pod.metadata.name}:{container}:{sha256log} does not exists. Preparing to store log content")
+        logging.debug(f"[logid:{logid}][k-inv][logs-loop] The key log:{logid}:{pod.metadata.name}:{container}:{sha256log} does not exists. Preparing to store log content")
         old_rows = r.get(f"logs:chaoslogs-{logid}")
         logrow = f"{logrow}\n{old_rows}"
         r.set(f"logs:chaoslogs-{logid}", logrow)
@@ -139,9 +139,10 @@ def compute_line(api_response_line, container):
     r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
     r.expire(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}", 30)
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.getLogger('kubernetes').setLevel(logging.ERROR)
 
-logging.info('Starting script for KubeInvaders taking logs from pods...')
+logging.debug('Starting script for KubeInvaders taking logs from pods...')
 
 file = pathlib.Path('/tmp/redis.sock')
 
@@ -151,13 +152,13 @@ else:
     r = redis.Redis("127.0.0.1", charset="utf-8", decode_responses=True)
 
 if os.environ.get("DEV"):
-    logging.info("Setting env var for dev...")
+    logging.debug("Setting env var for dev...")
     r.set("log_pod_regex", '{"pod":".*", "namespace":"namespace1", "labels":".*", "annotations":".*", "containers": ".*"}')
     r.set("logs_enabled:aaaa", 1)
     r.expire("logs_enabled:aaaa", 10)
     r.set("programming_mode", 0)
-    logging.info(r.get("log_pod_regex:aaaa"))
-    logging.info(r.get("logs_enabled:aaaa"))
+    logging.debug(r.get("log_pod_regex:aaaa"))
+    logging.debug(r.get("logs_enabled:aaaa"))
 
 configuration = client.Configuration()
 token = os.environ["TOKEN"]
@@ -178,7 +179,7 @@ while True:
     for key in r.scan_iter("logs_enabled:*"):
         if r.get(key) == "1":
             logid = key.split(":")[1]
-            logging.info(f"Found key {key} and it is enabled.")
+            logging.debug(f"Found key {key} and it is enabled.")
             r.set(f"log_status:{logid}", f"[k-inv][logs-loop] Found key {key}. Starting collecting logs...")
             webtail_pods = []
             current_regex = get_regex(logid)
@@ -188,14 +189,14 @@ while True:
             else:
                 r.set(f"log_status:{logid}", f"[k-inv][logs-loop] {key} is using this regex: {current_regex}")
 
-            logging.info(f"[logid:{logid}] Checking do_not_clean_log Redis key")
+            logging.debug(f"[logid:{logid}] Checking do_not_clean_log Redis key")
 
             log_cleaner(logid)
 
             try:
                 api_response = api_instance.list_pod_for_all_namespaces()
             except ApiException as e:
-                logging.info(e)
+                logging.debug(e)
             
             pods_found_info = f"[logid:{logid}][k-inv][logs-loop] Looking for pods compliant with the current regex. Scanning {len(api_response.items)} pods"
             r.set(f"log_status:{logid}", pods_found_info)
@@ -211,45 +212,60 @@ while True:
 
             r.set(f"logs:webtail_pods_len:{logid}", webtail_pods_len)
             r.set(f"pods_match_regex:{logid}", webtail_pods_len)
+            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Current Regex: {current_regex}")
 
             for pod in webtail_pods:
+                logging.debug(f"[logid:{logid}][k-inv][logs-loop] Taking logs from {pod.metadata.name}")
                 container_list = []
                 for container in pod.spec.containers:
-                    if "containers_re" in locals() or "containers_re" in globals():
-                        if re.search(f"{containers_re}", container.name):
-                            container_list.append(container.name)
+                    # if "containers_re" in locals() or "containers_re" in globals():
+                    #     if re.search(f"{containers_re}", container.name):
+                    container_list.append(container.name)
 
                 for container in container_list:
-                    if pod.status.phase != "Pending":
+                    logging.debug(f"[logid:{logid}][k-inv][logs-loop] Listing containers of {pod.metadata.name}. Computing {container} phase: {pod.status.phase}")
+                    if pod.status.phase != "Unknown":
+                        logging.debug(f"[logid:{logid}][k-inv][logs-loop] Container {container} on pod {pod.metadata.name} has accepted phase for taking logs")
                         try:
                             if r.exists(f"log_time:{logid}:{pod.metadata.name}:{container}"):
                                 latest_log_tail_time = r.get(f"log_time:{logid}:{pod.metadata.name}:{container}")
                             else:
                                 latest_log_tail_time = time.time()
-
+                            
                             since = int(time.time() - float(latest_log_tail_time)) + 2
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Time types: {type(latest_log_tail_time)} {type(time.time())} {type(since)} since={since}")
 
                             if since == 0:
-                                since = 1
+                                since = 2
                             
-                            logging.info(f"[logid:{logid}][k-inv][logs-loop] Calling K8s API for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace}")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds")
 
                             api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
+                            #api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, container=container)
 
-                            logging.info(f"[logid:{logid}][k-inv][logs-loop] Computing K8s API response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace}")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing K8s API response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace}")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] {api_response}")
 
                             r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
 
                             if api_response == "":
                                 continue
+                            
+                            compute_line(api_response, container)
+                            
+                            logs = ""
 
                             if type(api_response) is list:
                                 for api_response_line in api_response:
-                                    compute_line(api_response_line, container)
+                                    #compute_line(api_response_line, container)
+                                    logs = f"{logs}</br>{api_response_line}"
                             else:
                                 for api_response_line in api_response.splitlines():
-                                    compute_line(api_response_line, container)
+                                    #compute_line(api_response_line, container)
+                                    logs = f"{logs}</br>{api_response_line}"
+
+                            compute_line(logs, container)
 
                         except ApiException as e:
-                            logging.info(e)
-    time.sleep(0.5)
+                            logging.debug(f"[k-inv][logs-loop] EXCEPTION {e}")
+    time.sleep(1)

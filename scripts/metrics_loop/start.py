@@ -24,7 +24,7 @@ def create_container(image, name, command, args):
         command=command,
     )
 
-    logging.info(
+    logging.debug(
         f"Created container with name: {container.name}, "
         f"image: {container.image} and args: {container.args}"
     )
@@ -54,9 +54,10 @@ def create_job(job_name, pod_template):
 
 r = redis.Redis(unix_socket_path='/tmp/redis.sock')
 
-# create logger
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
-logging.info('Starting script for KubeInvaders programming mode')
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.getLogger('kubernetes').setLevel(logging.ERROR)
+
+logging.debug('Starting script for KubeInvaders programming mode')
 
 configuration = client.Configuration()
 token = os.environ["TOKEN"]
@@ -77,31 +78,31 @@ while True:
         label_selector="chaos-controller=kubeinvaders"
         api_response = api_instance.list_pod_for_all_namespaces(label_selector=label_selector)
     except ApiException as e:
-        logging.info(e)
+        logging.debug(e)
 
     r.set("current_chaos_job_pod", 0)
 
     for pod in api_response.items:
         if pod.status.phase == "Pending" or pod.status.phase == "Running":
-            logging.info(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Incrementing current_chaos_job_pod Redis key")
+            logging.debug(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Incrementing current_chaos_job_pod Redis key")
             r.incr('current_chaos_job_pod')
         
         if pod.status.phase != "Pending" and pod.status.phase != "Running" and not r.exists(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}"):
-            logging.info(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Tracking time in pod:time:{pod.metadata.namespace}:{pod.metadata.name} Redis key")
+            logging.debug(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Tracking time in pod:time:{pod.metadata.namespace}:{pod.metadata.name} Redis key")
             r.set(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}", int(time.time()))
 
         elif pod.status.phase != "Pending" and pod.status.phase != "Running" and r.exists(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}"):
-            logging.info(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Comparing time in pod:time:{pod.metadata.namespace}:{pod.metadata.name} Redis key with now")
+            logging.debug(f"[k-inv][metrics_loop] Found pod {pod.metadata.name}. It is in {pod.status.phase} phase. Comparing time in pod:time:{pod.metadata.namespace}:{pod.metadata.name} Redis key with now")
             now = int(time.time())
             pod_time = int(r.get(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}"))
-            logging.info(f"[k-inv][metrics_loop] For {pod.metadata.name} comparing now:{now} with pod_time:{pod_time}")
-            if (now - pod_time > 30):
+            logging.debug(f"[k-inv][metrics_loop] For {pod.metadata.name} comparing now:{now} with pod_time:{pod_time}")
+            if (now - pod_time > 240):
                 try:
                     api_instance.delete_namespaced_pod(pod.metadata.name, namespace = pod.metadata.namespace)
-                    logging.info(f"[k-inv][metrics_loop] Deleting pod {pod.metadata.name}")
+                    logging.debug(f"[k-inv][metrics_loop] Deleting pod {pod.metadata.name}")
                     r.delete(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}")
                 except ApiException as e:
-                    logging.info(e)
+                    logging.debug(e)
         if pod.metadata.labels.get('chaos-codename') != None:
             codename = pod.metadata.labels.get('chaos-codename')
             job_name = pod.metadata.labels.get('job-name')

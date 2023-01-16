@@ -96,7 +96,7 @@ while True:
             now = int(time.time())
             pod_time = int(r.get(f"pod:time:{pod.metadata.namespace}:{pod.metadata.name}"))
             logging.debug(f"[k-inv][metrics_loop] For {pod.metadata.name} comparing now:{now} with pod_time:{pod_time}")
-            if (now - pod_time > 240):
+            if (now - pod_time > 120):
                 try:
                     api_instance.delete_namespaced_pod(pod.metadata.name, namespace = pod.metadata.namespace)
                     logging.debug(f"[k-inv][metrics_loop] Deleting pod {pod.metadata.name}")

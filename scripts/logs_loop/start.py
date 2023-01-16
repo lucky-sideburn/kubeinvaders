@@ -124,7 +124,7 @@ def compute_line(api_response_line, container):
     </div>
 </div>
 <div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
-    >>> {api_response_line}
+    {api_response_line}
 </div>
 """
     sha256log = sha256(logrow.encode('utf-8')).hexdigest()
@@ -139,7 +139,7 @@ def compute_line(api_response_line, container):
     r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
     r.expire(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}", 30)
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
 logging.getLogger('kubernetes').setLevel(logging.ERROR)
 
 logging.debug('Starting script for KubeInvaders taking logs from pods...')
@@ -228,29 +228,37 @@ while True:
                         logging.debug(f"[logid:{logid}][k-inv][logs-loop] Container {container} on pod {pod.metadata.name} has accepted phase for taking logs")
                         try:
                             if r.exists(f"log_time:{logid}:{pod.metadata.name}:{container}"):
-                                latest_log_tail_time = r.get(f"log_time:{logid}:{pod.metadata.name}:{container}")
+                                latest_log_tail_time = float(r.get(f"log_time:{logid}:{pod.metadata.name}:{container}"))
                             else:
                                 latest_log_tail_time = time.time()
                             
-                            since = int(time.time() - float(latest_log_tail_time)) + 2
+                            since = int(time.time() - float(latest_log_tail_time)) + 1
                             logging.debug(f"[logid:{logid}][k-inv][logs-loop] Time types: {type(latest_log_tail_time)} {type(time.time())} {type(since)} since={since}")
 
                             if since == 0:
-                                since = 2
+                                since = 1
                             
                             logging.debug(f"[logid:{logid}][k-inv][logs-loop] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds")
 
                             api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
-                            #api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, container=container)
 
                             logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing K8s API response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace}")
-                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] {api_response}")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] {type(api_response)} {api_response}")
 
                             r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
 
+                            k = 5
+    
+                            while api_response == "" and k < 120:
+                                logging.debug(f"[logid:{logid}][k-inv][logs-loop][logs collector attempt {k}] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds")
+                                api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
+                                since = since + 1
+                                k = k + 1
+                                time.sleep(0.5)
+                            
                             if api_response == "":
                                 continue
-                            
+
                             compute_line(api_response, container)
                             
                             logs = ""
@@ -258,9 +266,11 @@ while True:
                             if type(api_response) is list:
                                 for api_response_line in api_response:
                                     #compute_line(api_response_line, container)
+                                    logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing log line {api_response_line}")
                                     logs = f"{logs}</br>{api_response_line}"
                             else:
                                 for api_response_line in api_response.splitlines():
+                                    logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing log line {api_response_line}")
                                     #compute_line(api_response_line, container)
                                     logs = f"{logs}</br>{api_response_line}"
 

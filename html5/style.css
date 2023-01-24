@@ -73,8 +73,8 @@ hr {
 }
 
 .btn-light:hover, .btn-light:focus, .btn-light:active, .btn-light.active, .open .dropdown-toggle.btn-default {
-  background-color: #06812f;
-  color:#FFF;
+  background-color: #b0b3b1;
+  color: #000000;
   border-color: #000000;
 }
 
@@ -86,6 +86,10 @@ hr {
 }
 
 .btn-light:hover {
+  transform: scale(1.05);
+}
+
+.btn-dark:hover {
   transform: scale(1.05);
 }
 

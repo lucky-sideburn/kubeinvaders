@@ -100,6 +100,8 @@ const chaos_job_regex = /chaos_jobs_status.*/g;
 var codename_configured = false;
 var chaos_jobs_status = new Map();
 
+var current_color_mode = "light";
+
 function rand_id() {
     return getRandomInt(9999);
 }
@@ -350,8 +352,13 @@ function drawChaosProgramFlow() {
                     else {
                         times = flow["experiments"][i]["loop"] + " times"
                     }
-
-                    flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert" style="border-color: #000000; border-width: 1.5px;">Do ' + flow["experiments"][i]["name"] + ' ' + times + '</div></div>';
+                    console.log(flow_html);
+                    if (current_color_mode == "light") {
+                        flow_html = flow_html + '<div class="row"><div class="alert alert-light alert-kinv" id="' +  random_code + Math.floor(Math.random() * 9999) +'" role="alert" style="border-color: #000000; border-width: 1.5px;">Do ' + flow["experiments"][i]["name"] + ' ' + times + '</div></div>';
+                    }
+                    else {
+                        flow_html = flow_html + '<div class="row"><div class="alert alert-light alert-kinv" id="' +  random_code + Math.floor(Math.random() * 9999) +'" role="alert" style="border-color: #ffffff; color: #1ed931; background-color: #0a0a0a; border-width: 1.5px;">Do ' + flow["experiments"][i]["name"] + ' ' + times + '</div></div>';
+                    }
                     search_job = codename + ":" + flow["experiments"][i]["name"]
 
                     flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">';
@@ -359,7 +366,11 @@ function drawChaosProgramFlow() {
                     //console.log("Search " + search_job);
                     for (let [key, value] of chaos_jobs_status) {
                         if (key.search(search_job) != -1 ) {
-                            flow_html = flow_html + '<div class="row"><div class="alert alert-light" role="alert" style="border-color: #000000; border-width: 1.5px;">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
+                            if (current_color_mode == "light") {
+                                flow_html = flow_html + '<div class="row"><div class="alert alert-light alert-kinv" id="' +  random_code + Math.floor(Math.random() * 9999) +'" role="alert" style="border-color: #000000; border-width: 1.5px;">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
+                            } else {
+                                flow_html = flow_html + '<div class="row"><div class="alert alert-light alert-kinv" id="' +  random_code + Math.floor(Math.random() * 9999) +'" role="alert" style="border-color: #ffffff; color: #1ed931; background-color: #0a0a0a; border-width: 1.5px;">[' + key.split(":")[2] + '] Status: ' + value + '</div></div>';
+                            }
                         }
                     }
                     i++;

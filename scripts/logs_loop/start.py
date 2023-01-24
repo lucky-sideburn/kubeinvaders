@@ -19,7 +19,6 @@ import time
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 def create_pod_list(logid, api_response_items, current_regex):
     json_re = json.loads(current_regex)
     regexsha = sha256(current_regex.encode('utf-8')).hexdigest()
@@ -214,7 +213,23 @@ while True:
             r.set(f"pods_match_regex:{logid}", webtail_pods_len)
             logging.debug(f"[logid:{logid}][k-inv][logs-loop] Current Regex: {current_regex}")
 
+            pods_pending = 0
+            pods_running = 0
+            pods_succeeded = 0
+
             for pod in webtail_pods:
+                if pod.status.phase == "Pending":
+                    pods_pending = pods_pending + 1
+                if pod.status.phase == "Running":
+                    pods_running = pods_running + 1
+                if pod.status.phase == "Succeeded":
+                    pods_succeeded = pods_succeeded + 1
+                
+                r.set(f"logs:chaoslogs-{logid}", f"<hr/>[k-inv] pods on Pending phase: {pods_pending}<hr/>[k-inv] pods on Succeeded phase: {pods_succeeded}<hr/>[k-inv] pods on Running phase: {pods_running}<hr/>")
+            
+            for pod in webtail_pods:
+                if pod.status.phase == "Unknown" and pod.status.phase == "Pending":
+                    continue
                 logging.debug(f"[logid:{logid}][k-inv][logs-loop] Taking logs from {pod.metadata.name}")
                 container_list = []
                 for container in pod.spec.containers:
@@ -224,7 +239,7 @@ while True:
 
                 for container in container_list:
                     logging.debug(f"[logid:{logid}][k-inv][logs-loop] Listing containers of {pod.metadata.name}. Computing {container} phase: {pod.status.phase}")
-                    if pod.status.phase != "Unknown":
+                    if pod.status.phase != "Unknown" and pod.status.phase != "Pending":
                         logging.debug(f"[logid:{logid}][k-inv][logs-loop] Container {container} on pod {pod.metadata.name} has accepted phase for taking logs")
                         try:
                             if r.exists(f"log_time:{logid}:{pod.metadata.name}:{container}"):
@@ -238,25 +253,35 @@ while True:
                             if since == 0:
                                 since = 1
                             
-                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds - phase {pod.status.phase}")
 
-                            api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
+                            api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container, tail_lines=since)
 
-                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing K8s API response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace}")
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Computing K8s API response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace} - phase {pod.status.phase}")
                             logging.debug(f"[logid:{logid}][k-inv][logs-loop] {type(api_response)} {api_response}")
 
                             r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
 
                             k = 5
-    
-                            while api_response == "" and k < 120:
-                                logging.debug(f"[logid:{logid}][k-inv][logs-loop][logs collector attempt {k}] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds")
-                                api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container)
+                            
+                            regex_return = re.search(r'[\w]+', api_response)
+                            logging.debug(f"[logid:{logid}][k-inv][logs-loop] Regex on api_response: {regex_return}")
+
+                            while not re.search(r'[\w]+', api_response) and k < 60:
+                                logging.debug(f"[logid:{logid}][k-inv][logs-loop][logs collector attempt {k}] Calling K8s API for reading logs of {pod.metadata.name} container {container} in namespace {pod.metadata.namespace} since {since} seconds - phase {pod.status.phase}")
+                                api_response = api_instance.read_namespaced_pod_log(name=pod.metadata.name, namespace=pod.metadata.namespace, since_seconds=since, container=container, tail_lines=since)
+                                logging.debug(f"[logid:{logid}][k-inv][logs-loop] API Response: {api_response}")
+                                # regex_return = re.search(r'[\w]+', api_response)
+                                # logging.debug(f"[logid:{logid}][k-inv][logs-loop] Regex on api_response: {regex_return}")
+
                                 since = since + 1
                                 k = k + 1
                                 time.sleep(0.5)
                             
-                            if api_response == "":
+                            if not re.search(r'[\w]+', api_response):
+                                # regex_return = re.search(r'[\w]+', api_response)
+                                # logging.debug(f"[logid:{logid}][k-inv][logs-loop] Regex on api_response: {regex_return}")
+                                logging.debug(f"[logid:{logid}][k-inv][logs-loop] API Response for reading logs of {pod.metadata.name} in namespace {pod.metadata.namespace} is still empty")
                                 continue
 
                             compute_line(api_response, container)

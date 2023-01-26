@@ -38,7 +38,6 @@ hr {
   font-family: Courier New, Courier, monospace;
 }
 
-
 .custom-btn-group {
   margin-top: 2%;
   border: 5px solid #b2afaf;
@@ -91,6 +90,24 @@ hr {
 
 .btn-dark:hover {
   transform: scale(1.05);
+}
+
+.log-row {
+  color: #4fa80b;
+  font-size: 14px; 
+  font-family: Courier New, Courier, monospace;
+  margin-top: 0.5%;
+}
+
+.log-title {
+  color: #7c737f;
+  font-size: 12px; 
+}
+
+.btn-green {
+  background-color: #1ed931;
+  color: #000000;
+  border-color: #000000;
 }
 
 @font-face {

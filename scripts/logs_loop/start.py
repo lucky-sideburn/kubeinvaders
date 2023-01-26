@@ -116,7 +116,7 @@ def compute_line(api_response_line, container):
     <div class='row' style='font-size: 12px'>
         <hr/>
     </div>
-    <div class='row'>
+    <div class='row log-title'>
         <div class='col'>Namespace</div>
         <div class='col'>Pod</div>
         <div class='col'>Container</div>
@@ -139,7 +139,7 @@ def compute_line(api_response_line, container):
         </div>
     </div>
 </div>
-<div class='row' style='margin-top: 0.5%; color: #444141; font-size: 12px; font-family: Courier New, Courier, monospace;'>
+<div class='row log-row'>
     {api_response_line}
 </div>
 """

@@ -12,6 +12,8 @@
 10. [Community blogs and videos](#Community-blogs-and-videos)
 11. [License](#License)
 
+![Alt Text](./doc_images/spaceship.png)
+
 ![Alt Text](./doc_images/dashboard.png)
 
 ### Watch Kubernetes logs through web tail console

@@ -43,6 +43,8 @@ def create_pod_list(logid, api_responses, current_regex):
             if pod.status.phase == "Succeeded":
                 pods_succeeded = pods_succeeded + 1
 
+            r.set(f"log_status:{logid}", f"Pods on Pending phase: {pods_pending}\nPods on Succeeded phase: {pods_succeeded}\nPods on Running phase: {pods_running}")
+
             # old_logs = r.get(f"logs:chaoslogs-{logid}")
             # r.set(f"logs:chaoslogs-{logid}", f"<hr/>[k-inv] pods on Pending phase: {pods_pending}<hr/>[k-inv] pods on Succeeded phase: {pods_succeeded}<hr/>[k-inv] pods on Running phase: {pods_running}<hr/>{old_logs}") 
             
@@ -54,7 +56,6 @@ def create_pod_list(logid, api_responses, current_regex):
                 if cached_regex_match == "maching":
                     webtail_pods.append(pod)
                     regex_match_info = f"[logid:{logid}][k-inv][logs-loop] Taking logs of {pod.metadata.name}. Redis has cached that {current_regex} is good for {pod.metadata.name}"
-                    r.set(f"log_status:{logid}", regex_match_info)
                     logging.debug(f"[k-inv][regexmatch][logid:{logid}][{cached_regex_match}] IS CHACHED IN REDIS")
 
                 else:
@@ -77,7 +78,7 @@ def create_pod_list(logid, api_responses, current_regex):
                                 regex_match_info = f"[logid:{logid}] Taking logs from {pod.metadata.name}. It is compliant with the Regex {current_regex}"
                                 r.set(regex_key_name, "maching")
                                 logging.debug(regex_match_info)
-                                r.set(f"log_status:{logid}", regex_match_info)
+                                #r.set(f"log_status:{logid}", regex_match_info)
                             else:
                                 logging.debug(f"[logid:{logid}][k-inv][regexmatch] |{annotations_re}| |{str(pod.metadata.annotations)}| FAILED")
                                 r.set(regex_key_name, "not_maching")
@@ -99,13 +100,9 @@ def log_cleaner(logid):
             r.delete(key)
         for key in r.scan_iter(f"log:{logid}:*"):
                 r.delete(key)
-
-        # old_logs = r.get(f"logs:chaoslogs-{logid}")
-        # r.set(f"logs:chaoslogs-{logid}", f"<hr/>[k-inv] Logs has been cleaned...<hr/>{old_logs}")
         r.set(f"do_not_clean_log:{logid}", "1")
         r.expire(f"do_not_clean_log:{logid}", 60)
-
-        r.set(f"log_status:{logid}", "[k-inv][logs-loop] Logs has been cleaned")
+        r.set(f"log_status:{logid}", f"[k-inv][logs-loop] Logs (id: {logid}) has been cleaned")
 
 def get_regex(logid):
     if not r.exists(f"log_pod_regex:{logid}"):
@@ -158,7 +155,7 @@ def compute_line(api_response_line, container):
     r.set(f"log_time:{logid}:{pod.metadata.name}:{container}", time.time())
     r.expire(f"log:{logid}:{pod.metadata.name}:{container}:{sha256log}", 60)
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "DEBUG"))
+logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
 logging.getLogger('kubernetes').setLevel(logging.ERROR)
 
 logging.debug('Starting script for KubeInvaders taking logs from pods...')
@@ -199,14 +196,13 @@ while True:
         if r.get(key) == "1":
             logid = key.split(":")[1]
             logging.debug(f"Found key {key} and it is enabled.")
-            r.set(f"log_status:{logid}", f"[k-inv][logs-loop] Found key {key}. Starting collecting logs...")
             webtail_pods = []
             current_regex = get_regex(logid)
 
             if not current_regex:
                 continue
             else:
-                r.set(f"log_status:{logid}", f"[k-inv][logs-loop] {key} is using this regex: {current_regex}")
+                logging.debug(f"log_status:{logid}", f"[k-inv][logs-loop] {key} is using this regex: {current_regex}")
 
             logging.debug(f"[logid:{logid}] Checking do_not_clean_log Redis key")
             log_cleaner(logid)

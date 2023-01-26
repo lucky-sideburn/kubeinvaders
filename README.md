@@ -3,14 +3,15 @@
 1. [Description](#Description)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
-4. [Persistence](#Persistence)
-5. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
-6. [Metrics](#Metrics)
-7. [Security](#Security)
-8. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)
-9. [Community](#Community)
-10. [Community blogs and videos](#Community-blogs-and-videos)
-11. [License](#License)
+4. [Architecture](#Architecture)
+6. [Persistence](#Persistence)
+7. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
+8. [Metrics](#Metrics)
+9. [Security](#Security)
+10. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)
+11. [Community](#Community)
+12. [Community blogs and videos](#Community-blogs-and-videos)
+13. [License](#License)
 
 ![Alt Text](./doc_images/spaceship.png)
 
@@ -134,6 +135,10 @@ Press + or - buttons to increase or decrease the game screen.
 - Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
 
 - Select from the menu "Set Custom Chaos Container for nodes" for using your preferred image or configuration against nodes.
+
+## Architecture
+
+![Alt Text](./doc_images/architecture.png)
 
 ## Persistence
 

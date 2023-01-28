@@ -56,14 +56,12 @@
     <!-- Modal -->
     <div class="modal" id="kubeLinterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
-        <div class="modal-content">
           <div class="modal-body">
-            <pre id="currentKubeLinterResult"></pre> 
+            <p id="currentKubeLinterResult"></hp> 
           </div>
           <div class="modal-footer">
             <button type="button" id="closeButton2" class="btn btn-light" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
           </div>
-        </div>
       </div>
     </div>
 
@@ -212,6 +210,8 @@
         <!-- START METRICS ROW -->
         <div class="row transition" align="center" id="metricsPresetsRow">
           <div style="margin-top: 1%;" class="custom-btn-group" id="metricsGroup">
+
+              <span style="color: #000000;" class="text-kinv" id="currentGameNamespaceLabel">Current Game Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961"> unknown </span></span><br>
 
               <span style="color: #000000;" class="text-kinv" id="deletedPodsTotalText">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
               <span style="color: #000000"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>

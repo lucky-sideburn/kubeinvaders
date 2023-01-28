@@ -476,15 +476,23 @@ function keepAliveJobsLogs() {
 }
 
 function runKubeLinter() {
-    $('#kubeLinterModal').modal('show');
-    modal_opened = true;
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         kubelinter = this.responseText;
-        result_parsed = JSON.stringify(JSON.parse(kubelinter), null, 4);
-        $('#currentKubeLinterResult').text(result_parsed);
+        $('#alert_placeholder').replaceWith(alert_div + "KubeLinter executed correctly on namespace " + namespace +  ". Changing Regex and activating logs tail.</div>");
+        enableLogTail();
+        setLogRegex();
+
+        $('#logTailRegex').val('{"since": "60", "pod":".*", "namespace":"' + namespace + '", "labels":".*", "annotations":".*", "containers":".*"}');
+        
+        if (!log_tail_switch) {
+            setLogConsole(); 
+        }
     };;
-    oReq.open("GET", k8s_url + "/kube/kube-linter?namespace=" + namespace);
+
+    $('#currentKubeLinterResult').text('KubeLinter launched. Set this regex and start log tail: {"since": "60", "pod":".*", "namespace":"' + namespace + '", "labels":".*", "annotations":".*", "containers":".*"}');
+
+    oReq.open("GET", k8s_url + "/kube/kube-linter?logid=" + random_code +"&namespace=" + namespace);
     oReq.send();
 }
 
@@ -494,6 +502,8 @@ function getNamespaces() {
         namespaces = this.responseText;
         namespaces = namespaces.split(",");
         namespace = namespaces[namespaces_index];
+        console.log("[CURRENT-NAMESPACE] " + namespace);
+        $('#currentGameNamespace').text(namespace);
     };;
     oReq.open("GET", k8s_url + "/kube/namespaces");
     oReq.send();
@@ -733,6 +743,7 @@ function switchNamespace() {
         namespaces_index = 0;
     }
     namespace = namespaces[namespaces_index];
+    $('#currentGameNamespace').text(namespace);
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Change target namespace to ' + namespace + '</div>');
     aliens = [];
     pods = [];

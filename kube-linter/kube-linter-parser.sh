@@ -18,5 +18,5 @@ done
 #date_now=$(date)
 #echo "${date_now} | Namespace: ${i} | Token: ${K8S_TOKEN} | KUBERNETES_SERVICE_HOST: ${KUBERNETES_SERVICE_HOST} | KUBERNETES_SERVICE_PORT_HTTPS: ${KUBERNETES_SERVICE_PORT_HTTPS}" >>  /tmp/linter.log
 
-return_json=$(kube-linter lint /tmp/kube-linter-pods/* --format json | jq '[.Reports[] | {message: .Diagnostic.Message, remediation: .Remediation, k8s_object: .Object.K8sObject.Name, namespace: .Object.K8sObject.Namespace, kind: .Object.K8sObject.GroupVersionKind.Kind}]')
-echo "<div class='row log-row'>${return_json}</div>"
+return_json=$(kube-linter lint /tmp/kube-linter-pods/* --format json |  jq '[.Reports[] | {message: .Diagnostic.Message, remediation: .Remediation, k8s_object: .Object.K8sObject.Name, namespace: .Object.K8sObject.Namespace, kind: .Object.K8sObject.GroupVersionKind.Kind}]' | sed "s/{/<div class='row log-row' style='margin-top: 2%;'>/g" | sed "s/}/<\/div>/g" | sed "s/<\/div>,/<\/div><hr style='margin-top: 2%;'>/g" | sed "s/\[//g" | sed "s/\]//g")
+echo "<p>START KUBELINTER</p><div class='row log-row' style='margin-top: 2%;'>${return_json}</div><p style='margin-top: 2%;'>END KUBELINTER</p>"

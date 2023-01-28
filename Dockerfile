@@ -26,7 +26,7 @@ RUN luarocks install lunajson
 RUN luarocks install lyaml
 
 # Install kube-linter
-RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.5.1/kube-linter-linux.tar.gz
+RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.6.0/kube-linter-linux.tar.gz
 RUN tar -xvf kube-linter-linux.tar.gz && rm -f kube-linter-linux.tar.gz
 RUN cp kube-linter /usr/local/bin/ && chmod 775 /usr/local/bin/kube-linter
 RUN mkdir /tmp/kube-linter-pods && chmod 777 /tmp/kube-linter-pods

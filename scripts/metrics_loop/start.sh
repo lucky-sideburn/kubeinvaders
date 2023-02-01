@@ -12,7 +12,6 @@ python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNET
 
 while true
 do
-  ( ps -ef | grep start.py | grep metrics_loop | grep -v grep &> /dev/null) || echo "Error. Metrics Loop is down..."
-  ( ps -ef | grep start.py | grep metrics_loop | grep -v grep &> /dev/null) || (python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
+  pgrep -a -f -c "^python3.*metrics_loop.*$" > /dev/null || ( python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
   sleep 2
 done

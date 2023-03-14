@@ -28,7 +28,7 @@
 
 ## Description
 
-Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how it is resilient.
+Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how resilient it is.
 
 ## Installation
 
@@ -88,7 +88,7 @@ At the top you will find some metrics as described below:
 
 ![Alt Text](./doc_images/metrics_bar.png)
 
-**Current Replicas State Delay** is a metric that show how much time the cluster takes to coming back at the desired state of pods replicas.
+**Current Replicas State Delay** is a metric that show how much time the cluster takes to come back at the desired state of pods replicas.
 
 This is a control-plane you can use to switch off & on various features.
 
@@ -102,10 +102,10 @@ This is a control-plane you can use to switch off & on various features.
 Press the button "Start" to start automatic pilot (button changes to "Stop" to disable this feature).
 ### Enable Shuffle
 
-Press the button "Enable Shuffle" to switch randomly the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).
+Press the button "Enable Shuffle" to randomly switch the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).
 ### Enable Auto Jump Between Namespace
 
-Press the button "Auto NS Switch" to switch randomly between namespaces (button changes to "Disable Auto NS Switch" to disable this feature).
+Press the button "Auto NS Switch" to randomly switch between namespaces (button changes to "Disable Auto NS Switch" to disable this feature).
 ### Show / Hide pods name
 
 Press the button "Hide Pods Name" to hide the name of the pods under the aliens (button changes to "Show Pods Name" to disable this feature).
@@ -135,9 +135,9 @@ Press + or - buttons to increase or decrease the game screen.
 
 ### Chaos Containers for masters and workers nodes
 
-- Select from the menu "Show Current Chaos Container for nodes" for watching which container start when you fire against a worker node (not an alien, they are pods).
+- Select from the menu "Show Current Chaos Container for nodes" to watch which container start when you fire against a worker node (not an alien, they are pods).
 
-- Select from the menu "Set Custom Chaos Container for nodes" for using your preferred image or configuration against nodes.
+- Select from the menu "Set Custom Chaos Container for nodes" to use your preferred image or configuration against nodes.
 
 ## Architecture
 
@@ -152,11 +152,11 @@ At moment the helm chart does not support PersistentVolumes but this task is in 
 ## Known problems and troubleshooting
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount.
-* At moment is not supported the installation of KubeInvaders into a namespace that is not named "kubeinvaders"
-* I have tested KubeInvaders only with a Kubernetes cluster installed through KubeSpray
+* At moment the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported
+* I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray
 * If you don't see aliens please do the following steps:
 1. Open a terminal and do "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
-2. Execute from another terminal curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k
+2. Execute from another terminal `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
 3. Open an issue with attached logs
 
 ## Hands-on Tutorial
@@ -167,7 +167,7 @@ To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda 
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
 
-This is an example of Prometheus configuration
+This is an example of Prometheus configuration:
 
 ```bash
 scrape_configs:
@@ -176,7 +176,7 @@ scrape_configs:
   - targets:
     - kubeinvaders.kubeinvaders.svc.cluster.local:8080
 ```
-Example of metrics
+Example of metrics:
 
 | Metric           | Description                                                                                                                          |  
 |------------------|--------------------------------------------------------------------------------------------------------------------------------------|

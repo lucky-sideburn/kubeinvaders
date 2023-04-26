@@ -31,5 +31,5 @@ spec:
           service:
             name: kubeinvaders
             port:
-              number: 8080
+              number: {{ .Values.service.targetPort }}
 {{- end }}

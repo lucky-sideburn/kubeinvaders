@@ -58,6 +58,15 @@ helm install kubeinvaders --set-string config.target_namespace="namespace1\,name
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
 ```
 
+### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
+
+```bash
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=v1.9.6 --set service.type=LoadBalancer --set service.type=LoadBalancer
+
+kubectl set env deployment/kubeinvaders INSECURE_ENDPOINT=true -n kubeinvaders
+```
+
+
 ### SCC for Openshift
 
 ```bash

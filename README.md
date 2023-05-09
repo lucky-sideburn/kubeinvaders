@@ -5,13 +5,14 @@
 3. [Usage](#Usage)
 4. [Architecture](#Architecture)
 6. [Persistence](#Persistence)
-7. [Known Problems & Troubleshooting](#Known-problems-and-troubleshooting)
-8. [Metrics](#Metrics)
-9. [Security](#Security)
-10. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)
-11. [Community](#Community)
-12. [Community blogs and videos](#Community-blogs-and-videos)
-13. [License](#License)
+7. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
+8. [Troubleshooting Unknown Namespace](#Known-Problems-And-Troubleshooting)
+9. [Metrics](#Metrics)
+10. [Security](#Security)
+11. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)
+12. [Community](#Community)
+13. [Community blogs and videos](#Community-blogs-and-videos)
+14. [License](#License)
 
 [These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf)
  from the Chaos Engineering speech I prepared for Fosdem 2023. Unfortunately I could not be present at my talk :D but I would still like to share them with the community
@@ -158,7 +159,7 @@ Press + or - buttons to increase or decrease the game screen.
 
 At moment the helm chart does not support PersistentVolumes but this task is in the to do list...
 
-## Known problems and troubleshooting
+## Generic Troubleshooting And Known Problems
 
 * It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount.
 * At moment the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported
@@ -168,6 +169,12 @@ At moment the helm chart does not support PersistentVolumes but this task is in 
 2. Execute from another terminal `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
 3. Open an issue with attached logs
 
+## Troubleshooting Unknown Namespace
+
+* Check if namespaces declared with helm config.target_namespace (es: config.target_namespace="namespace1\,namespace2") exist and contain some pods
+* Check from your browser developer console if there some HTTP requests that fails (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo=
+* Try v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo
+ 
 ## Hands-on Tutorial
 
 To experience KubeInvaders in action, try it out in this free O'Reilly Katacoda scenario, [KubeInvaders](https://www.katacoda.com/kuber-ru/courses/kubernetes-chaos).

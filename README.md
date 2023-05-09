@@ -172,7 +172,7 @@ At moment the helm chart does not support PersistentVolumes but this task is in 
 ## Troubleshooting Unknown Namespace
 
 * Check if namespaces declared with helm config.target_namespace (es: config.target_namespace="namespace1\,namespace2") exist and contain some pods
-* Check from your browser developer console if there some HTTP requests that fails (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo=
+* Check from your browser developer console if there some HTTP requests that fails (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo
 * Try v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo
  
 ## Hands-on Tutorial

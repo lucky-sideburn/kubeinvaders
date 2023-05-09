@@ -6,7 +6,7 @@
 4. [Architecture](#Architecture)
 6. [Persistence](#Persistence)
 7. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
-8. [Troubleshooting Unknown Namespace](#Known-Problems-And-Troubleshooting)
+8. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
 9. [Metrics](#Metrics)
 10. [Security](#Security)
 11. [Test Loading and Chaos Experiment Presets](#Test-Loading-and-Chaos-Experiment-Presets)

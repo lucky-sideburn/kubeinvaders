@@ -14,8 +14,6 @@
 13. [Community blogs and videos](#Community-blogs-and-videos)
 14. [License](#License)
 
-[Play Demo](https://devopstribe.it/)
-
 [These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf)
  from the Chaos Engineering speech I prepared for Fosdem 2023. Unfortunately I could not be present at my talk :D but I would still like to share them with the community
 

@@ -1,3 +1,17 @@
+
+# Kubeinvaders a.k.a k-inv
+
+![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
+![Alt Text](./doc_images/small_logo.png
+
+We have embedded a Kubeinvaders demo directly on our website to le try out the tool.
+
+* Launch the demo at this link https://kubeinvaders.devopstribe.it/
+* Watch Grafana dashboard here https://grafana.devopstribe.it
+* Monitor the pod status here https://kubeopsview.devopstribe.it
+
+[These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for Fosdem 2023. Unfortunately I could not be present at my talk :D but I would still like to share them with the community
+
 # Table of Contents
 
 1. [Description](#Description)
@@ -14,16 +28,6 @@
 13. [Community blogs and videos](#Community-blogs-and-videos)
 14. [License](#License)
 
-![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
-
-We have embedded a Kubeinvaders demo directly on our website to le try out the tool. 
-
-* Launch the demo at this link https://kubeinvaders.devopstribe.it/ 
-* Watch Grafana dashboard here https://grafana.devopstribe.it
-* Monitor the pod status here https://kubeopsview.devopstribe.it
-
-[These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf)
- from the Chaos Engineering speech I prepared for Fosdem 2023. Unfortunately I could not be present at my talk :D but I would still like to share them with the community
 
 ## Description
 

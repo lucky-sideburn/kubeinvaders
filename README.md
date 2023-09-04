@@ -14,18 +14,14 @@
 13. [Community blogs and videos](#Community-blogs-and-videos)
 14. [License](#License)
 
+We have embedded a Kubeinvaders demo directly on our website to le try out the tool. 
+
+* Launch the demo at this link https://kubeinvaders.devopstribe.it/ 
+* Watch Grafana dashboard here https://grafana.devopstribe.it
+* Monitor the pod status here https://kubeopsview.devopstribe.it
+
 [These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf)
  from the Chaos Engineering speech I prepared for Fosdem 2023. Unfortunately I could not be present at my talk :D but I would still like to share them with the community
-
-![Alt Text](./doc_images/spaceship.png)
-
-![Alt Text](./doc_images/dashboard.png)
-
-### Watch Kubernetes logs through web tail console
-![Alt Text](./doc_images/webtail.png)
-
-### Define Chaos Experiments
-![Alt Text](./doc_images/programming_mode.png)
 
 ## Description
 

@@ -4,7 +4,6 @@
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
-![Alt Text](./doc_images/small_logo.png)
 We have embedded a Kubeinvaders demo directly on our website to le try out the tool.
 
 * Launch the demo at this link https://kubeinvaders.devopstribe.it/

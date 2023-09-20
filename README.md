@@ -1,6 +1,7 @@
 
 # Kubeinvaders
-# A.K.A. k-inv
+
+The first Gamified Chaos Engineering Tool for Kubernetes (backed by [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services about your kubernetes infrastructure).
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 

@@ -35,8 +35,30 @@ Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a f
 
 ## Installation
 
-### Try with Docker (only for development purpose)
-
+### Run through Docker or Podman
+#### Params
+##### K8S_TOKEN
+These are the permissions your service account must have
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["delete"]
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "watch", "list"]
+##### ENDPOINT
+Host and web console port of kubeinvaders
+##### INSECURE_ENDPOINT
+Select http or https for web console
+##### KUBERNETES_SERVICE_HOST
+Ip or dns name of your control plane
+##### KUBERNETES_SERVICE_PORT_HTTPS
+TCP port listening to your controlplane
+#### NAMESPACE
+List the namespaces you want to stress or on which you want to see logs
+  
 ```bash
 docker run -p 8080:8080 \
 --env K8S_TOKEN=<k8s_service_account_token>  \

@@ -35,6 +35,15 @@ Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a f
 
 ## Installation
 
+Before you start you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
+
+Assign the clusterrole to a Service Account and get token
+```bash
+kubectl create sa kinv-sa
+kubectl create clusterrolebinding kinv-sa --clusterrole=cluster-admin --serviceaccount=default:kinv-sa
+kubectl describe secret $(kubectl get secrets | grep kinv-sa | awk '{ print $1 }') | grep 'token:' | awk '{ print $2 }'
+```
+
 ### Run through Docker or Podman
 #### Params
 ##### K8S_TOKEN

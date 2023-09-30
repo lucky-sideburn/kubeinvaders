@@ -31,7 +31,7 @@ We have embedded a Kubeinvaders demo on DevOpsTRibe blog to le try out the tool.
 
 ## Description
 
-Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how resilient it is.
+Through **k-inv** you can stress a K8s cluster in a fun way and check how resilient it is.
 
 ## Installation
 
@@ -59,14 +59,14 @@ luckysideburn/kubeinvaders:v1.9.6_debug
 ```
 Given this example, I can reach k-inv at this address **http://localhost:3131**
 
-* Please pay attention to "podman run -p 3131:8080" it is importante forward the port 8080
-* We suggest to use INSECURE_ENDPOINT=true for local dev environments
-* Follow the above isntructions for create the token for K8S_TOKEN
-* Into the example we use v1.9.6_debug but if everything work good use v1.9.6 as image tag
+* Please pay attention to "podman run -p 3131:8080". Forward the port 8080 is important.
+* We suggest to use INSECURE_ENDPOINT=true for local dev environments.
+* Follow the above isntructions to create the token for K8S_TOKEN.
+* We use v1.9.6_debug in the example, but if everything works good use v1.9.6 as image tag
 
 #### Params
 ##### K8S_TOKEN
-These are the permissions your service account must have
+These are the permissions your service account must have. Take example from [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
   verbs: ["delete"]
@@ -78,19 +78,19 @@ These are the permissions your service account must have
   verbs: ["get", "watch", "list"]
 
 ##### ENDPOINT
-Host and web console port of kubeinvaders
+Host and port of web console
 
 ##### INSECURE_ENDPOINT
 Select http or https for web console
 
 ##### KUBERNETES_SERVICE_HOST
-Ip or dns name of your control plane
+IP or DNS name of your control plane
 
 ##### KUBERNETES_SERVICE_PORT_HTTPS
-TCP port listening to your controlplane
+TCP port of target control plane
 
 #### NAMESPACE
-List the namespaces you want to stress or on which you want to see logs
+List the namespaces you want to stress or on which you want to see logs (logs is a beta feature, it might not work or slow down the browser...)
   
 ```bash
 docker run -p 8080:8080 \

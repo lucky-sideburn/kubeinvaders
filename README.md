@@ -35,6 +35,7 @@ Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a f
 
 ## Installation
 
+### Run through Docker or Podman
 Before you start you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
 
 Assign the clusterrole to a Service Account and get token
@@ -43,8 +44,17 @@ kubectl create sa kinv-sa
 kubectl create clusterrolebinding kinv-sa --clusterrole=cluster-admin --serviceaccount=default:kinv-sa
 kubectl describe secret $(kubectl get secrets | grep kinv-sa | awk '{ print $1 }') | grep 'token:' | awk '{ print $2 }'
 ```
-
-### Run through Docker or Podman
+#### Example
+```bash
+podman run -p 3131:3131 \
+--env K8S_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImlrbVNQMWg5QUVCLVhjQl9uT0V4aVpQY0RNdTR2aVVHTzdJeXBZSXNnZkkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImtpbnYtc2EtdG9rZW4tcjdiOWoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoia2ludi1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImYxZDhjODZmLWU1MGItNGFkNy1hNjFlLWQ2OGE0ZWY0MTFmOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmtpbnYtc2EifQ.I2Wj8G_Mi49l7xGUTb3bKymoTme4dPFryTZ93LEMRePWZrmH7wJYZiI3KwdR3-kzB3Z8Mu4aIshFzL5goLVxAEeCfeRwQdeFsTZ9BLXG-bofFV8Y1qMFeaqawWQ0FH93h-N7mF0bLLXZhZcaj40AUo_tnDgnpT2TD0s62O8mpaHDHOwKZt5d1vHn4FX2B-YhOCuhar2VomeJCO6k4mOLUGvzoXfbRVnoOxGniChLIsT6LtrlAJvExjRKAljle5A8IuuiFTFrdez2UIq1Al-gfA5qdTiAwlXufZeMSq6RGBJRAWxOoRAqcd7Fe1MZRJ2rNH0Rz1L7lj1IverDXSYyug \
+--env ENDPOINT=localhost:3131 \
+--env INSECURE_ENDPOINT=true \
+--env KUBERNETES_SERVICE_HOST=10.10.10.4 \
+--env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
+--env NAMESPACE=namespace1,namespace2 \
+luckysideburn/kubeinvaders:v1.9.6_debug
+```
 #### Params
 ##### K8S_TOKEN
 These are the permissions your service account must have

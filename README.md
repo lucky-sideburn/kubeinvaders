@@ -1,5 +1,5 @@
 
-# Kubeinvaders
+# Kubeinvaders :alien:
 
 The first Gamified Chaos Engineering Tool for Kubernetes (backed by [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services about your kubernetes infrastructure).
 

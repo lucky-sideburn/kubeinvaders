@@ -1,6 +1,8 @@
 # kubeinvaders :rocket:
 
-Gamified Chaos Engineering Tool for K8s (backed by friends of [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services for your Kubernetes infrastructure).
+Gamified Chaos Engineering Tool for K8s
+
+Backed by friends of [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services for your Kubernetes infrastructure.
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 

@@ -214,7 +214,7 @@ Press + or - buttons to increase or decrease the game screen.
 
 ## Persistence
 
-"Kinv" uses Redis for save and manage data. Redis is configured with "appendonly".
+K-inv uses Redis for save and manage data. Redis is configured with "appendonly".
 
 At moment the helm chart does not support PersistentVolumes but this task is in the to do list...
 

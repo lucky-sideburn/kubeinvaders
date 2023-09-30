@@ -1,7 +1,6 @@
+# Kubeinvaders :rocket:
 
-# Kubeinvaders :alien:
-
-The first Gamified Chaos Engineering Tool for Kubernetes (backed by [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services about your kubernetes infrastructure).
+Gamified Chaos Engineering Tool for K8s (backed by friends of [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services for your Kubernetes infrastructure).
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
@@ -28,7 +27,6 @@ We have embedded a Kubeinvaders demo directly on our website to le try out the t
 13. [Community blogs and videos](#Community-blogs-and-videos)
 14. [License](#License)
 
-
 ## Description
 
 Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a fun way and check how resilient it is.
@@ -36,6 +34,7 @@ Through **k-inv** a.k.a. KubeInvaders you can stress a Kubernetes cluster in a f
 ## Installation
 
 ### Run through Docker or Podman
+
 Before you start you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
 
 Assign the clusterrole to a Service Account and get token
@@ -45,6 +44,7 @@ kubectl create clusterrolebinding kinv-sa --clusterrole=cluster-admin --servicea
 kubectl describe secret $(kubectl get secrets | grep kinv-sa | awk '{ print $1 }') | grep 'token:' | awk '{ print $2 }'
 ```
 #### Example
+
 ```bash
 podman run -p 3131:8080 \
 --env K8S_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImlrbVNQMWg5QUVCLVhjQl9uT0V4aVpQY0RNdTR2aVVHTzdJeXBZSXNnZkkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImtpbnYtc2EtdG9rZW4tcjdiOWoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoia2ludi1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImYxZDhjODZmLWU1MGItNGFkNy1hNjFlLWQ2OGE0ZWY0MTFmOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmtpbnYtc2EifQ.I2Wj8G_Mi49l7xGUTb3bKymoTme4dPFryTZ93LEMRePWZrmH7wJYZiI3KwdR3-kzB3Z8Mu4aIshFzL5goLVxAEeCfeRwQdeFsTZ9BLXG-bofFV8Y1qMFeaqawWQ0FH93h-N7mF0bLLXZhZcaj40AUo_tnDgnpT2TD0s62O8mpaHDHOwKZt5d1vHn4FX2B-YhOCuhar2VomeJCO6k4mOLUGvzoXfbRVnoOxGniChLIsT6LtrlAJvExjRKAljle5A8IuuiFTFrdez2UIq1Al-gfA5qdTiAwlXufZeMSq6RGBJRAWxOoRAqcd7Fe1MZRJ2rNH0Rz1L7lj1Ivraveparty \
@@ -74,14 +74,19 @@ These are the permissions your service account must have
 - apiGroups: ["*"]
   resources: ["*"]
   verbs: ["get", "watch", "list"]
+
 ##### ENDPOINT
 Host and web console port of kubeinvaders
+
 ##### INSECURE_ENDPOINT
 Select http or https for web console
+
 ##### KUBERNETES_SERVICE_HOST
 Ip or dns name of your control plane
+
 ##### KUBERNETES_SERVICE_PORT_HTTPS
 TCP port listening to your controlplane
+
 #### NAMESPACE
 List the namespaces you want to stress or on which you want to see logs
   
@@ -97,6 +102,7 @@ luckysideburn/kubeinvaders:develop
 ```
 
 ### Install to Kubernetes with Helm (v3+)
+
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 
 ```bash
@@ -116,7 +122,6 @@ helm install kubeinvaders --set-string config.target_namespace="namespace1\,name
 
 kubectl set env deployment/kubeinvaders INSECURE_ENDPOINT=true -n kubeinvaders
 ```
-
 
 ### SCC for Openshift
 
@@ -157,18 +162,22 @@ This is a control-plane you can use to switch off & on various features.
 ### YouTube HowTo
 
 [Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
+
 ### Start The Chaos Experiment
 
 Press the button "Start" to start automatic pilot (button changes to "Stop" to disable this feature).
 ### Enable Shuffle
 
 Press the button "Enable Shuffle" to randomly switch the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).
+
 ### Enable Auto Jump Between Namespace
 
 Press the button "Auto NS Switch" to randomly switch between namespaces (button changes to "Disable Auto NS Switch" to disable this feature).
+
 ### Show / Hide pods name
 
 Press the button "Hide Pods Name" to hide the name of the pods under the aliens (button changes to "Show Pods Name" to disable this feature).
+
 ### Information about current status and events
 
 As described below, on the game screen, near the spaceship, there are details about current cluster, namespace and some configurations.
@@ -225,7 +234,6 @@ At moment the helm chart does not support PersistentVolumes but this task is in 
 * Check from your browser developer console if there some HTTP requests that fails (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo
 * Try v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo
  
-
 ## Prometheus Metrics
 
 KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
@@ -253,7 +261,6 @@ Example of metrics:
 ![Alt Text](./doc_images/grafana1.png)
 
 ![Alt Text](./doc_images/grafana2.png)
-
 
 ## Security
 
@@ -291,7 +298,6 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - Chaos Engineering for SQL Server | Andrew Pruski | Conf42: Chaos Engineering: [YouTube_Video](https://www.youtube.com/watch?v=HCy3sjMRvlI)
 - nicholaschangblog: [Introducing Azure Chaos Studio](https://nicholaschangblog.com/azure/introduction-to-azure-choas-studio/)
 - bugbug: [Chaos Testing: Everything You Need To Know](https://bugbug.io/blog/software-testing/chaos-testing-guide/)
-
 
 ## License
 

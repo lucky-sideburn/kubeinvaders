@@ -1,19 +1,18 @@
 # kubeinvaders :rocket:
 
-Gamified Chaos Engineering Tool for K8s
+**Gamified Chaos Engineering Tool for K8s**
 
-Backed by friends of [platformengineering.it](https://platformengineering.it) who provides enterprise-grade features and certificated resilience services for your Kubernetes infrastructure.
+Backed by the team at [platformengineering.it](https://platformengineering.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
-We have embedded a demo on DevOpsTRibe blog to le try out the tool.
+We have embedded a demo on the DevOpsTRibe blog for you to try out the tool.
 
-* Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
-* Watch Grafana dashboard here [https://grafana.platformengineering.it](https://grafana.platformengineering.it)
-* Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
+- Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
+- Watch the Grafana dashboard here [https://grafana.platformengineering.it](https://grafana.platformengineering.it)
+- Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
 
-[These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) of the Chaos Engineering speech I prepared for FOSDEM 2023. 
-Unfortunately I could not be present at my talk but I would still like to share them with the community.
+[Here are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I could not be present at my talk, but I would still like to share them with the community.
 
 # Table of Contents
 
@@ -32,15 +31,15 @@ Unfortunately I could not be present at my talk but I would still like to share 
 
 ## Description
 
-Through **k-inv** you can stress a K8s cluster in a fun way and check how resilient it is.
+With **k-inv**, you can stress a K8s cluster in a fun way and check how resilient it is.
 
 ## Installation
 
 ### Run through Docker or Podman
 
-Before you start you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
+Before you start, you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
 
-Assign the clusterrole to a Service Account and get token
+Assign the clusterrole to a Service Account and obtain the token:
 ```bash
 kubectl create sa kinv-sa
 kubectl create clusterrolebinding kinv-sa --clusterrole=cluster-admin --serviceaccount=default:kinv-sa
@@ -58,16 +57,17 @@ podman run -p 3131:8080 \
 --env NAMESPACE=namespace1,namespace2 \
 luckysideburn/kubeinvaders:v1.9.6_debug
 ```
-Given this example, I can reach k-inv at this address **http://localhost:3131**
+Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
 
-* Please pay attention to "podman run -p 3131:8080". Forward the port 8080 is important.
-* We suggest to use INSECURE_ENDPOINT=true for local dev environments.
-* Follow the above isntructions to create the token for K8S_TOKEN.
-* We use v1.9.6_debug in the example, but if everything works good use v1.9.6 as image tag
+- Please pay attention to the command "podman run -p 3131:8080". Forwarding port 8080 is important.
+- We suggest using `INSECURE_ENDPOINT=true` for local development environments.
+- Follow the instructions above to create the token for `K8S_TOKEN`.
+- In the example, we use `v1.9.6_debug`, but if everything works well, use `v1.9.6` as the image tag.
 
 #### Params
 ##### K8S_TOKEN
-These are the permissions your service account must have. Take example from [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml))
+These are the permissions your service account must have. You can take an example from [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
+
 - apiGroups: [""]
   resources: ["pods", "pods/log"]
   verbs: ["delete"]
@@ -79,19 +79,19 @@ These are the permissions your service account must have. Take example from [thi
   verbs: ["get", "watch", "list"]
 
 ##### ENDPOINT
-Host and port of web console
+Host and port of the web console.
 
 ##### INSECURE_ENDPOINT
-Select http or https for web console
+Select HTTP or HTTPS for the web console.
 
 ##### KUBERNETES_SERVICE_HOST
-IP or DNS name of your control plane
+IP address or DNS name of your control plane.
 
 ##### KUBERNETES_SERVICE_PORT_HTTPS
-TCP port of target control plane
+TCP port of the target control plane.
 
 #### NAMESPACE
-List the namespaces you want to stress or on which you want to see logs (logs is a beta feature, it might not work or slow down the browser...)
+List the namespaces you want to stress or on which you want to see logs (logs are a beta feature, they might not work or could slow down the browser...).
   
 ```bash
 docker run -p 8080:8080 \
@@ -134,8 +134,6 @@ oc adm policy add-scc-to-user anyuid -z kubeinvaders
 
 ### Route for Openshift
 
-I should add this to the helm chart...
-
 ```bash
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -168,32 +166,33 @@ This is a control-plane you can use to switch off & on various features.
 
 ### Start The Chaos Experiment
 
-Press the button "Start" to start automatic pilot (button changes to "Stop" to disable this feature).
+Press the "Start" button to initiate the automatic pilot (the button changes to "Stop" to disable this feature).
+
 ### Enable Shuffle
 
-Press the button "Enable Shuffle" to randomly switch the positions of pods or k8s nodes (button changes to "Disable Shuffle" to disable this feature).
+Press the "Enable Shuffle" button to randomly rearrange the positions of pods or K8s nodes (the button changes to "Disable Shuffle" to deactivate this feature).
 
 ### Enable Auto Jump Between Namespace
 
-Press the button "Auto NS Switch" to randomly switch between namespaces (button changes to "Disable Auto NS Switch" to disable this feature).
+Press the "Auto NS Switch" button to randomly switch between namespaces (the button changes to "Disable Auto NS Switch" to deactivate this feature).
 
-### Show / Hide pods name
+### Show / Hide Pods Name
 
-Press the button "Hide Pods Name" to hide the name of the pods under the aliens (button changes to "Show Pods Name" to disable this feature).
+Press the "Hide Pods Name" button to conceal the names of the pods beneath the aliens (the button changes to "Show Pods Name" to deactivate this feature).
 
-### Information about current status and events
+### Information about Current Status and Events
 
-As described below, on the game screen, near the spaceship, there are details about current cluster, namespace and some configurations.
+As described below, on the game screen near the spaceship, there are details about the current cluster, namespace, and some configurations.
 
 ![Alt Text](./doc_images/game-info.png)
 
-Under + and - buttons appears a bar with the latest occurred game events.
+Under the + and - buttons, a bar appears with the latest game events.
 
 ![Alt Text](./doc_images/game-events.png)
 
-### Do Kube-linter Lint
+### Perform Kube-linter Lint
 
-It is possibile using [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders in order to scan resources looking for best-practices or improvements to apply.
+You can use [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders to scan resources for best practices or improvements to apply.
 
 [Example from YouTube](https://www.youtube.com/watch?v=n_EuYjq3M-A)
 
@@ -203,13 +202,13 @@ Press 'h' or select 'Show Special Keys' from the menu.
 
 ### Zoom In / Out
 
-Press + or - buttons to increase or decrease the game screen.
+Press the + or - buttons to increase or decrease the game screen.
 
-### Chaos Containers for masters and workers nodes
+### Chaos Containers for Master and Worker Nodes
 
-- Select from the menu "Show Current Chaos Container for nodes" to watch which container start when you fire against a worker node (not an alien, they are pods).
+- Select "Show Current Chaos Container for Nodes" from the menu to see which container starts when you attack a worker node (not an alien, they are pods).
 
-- Select from the menu "Set Custom Chaos Container for nodes" to use your preferred image or configuration against nodes.
+- Select "Set Custom Chaos Container for Nodes" from the menu to use your preferred image or configuration against nodes.
 
 ## Architecture
 
@@ -217,31 +216,31 @@ Press + or - buttons to increase or decrease the game screen.
 
 ## Persistence
 
-K-inv uses Redis for save and manage data. Redis is configured with "appendonly".
+K-inv uses Redis to save and manage data. Redis is configured with "appendonly."
 
-At moment the helm chart does not support PersistentVolumes but this task is in the to do list...
+Currently, the Helm chart does not support PersistentVolumes, but this task is on the to-do list...
 
-## Generic Troubleshooting And Known Problems
+## Generic Troubleshooting and Known Problems
 
-* It seems that KubeInvaders does not work with EKS because of problems with ServiceAccount.
-* At moment the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported
-* I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray
-* If you don't see aliens please do the following steps:
-1. Open a terminal and do "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
-2. Execute from another terminal `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
-3. Open an issue with attached logs
+* It seems that KubeInvaders does not work with EKS due to problems with ServiceAccount.
+* Currently, the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported.
+* I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray.
+* If you don't see aliens, please follow these steps:
+   1. Open a terminal and run "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
+   2. Execute the following command from another terminal: `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
+   3. Open an issue with attached logs.
 
 ## Troubleshooting Unknown Namespace
 
-* Check if namespaces declared with helm config.target_namespace (es: config.target_namespace="namespace1\,namespace2") exist and contain some pods
-* Check from your browser developer console if there some HTTP requests that fails (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo
-* Try v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo
- 
+* Check if the namespaces declared with helm config.target_namespace (e.g., config.target_namespace="namespace1\,namespace2") exist and contain some pods.
+* Check your browser's developer console for any failed HTTP requests (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo).
+* Try using v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
+
 ## Prometheus Metrics
 
-KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics
+KubeInvaders exposes metrics for Prometheus through the standard endpoint /metrics.
 
-This is an example of Prometheus configuration:
+Here is an example of Prometheus configuration:
 
 ```bash
 scrape_configs:

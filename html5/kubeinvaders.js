@@ -90,7 +90,7 @@ var kubelinter = '';
 var showPodName = true
 var latestPodNameY = '';
 var namespacesJumpFlag = false;
-var namespacesJumpStaus = 'Disabled';
+var namespacesJumpStatus = 'Disabled';
 
 var latest_preset_name = "";
 var latest_preset_lang = "";
@@ -101,6 +101,8 @@ var codename_configured = false;
 var chaos_jobs_status = new Map();
 
 var current_color_mode = "light";
+
+var chaos_logs_pos = 0;
 
 function rand_id() {
     return getRandomInt(9999);
@@ -443,6 +445,37 @@ function getMetrics() {
     oReq.send();
 }
 
+function scroll_backwards() {
+    if (chaos_logs_pos > 0){
+        chaos_logs_pos = chaos_logs_pos -1;
+        $('#current_log_pos').text(chaos_logs_pos);
+        getChaosJobsLogs();
+    } 
+}
+
+function getTotalLogsPos() {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            if (log_tail_switch) {
+                if (this.responseText.trim() == "null") {
+                    $('#total_logs_pos').text("0");
+                } else {
+                    $('#total_logs_pos').text(this.responseText);
+                }
+            }
+        }
+    };;
+    oReq.open("GET", k8s_url + "/chaos/logs/count?logid=" + random_code);
+    oReq.send();
+}
+
+function scroll_forward() {
+    chaos_logs_pos = chaos_logs_pos + 1;
+    $('#current_log_pos').text(chaos_logs_pos);
+    getChaosJobsLogs();
+}
+
 function getChaosJobsLogs() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
@@ -457,7 +490,7 @@ function getChaosJobsLogs() {
             }
         }
     };;
-    oReq.open("GET", k8s_url + "/chaos/logs?logid=" + random_code);
+    oReq.open("GET", k8s_url + "/chaos/logs?logid=" + random_code + "&pos=" + chaos_logs_pos);
     oReq.send();
     keepAliveJobsLogs();
 }
@@ -471,7 +504,7 @@ function keepAliveJobsLogs() {
             }
         }
     };;
-    oReq.open("GET", k8s_url + "/chaos/logs/keepalive?logid=" + random_code);
+    oReq.open("GET", k8s_url + "/chaos/logs/keepalive?logid=" + random_code + "&pos=" + chaos_logs_pos);
     oReq.send();
 }
 
@@ -950,7 +983,7 @@ window.setInterval(function draw() {
     ctx.fillText('Cluster: ' + endpoint, 10, 390);
     ctx.fillText('Current Namespace: ' + namespace, 10, 410);
     ctx.fillText('Alien Shuffle: ' + shuffle, 10, 430);
-    ctx.fillText('Auto Namespaces Switch: ' + namespacesJumpStaus, 10, 450);
+    ctx.fillText('Auto Namespaces Switch: ' + namespacesJumpStatus, 10, 450);
 
     ctx.fillText('press \'h\' for help!', 10, 470);
 
@@ -981,12 +1014,12 @@ function namespacesJumpControl() {
         namespacesJumpFlag = false;
         $("#namespacesJumpButton").text("Enable Auto NS Switch");
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Disabled automatic switch of namespace</div>');
-        namespacesJumpStaus = 'Disabled'
+        namespacesJumpStatus = 'Disabled'
     } else {
         namespacesJumpFlag = true;
         $("#namespacesJumpButton").text("Disable Auto NS Switch");
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Enabled automatic switch of namespace </div>');
-        namespacesJumpStaus = 'Enabled'
+        namespacesJumpStatus = 'Enabled'
     }
 }
 
@@ -1089,11 +1122,12 @@ window.setInterval(function backgroundTasks() {
     }
 
     if (game_mode_switch || programming_mode_switch || log_tail_switch) {
-        getMetrics()
+        getMetrics();
     }
     
     if (log_tail_switch) {
-	    getChaosJobsLogs()
+	    getChaosJobsLogs();
+        getTotalLogsPos();
     }
     
     if (programming_mode_switch) {

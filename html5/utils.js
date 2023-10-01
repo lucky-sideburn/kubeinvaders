@@ -185,6 +185,7 @@ loadPresetsCodeJson = `{
       log_tail_screen.style.display = "block"
       setLogRegex();
       enableLogTail();
+      getChaosJobsLogs();
     }
   }
 

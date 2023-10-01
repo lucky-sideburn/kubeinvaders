@@ -22,7 +22,7 @@
                 <font style="color: #ffffff;">Menu</font>
               </a>
               <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarDarkDropdownMenuLink">
-                <li><a class="dropdown-item" href="#" onclick="runKubeLinter()">Run KubeLinter On Current Namespace</a></li>
+                <!-- <li><a class="dropdown-item" href="#" onclick="runKubeLinter()">Run KubeLinter On Current Namespace</a></li> -->
                 <li><a class="dropdown-item" href="#" onclick="showSpecialKeys()">Show Special Keys</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a></li>
                 <li><a class="dropdown-item" href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a></li>
@@ -221,9 +221,13 @@
 
               <span style="color: #000000" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
               <span style="color: #000000" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
-
-              <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span>
+              <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
           </div>
+        </div>
+        <!-- END METRICS ROW -->
+
+        <!-- START CHAOS PROGRAMMING MODE SCREEN -->
+        <div id="chaos-program-screen" style="display: none;">
           <div class="">
             <div class="row" style="margin-top: 2%;">
               <font size="2" class="text-kinv" id="loadTestingPresetsText">Load Testing Presets & Chaos Programs</font>
@@ -255,11 +259,6 @@
               </div>
           </div>
           </div>
-        </div>
-        <!-- END METRICS ROW -->
-
-        <!-- START CHAOS PROGRAMMING MODE SCREEN -->
-        <div id="chaos-program-screen" style="display: none;">
           <div class="row" style="margin-top: 1%;">
             <div id="alert_placeholder_programming_mode" style="margin-top: 1%; margin-bottom: 1%;"></div>
             <div class="col">
@@ -345,7 +344,7 @@ experiments:
         </div>
 
         <!-- LOG TAIL ROW -->
-        <div class="logtail-group">
+        <!-- <div class="logtail-group">
           <div class="row" style="margin-top: 1%;">
             <div class="col text-center">
               <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
@@ -365,12 +364,17 @@ experiments:
       
           <div id="logTailRegexInput" style="display: block;">
             <div class="row" style="margin-top: 2%; padding-left: 2%; padding-right: 2%;">
-              <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"since": "60", "pod":".*", "namespace":"namespace1", "labels":".*", "annotations":".*", "containers":".*"}'/>
+              <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod_logs_sec": "60", "pod_start_time_sec": "60", "pod":".*", "namespace":"kube-system", "labels":".*", "annotations":".*", "containers":".*"}'/>
             </div>
             <div class="row" style="margin-top: 1%;">
               <div class="col text-center">
+                <button type="button" style="width: 10em;" id="scroll_backwards" class="btn btn-sm btn-dark ext-center" onclick="scroll_backwards()"><<<</button>
                 <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
+                <button type="button" style="width: 10em;" id="scroll_forward" class="btn btn-sm btn-dark ext-center" onclick="scroll_forward()">>>></button>
               </div>
+              <div class="row" style="margin-top: 1%;">
+                <span style="color: #000000" class="text-kinv" id="chaosLogsTotalPos">Total Logs Position:&nbsp;&nbsp;<span id="total_logs_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
+                <span style="color: #000000" class="text-kinv" id="chaosLogsCurrentPos">Current Logs Position:&nbsp;&nbsp;<span id="current_log_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
             </div>
           </div>
 
@@ -380,7 +384,7 @@ experiments:
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div id="footer" style="margin-top: 5%;">

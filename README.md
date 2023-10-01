@@ -55,7 +55,7 @@ podman run -p 3131:8080 \
 --env KUBERNETES_SERVICE_HOST=10.10.10.4 \
 --env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
 --env NAMESPACE=namespace1,namespace2 \
-luckysideburn/kubeinvaders:v1.9.6_debug
+luckysideburn/kubeinvaders:v1.9.6
 ```
 Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
 
@@ -189,12 +189,6 @@ As described below, on the game screen near the spaceship, there are details abo
 Under the + and - buttons, a bar appears with the latest game events.
 
 ![Alt Text](./doc_images/game-events.png)
-
-### Perform Kube-linter Lint
-
-You can use [kube-linter](https://github.com/stackrox/kube-linter) through KubeInvaders to scan resources for best practices or improvements to apply.
-
-[Example from YouTube](https://www.youtube.com/watch?v=n_EuYjq3M-A)
 
 ### Show Special Keys
 

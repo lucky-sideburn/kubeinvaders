@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="./style.css">
   </head>
   <body id="kinvBody">
-    <nav class="navbar navbar-expand-lg navbar-li bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-li bg-dark navbar-collapse">
       <div class="container-fluid">
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button style="color: #ffffff; border-color: #ffffff; border-width: 3px;" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown" aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNavDarkDropdown">
@@ -153,11 +153,11 @@
         <!-- START FIRST ROW -->
         <div class="row" style="margin-top: 2%;">
           <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
-          <div class="row" style="margin-bottom: 1%;">
-            <div class="col text-center">
+          <div class="row" style="margin-bottom: 2%;">
+            <div class="col text-center" style="margin-bottom: 2%;">
               <button type="button" id="gameModeButton" class="btn btn-light btn-green" onclick="startGameMode()">Game Mode</button>
             </div>
-            <div class="col text-center">
+            <div class="col text-center" style="margin-bottom: 2%;">
               <button type="button" id="programmingModeButton" class="btn btn-light btn-green" onclick="startProgrammingMode()">Programming Mode</button>
             </div>
           </div>
@@ -179,38 +179,37 @@
 
         <!-- START GAME MODE BUTTONS -->
         <div id="game-buttons" style="display: none;">
-          <div class="row">
+          <div class="row container">
             <div class="col text-center">
               <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
             </div>
-            <div class="col text-center">
+            <div class="col">
               <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
             </div>
             <div class="col text-center">
               <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
             </div>
           </div>
-          <div class="row" style="margin-top: 1%;">
+          <div class="row container" style="margin-top: 1%;">
             <div class="col text-center">
-              <button type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+              <button style="margin-bottom: 2%" type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
             </div>
             <div class="col text-center">
-              <button type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+              <button style="margin-bottom: 2%" type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
             </div>
             <div class="col text-center">
-              <button type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+              <button style="margin-bottom: 2%" type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
             </div>
           </div>
         </div>
         <!-- END GAME MODE BUTTONS -->
 
         <!-- START METRICS ROW -->
-        <div class="row transition" align="center" id="metricsPresetsRow">
-          <div style="margin-top: 1%;" class="custom-btn-group" id="metricsGroup">
+        <div class="row text-justify" align="center" id="metricsPresetsRow">
+          <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
 
-              <span style="color: #000000;" class="text-kinv" id="currentGameNamespaceLabel">Current Game Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961"> unknown </span></span><br>
-
-              <span style="color: #000000;" class="text-kinv" id="deletedPodsTotalText">Deleted Pod Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
+              <span style="color: #000000;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
+              <span style="color: #000000;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
               <span style="color: #000000"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
 
               <span style="color: #000000" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
@@ -261,10 +260,10 @@
             <div class="col">
               <div class="row" width="10px">
                 <div class="col text-center">
-                  <button type="button" id="saveChaosProgramButton" class="btn btn-light" style="width: 50%;" onclick="savePreset('save-chaos-program')">SAVE</button>
+                  <button type="button" id="saveChaosProgramButton" class="btn btn-light" onclick="savePreset('save-chaos-program')">SAVE</button>
                 </div>
                 <div class="col text-center">
-                  <button type="button" id="runChaosProgramButton" class="btn btn-dark" style="width: 50%;" onclick="runChaosProgram()">RUN</button>
+                  <button type="button" id="runChaosProgramButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
                 </div>
               </div>
               <form>
@@ -385,11 +384,13 @@ experiments:
     </div>
 
     <div id="footer" style="margin-top: 5%;">
-      <div align="center" style="margin-top: 10%;">
-        <img src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-      </div>
-      <div class="container text-center" style="margin-top: 1%;">
-        <p class="text-muted credit" style="color:#fff">kubeinvaders_version: v1.9.6</p>
+      <div class="container text-center">
+        <div class="container text-center" style="margin-top: 20%;">
+          <div>
+            <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
+            <p class="text-muted credit" style="color:#fff;">version: v1.9.6</p>
+          </div>
+        </div>
       </div>
     </div>
 

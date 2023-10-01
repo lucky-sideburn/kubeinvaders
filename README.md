@@ -6,7 +6,7 @@ Backed by friends of [platformengineering.it](https://platformengineering.it) wh
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
-We have embedded a demo on DevOpsTRibe blog to le try out the tool.
+We have embedded a demo on DevOpsTRibe blog to let try out the tool.
 
 * Launch the demo at this link [https://kubeinvaders.devopstribe.it](https://kubeinvaders.devopstribe.it/)
 * Watch Grafana dashboard here [https://grafana.devopstribe.it](https://grafana.devopstribe.it)

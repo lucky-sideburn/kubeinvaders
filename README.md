@@ -8,9 +8,9 @@ Backed by friends of [platformengineering.it](https://platformengineering.it) wh
 
 We have embedded a demo on DevOpsTRibe blog to le try out the tool.
 
-* Launch the demo at this link [https://kubeinvaders.devopstribe.it](https://kubeinvaders.devopstribe.it/)
-* Watch Grafana dashboard here [https://grafana.devopstribe.it](https://grafana.devopstribe.it)
-* Monitor the pod status here [https://kubeopsview.devopstribe.it](https://kubeopsview.devopstribe.it)
+* Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
+* Watch Grafana dashboard here [https://grafana.platformengineering.it](https://grafana.platformengineering.it)
+* Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
 
 [These are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) of the Chaos Engineering speech I prepared for FOSDEM 2023. 
 Unfortunately I could not be present at my talk but I would still like to share them with the community.

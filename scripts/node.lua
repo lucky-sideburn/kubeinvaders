@@ -88,7 +88,7 @@ for k,v in ipairs(resp) do
       -- TODO: masters should be included?
       -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
       ngx.log(ngx.INFO, "found node " .. v2["metadata"]["name"])
-      table.insert(nodes["items"], v2["metadata"]["name"])
+      table.insert(nodes["items"], { name = v2["metadata"]["name"], status = "ready" })
       --end
     end
   end

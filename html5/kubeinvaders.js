@@ -46,8 +46,6 @@ var random_code = (Math.random() + 1).toString(36).substring(7);
 // nodes list from kubernetes
 var nodes = [];
 
-var mergeNodesAndPods = [];
-
 // Hash of aliens related to pods or nodes
 var aliens = [];
 var aliensWidth = 40;
@@ -664,11 +662,19 @@ function getPods() {
     if (chaos_pods) {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
-            json_parsed = JSON.parse(this.responseText);
+            new_pods = JSON.parse(this.responseText)["items"];
+
+            // Pod might just be killed in game, but not terminated in k8s yet.
+            for (i=0; i<new_pods.length; i++) {
+                if (aliens.some((alien) => alien.name == new_pods[i].name && alien.status == "killed")) {
+                    new_pods[i].status = "killed";
+                }
+            }
+
             if (nodes && nodes.length > 0) {
-                pods = json_parsed["items"].concat(nodes);
+                pods = new_pods.concat(nodes);
             } else {
-                pods = json_parsed["items"];
+                pods = new_pods;
             }
         };;
         oReq.open("GET", k8s_url + "/kube/pods?action=list&namespace=" + namespace);
@@ -703,7 +709,7 @@ window.setInterval(function getKubeItems() {
         getNodes();
         getPods();
     }
-}, 1000)
+}, 500)
 
 function keyDownHandler(e) {
     if (!modal_opened && game_mode_switch) {
@@ -800,14 +806,14 @@ function keyUpHandler(e) {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
-function drawAlien(alienX, alienY, name) {
+function drawAlien(alienX, alienY, name, status) {
     var image = new Image(); // Image constructor
-    if (contains(nodes, name)) {
+    if (nodes.some((node) => node.name == name)) {
         image.src = './images/k8s_node.png';
         ctx.drawImage(image, alienX, alienY, 30, 40);
     }
     else {
-        image.src = './images/sprite_invader.png';
+        image.src = `./images/sprite_invader_${status}.png`;
         ctx.font = '8px pixel';
         ctx.drawImage(image, alienX, alienY, 40, 40);
         if (showPodName) {
@@ -831,14 +837,19 @@ function checkRocketAlienCollision() {
                 
                 if(contains(rangeX, rocketX)) {
                     collisionDetected = true;
-                    aliens[i]["active"] = false;
-                    if (contains(nodes, aliens[i]["name"])) {
+                    aliens[i]["status"] = "killed";
+                    // Aliens might be updated before new pods are fetched
+                    for (j=0; j<pods.length; j++) {
+                        if (pods[j].name == aliens[i].name) {
+                            pods[j].status = "killed";
+                        }
+                    }
+                    if (nodes.some((node) => node.name == aliens[i]["name"])) {
+                        aliens[i]["active"] = false;
                         startChaosNode(aliens[i]["name"]);
-                        aliens[i]["name"] = "killed_pod";
                     }
                     else {
                         deletePods(aliens[i]["name"]);
-                        aliens[i]["name"] = "killed_pod";
                     }
                     return true;
                 }
@@ -974,7 +985,7 @@ window.setInterval(function draw() {
     
     for (i=0; i<aliens.length; i++) {
         if (aliens[i]["active"]) {
-            drawAlien(aliens[i]["x"], aliens[i]["y"], aliens[i]["name"]);
+            drawAlien(aliens[i]["x"], aliens[i]["y"], aliens[i]["name"], aliens[i]["status"]);
         }
     }
     ctx.fillStyle = 'white';
@@ -1077,10 +1088,10 @@ window.setInterval(function setAliens() {
         var yInc = false;
 
         for (i=0; i<pods.length; i++) {
-            if(!podExists(pods[i])) {
+            if(!podExists(pods[i].name)) {
                 var replaceWith = findReplace();
                 if (replaceWith != -1) {
-                    aliens[replaceWith] = {"name": pods[i], "x": aliens[replaceWith]["x"], "y": aliens[replaceWith]["y"], "active": true}
+                    aliens[replaceWith] = {"name": pods[i].name, "status": pods[i].status, "x": aliens[replaceWith]["x"], "y": aliens[replaceWith]["y"], "active": true}
                     cnt =+ 1;
                 }
                 else {
@@ -1092,7 +1103,7 @@ window.setInterval(function setAliens() {
                         y -= 20;
                         yInc = false;
                     }
-                    aliens.push({"name": pods[i], "x": x, "y": y, "active": true});
+                    aliens.push({"name": pods[i].name, "status": pods[i].status, "x": x, "y": y, "active": true});
                     cnt =+ 1;
                 }
                 if (aliens.length % 12 == 0) {

@@ -4,6 +4,14 @@
   transition: visibility 0s, opacity 1.0s linear;
 }
 
+.navbar-toggler-icon {
+  background-image: url("./images/sprite_invader_ready.png")
+}
+
+.navbar-toggler {
+  border-color: rgb(255, 255, 255);
+} 
+
 hr {
   margin-top: 1rem;
   margin-bottom: 1rem;

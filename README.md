@@ -206,10 +206,6 @@ Press the + or - buttons to increase or decrease the game screen.
 
 - Select "Set Custom Chaos Container for Nodes" from the menu to use your preferred image or configuration against nodes.
 
-## Architecture
-
-![Alt Text](./doc_images/kinv_hld.svg)
-
 ## Persistence
 
 K-inv uses Redis to save and manage data. Redis is configured with "appendonly."

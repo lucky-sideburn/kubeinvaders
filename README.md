@@ -106,6 +106,8 @@ luckysideburn/kubeinvaders:develop
 
 ### Install to Kubernetes with Helm (v3+)
 
+If you need a lab kubernetes cluster you can use this setup via Make and Minikube. Follow [this readme](./minikube-setup/README.md)
+
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 
 ```bash

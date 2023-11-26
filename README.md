@@ -2,7 +2,7 @@
 
 **Gamified Chaos Engineering Tool for K8s**
 
-Backed by the team at [platformengineering.it](https://platformengineering.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
+Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 

@@ -2,6 +2,8 @@
 
 **Gamified Chaos Engineering Tool for K8s**
 
+This project is part of landscape of [Cloud Native Computing Foudation]([url](https://landscape.cncf.io/)) in the Observability and Analysis - Chaos Engineering section.
+
 Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)

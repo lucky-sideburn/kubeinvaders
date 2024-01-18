@@ -1,4 +1,4 @@
-# kubeinvaders :space_invader: aka k-inv
+# kubeinvaders :space_invader: aka k-inv :joystick:
 
 **Gamified Chaos Engineering Tool for K8s**
 

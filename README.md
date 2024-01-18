@@ -1,4 +1,4 @@
-# kubeinvaders :rocket:
+# kubeinvaders :space_invader: aka k-inv
 
 **Gamified Chaos Engineering Tool for K8s**
 

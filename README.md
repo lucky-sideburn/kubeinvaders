@@ -172,7 +172,7 @@ This is a control-plane you can use to switch off & on various features.
 
 Press the "Start" button to initiate the automatic pilot (the button changes to "Stop" to disable this feature).
 
-### Enable Shuffle
+### Enable Shuffle :joystick:
 
 Press the "Enable Shuffle" button to randomly rearrange the positions of pods or K8s nodes (the button changes to "Disable Shuffle" to deactivate this feature).
 

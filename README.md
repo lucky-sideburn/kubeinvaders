@@ -176,15 +176,15 @@ Press the "Start" button to initiate the automatic pilot (the button changes to 
 
 Press the "Enable Shuffle" button to randomly rearrange the positions of pods or K8s nodes (the button changes to "Disable Shuffle" to deactivate this feature).
 
-### Enable Auto Jump Between Namespace
+### Enable Auto Jump Between Namespace :joystick:
 
 Press the "Auto NS Switch" button to randomly switch between namespaces (the button changes to "Disable Auto NS Switch" to deactivate this feature).
 
-### Show / Hide Pods Name
+### Show / Hide Pods Name :joystick:
 
 Press the "Hide Pods Name" button to conceal the names of the pods beneath the aliens (the button changes to "Show Pods Name" to deactivate this feature).
 
-### Information about Current Status and Events
+### Information about Current Status and Events :joystick:
 
 As described below, on the game screen near the spaceship, there are details about the current cluster, namespace, and some configurations.
 
@@ -194,11 +194,11 @@ Under the + and - buttons, a bar appears with the latest game events.
 
 ![Alt Text](./doc_images/game-events.png)
 
-### Show Special Keys
+### Show Special Keys :joystick:
 
 Press 'h' or select 'Show Special Keys' from the menu.
 
-### Zoom In / Out
+### Zoom In / Out :joystick:
 
 Press the + or - buttons to increase or decrease the game screen.
 

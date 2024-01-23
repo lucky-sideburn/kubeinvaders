@@ -121,6 +121,57 @@ kubectl create namespace kubeinvaders
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
 ```
+### Example for K3S
+
+```bash
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
+
+cat >/tmp/ingress-nginx.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: ingress-nginx
+  namespace: kube-system
+spec:
+  chart: ingress-nginx
+  repo: https://kubernetes.github.io/ingress-nginx
+  targetNamespace: ingress-nginx
+  version: v4.9.0
+  set:
+  valuesContent: |-
+    fullnameOverride: ingress-nginx
+    controller:
+      kind: DaemonSet
+      hostNetwork: true
+      hostPort:
+        enabled: true
+      service:
+        enabled: false
+      publishService:
+        enabled: false
+      metrics:
+        enabled: false
+        serviceMonitor:
+          enabled: false
+      config:
+        use-forwarded-headers: "true"
+EOF
+
+kubectl create -f /tmp/ingress-nginx.yaml
+
+kubectl create ns namespace1
+kubectl create ns namespace2
+
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
+```
 
 ### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
 

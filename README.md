@@ -22,14 +22,14 @@ We have embedded a demo on the DevOpsTRibe blog for you to try out the tool.
 2. [Installation](#Installation)
 3. [Usage](#Usage)
 4. [Architecture](#Architecture)
-6. [Persistence](#Persistence)
-7. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
-8. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
-9. [Metrics](#Metrics)
-10. [Security](#Security)
-12. [Community](#Community)
-13. [Community blogs and videos](#Community-blogs-and-videos)
-14. [License](#License)
+5. [Persistence](#Persistence)
+6. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
+7. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
+8. [Metrics](#Metrics)
+9. [Security](#Security)
+10. [Community](#Community)
+11. [Community blogs and videos](#Community-blogs-and-videos)
+12. [License](#License)
 
 ## Description
 
@@ -41,17 +41,92 @@ With **k-inv**, you can stress a K8s cluster in a fun way and check how resilien
 
 Before you start, you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
 
-Assign the clusterrole to a Service Account and obtain the token:
-```bash
-kubectl create sa kinv-sa
-kubectl create clusterrolebinding kinv-sa --clusterrole=cluster-admin --serviceaccount=default:kinv-sa
-kubectl describe secret $(kubectl get secrets | grep kinv-sa | awk '{ print $1 }') | grep 'token:' | awk '{ print $2 }'
-```
 #### Example
+
+Create the required components (assumes k8s v1.24+):
+
+```bash
+cat << 'EOF' | kubectl apply -f -
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeinvaders
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kinv-cr
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - pods/log
+    verbs:
+      - delete
+  - apiGroups:
+      - batch
+      - extensions
+    resources:
+      - jobs
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - "*"
+    resources:
+      - "*"
+    verbs:
+      - get
+      - watch
+      - list
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kinv-sa
+  namespace: kubeinvaders
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kinv-crb
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kinv-cr
+subjects:
+  - kind: ServiceAccount
+    name: kinv-sa
+    namespace: kubeinvaders
+---
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: kinv-sa-token
+  namespace: kubeinvaders
+  annotations:
+    kubernetes.io/service-account.name: kinv-sa
+EOF
+```
+
+Extract the token:
+
+```bash
+TOKEN=$(k get secret -n kubeinvaders -o go-template='{{.data.token | base64decode}}' kinv-sa-token)
+```
+
+Run the container:
 
 ```bash
 podman run -p 3131:8080 \
---env K8S_TOKEN=eyJhbGciOiJSUzI1NiIsImtpZCI6ImlrbVNQMWg5QUVCLVhjQl9uT0V4aVpQY0RNdTR2aVVHTzdJeXBZSXNnZkkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJkZWZhdWx0Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImtpbnYtc2EtdG9rZW4tcjdiOWoiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoia2ludi1zYSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6ImYxZDhjODZmLWU1MGItNGFkNy1hNjFlLWQ2OGE0ZWY0MTFmOSIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpkZWZhdWx0OmtpbnYtc2EifQ.I2Wj8G_Mi49l7xGUTb3bKymoTme4dPFryTZ93LEMRePWZrmH7wJYZiI3KwdR3-kzB3Z8Mu4aIshFzL5goLVxAEeCfeRwQdeFsTZ9BLXG-bofFV8Y1qMFeaqawWQ0FH93h-N7mF0bLLXZhZcaj40AUo_tnDgnpT2TD0s62O8mpaHDHOwKZt5d1vHn4FX2B-YhOCuhar2VomeJCO6k4mOLUGvzoXfbRVnoOxGniChLIsT6LtrlAJvExjRKAljle5A8IuuiFTFrdez2UIq1Al-gfA5qdTiAwlXufZeMSq6RGBJRAWxOoRAqcd7Fe1MZRJ2rNH0Rz1L7lj1Ivraveparty \
+--env K8S_TOKEN=$TOKEN \
 --env ENDPOINT=localhost:3131 \
 --env INSECURE_ENDPOINT=true \
 --env KUBERNETES_SERVICE_HOST=10.10.10.4 \
@@ -59,15 +134,18 @@ podman run -p 3131:8080 \
 --env NAMESPACE=namespace1,namespace2 \
 luckysideburn/kubeinvaders:v1.9.6
 ```
+
 Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
 
 - Please pay attention to the command "podman run -p 3131:8080". Forwarding port 8080 is important.
 - We suggest using `INSECURE_ENDPOINT=true` for local development environments.
 - Follow the instructions above to create the token for `K8S_TOKEN`.
-- In the example, we use `v1.9.6_debug`, but if everything works well, use `v1.9.6` as the image tag.
+- In the example, we use image tag `v1.9.6`, use `v1.9.6_debug` for debugging.
 
 #### Params
+
 ##### K8S_TOKEN
+
 These are the permissions your service account must have. You can take an example from [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
 
 - apiGroups: [""]
@@ -81,20 +159,25 @@ These are the permissions your service account must have. You can take an exampl
   verbs: ["get", "watch", "list"]
 
 ##### ENDPOINT
+
 Host and port of the web console.
 
 ##### INSECURE_ENDPOINT
+
 Select HTTP or HTTPS for the web console.
 
 ##### KUBERNETES_SERVICE_HOST
+
 IP address or DNS name of your control plane.
 
 ##### KUBERNETES_SERVICE_PORT_HTTPS
+
 TCP port of the target control plane.
 
 #### NAMESPACE
+
 List the namespaces you want to stress or on which you want to see logs (logs are a beta feature, they might not work or could slow down the browser...).
-  
+
 ```bash
 docker run -p 8080:8080 \
 --env K8S_TOKEN=<k8s_service_account_token>  \
@@ -121,6 +204,7 @@ kubectl create namespace kubeinvaders
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
 ```
+
 ### Example for K3S
 
 ```bash
@@ -201,7 +285,7 @@ spec:
     name: kubeinvaders
   tls:
     termination: Edge
- ```
+```
 
 ## Usage
 
@@ -267,19 +351,19 @@ Currently, the Helm chart does not support PersistentVolumes, but this task is o
 
 ## Generic Troubleshooting and Known Problems
 
-* It seems that KubeInvaders does not work with EKS due to problems with ServiceAccount.
-* Currently, the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported.
-* I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray.
-* If you don't see aliens, please follow these steps:
-   1. Open a terminal and run "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
-   2. Execute the following command from another terminal: `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
-   3. Open an issue with attached logs.
+- It seems that KubeInvaders does not work with EKS due to problems with ServiceAccount.
+- Currently, the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported.
+- I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray.
+- If you don't see aliens, please follow these steps:
+  1.  Open a terminal and run "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
+  2.  Execute the following command from another terminal: `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
+  3.  Open an issue with attached logs.
 
 ## Troubleshooting Unknown Namespace
 
-* Check if the namespaces declared with helm config.target_namespace (e.g., config.target_namespace="namespace1\,namespace2") exist and contain some pods.
-* Check your browser's developer console for any failed HTTP requests (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo).
-* Try using v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
+- Check if the namespaces declared with helm config.target_namespace (e.g., config.target_namespace="namespace1\,namespace2") exist and contain some pods.
+- Check your browser's developer console for any failed HTTP requests (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo).
+- Try using v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
 
 ## Prometheus Metrics
 
@@ -294,14 +378,15 @@ scrape_configs:
   - targets:
     - kubeinvaders.kubeinvaders.svc.cluster.local:8080
 ```
+
 Example of metrics:
 
-| Metric           | Description                                                                                                                          |  
-|------------------|--------------------------------------------------------------------------------------------------------------------------------------|
-|     chaos_jobs_node_count{node=workernode01}               | Total number of chaos jobs executed per node                                               |
-|     chaos_node_jobs_total                                  | Total number of chaos jobs executed against all worker nodes                               |                                                      
-|     deleted_pods_total 16                                  | Total number of deleted pods                                                               |
-|     deleted_namespace_pods_count{namespace=myawesomenamespace}           |Total number of deleted pods per namespace                                    |                                     
+| Metric                                                     | Description                                                  |
+| ---------------------------------------------------------- | ------------------------------------------------------------ |
+| chaos_jobs_node_count{node=workernode01}                   | Total number of chaos jobs executed per node                 |
+| chaos_node_jobs_total                                      | Total number of chaos jobs executed against all worker nodes |
+| deleted_pods_total 16                                      | Total number of deleted pods                                 |
+| deleted_namespace_pods_count{namespace=myawesomenamespace} | Total number of deleted pods per namespace                   |
 
 ![Download Grafana dashboard](./confs/grafana/KubeInvadersDashboard.json)
 
@@ -325,6 +410,7 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - New features are published on YouTube too in [this channel](https://www.youtube.com/channel/UCQ5BQ8R2fDL_WkNAllYRrpQ)
 
 ## Community blogs and videos
+
 - [ AdaCon Norway Live Stream ](https://www.youtube.com/watch?v=rt_eM_KRfK4)
 - [ LILiS - Linux Day 2023 Benevento ](https://www.youtube.com/watch?v=1tHkEfbGjgE)
 - Kubernetes.io blog: [KubeInvaders - Gamified Chaos Engineering Tool for Kubernetes](https://kubernetes.io/blog/2020/01/22/kubeinvaders-gamified-chaos-engineering-tool-for-kubernetes/)

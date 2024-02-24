@@ -40,9 +40,20 @@ function closeSetLoadTestModal() {
   $('#setLoadTestModal').modal('hide');
   setModalState(false);
 }
-function showPrepareChaosReportModal() {
-  $('#prepareChaosReportModal').modal('show');
-  $("#chaosReportHeader").text("Configuration of Chaos Report for namespace: " + namespace);
-  $("#chaosReportDate").val(formattedToday());
-  setModalState(true);
+
+function showPrepareChaosReportModal(checkbox) {
+  if(checkbox.checked){
+    $('#prepareChaosReportModal').modal('show');
+    $("#chaosReportHeader").text("Configuration of Chaos Report for namespace: " + namespace);
+    setCodeNameToTextInput("chaosReportAuthor");
+    setCodeNameToTextInput("chaosReportProject");
+    setModalState(true);
+  } else {
+    closePrepareChaosReportModal();
+  }
+}
+
+function closePrepareChaosReportModal() {
+  $('#prepareChaosReportModal').modal('hide');
+  setModalState(false);
 }

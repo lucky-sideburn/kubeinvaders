@@ -127,49 +127,50 @@
           <div class="modal-body">
             <form>
               <div class="form-group row">
-                <div class="col-xs-2">
+                <div class="col col-xl-10">
                   <label for="" style="margin-bottom: 1%;" id="chaosReportHeader"></label>
                   <div class="row">
-                    <div class="col-xs-2">
+                    <div class="col col-xl-10">
                       <label for="chaosReportProject">Project</label>
-                      <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%;">
+                      <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%; width: 50%;">
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-2">
+                    <div class="col col-xl-10">
                       <label for="chaosReportAuthor">Author</label>
-                      <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%;">
+                      <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%; width: 50%;">
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-xs-2">
+                  <!-- <div class="row">
+                    <div class="col col-xl-10">
                       <label for="chaosReportDate">Date</label>
-                      <input type="text" id="chaosReportDate" value="" style="margin-bottom: 1%;">
+                      <input type="text" id="chaosReportDate" value="" style="margin-bottom: 1%; width: 30%;">
+                    </div>
+                  </div> -->
+                  <div class="row">
+                    <div class="col col-xl-10">
+                      <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">add an http endpoint to be analyzed during the chaos engineering session</label>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-2">
-                      <button type="button" id="chaosReportHttpEndpointButton" class="btn btn-light-saved" style="margin-top: 1%; margin-bottom: 1%;" onclick="chaosReportHttpEndpointAdd()">add site</button>
-                      <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">(URL to check during Chaos Report Session)</label>
+                    <div class="col col-xl-10">
+                      <button type="button" id="chaosReportHttpEndpointButton" class="btn btn-light-saved" style="margin-top: 1%; margin-bottom: 1%;" onclick="chaosReportHttpEndpointAdd()">Configure Site</button>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-xs-2">
+                    <div class="col col-xl-10">
                       <div id="addSiteAreaChaosReport"></div>
                     </div>
                   </div>
-                  <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea>
+                  <!-- <textarea class="form-control" id="chaosReportTextArea" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea> -->
                 </div>
               </div>
               <div class="form-group">
                 <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 1%;"></p>
               </div>
               <div class="modal-footer">
-                <button type="button" id="saveAndApplyButton" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
-                <button type="button" id="savePresetButton" class="btn btn-light" onclick="savePreset('save')">Save</button>
-                <button type="button" id="resetToDefaultButton" class="btn btn-light-saved" onclick="resetPreset('preset')">Reset to default</button>
-                <button type="button" id="deleteChaosProgramButton" class="btn btn-dark" onclick="resetPreset('k-inv')">Delete</button>
-                <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
+                <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
+                <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModal()">Close</button>
               </div>
             </form>
           </div>
@@ -211,7 +212,7 @@
               <button type="button" id="gameModeButton" class="btn btn-light btn-green" onclick="startGameMode()">Game Mode</button>
             </div>
             <div class="col text-center" style="margin-bottom: 0%;">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="showPrepareChaosReportModal()">
+              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="showPrepareChaosReportModal(this)">
               <label class="form-check-label" for="flexCheckDefault">
                 Enable Resilience Report
               </label>
@@ -278,9 +279,9 @@
               <span style="color: #000000" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
               <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
           </div>
-          <div class="progress" style="margin-top: 1%;">
+          <!-- <div class="progress" style="margin-top: 1%;">
             <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
-          </div>
+          </div> -->
         </div>
         <!-- END METRICS ROW -->
 
@@ -375,7 +376,7 @@ experiments:
             </div>
           </div>
         </div>
-        <!-- END CHAOS PROGRAMMING MODE SCREEN -->
+        <!-- END CHAOS PROGRAMMING MODE SCREEN --> 
 
         <!-- START GAME MODE SCREEN -->
         <div id="game-screen" style="display: none;">
@@ -400,49 +401,6 @@ experiments:
           <div id="alert_placeholder" style="margin-top: 3%;"></div>
           <div id="alert_placeholder3" style="margin-top: 3%;"></div>
         </div>
-
-        <!-- LOG TAIL ROW -->
-        <!-- <div class="logtail-group">
-          <div class="row" style="margin-top: 1%;">
-            <div class="col text-center">
-              <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col text-center">
-            </div>
-            <div class="col text-center">
-              <input type="button" id="zoomInButton2" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
-              <input type="button" id="zoomOutButton2" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
-            </div>
-            <div class="col text-center">
-            </div>
-          </div> 
-      
-          <div id="logTailRegexInput" style="display: block;">
-            <div class="row" style="margin-top: 2%; padding-left: 2%; padding-right: 2%;">
-              <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod_logs_sec": "60", "pod_start_time_sec": "60", "pod":".*", "namespace":"kube-system", "labels":".*", "annotations":".*", "containers":".*"}'/>
-            </div>
-            <div class="row" style="margin-top: 1%;">
-              <div class="col text-center">
-                <button type="button" style="width: 10em;" id="scroll_backwards" class="btn btn-sm btn-dark ext-center" onclick="scroll_backwards()"><<<</button>
-                <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
-                <button type="button" style="width: 10em;" id="scroll_forward" class="btn btn-sm btn-dark ext-center" onclick="scroll_forward()">>>></button>
-              </div>
-              <div class="row" style="margin-top: 1%;">
-                <span style="color: #000000" class="text-kinv" id="chaosLogsTotalPos">Total Logs Position:&nbsp;&nbsp;<span id="total_logs_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
-                <span style="color: #000000" class="text-kinv" id="chaosLogsCurrentPos">Current Logs Position:&nbsp;&nbsp;<span id="current_log_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
-            </div>
-          </div>
-
-          <div id="logTailScreen" style="display: none;">
-            <div class="row">
-              <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none; padding-left: 3%; padding-right: 3%;"></div>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <div id="footer" style="margin-top: 5%;">

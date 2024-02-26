@@ -98,6 +98,9 @@ var codename_configured = false;
 var chaos_jobs_status = new Map();
 var current_color_mode = "light";
 var chaos_logs_pos = 0;
+var chaos_report_switch = false;
+var chaos_report_http_elapsed_time_array = [];
+var chaosReportprojectName = "";
 
 function getCodeName() {
     var oReq = new XMLHttpRequest();
@@ -826,6 +829,12 @@ window.setInterval(function backgroundTasks() {
     
     if (programming_mode_switch) {
         drawChaosProgramFlow();
+    }
+    
+    if (chaos_report_switch) {
+        updateElapsedTimeArray(chaosReportprojectName);
+        updateChaosReportStartTime(chaosReportprojectName)
+        drawCanvasHTTPStatusCodeStats();
     }
 
 }, 2000)

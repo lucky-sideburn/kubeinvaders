@@ -74,7 +74,9 @@ function checkIfSomeItemIsEmpty(dict, except) {
 }
 
 function sendSavedChaosReport() {
-
+  chaos_report_switch = true;
+  document.getElementById("httpStatsCanvasDiv").style.display = "block";
+  drawCanvasHTTPStatusCodeStats()
   var presetBodyDict = {
     "chaosReportAuthor": $("#chaosReportAuthor").val(),
     "chaosReportProject": $("#chaosReportProject").val(),
@@ -83,6 +85,13 @@ function sendSavedChaosReport() {
     "chaosReportCheckSiteURLHeaders": $("#chaosReportCheckSiteURLHeaders").val(),
     "chaosReportCheckSiteURLPayload": chaos_report_post_data
   }
+
+  chaosReportprojectName = presetBodyDict["chaosReportProject"];
+  $("#chaosReportAuthorDiv").html("Author: " + presetBodyDict["chaosReportAuthor"]);
+  $("#chaosReportProjectDiv").html("Project: " + presetBodyDict["chaosReportProject"]);
+  $("#chaosReportDateDiv").html("Session Start Date: " + new Date().toLocaleString());
+  $("#chaosReportSessionTimeDiv").html("Session Time: 0");
+  $("#chaosReportCheckSiteURLDiv").html("Observed URL: " + presetBodyDict["chaosReportCheckSiteURL"]);
 
   if (!isValidURL(presetBodyDict["chaosReportCheckSiteURL"])) {
     alert("Invalid URL");
@@ -139,5 +148,108 @@ function saveChaosReport() {
   } else {
     console.log("[SAVE-CHAOS-REPORT-CONF] Check url is GET, sending saved Chaos Report");
     sendSavedChaosReport();
+  }
+}
+
+function updateElapsedTimeArray(projectName) {
+  console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
+  
+  var oReq = new XMLHttpRequest();
+  var redis_key = projectName + "_check_url_elapsed_time";
+  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  
+  oReq.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      console.log("[SAVE-CHAOS-REPORT-CONF] Elapsed time array received from Redis: " + parseFloat(this.responseText));
+      chaos_report_http_elapsed_time_array.push(parseFloat(this.responseText));
+    } 
+  };;
+
+  oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
+  oReq.setRequestHeader("Content-Type", "application/json");
+  oReq.send();
+}
+
+function updateChaosReportStartTime(projectName) {
+  console.log("[SAVE-CHAOS-REPORT-CONF] Updating Start Time for project: " + projectName);
+  
+  var oReq = new XMLHttpRequest();
+  var redis_key = projectName + "_check_url_start_time";
+  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  
+  oReq.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      $("#chaosReportDateDiv").html("Session Start Date: " + this.responseText);
+    } 
+  };;
+
+  oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
+  oReq.setRequestHeader("Content-Type", "application/json");
+  oReq.send();
+}
+
+
+function drawCanvasHTTPStatusCodeStats() {
+  
+  while (chaos_report_http_elapsed_time_array.length > 40) {
+    chaos_report_http_elapsed_time_array.shift();
+  }
+
+  var elapsedTimeArray = chaos_report_http_elapsed_time_array;
+  var canvas = document.getElementById('httpStatsCanvas');
+  var context = canvas.getContext('2d');
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Imposta la dimensione dei rettangoli e il numero di colonne e righe
+  var rectSize = 20;
+  var rows = canvas.height / rectSize;
+  var columns = canvas.width / rectSize;
+
+  // Disegna la griglia di rettangoli
+  for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < columns; j++) {
+          // Calcola le coordinate del rettangolo
+          var x = j * rectSize;
+          var y = i * rectSize;
+
+          context.strokeStyle = 'black';
+          context.fillStyle = 'white';
+        
+          // Disegna il rettangolo
+          context.fillRect(x, y, rectSize, rectSize);
+
+          // Aggiungi bordi per una migliore visualizzazione
+          //context.strokeRect(x, y, rectSize, rectSize);
+      }
+  }
+
+  for (var i = 0; i < elapsedTimeArray.length; i++) {
+    var x = i * rectSize;
+    var y = 80;
+
+    var width = rectSize;
+    var height = rectSize;
+
+    if (elapsedTimeArray[i] > 3) {
+      context.strokeStyle = 'black';
+      context.fillStyle = 'red';
+    } else if (elapsedTimeArray[i] > 2) {
+      context.strokeStyle = 'black';
+      context.fillStyle = 'orange';
+    } else {
+      context.strokeStyle = 'black';
+      context.fillStyle = "green";
+    }
+
+    if (i == elapsedTimeArray.length - 1) {
+      var text = String(elapsedTimeArray[i]);
+      context.fillStyle = 'black';
+      context.font = '20px Courier New';
+      context.fillText(text, x + width / 2 - context.measureText(text).width / 2, y - (height / 2));
+    }
+  
+    context.fillRect(x, y, width, height);
+  
+    //context.strokeRect(x, y, 20, 20);
   }
 }

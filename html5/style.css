@@ -149,4 +149,14 @@ div {
   font-family: pixel;
 }
 
-canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}
+.game-canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}
+
+.http-stats-code-canvas {
+  margin-top: 2%;
+  border: 5px solid #b2afaf;
+  border-radius: 5px;
+  -moz-border-radius: 15px;
+  -webkit-border-radius: 15px;
+  padding: 5px;
+  border-image-slice: 5;    
+}

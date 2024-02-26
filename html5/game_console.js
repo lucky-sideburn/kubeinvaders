@@ -25,6 +25,7 @@ function controlAutoPilot() {
   if (autoPilot) {
     autoPilot = false;
     $("#controlAutoPilotButton").text("Start");
+    chaos_report_switch = false;
   } else {
     autoPilot = true;
     $("#controlAutoPilotButton").text("Stop");

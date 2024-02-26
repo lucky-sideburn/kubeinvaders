@@ -48,6 +48,7 @@ function showPrepareChaosReportModal(checkbox) {
     setCodeNameToTextInput("chaosReportAuthor");
     setCodeNameToTextInput("chaosReportProject");
     setModalState(true);
+    //$("#httpStatsCanvasDiv").style.display = "block";
   } else {
     closePrepareChaosReportModal();
   }

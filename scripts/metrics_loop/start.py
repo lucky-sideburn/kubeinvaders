@@ -108,16 +108,20 @@ while True:
 
 
             check_url_counter_key = f"{chaos_report_program['chaosReportProject']}_check_url_counter"
-            check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code_{now}"
-            check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time_{now}"
+            check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code"
+            check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time"
+            check_url_start_time = f"{chaos_report_program['chaosReportProject']}_check_url_start_time"
 
             if r.get(check_url_counter_key) == None:
                 r.set(check_url_counter_key, 0)
             else:
                 r.incr(check_url_counter_key)
 
+            if r.get(check_url_start_time) == None:
+                r.set(check_url_start_time, now.strftime("%Y-%m-%d %H:%M:%S"))
+
             r.set(check_url_status_code_key, response.status_code)
-            r.set(check_url_elapsed_time_key, response.elapsed.total_seconds())
+            r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
 
     try:
         label_selector="chaos-controller=kubeinvaders"

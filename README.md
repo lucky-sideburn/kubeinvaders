@@ -7,9 +7,10 @@ This project is part of landscape of [Cloud Native Computing Foudation](https://
 Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
 <img src="https://raw.githubusercontent.com/lucky-sideburn/kubeinvaders/master/doc_images/logo.svg" width=50% height=50%>
-![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
 We have embedded a demo on the DevOpsTRibe blog for you to try out the tool.
+
+![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
 - Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
 - Watch the Grafana dashboard here [https://grafana.platformengineering.it](https://grafana.platformengineering.it)

@@ -383,8 +383,9 @@ experiments:
           <p id="chaosReportDateDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
           <p id="chaosReportSessionTimeDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
           <p id="chaosReportCheckSiteURLDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <label for="httpStatsCanvas" style="font-family: 'Courier New', Courier, monospace; font-size: large;">HTTP Elapsed</label>
-          <canvas id="httpStatsCanvas" width="720" height="100" class="http-stats-code-canvas"></canvas>
+          <!-- <label for="httpStatsCanvas" style="font-family: 'Courier New', Courier, monospace; font-size: large;">HTTP Elapsed</label>
+          <canvas id="httpStatsCanvas" width="720" height="100" class="http-stats-code-canvas"></canvas> -->
+          <div id="main" style="width: 600px;height:400px;"></div>
         </div>
         <!-- START GAME MODE SCREEN -->
         <div id="game-screen" style="display: none;">
@@ -421,16 +422,16 @@ experiments:
         </div>
       </div>
     </div>
-
+    <script src="./programming_mode.js"></script>
     <script src="./utils.js"></script>
     <script src="./modals.js"></script>
-    <script src="./programming_mode.js"></script>
     <script src="./mode_controls.js"></script>
     <script src="./game_console.js"></script>
-    <script src="./chaos_report.js"></script>
-    <script src="./kubeinvaders.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
     <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./js/popper.min.js"></script>
+    <script src="./kubeinvaders.js"></script>
+    <script src="./echarts/echarts.min.js"></script>
+    <script src="./chaos_report.js"></script>
   </body>
 </html>

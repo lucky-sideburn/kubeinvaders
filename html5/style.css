@@ -160,3 +160,7 @@ div {
   padding: 5px;
   border-image-slice: 5;    
 }
+
+.td-grey {
+  color: #7c737f;
+}

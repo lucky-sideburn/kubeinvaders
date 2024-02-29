@@ -213,8 +213,8 @@
             </div>
             <div class="col text-center" style="margin-bottom: 0%;">
               <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="showPrepareChaosReportModal(this)">
-              <label class="form-check-label" for="flexCheckDefault">
-                Enable Resilience Report
+              <label class="form-check-label text-kinv" for="flexCheckDefault">
+                Add HTTP check & Chaos Report
               </label>
             </div>
             <div class="col text-center" style="margin-bottom: 2%;">
@@ -393,22 +393,22 @@ experiments:
                 </thead>
                 <tbody>
                   <tr>
-                    <td>PROJECT</td>
+                    <td class="td-grey">PROJECT</td>
                     <td><p id="chaosReportProjectDiv"></p></td>
                   </tr>
                   <tr>
-                    <td>AUTHOR</td>
-                    <td><p id="chaosReportAuthorDiv"></p></td>
+                    <td class="td-grey">AUTHOR</td>
+                    <td><p id="chaosReportAuthorDiv" class="text-kinv"></p></td>
                   </tr>
-                    <td>Chaos session date</td>
-                    <td><p id="chaosReportDateDiv"></p></td>
+                    <td class="td-grey">Chaos session date</td>
+                    <td><p id="chaosReportDateDiv" class="text-kinv"></p></td>
                   <tr>
-                    <td>Chaos session time</td>
-                    <td><p id="chaosReportSessionTimeDiv"></p></td>
+                    <td class="td-grey">Chaos session time</td>
+                    <td><p id="chaosReportSessionTimeDiv" class="text-kinv"></p></td>
                   </tr>
                   <tr>
-                    <td>Checked URL</td>
-                    <td><p id="chaosReportCheckSiteURLDiv"></p></td>   
+                    <td class="td-grey">Checked URL</td>
+                    <td><p id="chaosReportCheckSiteURLDiv" class="text-kinv"></p></td>   
                   </tr>   
                   </tr>
                 </tbody>
@@ -451,8 +451,8 @@ experiments:
         </div>
       </div>
     </div>
-    <script src="./programming_mode.js"></script>
     <script src="./utils.js"></script>
+    <script src="./programming_mode.js"></script>
     <script src="./modals.js"></script>
     <script src="./mode_controls.js"></script>
     <script src="./game_console.js"></script>

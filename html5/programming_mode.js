@@ -1,4 +1,12 @@
 /* Programming Mode Functions */
+function IsJsonString(str) {
+    try {
+        JSON.parse(str);
+    } catch (e) {
+        return false;
+    }
+    return true;
+}
 
 /* TODO: this is very bad... change asap :D */
 loadPresetsCodeJson = `{
@@ -185,7 +193,7 @@ function drawChaosProgramFlow() {
 
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-          if (isJsonString(this.responseText)){
+          if (IsJsonString(this.responseText)){
               var flow = JSON.parse(this.responseText);
               var flow_html = "";
               let i = 0;

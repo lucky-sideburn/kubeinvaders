@@ -17,6 +17,10 @@ import time
 import datetime
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
+def join_string_to_array(project_list_string, separator):
+    return project_list_string.split(separator)
+
 def do_http_request(url, method, headers, data):
     try:
         response = requests.request(method, url, headers=headers, data=data, verify=False, allow_redirects=True, timeout=10)
@@ -93,35 +97,40 @@ batch_api = client.BatchV1Api()
 
 while True:
 
-    logging.info("[k-inv][metrics_loop] Metrics loop is active")
+    logging.info(f"[k-inv][metrics_loop] Metrics loop is active - {r.exists('chaos_report_project_list')}")
     
-    if r.exists('chaos_report_program'):
-        logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_program key in Redis. Starting chaos_report_program")
+    if r.exists('chaos_report_project_list'):
+        logging.info("[k-inv][metrics_loop] Found chaos_report_project_list Redis Key")
+        for project in join_string_to_array(r.get('chaos_report_project_list').decode(), ','):
+            logging.info(f"[k-inv][metrics_loop] Computing Chaos Report Project: {project}")
+            chaos_program_key = f"chaos_report_project_{project}"
+            if r.exists(chaos_program_key):
+                logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_project_{project} key in Redis. Starting {project} ")
 
-        if check_if_json_is_valid(r.get('chaos_report_program')):
-            chaos_report_program = json.loads(r.get('chaos_report_program'))
-            now = datetime.datetime.now()
+                if check_if_json_is_valid(r.get(chaos_program_key)):
+                    chaos_report_program = json.loads(r.get(chaos_program_key))
+                    now = datetime.datetime.now()
 
-            logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
-            response = do_http_request(chaos_report_program['chaosReportCheckSiteURL'], chaos_report_program['chaosReportCheckSiteURLMethod'], json.loads(chaos_report_program['chaosReportCheckSiteURLHeaders']), chaos_report_program['chaosReportCheckSiteURLPayload'])
-            logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program response: {response.status_code}")
+                    logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
+                    response = do_http_request(chaos_report_program['chaosReportCheckSiteURL'], chaos_report_program['chaosReportCheckSiteURLMethod'], json.loads(chaos_report_program['chaosReportCheckSiteURLHeaders']), chaos_report_program['chaosReportCheckSiteURLPayload'])
+                    logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program response: {response.status_code}")
 
 
-            check_url_counter_key = f"{chaos_report_program['chaosReportProject']}_check_url_counter"
-            check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code"
-            check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time"
-            check_url_start_time = f"{chaos_report_program['chaosReportProject']}_check_url_start_time"
+                    check_url_counter_key = f"{chaos_report_program['chaosReportProject']}_check_url_counter"
+                    check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code"
+                    check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time"
+                    check_url_start_time = f"{chaos_report_program['chaosReportProject']}_check_url_start_time"
 
-            if r.get(check_url_counter_key) == None:
-                r.set(check_url_counter_key, 0)
-            else:
-                r.incr(check_url_counter_key)
+                    if r.get(check_url_counter_key) == None:
+                        r.set(check_url_counter_key, 0)
+                    else:
+                        r.incr(check_url_counter_key)
 
-            if r.get(check_url_start_time) == None:
-                r.set(check_url_start_time, now.strftime("%Y-%m-%d %H:%M:%S"))
+                    if r.get(check_url_start_time) == None:
+                        r.set(check_url_start_time, now.strftime("%Y-%m-%d %H:%M:%S"))
 
-            r.set(check_url_status_code_key, response.status_code)
-            r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
+                    r.set(check_url_status_code_key, response.status_code)
+                    r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
 
     try:
         label_selector="chaos-controller=kubeinvaders"

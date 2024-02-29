@@ -1,3 +1,9 @@
+function diffBetweenTwoDates(date1, date2) {
+  console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + date1 + " and " + date2);
+  var diff = (date2.getTime() - date1.getTime()) / 1000;
+  console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + diff + " seconds")
+  return diff;
+}
 
 function addPostUploadFile(selectedValue) {
   if (selectedValue == "POST") {
@@ -74,6 +80,7 @@ function checkIfSomeItemIsEmpty(dict, except) {
 }
 
 function sendSavedChaosReport() {
+  startGameMode()
   chaos_report_switch = true;
   document.getElementById("httpStatsCanvasDiv").style.display = "block";
   drawCanvasHTTPStatusCodeStats()
@@ -86,11 +93,15 @@ function sendSavedChaosReport() {
     "chaosReportCheckSiteURLPayload": chaos_report_post_data
   }
 
+  if (chaos_report_start_date == "") {
+    chaos_report_start_date = new Date();
+  }
+
   chaosReportprojectName = presetBodyDict["chaosReportProject"];
   $("#chaosReportAuthorDiv").html(presetBodyDict["chaosReportAuthor"]);
   $("#chaosReportProjectDiv").html(presetBodyDict["chaosReportProject"]);
-  $("#chaosReportDateDiv").html(new Date().toLocaleString());
-  $("#chaosReportSessionTimeDiv").html("0");
+  $("#chaosReportDateDiv").html(chaos_report_start_date.toLocaleString());
+  $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
   $("#chaosReportCheckSiteURLDiv").html(presetBodyDict["chaosReportCheckSiteURL"]);
 
   if (!isValidURL(presetBodyDict["chaosReportCheckSiteURL"])) {
@@ -114,7 +125,7 @@ function sendSavedChaosReport() {
   }
 
   var oReq = new XMLHttpRequest();
-  oReq.open("POST", k8s_url + "/chaos/report/save", true);
+  oReq.open("POST", k8s_url + "/chaos/report/save?project=" + $("#chaosReportProject").val(), true);
 
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -152,6 +163,9 @@ function saveChaosReport() {
 }
 
 function updateElapsedTimeArray(projectName) {
+
+  $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
+  console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
   console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
   
   var oReq = new XMLHttpRequest();
@@ -182,7 +196,7 @@ function updateChaosReportStartTime(projectName) {
   
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      $("#chaosReportDateDiv").html("Session Start Date: " + this.responseText);
+      $("#chaosReportDateDiv").html(this.responseText);
     } 
   };;
 

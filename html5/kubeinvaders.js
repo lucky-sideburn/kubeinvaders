@@ -101,7 +101,7 @@ var chaos_logs_pos = 0;
 var chaos_report_switch = false;
 var chaos_report_http_elapsed_time_array = [];
 var chaosReportprojectName = "";
-
+var chaos_report_start_date = "";
 var chart_deleted_pods_total = 0;
 var chart_chaos_jobs_total = 0;
 var chart_current_chaos_job_pod = 0;

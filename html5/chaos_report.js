@@ -83,6 +83,8 @@ function sendSavedChaosReport() {
   startGameMode()
   chaos_report_switch = true;
   document.getElementById("httpStatsCanvasDiv").style.display = "block";
+  document.getElementById("chartDiv").style.display = "block";
+
   drawCanvasHTTPStatusCodeStats()
   var presetBodyDict = {
     "chaosReportAuthor": $("#chaosReportAuthor").val(),
@@ -137,6 +139,17 @@ function sendSavedChaosReport() {
   console.log("[SAVE-CHAOS-REPORT-CONF] Sending configuration to Nginx: " + JSON.stringify(presetBodyDict));
   oReq.send(JSON.stringify(presetBodyDict));
   closePrepareChaosReportModal();
+  
+  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
+    myHTTPStatusCodeChart.resize();
+  }
+  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
+    myMainChaosMetrics.resize();
+  }
+  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
+    myHTTPElapsedChart.resize();
+  }
+
 }
 
 function readContentOfUploadedFile() {
@@ -209,7 +222,7 @@ function updateChaosReportStartTime(projectName) {
 function drawCanvasHTTPStatusCodeStats() {
   console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
   
-  myChart.setOption({
+  myHTTPElapsedChart.setOption({
     xAxis: {},
     yAxis: {
       data: chaos_report_http_elapsed_time_array,
@@ -329,7 +342,7 @@ function drawCanvasHTTPStatusCodeStats() {
 //   }
 }
 
-var myChart = echarts.init(document.getElementById('main'));
+var myHTTPElapsedChart = echarts.init(document.getElementById('httpElapsedChart'));
 
 option = {
   legend: {
@@ -353,7 +366,7 @@ option = {
     }
   ]
 };
-myChart.setOption(option);
+myHTTPElapsedChart.setOption(option);
 
 
 var myMainChaosMetrics = echarts.init(document.getElementById('mainChaosMetrics'));
@@ -394,3 +407,55 @@ option = {
 };
 
 myMainChaosMetrics.setOption(option);
+
+var myHTTPStatusCodeChart = echarts.init(document.getElementById('httpStatusCodeChart'));
+
+option = {
+  series: [
+    {
+      type: 'pie',
+      data: [
+        {
+          value: 23,
+          name: '200',
+          itemStyle: {color: 'green'},
+        },
+        {
+          value: 34,
+          name: '500',
+          itemStyle: {color: 'red'},
+        },
+        {
+          value: 34,
+          name: '502',
+          itemStyle: {color: 'grey'},
+        },
+        {
+          value: 34,
+          name: '504',
+          itemStyle: {color: 'black'},
+        },
+        {
+          value: 34,
+          name: 'other',
+          itemStyle: {color: 'yellow'},
+        },
+      ],
+      roseType: 'area'
+    }
+  ]
+};
+
+myHTTPStatusCodeChart.setOption(option);
+
+$(window).on('resize', function(){
+  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
+    myHTTPStatusCodeChart.resize();
+  }
+  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
+    myMainChaosMetrics.resize();
+  }
+  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
+    myHTTPElapsedChart.resize();
+  }
+});

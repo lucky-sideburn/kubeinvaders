@@ -102,6 +102,13 @@ var chaos_report_switch = false;
 var chaos_report_http_elapsed_time_array = [];
 var chaosReportprojectName = "";
 
+var chart_deleted_pods_total = 0;
+var chart_chaos_jobs_total = 0;
+var chart_current_chaos_job_pod = 0;
+var chart_pods_not_running_on = 0;
+var chart_fewer_replicas_seconds = 0;
+var chart_latest_fewer_replicas_seconds = 0;
+
 function getCodeName() {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
@@ -140,20 +147,25 @@ function getMetrics() {
         var lines = this.responseText.split('\n');
         for (var i = 0;i < lines.length;i++){
             metric = lines[i].split(' ');
+
             if (metric[0] == "chaos_node_jobs_total") {
-                chaos_jobs_total
                 $('#chaos_jobs_total').text(metric[1]);
+                chart_chaos_jobs_total = Number(metric[1]);
             }
             else if (metric[0] == "deleted_pods_total") {
+                chart_deleted_pods_total = Number(metric[1]);
                 $('#deleted_pods_total').text(metric[1]);            
             }
             else if (metric[0] == "fewer_replicas_seconds") {
+                chart_fewer_replicas_seconds = Number(metric[1]);
                 $('#fewer_replicas_seconds').text(metric[1]);            
             }
             else if (metric[0] == "latest_fewer_replicas_seconds") {
+                chart_latest_fewer_replicas_seconds = Number(metric[1]);
                 $('#latest_fewer_replicas_seconds').text(metric[1]);            
             }
             else if (metric[0] == "pods_not_running_on_selected_ns") {
+                chart_pods_not_running_on = Number(metric[1]);
                 $('#pods_not_running_on').text(metric[1]);            
             }
             else if (metric[0] == "pods_match_regex:" + random_code) {
@@ -164,6 +176,7 @@ function getMetrics() {
                 chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
             }
             else if (metric[0] == "current_chaos_job_pod") {
+                chart_current_chaos_job_pod = Number(metric[1]);
                 $('#current_chaos_job_pod').text(metric[1]);
             }
         }

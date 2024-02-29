@@ -205,7 +205,7 @@
     </div>
     <div class="container" id="gameContainer" style="width: 50%; height: 50%;">
         <!-- START FIRST ROW -->
-        <div class="row" style="margin-top: 2%;">
+        <div class="row custom-btn-group" style="margin-top: 2%;">
           <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
           <div class="row" style="margin-bottom: 2%;">
             <div class="col text-center" style="margin-bottom: 2%;">
@@ -241,12 +241,12 @@
         <div id="game-buttons" style="display: none;">
           <div class="row container">
             <div class="col text-center">
-              <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
+              <button type="button" id="controlAutoPilotButton" class="btn btn-dark" onclick="controlAutoPilot()">Start</button>
+            </div>
+            <div class="col">
             </div>
             <div class="col">
               <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
-            </div>
-            <div class="col text-center">
               <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
             </div>
           </div>
@@ -277,6 +277,8 @@
 
               <span style="color: #000000" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
               <span style="color: #000000" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
+              <div id="mainChaosMetrics" style="width: 50%;height: 50%; margin-top: 1%;"></div>
+              
               <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
           </div>
           <!-- <div class="progress" style="margin-top: 1%;">
@@ -377,20 +379,47 @@ experiments:
           </div>
         </div>
         <!-- END CHAOS PROGRAMMING MODE SCREEN --> 
-        <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
-          <p id="chaosReportProjectDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <p id="chaosReportAuthorDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <p id="chaosReportDateDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <p id="chaosReportSessionTimeDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <p id="chaosReportCheckSiteURLDiv" style="font-family: 'Courier New', Courier, monospace; font-size: large;"></p>
-          <!-- <label for="httpStatsCanvas" style="font-family: 'Courier New', Courier, monospace; font-size: large;">HTTP Elapsed</label>
-          <canvas id="httpStatsCanvas" width="720" height="100" class="http-stats-code-canvas"></canvas> -->
-          <div id="main" style="width: 600px;height:400px;"></div>
-        </div>
+
         <!-- START GAME MODE SCREEN -->
         <div id="game-screen" style="display: none;">
+          <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
+            <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>PROJECT</td>
+                    <td><p id="chaosReportProjectDiv"></p></td>
+                  </tr>
+                  <tr>
+                    <td>AUTHOR</td>
+                    <td><p id="chaosReportAuthorDiv"></p></td>
+                  </tr>
+                    <td>Chaos session date</td>
+                    <td><p id="chaosReportDateDiv"></p></td>
+                  <tr>
+                    <td>Chaos session time</td>
+                    <td><p id="chaosReportSessionTimeDiv"></p></td>
+                  </tr>
+                  <tr>
+                    <td>Checked URL</td>
+                    <td><p id="chaosReportCheckSiteURLDiv"></p></td>   
+                  </tr>   
+                  </tr>
+                </tbody>
+              </table>
+
+              <label for="main" style="margin-left: 2%;">HTTP Elapsed (seconds)</label>
+              <div id="main" style="width: 800px; height:400px;"></div>
+            </div>
+          </div>
           <div class="row" style="margin-top: 2%;">
-            <canvas id="myCanvas" width="720" height="480" class="game-canvas"></canvas>
+            <canvas id="myCanvas" width="720" height="480" class="game-canvas custom-btn-group"></canvas>
           </div>
           <div class="row">
             <div class="col text-center">

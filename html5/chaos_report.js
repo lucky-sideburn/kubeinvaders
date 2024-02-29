@@ -87,11 +87,11 @@ function sendSavedChaosReport() {
   }
 
   chaosReportprojectName = presetBodyDict["chaosReportProject"];
-  $("#chaosReportAuthorDiv").html("Author: " + presetBodyDict["chaosReportAuthor"]);
-  $("#chaosReportProjectDiv").html("Project: " + presetBodyDict["chaosReportProject"]);
-  $("#chaosReportDateDiv").html("Session Start Date: " + new Date().toLocaleString());
-  $("#chaosReportSessionTimeDiv").html("Session Time: 0");
-  $("#chaosReportCheckSiteURLDiv").html("Observed URL: " + presetBodyDict["chaosReportCheckSiteURL"]);
+  $("#chaosReportAuthorDiv").html(presetBodyDict["chaosReportAuthor"]);
+  $("#chaosReportProjectDiv").html(presetBodyDict["chaosReportProject"]);
+  $("#chaosReportDateDiv").html(new Date().toLocaleString());
+  $("#chaosReportSessionTimeDiv").html("0");
+  $("#chaosReportCheckSiteURLDiv").html(presetBodyDict["chaosReportCheckSiteURL"]);
 
   if (!isValidURL(presetBodyDict["chaosReportCheckSiteURL"])) {
     alert("Invalid URL");
@@ -194,6 +194,7 @@ function updateChaosReportStartTime(projectName) {
 
 function drawCanvasHTTPStatusCodeStats() {
   console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
+  
   myChart.setOption({
     xAxis: {},
     yAxis: {
@@ -204,6 +205,49 @@ function drawCanvasHTTPStatusCodeStats() {
         data: chaos_report_http_elapsed_time_array,
         type: 'line',
         smooth: true
+      }
+    ]
+  });
+
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating metrics");
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Deleted Pods: " + chart_deleted_pods_total);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Chaos Jobs: " + chart_chaos_jobs_total);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Current Chaos Pods: " + chart_current_chaos_job_pod);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Not Running Pods: " + chart_pods_not_running_on);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Current Replicas State Delay: " + chart_fewer_replicas_seconds);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Latest Replicas State Delay: " + chart_latest_fewer_replicas_seconds);
+
+  myMainChaosMetrics.setOption({
+    series: [
+      {
+        type: 'pie',
+        data: [
+          {
+            value: Number(chart_deleted_pods_total),
+            name: 'Deleted Pods'
+          },
+          {
+            value: Number(chart_chaos_jobs_total),
+            name: 'Chaos Jobs'
+          },
+          {
+            value: Number(chart_current_chaos_job_pod),
+            name: 'Current Chaos Pods'
+          },
+          {
+            value: Number(chart_pods_not_running_on),
+            name: 'Not Running Pods'
+          },
+          {
+            value:  Number(chart_fewer_replicas_seconds),
+            name: 'Current Replicas State Delay'
+          },
+          {
+            value:  Number(chart_latest_fewer_replicas_seconds),
+            name: 'Latest Replicas State Delay'
+          }
+        ],
+        roseType: 'area'
       }
     ]
   });
@@ -274,6 +318,12 @@ function drawCanvasHTTPStatusCodeStats() {
 var myChart = echarts.init(document.getElementById('main'));
 
 option = {
+  legend: {
+    // Try 'horizontal'
+    orient: 'vertical',
+    right: 10,
+    top: 'center'
+  },
   xAxis: {
     data: chaos_report_http_elapsed_time_array,
   },
@@ -282,8 +332,51 @@ option = {
     {
       data: chaos_report_http_elapsed_time_array,
       type: 'line',
-      smooth: true
+      smooth: true,
+      itemStyle: {
+        color: 'red'
+      }
     }
   ]
 };
 myChart.setOption(option);
+
+
+var myMainChaosMetrics = echarts.init(document.getElementById('mainChaosMetrics'));
+
+option = {
+  series: [
+    {
+      type: 'pie',
+      data: [
+        {
+          value: 0,
+          name: 'Deleted Pods'
+        },
+        {
+          value: 0,
+          name: 'Chaos Jobs'
+        },
+        {
+          value: 0,
+          name: 'Current Chaos Pods'
+        },
+        {
+          value: 0,
+          name: 'Not Running Pods'
+        },
+        {
+          value: 0,
+          name: 'Current Replicas State Delay'
+        },
+        {
+          value: 0,
+          name: 'Latest Replicas State Delay'
+        }
+      ],
+      roseType: 'area'
+    }
+  ]
+};
+
+myMainChaosMetrics.setOption(option);

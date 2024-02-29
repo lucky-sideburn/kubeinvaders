@@ -149,7 +149,7 @@ div {
   font-family: pixel;
 }
 
-.game-canvas { background: #161616 ; display: block; margin: 0 auto; border:1px solid #ffffff;}
+.game-canvas { background: #161616 ; display: block; margin: 0 auto; }
 
 .http-stats-code-canvas {
   margin-top: 2%;

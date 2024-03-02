@@ -152,11 +152,11 @@
                       <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">add an http endpoint to be analyzed during the chaos engineering session</label>
                     </div>
                   </div>
-                  <div class="row">
+                  <!-- <div class="row">
                     <div class="col col-xl-10">
                       <button type="button" id="chaosReportHttpEndpointButton" class="btn btn-light-saved" style="margin-top: 1%; margin-bottom: 1%;" onclick="chaosReportHttpEndpointAdd()">Configure Site</button>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="row">
                     <div class="col col-xl-10">
                       <div id="addSiteAreaChaosReport"></div>
@@ -170,7 +170,7 @@
               </div>
               <div class="modal-footer">
                 <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
-                <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModal()">Close</button>
+                <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModalAndUncheck()">Close</button>
               </div>
             </form>
           </div>
@@ -212,7 +212,7 @@
               <button type="button" id="gameModeButton" class="btn btn-light btn-green" onclick="startGameMode()">Game Mode</button>
             </div>
             <div class="col text-center" style="margin-bottom: 0%;">
-              <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" onclick="showPrepareChaosReportModal(this)">
+              <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="showPrepareChaosReportModal(this)">
               <label class="form-check-label text-kinv" for="flexCheckDefault">
                 Add HTTP check & Chaos Report
               </label>
@@ -268,15 +268,15 @@
         <div class="row text-justify" align="center" id="metricsPresetsRow">
           <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
 
-              <span style="color: #000000;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
-              <span style="color: #000000;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
-              <span style="color: #000000"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
+              <span style="color: #b2afaf;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
 
-              <span style="color: #000000" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
-              <span style="color: #000000" class="text-kinv" id="podNotRunningText">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="podNotRunningText">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #3ac961">0</span></span><br>
 
-              <span style="color: #000000" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
-              <span style="color: #000000" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
               <div id="mainChaosMetrics" style="width: 50%;height: 50%; margin-top: 1%;"></div>
               
               <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
@@ -384,7 +384,7 @@ experiments:
         <div id="game-screen" style="display: none;">
           <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
             <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
-              <table class="table">
+              <table class="table" style="color:#b2afaf;">
                 <thead>
                   <tr>
                     <th scope="col"></th>
@@ -415,10 +415,10 @@ experiments:
               </table>
             </div>
             <div id="chartDiv" style="display: none;">
-              <label for="httpElapsedChart" style="margin-left: 2%; margin-top: 2%">HTTP Elapsed (seconds)</label>
-              <div id="httpElapsedChart" style="width: 100%; height: 400px;" ></div>
+              <label for="httpElapsedChart" style="margin-left: 2%; margin-top: 3%">HTTP Elapsed (seconds)</label>
+              <div id="httpElapsedChart" style="width: 100%; height: 400px; margin-top: 0%;" ></div>
               <label for="httpStatusCodeChart" style="margin-left: 2%;">HTTP Status Code</label>
-              <div id="httpStatusCodeChart" style="width: 50%; height: 200;"></div>
+              <div id="httpStatusCodeChart" style="width: 100%; height: 200px;"></div>
             </div>
           </div>          
           <div class="row" style="margin-top: 2%;">

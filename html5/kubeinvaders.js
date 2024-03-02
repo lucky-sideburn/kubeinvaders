@@ -108,6 +108,19 @@ var chart_current_chaos_job_pod = 0;
 var chart_pods_not_running_on = 0;
 var chart_fewer_replicas_seconds = 0;
 var chart_latest_fewer_replicas_seconds = 0;
+var chart_status_code_dict = {
+    "200": 0,
+    "500": 0,
+    "502": 0,
+    "503": 0,
+    "504": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "Connection Error": 0,
+    "Other": 0
+};
 
 function getCodeName() {
     var oReq = new XMLHttpRequest();
@@ -846,8 +859,20 @@ window.setInterval(function backgroundTasks() {
     
     if (chaos_report_switch) {
         updateElapsedTimeArray(chaosReportprojectName);
-        updateChaosReportStartTime(chaosReportprojectName)
+        updateChaosReportStartTime(chaosReportprojectName);
         drawCanvasHTTPStatusCodeStats();
+        chaosReportKeepAlive(chaosReportprojectName);
+        // if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
+        //     myHTTPStatusCodeChart.resize();
+        // }
+        
+        // if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
+        //     myMainChaosMetrics.resize();
+        // }
+        
+        // if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
+        //     myHTTPElapsedChart.resize();
+        // }
     }
 
 }, 2000)

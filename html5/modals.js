@@ -48,6 +48,7 @@ function showPrepareChaosReportModal(checkbox) {
     setCodeNameToTextInput("chaosReportAuthor");
     setCodeNameToTextInput("chaosReportProject");
     setModalState(true);
+    chaosReportHttpEndpointAdd();
     //$("#httpStatsCanvasDiv").style.display = "block";
   } else {
     closePrepareChaosReportModal();
@@ -56,5 +57,12 @@ function showPrepareChaosReportModal(checkbox) {
 
 function closePrepareChaosReportModal() {
   $('#prepareChaosReportModal').modal('hide');
+  document.getElementById("flagChaosReport").checked = false;
+  setModalState(false);
+}
+
+function closePrepareChaosReportModalAndUncheck() {
+  $('#prepareChaosReportModal').modal('hide');
+  document.getElementById("flagChaosReport").checked = false;
   setModalState(false);
 }

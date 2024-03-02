@@ -79,13 +79,15 @@ function checkIfSomeItemIsEmpty(dict, except) {
   return false;
 }
 
-function sendSavedChaosReport() {
-  startGameMode()
-  chaos_report_switch = true;
-  document.getElementById("httpStatsCanvasDiv").style.display = "block";
-  document.getElementById("chartDiv").style.display = "block";
+function chaosReportKeepAlive(chaosReportprojectName) {
+  var oReq = new XMLHttpRequest();
+  oReq.open("GET", k8s_url + "/chaos/report/keepalive?project=" + chaosReportprojectName, true);
+  oReq.setRequestHeader("Content-Type", "application/json");
+  oReq.send();
+}
 
-  drawCanvasHTTPStatusCodeStats()
+function sendSavedChaosReport() {
+
   var presetBodyDict = {
     "chaosReportAuthor": $("#chaosReportAuthor").val(),
     "chaosReportProject": $("#chaosReportProject").val(),
@@ -95,9 +97,20 @@ function sendSavedChaosReport() {
     "chaosReportCheckSiteURLPayload": chaos_report_post_data
   }
 
+  if (!isValidURL(presetBodyDict["chaosReportCheckSiteURL"])) {
+    alert("Invalid URL");
+    return;
+  }
+
   if (chaos_report_start_date == "") {
     chaos_report_start_date = new Date();
   }
+
+  startGameMode()
+  chaos_report_switch = true;
+  document.getElementById("httpStatsCanvasDiv").style.display = "block";
+  document.getElementById("chartDiv").style.display = "block";
+  drawCanvasHTTPStatusCodeStats();
 
   chaosReportprojectName = presetBodyDict["chaosReportProject"];
   $("#chaosReportAuthorDiv").html(presetBodyDict["chaosReportAuthor"]);
@@ -106,10 +119,6 @@ function sendSavedChaosReport() {
   $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
   $("#chaosReportCheckSiteURLDiv").html(presetBodyDict["chaosReportCheckSiteURL"]);
 
-  if (!isValidURL(presetBodyDict["chaosReportCheckSiteURL"])) {
-    alert("Invalid URL");
-    return;
-  }
 
   if (headerAreLikePythonRequestHeaders(presetBodyDict["chaosReportCheckSiteURLHeaders"]) == false) {
     alert("Invalid headers. Insert them like this: \"Content-Type\": \"application/json; charset=utf-8\";\"Authorization\"");
@@ -149,7 +158,8 @@ function sendSavedChaosReport() {
   if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
     myHTTPElapsedChart.resize();
   }
-
+  document.getElementById("myCanvas").scrollIntoView(true);
+  document.getElementById("flagChaosReport").checked = true;
 }
 
 function readContentOfUploadedFile() {
@@ -176,7 +186,6 @@ function saveChaosReport() {
 }
 
 function updateElapsedTimeArray(projectName) {
-
   $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
   console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
   console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
@@ -192,6 +201,94 @@ function updateElapsedTimeArray(projectName) {
       while (chaos_report_http_elapsed_time_array.length > 40) {
         chaos_report_http_elapsed_time_array.shift();
       }
+    } 
+  };;
+
+  oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
+  oReq.setRequestHeader("Content-Type", "application/json");
+  oReq.send();
+  updateStatusCodePieChart(projectName);
+}
+
+function updateStatusCodePieChart(projectName) {
+  console.log("[SAVE-CHAOS-REPORT-CONF] Updating Status Code Pie Chart for project: " + projectName);
+  
+  var oReq = new XMLHttpRequest();
+  var redis_key = projectName + "_check_url_status_code";
+  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  
+  oReq.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      var status_code = this.responseText.trim();
+      console.log("[SAVE-CHAOS-REPORT-CONF] Status Code Pie Chart received from Redis: |" + status_code + "|");
+
+      chart_status_code_dict[status_code] =  chart_status_code_dict[status_code] + 1
+
+      myHTTPStatusCodeChart.setOption({
+        series: [
+          {
+            type: 'pie',
+            data: [
+              {
+                value: chart_status_code_dict["200"],
+                name: '200',
+                itemStyle: {color: 'green'},
+              },
+              {
+                value: chart_status_code_dict["500"],
+                name: '500',
+                itemStyle: {color: 'red'},
+              },
+              {
+                value: chart_status_code_dict["502"],
+                name: '502',
+                itemStyle: {color: 'red'},
+              },
+              {
+                value: chart_status_code_dict["503"],
+                name: '503',
+                itemStyle: {color: 'red'},
+              },
+              {
+                value: chart_status_code_dict["504"],
+                name: '504',
+                itemStyle: {color: 'red'},
+              },
+              {
+                value: chart_status_code_dict["400"],
+                name: '400',
+                itemStyle: {color: 'yellow'},
+              },
+              {
+                value: chart_status_code_dict["401"],
+                name: '401',
+                itemStyle: {color: 'yellow'},
+              },
+              {
+                value: chart_status_code_dict["403"],
+                name: '403',
+                itemStyle: {color: 'yellow'},
+              },
+              {
+                value: chart_status_code_dict["404"],
+                name: '404',
+                itemStyle: {color: 'yellow'},
+              },
+              {
+                value: chart_status_code_dict["Connection Error"],
+                name: 'Connection Error',
+                itemStyle: {color: 'black'},
+              },
+              {
+                value: chart_status_code_dict["Other"],
+                name: 'Other',
+                itemStyle: {color: 'grey'},
+              },
+            ],
+            roseType: 'area'
+          }
+        ]
+      });
     } 
   };;
 
@@ -416,29 +513,59 @@ option = {
       type: 'pie',
       data: [
         {
-          value: 23,
+          value: chart_status_code_dict["200"],
           name: '200',
           itemStyle: {color: 'green'},
         },
         {
-          value: 34,
+          value: chart_status_code_dict["500"],
           name: '500',
           itemStyle: {color: 'red'},
         },
         {
-          value: 34,
+          value: chart_status_code_dict["502"],
           name: '502',
-          itemStyle: {color: 'grey'},
+          itemStyle: {color: 'red'},
         },
         {
-          value: 34,
+          value: chart_status_code_dict["503"],
+          name: '503',
+          itemStyle: {color: 'red'},
+        },
+        {
+          value: chart_status_code_dict["504"],
           name: '504',
+          itemStyle: {color: 'red'},
+        },
+        {
+          value: chart_status_code_dict["400"],
+          name: '400',
+          itemStyle: {color: 'yellow'},
+        },
+        {
+          value: chart_status_code_dict["401"],
+          name: '401',
+          itemStyle: {color: 'yellow'},
+        },
+        {
+          value: chart_status_code_dict["403"],
+          name: '403',
+          itemStyle: {color: 'yellow'},
+        },
+        {
+          value: chart_status_code_dict["404"],
+          name: '404',
+          itemStyle: {color: 'yellow'},
+        },
+        {
+          value: chart_status_code_dict["Connection Error"],
+          name: 'Connection Error',
           itemStyle: {color: 'black'},
         },
         {
-          value: 34,
-          name: 'other',
-          itemStyle: {color: 'yellow'},
+          value: chart_status_code_dict["Other"],
+          name: 'Other',
+          itemStyle: {color: 'grey'},
         },
       ],
       roseType: 'area'

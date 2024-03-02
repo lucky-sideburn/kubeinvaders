@@ -17,7 +17,6 @@ import time
 import datetime
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
 def join_string_to_array(project_list_string, separator):
     return project_list_string.split(separator)
 
@@ -28,7 +27,7 @@ def do_http_request(url, method, headers, data):
         return response
     except requests.exceptions.RequestException as e:
         logging.error(f"Error while sending HTTP request: {e}")
-        return None
+        return "Connection Error"
 
 def check_if_json_is_valid(json_data):
     try:
@@ -96,26 +95,21 @@ api_instance = client.CoreV1Api()
 batch_api = client.BatchV1Api()
 
 while True:
-
-    logging.info(f"[k-inv][metrics_loop] Metrics loop is active - {r.exists('chaos_report_project_list')}")
-    
+    #logging.info(f"[k-inv][metrics_loop] Metrics loop is active - {r.exists('chaos_report_project_list')}")
     if r.exists('chaos_report_project_list'):
-        logging.info("[k-inv][metrics_loop] Found chaos_report_project_list Redis Key")
+        #logging.info("[k-inv][metrics_loop] Found chaos_report_project_list Redis Key")
         for project in join_string_to_array(r.get('chaos_report_project_list').decode(), ','):
-            logging.info(f"[k-inv][metrics_loop] Computing Chaos Report Project: {project}")
+            #logging.info(f"[k-inv][metrics_loop] Computing Chaos Report Project: {project}")
             chaos_program_key = f"chaos_report_project_{project}"
             if r.exists(chaos_program_key):
-                logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_project_{project} key in Redis. Starting {project} ")
+                #logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_project_{project} key in Redis. Starting {project} ")
 
                 if check_if_json_is_valid(r.get(chaos_program_key)):
                     chaos_report_program = json.loads(r.get(chaos_program_key))
                     now = datetime.datetime.now()
 
-                    logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
+                    #logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
                     response = do_http_request(chaos_report_program['chaosReportCheckSiteURL'], chaos_report_program['chaosReportCheckSiteURLMethod'], json.loads(chaos_report_program['chaosReportCheckSiteURLHeaders']), chaos_report_program['chaosReportCheckSiteURLPayload'])
-                    logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program response: {response.status_code}")
-
-
                     check_url_counter_key = f"{chaos_report_program['chaosReportProject']}_check_url_counter"
                     check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code"
                     check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time"
@@ -129,9 +123,13 @@ while True:
                     if r.get(check_url_start_time) == None:
                         r.set(check_url_start_time, now.strftime("%Y-%m-%d %H:%M:%S"))
 
-                    r.set(check_url_status_code_key, response.status_code)
-                    r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
-
+                    if response == "Connection Error":
+                        #logging.info(f"[k-inv][metrics_loop][chaos_report] Connection Error while checking {chaos_report_program['chaosReportCheckSiteURL']}")
+                        r.set(check_url_status_code_key, "Connection Error")
+                        r.set(check_url_elapsed_time_key, 0)
+                    else:
+                        r.set(check_url_status_code_key, response.status_code)
+                        r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
     try:
         label_selector="chaos-controller=kubeinvaders"
         api_response = api_instance.list_pod_for_all_namespaces(label_selector=label_selector)

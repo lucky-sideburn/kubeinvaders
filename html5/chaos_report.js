@@ -1,7 +1,7 @@
 function diffBetweenTwoDates(date1, date2) {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + date1 + " and " + date2);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + date1 + " and " + date2);
   var diff = (date2.getTime() - date1.getTime()) / 1000;
-  console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + diff + " seconds")
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + diff + " seconds")
   return diff;
 }
 
@@ -140,12 +140,12 @@ function sendSavedChaosReport() {
 
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log("[SAVE-CHAOS-REPORT-CONF] Configuration sent to Nginx")
+      // console.log("[SAVE-CHAOS-REPORT-CONF] Configuration sent to Nginx")
     }
   };;
 
   oReq.setRequestHeader("Content-Type", "application/json");
-  console.log("[SAVE-CHAOS-REPORT-CONF] Sending configuration to Nginx: " + JSON.stringify(presetBodyDict));
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Sending configuration to Nginx: " + JSON.stringify(presetBodyDict));
   oReq.send(JSON.stringify(presetBodyDict));
   closePrepareChaosReportModal();
   
@@ -163,11 +163,11 @@ function sendSavedChaosReport() {
 }
 
 function readContentOfUploadedFile() {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Reading content of uploaded file");
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Reading content of uploaded file");
   var file = document.getElementById("formFile").files[0];
   var reader = new FileReader();
   reader.onload = function (e) {
-    //console.log("[SAVE-CHAOS-REPORT-CONF] Content of uploaded file: " + e.target.result);
+    // console.log("[SAVE-CHAOS-REPORT-CONF] Content of uploaded file: " + e.target.result);
     chaos_report_post_data = e.target.result;
     sendSavedChaosReport()
   };
@@ -175,28 +175,28 @@ function readContentOfUploadedFile() {
 }
 
 function saveChaosReport() {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Going to save Chaos Report program");
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Going to save Chaos Report program");
   if ($("#chaosReportCheckSiteURLMethod").val() == "POST") {
-    console.log("[SAVE-CHAOS-REPORT-CONF] Check url is POST, reading content of uploaded file and sending saved Chaos Report");
+    // console.log("[SAVE-CHAOS-REPORT-CONF] Check url is POST, reading content of uploaded file and sending saved Chaos Report");
     readContentOfUploadedFile();
   } else {
-    console.log("[SAVE-CHAOS-REPORT-CONF] Check url is GET, sending saved Chaos Report");
+    // console.log("[SAVE-CHAOS-REPORT-CONF] Check url is GET, sending saved Chaos Report");
     sendSavedChaosReport();
   }
 }
 
 function updateElapsedTimeArray(projectName) {
   $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
-  console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
-  console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
   
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_elapsed_time";
-  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
   
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log("[SAVE-CHAOS-REPORT-CONF] Elapsed time array received from Redis: " + parseFloat(this.responseText));
+      // console.log("[SAVE-CHAOS-REPORT-CONF] Elapsed time array received from Redis: " + parseFloat(this.responseText));
       chaos_report_http_elapsed_time_array.push(parseFloat(this.responseText));
       while (chaos_report_http_elapsed_time_array.length > 40) {
         chaos_report_http_elapsed_time_array.shift();
@@ -211,16 +211,16 @@ function updateElapsedTimeArray(projectName) {
 }
 
 function updateStatusCodePieChart(projectName) {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Updating Status Code Pie Chart for project: " + projectName);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating Status Code Pie Chart for project: " + projectName);
   
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_status_code";
-  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
   
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       var status_code = this.responseText.trim();
-      console.log("[SAVE-CHAOS-REPORT-CONF] Status Code Pie Chart received from Redis: |" + status_code + "|");
+      // console.log("[SAVE-CHAOS-REPORT-CONF] Status Code Pie Chart received from Redis: |" + status_code + "|");
 
       chart_status_code_dict[status_code] =  chart_status_code_dict[status_code] + 1
 
@@ -298,11 +298,11 @@ function updateStatusCodePieChart(projectName) {
 }
 
 function updateChaosReportStartTime(projectName) {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Updating Start Time for project: " + projectName);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating Start Time for project: " + projectName);
   
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_start_time";
-  console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
   
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -317,7 +317,7 @@ function updateChaosReportStartTime(projectName) {
 
 
 function drawCanvasHTTPStatusCodeStats() {
-  console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
+  // // console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
   
   myHTTPElapsedChart.setOption({
     xAxis: {},
@@ -332,14 +332,6 @@ function drawCanvasHTTPStatusCodeStats() {
       }
     ]
   });
-
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating metrics");
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Deleted Pods: " + chart_deleted_pods_total);
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Chaos Jobs: " + chart_chaos_jobs_total);
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Current Chaos Pods: " + chart_current_chaos_job_pod);
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Not Running Pods: " + chart_pods_not_running_on);
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Current Replicas State Delay: " + chart_fewer_replicas_seconds);
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Latest Replicas State Delay: " + chart_latest_fewer_replicas_seconds);
 
   myMainChaosMetrics.setOption({
     series: [
@@ -376,67 +368,6 @@ function drawCanvasHTTPStatusCodeStats() {
     ]
   });
 
-//   while (chaos_report_http_elapsed_time_array.length > 40) {
-//     chaos_report_http_elapsed_time_array.shift();
-//   }
-
-//   var elapsedTimeArray = chaos_report_http_elapsed_time_array;
-//   var canvas = document.getElementById('httpStatsCanvas');
-//   var context = canvas.getContext('2d');
-//   context.clearRect(0, 0, canvas.width, canvas.height);
-
-//   // Imposta la dimensione dei rettangoli e il numero di colonne e righe
-//   var rectSize = 20;
-//   var rows = canvas.height / rectSize;
-//   var columns = canvas.width / rectSize;
-
-//   // Disegna la griglia di rettangoli
-//   for (var i = 0; i < rows; i++) {
-//       for (var j = 0; j < columns; j++) {
-//           // Calcola le coordinate del rettangolo
-//           var x = j * rectSize;
-//           var y = i * rectSize;
-
-//           context.strokeStyle = 'black';
-//           context.fillStyle = 'white';
-        
-//           // Disegna il rettangolo
-//           context.fillRect(x, y, rectSize, rectSize);
-
-//           // Aggiungi bordi per una migliore visualizzazione
-//           //context.strokeRect(x, y, rectSize, rectSize);
-//       }
-//   }
-
-//   for (var i = 0; i < elapsedTimeArray.length; i++) {
-//     var x = i * rectSize;
-//     var y = 80;
-
-//     var width = rectSize;
-//     var height = rectSize;
-
-//     if (elapsedTimeArray[i] > 3) {
-//       context.strokeStyle = 'black';
-//       context.fillStyle = 'red';
-//     } else if (elapsedTimeArray[i] > 2) {
-//       context.strokeStyle = 'black';
-//       context.fillStyle = 'orange';
-//     } else {
-//       context.strokeStyle = 'black';
-//       context.fillStyle = "green";
-//     }
-
-//     if (i == elapsedTimeArray.length - 1) {
-//       var text = String(elapsedTimeArray[i]);
-//       context.fillStyle = 'black';
-//       context.font = '20px Courier New';
-//       context.fillText(text, x + width / 2 - context.measureText(text).width / 2, y - (height / 2));
-//     }
-  
-//     context.fillRect(x, y, width, height);
-  
-//     //context.strokeRect(x, y, 20, 20);
-//   }
 }
 
 var myHTTPElapsedChart = echarts.init(document.getElementById('httpElapsedChart'));

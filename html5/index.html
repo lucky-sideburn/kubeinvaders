@@ -121,6 +121,63 @@
     </div>
   
     <!-- Modal -->
+    <div class="modal fade" id="prepareChaosReportModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+      <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+          <div class="modal-body">
+            <form>
+              <div class="form-group row">
+                <div class="col col-xl-10">
+                  <label for="" style="margin-bottom: 1%;" id="chaosReportHeader"></label>
+                  <div class="row">
+                    <div class="col col-xl-10">
+                      <label for="chaosReportProject">Project</label>
+                      <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%; width: 50%;">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col col-xl-10">
+                      <label for="chaosReportAuthor">Author</label>
+                      <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%; width: 50%;">
+                    </div>
+                  </div>
+                  <!-- <div class="row">
+                    <div class="col col-xl-10">
+                      <label for="chaosReportDate">Date</label>
+                      <input type="text" id="chaosReportDate" value="" style="margin-bottom: 1%; width: 30%;">
+                    </div>
+                  </div> -->
+                  <div class="row">
+                    <div class="col col-xl-10">
+                      <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">add an http endpoint to be analyzed during the chaos engineering session</label>
+                    </div>
+                  </div>
+                  <!-- <div class="row">
+                    <div class="col col-xl-10">
+                      <button type="button" id="chaosReportHttpEndpointButton" class="btn btn-light-saved" style="margin-top: 1%; margin-bottom: 1%;" onclick="chaosReportHttpEndpointAdd()">Configure Site</button>
+                    </div>
+                  </div> -->
+                  <div class="row">
+                    <div class="col col-xl-10">
+                      <div id="addSiteAreaChaosReport"></div>
+                    </div>
+                  </div>
+                  <!-- <textarea class="form-control" id="chaosReportTextArea" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea> -->
+                </div>
+              </div>
+              <div class="form-group">
+                <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 1%;"></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
+                <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModalAndUncheck()">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
     <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -148,11 +205,17 @@
     </div>
     <div class="container" id="gameContainer" style="width: 50%; height: 50%;">
         <!-- START FIRST ROW -->
-        <div class="row" style="margin-top: 2%;">
+        <div class="row custom-btn-group" style="margin-top: 2%;">
           <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
           <div class="row" style="margin-bottom: 2%;">
             <div class="col text-center" style="margin-bottom: 2%;">
               <button type="button" id="gameModeButton" class="btn btn-light btn-green" onclick="startGameMode()">Game Mode</button>
+            </div>
+            <div class="col text-center" style="margin-bottom: 0%;">
+              <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="showPrepareChaosReportModal(this)">
+              <label class="form-check-label text-kinv" for="flexCheckDefault">
+                Add HTTP check & Chaos Report
+              </label>
             </div>
             <div class="col text-center" style="margin-bottom: 2%;">
               <button type="button" id="programmingModeButton" class="btn btn-light btn-green" onclick="startProgrammingMode()">Programming Mode</button>
@@ -178,12 +241,12 @@
         <div id="game-buttons" style="display: none;">
           <div class="row container">
             <div class="col text-center">
-              <button type="button" id="controlAutoPilotButton" class="btn btn-light" onclick="controlAutoPilot()">Start</button>
+              <button type="button" id="controlAutoPilotButton" class="btn btn-dark" onclick="controlAutoPilot()">Start</button>
+            </div>
+            <div class="col">
             </div>
             <div class="col">
               <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
-            </div>
-            <div class="col text-center">
               <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
             </div>
           </div>
@@ -205,17 +268,22 @@
         <div class="row text-justify" align="center" id="metricsPresetsRow">
           <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
 
-              <span style="color: #000000;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
-              <span style="color: #000000;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
-              <span style="color: #000000"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
+              <span style="color: #b2afaf;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
 
-              <span style="color: #000000" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
-              <span style="color: #000000" class="text-kinv" id="podNotRunningText">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="podNotRunningText">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #3ac961">0</span></span><br>
 
-              <span style="color: #000000" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
-              <span style="color: #000000" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
+              <span style="color: #b2afaf" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
+              <div id="mainChaosMetrics" style="width: 50%;height: 50%; margin-top: 1%;"></div>
+              
               <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
           </div>
+          <!-- <div class="progress" style="margin-top: 1%;">
+            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
+          </div> -->
         </div>
         <!-- END METRICS ROW -->
 
@@ -310,12 +378,51 @@ experiments:
             </div>
           </div>
         </div>
-        <!-- END CHAOS PROGRAMMING MODE SCREEN -->
-
+        <!-- END CHAOS PROGRAMMING MODE SCREEN --> 
+  
         <!-- START GAME MODE SCREEN -->
         <div id="game-screen" style="display: none;">
+          <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
+            <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
+              <table class="table" style="color:#b2afaf;">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="td-grey">PROJECT</td>
+                    <td><p id="chaosReportProjectDiv"></p></td>
+                  </tr>
+                  <tr>
+                    <td class="td-grey">AUTHOR</td>
+                    <td><p id="chaosReportAuthorDiv" class="text-kinv"></p></td>
+                  </tr>
+                    <td class="td-grey">Chaos session date</td>
+                    <td><p id="chaosReportDateDiv" class="text-kinv"></p></td>
+                  <tr>
+                    <td class="td-grey">Chaos session time</td>
+                    <td><p id="chaosReportSessionTimeDiv" class="text-kinv"></p></td>
+                  </tr>
+                  <tr>
+                    <td class="td-grey">Checked URL</td>
+                    <td><p id="chaosReportCheckSiteURLDiv" class="text-kinv"></p></td>   
+                  </tr>   
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div id="chartDiv" style="display: none;">
+              <label for="httpElapsedChart" style="margin-left: 2%; margin-top: 3%">HTTP Elapsed (seconds)</label>
+              <div id="httpElapsedChart" style="width: 100%; height: 400px; margin-top: 0%;" ></div>
+              <label for="httpStatusCodeChart" style="margin-left: 2%;">HTTP Status Code</label>
+              <div id="httpStatusCodeChart" style="width: 100%; height: 200px;"></div>
+            </div>
+          </div>          
           <div class="row" style="margin-top: 2%;">
-            <canvas id="myCanvas" width="720" height="480"></canvas>
+            <canvas id="myCanvas" width="720" height="480" class="game-canvas custom-btn-group"></canvas>
           </div>
           <div class="row">
             <div class="col text-center">
@@ -335,49 +442,6 @@ experiments:
           <div id="alert_placeholder" style="margin-top: 3%;"></div>
           <div id="alert_placeholder3" style="margin-top: 3%;"></div>
         </div>
-
-        <!-- LOG TAIL ROW -->
-        <!-- <div class="logtail-group">
-          <div class="row" style="margin-top: 1%;">
-            <div class="col text-center">
-              <button type="button" id="logConsoleButton" class="btn btn-light" onclick="setLogConsole()">Start Logs Tail</button>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col text-center">
-            </div>
-            <div class="col text-center">
-              <input type="button" id="zoomInButton2" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput2" name="zoomInGameScreenInput2" value="+" onclick="zoomIn()">
-              <input type="button" id="zoomOutButton2" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput2" name="zoomOutGameScreenInput2" value="-" onclick="zoomOut()">
-            </div>
-            <div class="col text-center">
-            </div>
-          </div> 
-      
-          <div id="logTailRegexInput" style="display: block;">
-            <div class="row" style="margin-top: 2%; padding-left: 2%; padding-right: 2%;">
-              <input type="text" style="font-family: Courier New, Courier, monospace;" id="logTailRegex" value='{"pod_logs_sec": "60", "pod_start_time_sec": "60", "pod":".*", "namespace":"kube-system", "labels":".*", "annotations":".*", "containers":".*"}'/>
-            </div>
-            <div class="row" style="margin-top: 1%;">
-              <div class="col text-center">
-                <button type="button" style="width: 10em;" id="scroll_backwards" class="btn btn-sm btn-dark ext-center" onclick="scroll_backwards()"><<<</button>
-                <button type="button" style="width: 10em;" id="logConsoleRegex" class="btn btn-sm btn-dark ext-center" onclick="setLogRegex()">Set Regex</button>
-                <button type="button" style="width: 10em;" id="scroll_forward" class="btn btn-sm btn-dark ext-center" onclick="scroll_forward()">>>></button>
-              </div>
-              <div class="row" style="margin-top: 1%;">
-                <span style="color: #000000" class="text-kinv" id="chaosLogsTotalPos">Total Logs Position:&nbsp;&nbsp;<span id="total_logs_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
-                <span style="color: #000000" class="text-kinv" id="chaosLogsCurrentPos">Current Logs Position:&nbsp;&nbsp;<span id="current_log_pos" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font>&nbsp;</span>
-            </div>
-          </div>
-
-          <div id="logTailScreen" style="display: none;">
-            <div class="row">
-              <div id="logTailDiv" style="margin-top: 2%; overflow-y: scroll; height:700px; display: none; padding-left: 3%; padding-right: 3%;"></div>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <div id="footer" style="margin-top: 5%;">
@@ -390,11 +454,16 @@ experiments:
         </div>
       </div>
     </div>
-
     <script src="./utils.js"></script>
-    <script src="./kubeinvaders.js"></script>
+    <script src="./programming_mode.js"></script>
+    <script src="./modals.js"></script>
+    <script src="./mode_controls.js"></script>
+    <script src="./game_console.js"></script>
     <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
     <script src="./js/jquery-3.6.0.min.js"></script>
     <script src="./js/popper.min.js"></script>
+    <script src="./kubeinvaders.js"></script>
+    <script src="./echarts/echarts.min.js"></script>
+    <script src="./chaos_report.js"></script>
   </body>
 </html>

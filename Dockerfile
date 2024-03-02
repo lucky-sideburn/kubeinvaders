@@ -1,4 +1,5 @@
 FROM nginx:stable
+# FROM localhost/local/base:latest
 
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y

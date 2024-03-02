@@ -29,6 +29,10 @@ function formattedToday() {
   return today
 }
 
+function convertStringToArrayWithSeparator(str, separator) {
+  return String(str).split(separator);
+}
+
 
 
 

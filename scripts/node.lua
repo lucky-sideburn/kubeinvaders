@@ -17,7 +17,6 @@ local url = k8s_url.. "/api/v1/nodes"
 local decoded = nil
 local nodes = {}
 
-
 if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/chaos[-]node.*$") then
   local red = redis:new()
   local okredis, errredis = red:connect("unix:/tmp/redis.sock")
@@ -50,7 +49,6 @@ if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/ch
     local res, err = red:set("chaos_node_jobs_total_on_" .. node_name,incr)
   end
 end
-
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
 ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'

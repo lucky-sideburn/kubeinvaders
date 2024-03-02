@@ -1,3 +1,55 @@
+function setChaosReportURL(select) {
+  var selectedValue = select.options[select.selectedIndex].value; 
+  document.getElementById("chaosReportCheckSiteURL").value = selectedValue;
+}
+
+function addElementToSelect(selectId, elementValue) {
+  var select = document.getElementById(selectId);
+  var option = document.createElement("option");
+  option.text = elementValue;
+  option.value = elementValue;
+  select.add(option);
+}
+
+function parseIngressListJSON(ingressList) {
+  var hostOfIngress = convertStringToArrayWithSeparator(ingressList, ",")
+
+  if (hostOfIngress.length > 0) {
+    document.getElementById("chaosReportCheckSiteURL").value = hostOfIngress[0];
+  }
+
+  for (i in hostOfIngress) {
+    if (hostOfIngress[i] != "No Ingress found") {
+      addElementToSelect("ingressHostList", hostOfIngress[i]);
+    }
+  }
+}
+
+function resizeCharts() {
+  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
+    myHTTPStatusCodeChart.resize();
+  }
+  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
+    myMainChaosMetrics.resize();
+  }
+  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
+    myHTTPElapsedChart.resize();
+  }
+}
+
+function getIngressLists() {
+  var oReq = new XMLHttpRequest();  
+  oReq.onreadystatechange = function () {
+    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+      console.log("[SAVE-CHAOS-REPORT-INGRESS-LISTS]" + JSON.parse(this.responseText));
+      parseIngressListJSON(JSON.parse(this.responseText));
+    } 
+  };;
+  oReq.open("GET", k8s_url + "/kube/ingress/get?namespace=" + namespace, true);
+  oReq.setRequestHeader("Content-Type", "application/json");
+  oReq.send();
+}
+
 function diffBetweenTwoDates(date1, date2) {
   // console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + date1 + " and " + date2);
   var diff = (date2.getTime() - date1.getTime()) / 1000;
@@ -23,6 +75,13 @@ function addPostUploadFile(selectedValue) {
 function chaosReportHttpEndpointAdd() {
   $("#addSiteAreaChaosReport").html(`
   <div class="row">
+    <div class="col col-xl-10" sytle="margin-top: 2%;">
+      <label for="chaosReportCheckSiteURL">Ingress Host List</label>
+      <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onchange="setChaosReportURL(this)">
+      </select>
+    </div>
+  </div>
+  <div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">
       <label for="chaosReportCheckSiteURL">URL</label>
       <input type='text' class='input-lg' id='chaosReportCheckSiteURL' value='' style='margin-top: 1%; width: 80%'>
@@ -147,19 +206,11 @@ function sendSavedChaosReport() {
   oReq.setRequestHeader("Content-Type", "application/json");
   // console.log("[SAVE-CHAOS-REPORT-CONF] Sending configuration to Nginx: " + JSON.stringify(presetBodyDict));
   oReq.send(JSON.stringify(presetBodyDict));
-  closePrepareChaosReportModal();
-  
-  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
-    myHTTPStatusCodeChart.resize();
-  }
-  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
-    myMainChaosMetrics.resize();
-  }
-  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
-    myHTTPElapsedChart.resize();
-  }
+  closePrepareChaosReportModal();  
+  resizeCharts();
   document.getElementById("myCanvas").scrollIntoView(true);
   document.getElementById("flagChaosReport").checked = true;
+  $('#alert_placeholder').replaceWith(alert_div + 'RETURN TO TOP, PRESS START TO BEGIN AUTOMATIC SESSION </div>');
 }
 
 function readContentOfUploadedFile() {
@@ -339,14 +390,6 @@ function drawCanvasHTTPStatusCodeStats() {
         type: 'pie',
         data: [
           {
-            value: Number(chart_deleted_pods_total),
-            name: 'Deleted Pods'
-          },
-          {
-            value: Number(chart_chaos_jobs_total),
-            name: 'Chaos Jobs'
-          },
-          {
             value: Number(chart_current_chaos_job_pod),
             name: 'Current Chaos Pods'
           },
@@ -404,14 +447,6 @@ option = {
     {
       type: 'pie',
       data: [
-        {
-          value: 0,
-          name: 'Deleted Pods'
-        },
-        {
-          value: 0,
-          name: 'Chaos Jobs'
-        },
         {
           value: 0,
           name: 'Current Chaos Pods'
@@ -507,13 +542,5 @@ option = {
 myHTTPStatusCodeChart.setOption(option);
 
 $(window).on('resize', function(){
-  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
-    myHTTPStatusCodeChart.resize();
-  }
-  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
-    myMainChaosMetrics.resize();
-  }
-  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
-    myHTTPElapsedChart.resize();
-  }
+  resizeCharts();
 });

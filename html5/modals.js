@@ -49,6 +49,7 @@ function showPrepareChaosReportModal(checkbox) {
     setCodeNameToTextInput("chaosReportProject");
     setModalState(true);
     chaosReportHttpEndpointAdd();
+    getIngressLists();
     //$("#httpStatsCanvasDiv").style.display = "block";
   } else {
     closePrepareChaosReportModal();

@@ -837,6 +837,7 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function backgroundTasks() {
+
     if (!codename_configured) {
         chaosProgram = $('#chaosProgramTextArea').val();
         chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
@@ -862,17 +863,6 @@ window.setInterval(function backgroundTasks() {
         updateChaosReportStartTime(chaosReportprojectName);
         drawCanvasHTTPStatusCodeStats();
         chaosReportKeepAlive(chaosReportprojectName);
-        // if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
-        //     myHTTPStatusCodeChart.resize();
-        // }
-        
-        // if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
-        //     myMainChaosMetrics.resize();
-        // }
-        
-        // if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
-        //     myHTTPElapsedChart.resize();
-        // }
     }
 
 }, 2000)

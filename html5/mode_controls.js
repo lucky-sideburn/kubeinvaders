@@ -28,6 +28,12 @@ function startGameMode() {
 }
 
 function startProgrammingMode() {
+
+  if (is_demo_mode()) {
+    demo_mode_alert();
+    return;
+  }
+
   if (programming_mode_switch) {
     programming_mode_switch = false;
     $("#programmingModeButton").text("Enable Prog. Mode");

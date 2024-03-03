@@ -108,6 +108,10 @@ function chaosReportHttpEndpointAdd() {
     </div>
   </div>
   `);
+  
+  if(is_demo_mode()) {
+    document.getElementById("chaosReportCheckSiteURL").readOnly = true;
+  }
 }
 
 function isValidURL(string) {
@@ -366,23 +370,12 @@ function updateChaosReportStartTime(projectName) {
   oReq.send();
 }
 
-
-function drawCanvasHTTPStatusCodeStats() {
-  // // console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
-  
-  myHTTPElapsedChart.setOption({
-    xAxis: {},
-    yAxis: {
-      data: chaos_report_http_elapsed_time_array,
-    },
-    series: [
-      {
-        data: chaos_report_http_elapsed_time_array,
-        type: 'line',
-        smooth: true
-      }
-    ]
-  });
+function updateMainMetricsChart() {
+  // console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
+  // console.log("[SAVE-CHAOS-REPORT-CONF] chart_current_chaos_job_pod: " + chart_current_chaos_job_pod);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] chart_pods_not_running_on: " + chart_pods_not_running_on);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] chart_fewer_replicas_seconds: " + chart_fewer_replicas_seconds);
+  // console.log("[SAVE-CHAOS-REPORT-CONF] chart_latest_fewer_replicas_seconds: " + chart_latest_fewer_replicas_seconds);
 
   myMainChaosMetrics.setOption({
     series: [
@@ -410,7 +403,24 @@ function drawCanvasHTTPStatusCodeStats() {
       }
     ]
   });
+}
 
+function drawCanvasHTTPStatusCodeStats() {
+  // // console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
+  
+  myHTTPElapsedChart.setOption({
+    xAxis: {},
+    yAxis: {
+      data: chaos_report_http_elapsed_time_array,
+    },
+    series: [
+      {
+        data: chaos_report_http_elapsed_time_array,
+        type: 'line',
+        smooth: true
+      }
+    ]
+  });
 }
 
 var myHTTPElapsedChart = echarts.init(document.getElementById('httpElapsedChart'));

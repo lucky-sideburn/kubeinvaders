@@ -1,3 +1,10 @@
+document.addEventListener("DOMContentLoaded", function() {
+  setTimeout(function() {
+      document.getElementById("splash-screen").style.display = "none";
+      document.getElementById("main-game-div").style.display = "block";
+  }, 2000);
+});
+
 function IsJsonString(str) {
   try {
       JSON.parse(str);
@@ -33,7 +40,14 @@ function convertStringToArrayWithSeparator(str, separator) {
   return String(str).split(separator);
 }
 
+function demo_mode_alert() {
+  alert("This is a demo mode, some features are disabled");
+}
 
-
-
+function is_demo_mode() {
+  if (demo_mode == "true") {
+    return true;
+  }
+  return false;
+}
 

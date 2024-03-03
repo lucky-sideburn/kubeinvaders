@@ -11,6 +11,7 @@ var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
 var clu_endpoint = "endpoint_placeholder";
 var clu_insicure = "insecure_endpoint_placeholder";
+var demo_mode = "platform_engineering_demo_mode_placeholder"
 var k8s_url = "";
 var chaos_report_post_data = "";
 
@@ -77,7 +78,7 @@ var aliensIncrementY = 50;
 
 var shuffle = true;
 var help = false;
-var chaos_nodes = true;
+var chaos_nodes = false;
 var chaos_pods = true;
 var log_tail_alert = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff" class="alert" role="alert">';
 var log_tail_alert_no_pixel = '<div id="alert_placeholder3" style="margin-top: 2%; margin-bottom: 1%; background-color: #161616; color: #ffffff; font-family: Courier, monospace;" class="alert" role="alert">';
@@ -485,6 +486,12 @@ function keyDownHandler(e) {
             }
         }
         else if(e.keyCode == 67) {
+
+            if (is_demo_mode()) {
+                demo_mode_alert();
+                return;
+            }
+
             if (chaos_nodes) {
                 chaos_nodes = false;
                 $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Hide nodes</div>');
@@ -847,6 +854,7 @@ window.setInterval(function backgroundTasks() {
 
     if (game_mode_switch || programming_mode_switch || log_tail_switch) {
         getMetrics();
+        updateMainMetricsChart();
     }
 
     if (log_tail_switch) {

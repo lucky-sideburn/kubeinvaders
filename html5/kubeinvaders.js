@@ -610,7 +610,7 @@ function drawRocket() {
         }
     }
     else {
-        rocketX = spaceshipX + (spaceshipWidth / 2);
+        rocketX = spaceshipX + (spaceshipWidth / 3);
         rocketY = spaceshipY;
         rocketLaunched = true
     }

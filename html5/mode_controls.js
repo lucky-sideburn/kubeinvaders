@@ -25,6 +25,7 @@ function startGameMode() {
   }
   chaos_program_screen.style.display = "none";
   programming_mode_buttons.style.display = "none";
+  resizeCharts();
 }
 
 function startProgrammingMode() {

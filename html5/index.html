@@ -225,6 +225,46 @@
                 <button type="button" id="programmingModeButton" class="btn btn-light btn-green" onclick="startProgrammingMode()">Programming Mode</button>
               </div>
             </div>
+
+
+            <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="guide-headingThree">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    k-inv guide - chaos mode controls and metrics
+                  </button>
+                </h2>
+                <div id="guide-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                  <div class="accordion-body">
+Dear user, thank you for installing kubeinvaders!<br>
+<br>
+This is a chaos engineering tool written by luckysideburn and friends from https://platformengineering.it for the community of kubernetes users, software developers, and admins.<br>
+It was born in 2019 as a gamified chaos engineering tool, and we are evolving it into a more serious instrument :d <br>
+here's how it works<br> 
+
+For reports, bugs, ideas you can open issue on the project github repo https://github.com/lucky-sideburn/kubeinvaders or write to luckysideburn [at] gmail [dot] com <br>
+
+<br>
+<font color="blue">[[game mode button]]</font><br>
+Enabling the game console allows you to kill pods and launch workloads to stress cluster nodes (check "show keys and options" to understand how to do it). You can also jump between namespace and many other things.<br>
+<br>
+<font color="blue">[[add http check & chaos report checkbox]]</font><br>
+Use it to activate the monitoring of an ingress and generate real-time reporting. it's very useful to know what happens to your applications during chaos sessions. for now, we monitor the elapsed time of http calls and status codes. also, you have some very useful default metrics:<br>
+<br>
+<font color="gren">Selected namespace</font> => indicates the current namespace focused on by the tool. you can jump between selected namespaces during installation.<br>
+<br>
+<font color="gren">>Deleted pods total</font> => total number of killed pods.<br>
+<br>
+<font color="gren">Current chaos pods</font> => when the node stress test mode is activated, this metric indicates the number of jobs stressing your cluster.<br>
+<br>
+<font color="gren">Current replicas state delay</font> => a very important metric, indicates how long your cluster takes to return to the desired state that was before the chaos engineering session.<br>
+<br>
+<font color="blue">[[enable prog. mode button (under development)]]</font><br>
+Through yaml programming, you can define your own chaos engineering experiments and execute them. we have preloaded some presets for various open-source tools to stress test (this feature is still in development, so contributions are welcome).<br>
+                  </div>
+                </div>
+              </div>
+            </div>
             <!-- END SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
 
             <!-- START CHAOS PROGRAM BUTTONS -->
@@ -264,6 +304,27 @@
               <div class="col text-center">
                 <button style="margin-bottom: 2%" type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
               </div>
+
+              <div class="accordion" id="specialkeys" style="margin-top: 2%; margin-bottom: 2%;">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="specialkeys-headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      show keys and options
+                    </button>
+                  </h2>
+                  <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                    <div class="accordion-body">
+                      h => Activate or deactivate help<br>
+                      s => Activate or deactivate shuffle for aliens<br>
+                      n => Change namespace<br>
+                      p => Activate or deactivate chaos engineering against pods<br>
+                      c => Activate or deactivate chaos engineering against nodes
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
           </div>
           <!-- END GAME MODE BUTTONS -->

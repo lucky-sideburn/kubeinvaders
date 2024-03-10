@@ -301,10 +301,6 @@ This is a control-plane you can use to switch off & on various features.
 
 ![Alt Text](./doc_images/control-plane.png)
 
-### YouTube HowTo
-
-[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
-
 ### Start The Chaos Experiment
 
 Press the "Start" button to initiate the automatic pilot (the button changes to "Stop" to disable this feature).

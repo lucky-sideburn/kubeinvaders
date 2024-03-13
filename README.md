@@ -289,7 +289,7 @@ spec:
     termination: Edge
 ```
 ## Add simple nginx Deployment for Pods to shot at
-
+```bash
 cat >deployment.yaml <<EOF
 apiVersion: apps/v1
 kind: Deployment
@@ -311,11 +311,12 @@ spec:
         ports:
         - containerPort: 81
 EOF
-
-# Apply Nginx Deployment in namespace1 and namespace2
+```
+Apply Nginx Deployment in namespace1 and namespace2
+```bash
 sudo kubectl apply -f deployment.yaml -n namespace1
 sudo kubectl apply -f deployment.yaml -n namespace2
-
+```
 ## Usage
 
 At the top you will find some metrics as described below:

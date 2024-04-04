@@ -169,7 +169,7 @@ function sendSavedChaosReport() {
     chaos_report_start_date = new Date();
   }
 
-  startGameMode()
+  //startGameMode()
   chaos_report_switch = true;
   document.getElementById("httpStatsCanvasDiv").style.display = "block";
   document.getElementById("chartDiv").style.display = "block";

@@ -42,10 +42,6 @@ function closeSetLoadTestModal() {
 }
 
 function showPrepareChaosReportModal(checkbox) {
-  // if (is_demo_mode()) {
-  //   demo_mode_alert();
-  //   return;
-  // }
   if(checkbox.checked){
     $('#prepareChaosReportModal').modal('show');
     $("#chaosReportHeader").text("Configuration of Chaos Report for namespace: " + namespace);

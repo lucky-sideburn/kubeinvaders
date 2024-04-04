@@ -271,19 +271,7 @@
         <div class="container" id="gameContainer">
             <!-- START FIRST ROW -->
             <div class="row custom-btn-group" style="margin-top: 2%;">
-              <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
-              <div class="row" style="margin-bottom: 2%;">
-                
-                <div class="col text-center" style="margin-bottom: 0%;">
-                  <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="showPrepareChaosReportModal(this)">
-                  <label class="form-check-label text-kinv" for="flexCheckDefault">
-                    Add HTTP check & Chaos Report
-                  </label>
-                </div>
-                
-              </div>
-  
-  
+              <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->  
               <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="guide-headingThree">
@@ -349,6 +337,14 @@
                 <div class="col">
                   <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
                   <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+                </div>
+              </div>
+              <div class="row" style="margin-bottom: 2%;">
+                <div class="col text-center" style="margin-bottom: 0%;">
+                  <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="showPrepareChaosReportModal(this)">
+                  <label class="form-check-label text-kinv" for="flexCheckDefault">
+                    Add HTTP check & Chaos Report
+                  </label>
                 </div>
               </div>
               <div class="row container" style="margin-top: 1%; width: 100%;">
@@ -540,8 +536,8 @@
                 </div>
                 
                 <div id="chartDiv" style="display: none; width: 100%; text-align: center; margin: auto;">
-                  <label for="httpElapsedChart">HTTP Elapse d (seconds)</label>
-                  <div id="httpElapsedChart"  ></div>
+                  <label for="httpElapsedChart">HTTP Elapsed (seconds)</label>
+                  <div id="httpElapsedChart"></div>
                   <label for="httpStatusCodeChart">HTTP Status Code</label>
                   <div id="httpStatusCodeChart"></div>
                 </div>

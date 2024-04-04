@@ -15,7 +15,7 @@
         width: 250px;
         position: fixed;
         top: 0;
-        left: -250px; /* Initially hide sidebar */
+        left: 0; /* Initially hide sidebar */
         background-color: #343a40; /* Dark color */
         padding-top: 60px; /* Adjust according to your navbar height */
         transition: left 0.3s ease; /* Smooth transition */
@@ -86,7 +86,7 @@
     <div class="main-content">
       <!-- Navbar -->
   
-          <span style="color:black" class="toggler-icon" onclick="toggleSidebar()">
+          <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
             <i class="fas fa-bars"></i>
           </span>
     
@@ -582,7 +582,13 @@
         <script src="./chaos_report.js"></script>
         <script>
           // Function to toggle sidebar
-          sidebar.style.left = '-250px';
+          
+          const sidebar = document.getElementById('sidebar');
+          const mainContent = document.querySelector('.main-content');
+          sidebar.style.left = '0px';
+          mainContent.style.marginLeft = '250px';
+          $('.toggler-icon').css({"color": "white"});
+
           function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.querySelector('.main-content');

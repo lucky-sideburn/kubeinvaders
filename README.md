@@ -288,7 +288,35 @@ spec:
   tls:
     termination: Edge
 ```
-
+## Add simple nginx Deployment for Pods to shot at
+```bash
+cat >deployment.yaml <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 20 # tells deployment to run 20 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.24.0
+        ports:
+        - containerPort: 81
+EOF
+```
+Apply Nginx Deployment in namespace1 and namespace2
+```bash
+sudo kubectl apply -f deployment.yaml -n namespace1
+sudo kubectl apply -f deployment.yaml -n namespace2
+```
 ## Usage
 
 At the top you will find some metrics as described below:
@@ -300,10 +328,6 @@ At the top you will find some metrics as described below:
 This is a control-plane you can use to switch off & on various features.
 
 ![Alt Text](./doc_images/control-plane.png)
-
-### YouTube HowTo
-
-[Video How To of version v1.9](https://www.youtube.com/watch?v=wD7ngPlNEjY)
 
 ### Start The Chaos Experiment
 

@@ -39,8 +39,8 @@ function startProgrammingMode() {
     programming_mode_switch = false;
     $("#programmingModeButton").text("Enable Prog. Mode");
   } else {
-    document.getElementById("gameContainer").style.width = "100%";
-    document.getElementById("gameContainer").style.height = "100%";
+    document.getElementById("gameContainer").style.width = "50%";
+    document.getElementById("gameContainer").style.height = "50%";
     document.getElementById("loadButtonGroup").style.width = "1250px";
 
     programming_mode_switch = true;
@@ -54,7 +54,7 @@ function startProgrammingMode() {
     chaos_program_screen.style.display = "none";
   }
   if (programming_mode_buttons.style.display === "none") {
-      programming_mode_buttons.style.display = "block";
+    programming_mode_buttons.style.display = "block";
   } else {
     programming_mode_buttons.style.display = "none";
   }

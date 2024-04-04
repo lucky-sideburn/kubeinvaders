@@ -190,7 +190,7 @@
                       <div class="row">
                         <div class="col col-xl-10">
                           <label for="chaosReportProject">Project</label>
-                          <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%; width: 50%;">
+                          <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%;">
                         </div>
                       </div>
                       <div class="row">
@@ -261,7 +261,7 @@
             </div>
           </div>
         </div>
-        <div class="container" id="gameContainer" style="width: 50%; height: 50%;">
+        <div class="container" id="gameContainer">
             <!-- START FIRST ROW -->
             <div class="row custom-btn-group" style="margin-top: 2%;">
               <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
@@ -381,7 +381,7 @@
   
             <!-- START METRICS ROW -->
             <div class="row text-justify" align="center" id="metricsPresetsRow">
-              <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
+              <div style="margin-top: 1%;" class="text-justify" id="metricsGroup">
   
                   <span style="color: #b2afaf;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
                   <span style="color: #b2afaf;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
@@ -498,7 +498,7 @@
             <!-- START GAME MODE SCREEN -->
             <div id="game-screen" style="display: none;">
               <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
-                <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup">
+                <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup" style="width: 100%;">
                   <div class="table-responsive">
                     <table class="table" style="color:#b2afaf;">
                       <thead>
@@ -539,7 +539,7 @@
                 </div>
               </div>          
               <div class="row" style="margin-top: 2%;">
-                <canvas id="myCanvas" width="720" height="480" class="game-canvas custom-btn-group"></canvas>
+                <canvas id="myCanvas" width="720" height="480" class="game-canvas"></canvas>
               </div>
               <div class="row">
                 <div class="col text-center">

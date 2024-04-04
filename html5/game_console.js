@@ -3,7 +3,7 @@ function zoomIn() {
   document.getElementById("gameContainer").style.width = "100%"
   document.getElementById("gameContainer").style.height = "100%";
   document.getElementById("zoomInGameScreenInput").disabled = true;
-  document.getElementById("zoomOutGameScreenInput").disabled = false; 
+  document.getElementById("zoomOutGameScreenInput").disabled = false;
   document.getElementById("zoomInGameScreenInput2").disabled = true;
   document.getElementById("zoomOutGameScreenInput2").disabled = false;
   document.getElementById("loadButtonGroup").style.width = "1200px";
@@ -14,10 +14,10 @@ function zoomOut() {
   var gameContainerHeight = document.getElementById("gameContainer").style.height;
   document.getElementById("gameContainer").style.width = "50%"
   document.getElementById("gameContainer").style.height = "50%"
-  document.getElementById("zoomInGameScreenInput").disabled = false; 
+  document.getElementById("zoomInGameScreenInput").disabled = false;
   document.getElementById("zoomOutGameScreenInput").disabled = true;
-  document.getElementById("zoomInGameScreenInput2").disabled = false; 
-  document.getElementById("zoomOutGameScreenInput2").disabled = true; 
+  document.getElementById("zoomInGameScreenInput2").disabled = false;
+  document.getElementById("zoomOutGameScreenInput2").disabled = true;
   document.getElementById("loadButtonGroup").style.width = "900px";
 }
 
@@ -52,17 +52,17 @@ function switchColorMode() {
     bodyElement.style.backgroundColor = "#0a0a0a";
     current_color_mode = "dark";
 
-    for (var i = 0; i < buttonsLightElement.length; i++) { 
+    for (var i = 0; i < buttonsLightElement.length; i++) {
       console.log("[COLOR-MODE-BUTTONS] Change color of " + buttonsLightElement[i].id);
       document.getElementById(buttonsLightElement[i].id).style.backgroundColor = "#1ed931";
     }
 
-    for (var i = 0; i < textkinv.length; i++) { 
+    for (var i = 0; i < textkinv.length; i++) {
       console.log("[COLOR-MODE-TEXT-KINV] Change color of " + textkinv[i].id);
       document.getElementById(textkinv[i].id).style.color = "#1ed931";
     }
 
-    for (var i = 0; i < alertkinv.length; i++) { 
+    for (var i = 0; i < alertkinv.length; i++) {
       console.log("[COLOR-MODE-ALERT-KINV] Change color of " + alertkinv[i].id);
       document.getElementById(alertkinv[i].id).style.color = "#1ed931";
       document.getElementById(alertkinv[i].id).style.backgroundColor = "#0a0a0a";
@@ -83,17 +83,17 @@ function switchColorMode() {
     bodyElement.style.backgroundColor = "#ffffff";
     current_color_mode = "light";
 
-    for (var i = 0; i < buttonsLightElement.length; i++) { 
+    for (var i = 0; i < buttonsLightElement.length; i++) {
       console.log("[COLOR-MODE-BUTTONS] Change color of " + buttonsLightElement[i].id);
       document.getElementById(buttonsLightElement[i].id).style.backgroundColor = "";
     }
 
-    for (var i = 0; i < textkinv.length; i++) { 
+    for (var i = 0; i < textkinv.length; i++) {
       console.log("[COLOR-MODE-TEXT-KINV] Change color of " + textkinv[i].id);
       document.getElementById(textkinv[i].id).style.color = "";
     }
 
-    for (var i = 0; i < alertkinv.length; i++) { 
+    for (var i = 0; i < alertkinv.length; i++) {
       console.log("[COLOR-MODE-ALERT-KINV] Change color of " + alertkinv[i].id);
       document.getElementById(alertkinv[i].id).style.color = "";
       document.getElementById(alertkinv[i].id).style.backgroundColor = "";
@@ -112,11 +112,11 @@ function switchColorMode() {
 }
 
 function switchNamespace() {
-  if (namespaces_index < namespaces.length-1) {
-      namespaces_index +=1 ;
+  if (namespaces_index < namespaces.length - 1) {
+    namespaces_index += 1;
   }
   else {
-      namespaces_index = 0;
+    namespaces_index = 0;
   }
   namespace = namespaces[namespaces_index];
   $('#currentGameNamespace').text(namespace);
@@ -134,18 +134,18 @@ function createChaosProgramButton(name, lang) {
   btn.name = "load" + capitalizedName;
   btn.id = "load" + capitalizedName;
   if (document.getElementById("load" + capitalizedName)) {
-      return;
+    return;
   }
   btn.style = "padding: 0% 2%;"
   btn.classList = "btn btn-light btn-sm";
-  btn.addEventListener("click", function(){ loadPreset(name, lang); });
-  document.getElementById("loadButtonGroup").appendChild(btn); 
+  btn.addEventListener("click", function () { loadPreset(name, lang); });
+  document.getElementById("loadButtonGroup").appendChild(btn);
   document.getElementById("loadButtonGroup").scrollLeft = document.getElementById("loadButtonGroup").scrollWidth;
 }
 
 function deleteChaosProgramButton(name) {
   let capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
-  document.getElementById("loadButtonGroup").removeChild(document.getElementById("load" + capitalizedName)); 
+  document.getElementById("loadButtonGroup").removeChild(document.getElementById("load" + capitalizedName));
 }
 
 function setLogConsole() {

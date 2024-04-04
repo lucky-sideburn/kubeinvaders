@@ -1,5 +1,5 @@
 function setChaosReportURL(select) {
-  var selectedValue = select.options[select.selectedIndex].value; 
+  var selectedValue = select.options[select.selectedIndex].value;
   document.getElementById("chaosReportCheckSiteURL").value = selectedValue;
 }
 
@@ -26,24 +26,24 @@ function parseIngressListJSON(ingressList) {
 }
 
 function resizeCharts() {
-  if(myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined){
+  if (myHTTPStatusCodeChart != null && myHTTPStatusCodeChart != undefined) {
     myHTTPStatusCodeChart.resize();
   }
-  if(myMainChaosMetrics != null && myMainChaosMetrics != undefined){
+  if (myMainChaosMetrics != null && myMainChaosMetrics != undefined) {
     myMainChaosMetrics.resize();
   }
-  if(myHTTPElapsedChart != null && myHTTPElapsedChart != undefined){
+  if (myHTTPElapsedChart != null && myHTTPElapsedChart != undefined) {
     myHTTPElapsedChart.resize();
   }
 }
 
 function getIngressLists() {
-  var oReq = new XMLHttpRequest();  
+  var oReq = new XMLHttpRequest();
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       console.log("[SAVE-CHAOS-REPORT-INGRESS-LISTS]" + JSON.parse(this.responseText));
       parseIngressListJSON(JSON.parse(this.responseText));
-    } 
+    }
   };;
   oReq.open("GET", k8s_url + "/kube/ingress/get?namespace=" + namespace, true);
   oReq.setRequestHeader("Content-Type", "application/json");
@@ -108,8 +108,8 @@ function chaosReportHttpEndpointAdd() {
     </div>
   </div>
   `);
-  
-  if(is_demo_mode()) {
+
+  if (is_demo_mode()) {
     document.getElementById("chaosReportCheckSiteURL").readOnly = true;
   }
 }
@@ -121,7 +121,7 @@ function isValidURL(string) {
     return false;
   }
   return true;
-} 
+}
 
 function headerAreLikePythonRequestHeaders(headers) {
   var headersDict = {};
@@ -210,7 +210,7 @@ function sendSavedChaosReport() {
   oReq.setRequestHeader("Content-Type", "application/json");
   // console.log("[SAVE-CHAOS-REPORT-CONF] Sending configuration to Nginx: " + JSON.stringify(presetBodyDict));
   oReq.send(JSON.stringify(presetBodyDict));
-  closePrepareChaosReportModal();  
+  closePrepareChaosReportModal();
   resizeCharts();
   document.getElementById("myCanvas").scrollIntoView(true);
   document.getElementById("flagChaosReport").checked = true;
@@ -244,11 +244,11 @@ function updateElapsedTimeArray(projectName) {
   $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
   // console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
   // console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
-  
+
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_elapsed_time";
   // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
-  
+
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       // console.log("[SAVE-CHAOS-REPORT-CONF] Elapsed time array received from Redis: " + parseFloat(this.responseText));
@@ -256,7 +256,7 @@ function updateElapsedTimeArray(projectName) {
       while (chaos_report_http_elapsed_time_array.length > 40) {
         chaos_report_http_elapsed_time_array.shift();
       }
-    } 
+    }
   };;
 
   oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
@@ -267,17 +267,17 @@ function updateElapsedTimeArray(projectName) {
 
 function updateStatusCodePieChart(projectName) {
   // console.log("[SAVE-CHAOS-REPORT-CONF] Updating Status Code Pie Chart for project: " + projectName);
-  
+
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_status_code";
   // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
-  
+
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       var status_code = this.responseText.trim();
       // console.log("[SAVE-CHAOS-REPORT-CONF] Status Code Pie Chart received from Redis: |" + status_code + "|");
 
-      chart_status_code_dict[status_code] =  chart_status_code_dict[status_code] + 1
+      chart_status_code_dict[status_code] = chart_status_code_dict[status_code] + 1
 
       myHTTPStatusCodeChart.setOption({
         series: [
@@ -287,64 +287,64 @@ function updateStatusCodePieChart(projectName) {
               {
                 value: chart_status_code_dict["200"],
                 name: '200',
-                itemStyle: {color: 'green'},
+                itemStyle: { color: 'green' },
               },
               {
                 value: chart_status_code_dict["500"],
                 name: '500',
-                itemStyle: {color: 'red'},
+                itemStyle: { color: 'red' },
               },
               {
                 value: chart_status_code_dict["502"],
                 name: '502',
-                itemStyle: {color: 'red'},
+                itemStyle: { color: 'red' },
               },
               {
                 value: chart_status_code_dict["503"],
                 name: '503',
-                itemStyle: {color: 'red'},
+                itemStyle: { color: 'red' },
               },
               {
                 value: chart_status_code_dict["504"],
                 name: '504',
-                itemStyle: {color: 'red'},
+                itemStyle: { color: 'red' },
               },
               {
                 value: chart_status_code_dict["400"],
                 name: '400',
-                itemStyle: {color: 'yellow'},
+                itemStyle: { color: 'yellow' },
               },
               {
                 value: chart_status_code_dict["401"],
                 name: '401',
-                itemStyle: {color: 'yellow'},
+                itemStyle: { color: 'yellow' },
               },
               {
                 value: chart_status_code_dict["403"],
                 name: '403',
-                itemStyle: {color: 'yellow'},
+                itemStyle: { color: 'yellow' },
               },
               {
                 value: chart_status_code_dict["404"],
                 name: '404',
-                itemStyle: {color: 'yellow'},
+                itemStyle: { color: 'yellow' },
               },
               {
                 value: chart_status_code_dict["Connection Error"],
                 name: 'Connection Error',
-                itemStyle: {color: 'black'},
+                itemStyle: { color: 'black' },
               },
               {
                 value: chart_status_code_dict["Other"],
                 name: 'Other',
-                itemStyle: {color: 'grey'},
+                itemStyle: { color: 'grey' },
               },
             ],
             roseType: 'area'
           }
         ]
       });
-    } 
+    }
   };;
 
   oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
@@ -354,15 +354,15 @@ function updateStatusCodePieChart(projectName) {
 
 function updateChaosReportStartTime(projectName) {
   // console.log("[SAVE-CHAOS-REPORT-CONF] Updating Start Time for project: " + projectName);
-  
+
   var oReq = new XMLHttpRequest();
   var redis_key = projectName + "_check_url_start_time";
   // console.log("[SAVE-CHAOS-REPORT-CONF] Redis key: " + redis_key);
-  
+
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       $("#chaosReportDateDiv").html(this.responseText);
-    } 
+    }
   };;
 
   oReq.open("GET", k8s_url + "/chaos/redis/get?key=" + redis_key, true);
@@ -391,11 +391,11 @@ function updateMainMetricsChart() {
             name: 'Not Running Pods'
           },
           {
-            value:  Number(chart_fewer_replicas_seconds),
+            value: Number(chart_fewer_replicas_seconds),
             name: 'Current Replicas State Delay'
           },
           {
-            value:  Number(chart_latest_fewer_replicas_seconds),
+            value: Number(chart_latest_fewer_replicas_seconds),
             name: 'Latest Replicas State Delay'
           }
         ],
@@ -407,7 +407,7 @@ function updateMainMetricsChart() {
 
 function drawCanvasHTTPStatusCodeStats() {
   // // console.log("[SAVE-CHAOS-REPORT-CONF] Updating chart");
-  
+
   myHTTPElapsedChart.setOption({
     xAxis: {},
     yAxis: {
@@ -491,57 +491,57 @@ option = {
         {
           value: chart_status_code_dict["200"],
           name: '200',
-          itemStyle: {color: 'green'},
+          itemStyle: { color: 'green' },
         },
         {
           value: chart_status_code_dict["500"],
           name: '500',
-          itemStyle: {color: 'red'},
+          itemStyle: { color: 'red' },
         },
         {
           value: chart_status_code_dict["502"],
           name: '502',
-          itemStyle: {color: 'red'},
+          itemStyle: { color: 'red' },
         },
         {
           value: chart_status_code_dict["503"],
           name: '503',
-          itemStyle: {color: 'red'},
+          itemStyle: { color: 'red' },
         },
         {
           value: chart_status_code_dict["504"],
           name: '504',
-          itemStyle: {color: 'red'},
+          itemStyle: { color: 'red' },
         },
         {
           value: chart_status_code_dict["400"],
           name: '400',
-          itemStyle: {color: 'yellow'},
+          itemStyle: { color: 'yellow' },
         },
         {
           value: chart_status_code_dict["401"],
           name: '401',
-          itemStyle: {color: 'yellow'},
+          itemStyle: { color: 'yellow' },
         },
         {
           value: chart_status_code_dict["403"],
           name: '403',
-          itemStyle: {color: 'yellow'},
+          itemStyle: { color: 'yellow' },
         },
         {
           value: chart_status_code_dict["404"],
           name: '404',
-          itemStyle: {color: 'yellow'},
+          itemStyle: { color: 'yellow' },
         },
         {
           value: chart_status_code_dict["Connection Error"],
           name: 'Connection Error',
-          itemStyle: {color: 'black'},
+          itemStyle: { color: 'black' },
         },
         {
           value: chart_status_code_dict["Other"],
           name: 'Other',
-          itemStyle: {color: 'grey'},
+          itemStyle: { color: 'grey' },
         },
       ],
       roseType: 'area'
@@ -551,6 +551,6 @@ option = {
 
 myHTTPStatusCodeChart.setOption(option);
 
-$(window).on('resize', function(){
+$(window).on('resize', function () {
   resizeCharts();
 });

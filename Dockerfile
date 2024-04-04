@@ -1,11 +1,9 @@
 FROM nginx:stable
-# FROM localhost/local/base:latest
 
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
 RUN apt-get -y install procps git vim wget gnupg ca-certificates jq openssl task-spooler at curl apt-transport-https python3 python3-pip redis libssl-dev
 RUN pip3 install pyyaml
-# --no-install-recommends
 
 # Install kubectl
 RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -53,6 +51,7 @@ RUN chmod 777 /var/www/html
 # Copy LUA scripts
 COPY scripts/metrics.lua /usr/local/openresty/nginx/conf/kubeinvaders/metrics.lua
 COPY scripts/pod.lua /usr/local/openresty/nginx/conf/kubeinvaders/pod.lua
+COPY scripts/ingress.lua /usr/local/openresty/nginx/conf/kubeinvaders/ingress.lua
 COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
 COPY scripts/kube-linter.lua /usr/local/openresty/nginx/conf/kubeinvaders/kube-linter.lua
 COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-node.lua

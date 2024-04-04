@@ -10,13 +10,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
       /* Adjust styling for sidebar */
+      *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      }
+    
       .sidebar {
         height: 100%;
         width: 250px;
         position: fixed;
         top: 0;
         left: 0; /* Initially hide sidebar */
-        background-color: #343a40; /* Dark color */
+        background-color: black; /* Dark color */
         padding-top: 60px; /* Adjust according to your navbar height */
         transition: left 0.3s ease; /* Smooth transition */
       }
@@ -73,13 +77,11 @@
     </div>
 
     <div class="sidebar" id="sidebar">
+      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
+      <a id="programmingModeButton"  onclick="startProgrammingMode()">Programming Mode</a>
       <a href="#" onclick="showSpecialKeys()">Show Special Keys</a>
       <a href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a>
       <a href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a>
-    
-      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
-      <a id="programmingModeButton"  onclick="startProgrammingMode()">Programming Mode</a>
-      
     </div>
     
     <!-- Main content -->

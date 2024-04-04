@@ -19,8 +19,24 @@
       }
       #mainChaosMetrics > div {
         width: 100% !important;
-
       }
+      #httpStatusCodeChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpStatusCodeChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
       .sidebar {
         height: 100%;
         width: 250px;
@@ -534,17 +550,19 @@
                     </table>
                   </div>
                 </div>
-                
-                <div id="chartDiv" style="display: none; width: 100%; text-align: center; margin: auto;">
-                  <label for="httpElapsedChart">HTTP Elapsed (seconds)</label>
-                  <div id="httpElapsedChart"></div>
-                  <label for="httpStatusCodeChart">HTTP Status Code</label>
-                  <div id="httpStatusCodeChart"></div>
-                </div>
-              </div>          
-              <div class="row" style="margin-top: 2%; text-align: center; margin: auto;">
+              </div>
+
+              <div id="chartDiv" class="row" style="display: none; height: 480px; margin-bottom: 15%;">
+                <label for="httpStatusCodeChart">HTTP Status Code</label>
+                <div id="httpStatusCodeChart" style="width: 50%; height: 50%; margin-top: 1%; margin-bottom: 0.5%;"></div>
+                <label for="httpElapsedChart">HTTP Elapsed (seconds)</label>
+                <div id="httpElapsedChart" style="width: 100%; height: 50%; margin-top: 0.5%;"></div>
+              </div>
+              
+              <div class="row" style="margin-top: 2%; text-align: center; margin: auto; margin-top: 1%;">
                 <canvas id="myCanvas" width="720" height="480" class="game-canvas"></canvas>
               </div>
+            
               <div class="row">
                 <div class="col text-center">
                 </div>

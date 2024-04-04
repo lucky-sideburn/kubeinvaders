@@ -173,6 +173,7 @@ function sendSavedChaosReport() {
   chaos_report_switch = true;
   document.getElementById("httpStatsCanvasDiv").style.display = "block";
   document.getElementById("chartDiv").style.display = "block";
+
   drawCanvasHTTPStatusCodeStats();
 
   chaosReportprojectName = presetBodyDict["chaosReportProject"];
@@ -340,7 +341,7 @@ function updateStatusCodePieChart(projectName) {
                 itemStyle: { color: 'grey' },
               },
             ],
-            roseType: 'area'
+            radius: ['40%', '70%']
           }
         ]
       });
@@ -426,6 +427,7 @@ function drawCanvasHTTPStatusCodeStats() {
 var myHTTPElapsedChart = echarts.init(document.getElementById('httpElapsedChart'));
 
 option = {
+  backgroundColor: 'black',
   legend: {
     // Try 'horizontal'
     orient: 'vertical',
@@ -442,13 +444,12 @@ option = {
       type: 'line',
       smooth: true,
       itemStyle: {
-        color: 'red'
+        color: 'green'
       }
     }
   ]
 };
 myHTTPElapsedChart.setOption(option);
-
 
 var myMainChaosMetrics = echarts.init(document.getElementById('mainChaosMetrics'));
 
@@ -482,11 +483,18 @@ option = {
 myMainChaosMetrics.setOption(option);
 
 var myHTTPStatusCodeChart = echarts.init(document.getElementById('httpStatusCodeChart'));
+console.log(myHTTPStatusCodeChart);
 
 option = {
   series: [
     {
       type: 'pie',
+      labelLine: {
+          normal: {
+              show: true,
+              color: 'yellow'
+          }
+      },
       data: [
         {
           value: chart_status_code_dict["200"],

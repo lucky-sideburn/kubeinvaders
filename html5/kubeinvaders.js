@@ -110,17 +110,17 @@ var chart_pods_not_running_on = 0;
 var chart_fewer_replicas_seconds = 0;
 var chart_latest_fewer_replicas_seconds = 0;
 var chart_status_code_dict = {
-    "200": 0,
-    "500": 0,
-    "502": 0,
-    "503": 0,
-    "504": 0,
-    "400": 0,
-    "401": 0,
-    "403": 0,
-    "404": 0,
-    "Connection Error": 0,
-    "Other": 0
+    "200": 1,
+    "500": 1,
+    "502": 1,
+    "503": 1,
+    "504": 1,
+    "400": 1,
+    "401": 1,
+    "403": 1,
+    "404": 1,
+    "Connection Error": 1,
+    "Other": 1
 };
 
 function getCodeName() {

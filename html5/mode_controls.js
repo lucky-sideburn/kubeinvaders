@@ -6,8 +6,8 @@ function startGameMode() {
     $("#gameModeButton").text("Enable Game Mode");
   } else {
     game_mode_switch = true;
-    document.getElementById("gameContainer").style.width = "50%";
-    document.getElementById("gameContainer").style.height = "50%";
+    document.getElementById("gameContainer").style.width = "100%";
+    document.getElementById("gameContainer").style.height = "100%";
     //document.getElementById("loadButtonGroup").style.width = "650px";
     $("#gameModeButton").text("Disable Game Mode");
     $("#programmingModeButton").text("Enable Prog. Mode");
@@ -39,8 +39,8 @@ function startProgrammingMode() {
     programming_mode_switch = false;
     $("#programmingModeButton").text("Enable Prog. Mode");
   } else {
-    document.getElementById("gameContainer").style.width = "50%";
-    document.getElementById("gameContainer").style.height = "50%";
+    document.getElementById("gameContainer").style.width = "100%";
+    document.getElementById("gameContainer").style.height = "100%";
     document.getElementById("loadButtonGroup").style.width = "1250px";
 
     programming_mode_switch = true;

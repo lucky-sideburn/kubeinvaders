@@ -12,8 +12,15 @@
       /* Adjust styling for sidebar */
       *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
       }
-    
+      #mainChaosMetrics > div > canvas {
+        width: 100% !important;
+      }
+      #mainChaosMetrics > div {
+        width: 100% !important;
+
+      }
       .sidebar {
         height: 100%;
         width: 250px;
@@ -196,7 +203,7 @@
                       <div class="row">
                         <div class="col col-xl-10">
                           <label for="chaosReportAuthor">Author</label>
-                          <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%; width: 50%;">
+                          <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%; width: 100%;">
                         </div>
                       </div>
                       <!-- <div class="row">
@@ -261,7 +268,7 @@
             </div>
           </div>
         </div>
-        <div class="container" id="gameContainer" style="width: 50% !important;">
+        <div class="container" id="gameContainer">
             <!-- START FIRST ROW -->
             <div class="row custom-btn-group" style="margin-top: 2%;">
               <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
@@ -333,7 +340,7 @@
   
             <!-- START GAME MODE BUTTONS -->
             <div id="game-buttons" style="display: none;">
-              <div class="row container" style="width: 50%;">
+              <div class="row container" style="width: 100%;">
                 <div class="col text-center">
                   <button type="button" id="controlAutoPilotButton" class="btn btn-dark" onclick="controlAutoPilot()">Start</button>
                 </div>
@@ -344,7 +351,7 @@
                   <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
                 </div>
               </div>
-              <div class="row container" style="margin-top: 1%; width: 50%;">
+              <div class="row container" style="margin-top: 1%; width: 100%;">
                 <div class="col text-center">
                   <button style="margin-bottom: 2%" type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
                 </div>
@@ -392,7 +399,7 @@
   
                   <span style="color: #b2afaf" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
                   <span style="color: #b2afaf" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
-                  <div id="mainChaosMetrics" style="width: 70%;height: 70%; margin-top: 1%;"></div>
+                  <div id="mainChaosMetrics" style="width: 100%;height: 70%; margin-top: 1%;"></div>
                   
                   <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
               </div>
@@ -531,14 +538,15 @@
                     </table>
                   </div>
                 </div>
-                <div id="chartDiv" style="display: none;">
-                  <label for="httpElapsedChart" style="margin-left: 2%; margin-top: 3%">HTTP Elapsed (seconds)</label>
-                  <div id="httpElapsedChart" style="width: 100%; height: 400px; margin-top: 0%;" ></div>
-                  <label for="httpStatusCodeChart" style="margin-left: 2%;">HTTP Status Code</label>
-                  <div id="httpStatusCodeChart" style="width: 100%; height: 200px;"></div>
+                
+                <div id="chartDiv" style="display: none; width: 100%; text-align: center; margin: auto;">
+                  <label for="httpElapsedChart">HTTP Elapse d (seconds)</label>
+                  <div id="httpElapsedChart"  ></div>
+                  <label for="httpStatusCodeChart">HTTP Status Code</label>
+                  <div id="httpStatusCodeChart"></div>
                 </div>
               </div>          
-              <div class="row" style="margin-top: 2%;">
+              <div class="row" style="margin-top: 2%; text-align: center; margin: auto;">
                 <canvas id="myCanvas" width="720" height="480" class="game-canvas"></canvas>
               </div>
               <div class="row">

@@ -134,7 +134,7 @@ podman run -p 3131:8080 \
 --env KUBERNETES_SERVICE_HOST=10.10.10.4 \
 --env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
 --env NAMESPACE=namespace1,namespace2 \
-luckysideburn/kubeinvaders:v1.9.6
+luckysideburn/kubeinvaders:latest
 ```
 
 Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
@@ -142,7 +142,7 @@ Given this example, you can access k-inv at the following address: [http://local
 - Please pay attention to the command "podman run -p 3131:8080". Forwarding port 8080 is important.
 - We suggest using `INSECURE_ENDPOINT=true` for local development environments.
 - Follow the instructions above to create the token for `K8S_TOKEN`.
-- In the example, we use image tag `v1.9.6`, use `v1.9.6_debug` for debugging.
+- In the example, we use image tag `latest`, use `latest_debug` for debugging.
 
 #### Params
 
@@ -204,7 +204,7 @@ helm repo update
 kubectl create namespace kubeinvaders
 
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
 ```
 
 ### Example for K3S
@@ -256,13 +256,13 @@ kubectl create ns namespace2
 export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
 
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=v1.9.6
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
 ```
 
 ### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
 
 ```bash
-helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=v1.9.6 --set service.type=LoadBalancer --set service.port=80
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest --set service.type=LoadBalancer --set service.port=80
 
 kubectl set env deployment/kubeinvaders INSECURE_ENDPOINT=true -n kubeinvaders
 ```
@@ -389,7 +389,7 @@ Currently, the Helm chart does not support PersistentVolumes, but this task is o
 
 - Check if the namespaces declared with helm config.target_namespace (e.g., config.target_namespace="namespace1\,namespace2") exist and contain some pods.
 - Check your browser's developer console for any failed HTTP requests (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo).
-- Try using v1.9.6_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
+- Try using latest_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
 
 ## Prometheus Metrics
 

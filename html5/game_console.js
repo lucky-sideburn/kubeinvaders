@@ -1,24 +1,32 @@
 /* Function for managing game console */
 function zoomIn() {
-  document.getElementById("gameContainer").style.width = "100%"
-  document.getElementById("gameContainer").style.height = "100%";
-  document.getElementById("zoomInGameScreenInput").disabled = true;
-  document.getElementById("zoomOutGameScreenInput").disabled = false;
-  document.getElementById("zoomInGameScreenInput2").disabled = true;
-  document.getElementById("zoomOutGameScreenInput2").disabled = false;
-  document.getElementById("loadButtonGroup").style.width = "1200px";
+  if (document.getElementById("myCanvas").width != 1200) {
+    document.getElementById("gameContainer").style.width = "100%"
+    document.getElementById("gameContainer").style.height = "100%";
+    document.getElementById("myCanvas").width = 1200;
+    document.getElementById("myCanvas").height = 800;
+    // document.getElementById("zoomInGameScreenInput").disabled = true;
+    // document.getElementById("zoomOutGameScreenInput").disabled = false;
+    document.getElementById("loadButtonGroup").style.width = "1200px";
+    maxAliensPerRow = 20;
+    myMainChaosMetrics.resize();
+    startYforHelp = 690;
+  }
 }
 
 function zoomOut() {
-  var gameContainerWidth = document.getElementById("gameContainer").style.width;
-  var gameContainerHeight = document.getElementById("gameContainer").style.height;
-  document.getElementById("gameContainer").style.width = "50%"
-  document.getElementById("gameContainer").style.height = "50%"
-  document.getElementById("zoomInGameScreenInput").disabled = false;
-  document.getElementById("zoomOutGameScreenInput").disabled = true;
-  document.getElementById("zoomInGameScreenInput2").disabled = false;
-  document.getElementById("zoomOutGameScreenInput2").disabled = true;
-  document.getElementById("loadButtonGroup").style.width = "900px";
+  if (document.getElementById("myCanvas").width > 720) {
+    document.getElementById("myCanvas").width = 720;
+    document.getElementById("myCanvas").height = 480;
+    document.getElementById("gameContainer").style.width = "50%"
+    document.getElementById("gameContainer").style.height = "50%"
+    // document.getElementById("zoomInGameScreenInput").disabled = false;
+    // document.getElementById("zoomOutGameScreenInput").disabled = true;
+    document.getElementById("loadButtonGroup").style.width = "900px";
+    maxAliensPerRow = 12;
+    myMainChaosMetrics.resize();
+    startYforHelp = 400;
+  }
 }
 
 function controlAutoPilot() {

@@ -37,7 +37,7 @@ deployment:
   replicaCount: 1
   image:
     repository: luckysideburn/kubeinvaders
-    tag: v1.9.6
+    tag: v1.9.7
     pullPolicy: Always
   extraEnv: []
   # - name: FOO

@@ -15,6 +15,10 @@ function closeCurrentChaosJobModal() {
 }
 
 function showSetCurrentChaosContainer() {
+  if (is_demo_mode()) {
+    demo_mode_alert();
+    return;
+  }
   $('#alert_placeholder2').text('');
   getCurrentChaosContainer();
   $('#setChaosContainerModal').modal('show');

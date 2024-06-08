@@ -4,6 +4,9 @@
 
 This project is part of landscape of [Cloud Native Computing Foudation](https://landscape.cncf.io/) in the Observability and Analysis - Chaos Engineering section.
 
+- Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
+- Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
+
 Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
 <img src="https://raw.githubusercontent.com/lucky-sideburn/kubeinvaders/master/doc_images/logo.svg" width=50% height=50%>
@@ -12,9 +15,6 @@ We have embedded a demo on the DevOpsTRibe blog for you to try out the tool.
 
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
-- Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
-- Watch the Grafana dashboard here [https://grafana.platformengineering.it](https://grafana.platformengineering.it)
-- Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
 
 [Here are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I could not be present at my talk, but I would still like to share them with the community.
 
@@ -449,6 +449,7 @@ Please reach out for news, bugs, feature requests, and other issues via:
 
 ## Community blogs and videos
 
+- [The Kubernetes ecosystem is a candy store](https://opensource.googleblog.com/2024/06/the-kubernetes-ecosystem-is-candy-store.html)
 - [ AdaCon Norway Live Stream ](https://www.youtube.com/watch?v=rt_eM_KRfK4)
 - [ LILiS - Linux Day 2023 Benevento ](https://www.youtube.com/watch?v=1tHkEfbGjgE)
 - Kubernetes.io blog: [KubeInvaders - Gamified Chaos Engineering Tool for Kubernetes](https://kubernetes.io/blog/2020/01/22/kubeinvaders-gamified-chaos-engineering-tool-for-kubernetes/)

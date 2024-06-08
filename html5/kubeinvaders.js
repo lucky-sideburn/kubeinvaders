@@ -713,16 +713,7 @@ window.setInterval(function draw() {
             spaceshipY = canvas.height - spaceshipHeight;
         }
     }
-    
-    // if (aliens_temp != aliens) {
-    //     for (i=0; i<aliens.length; i++) {
-    //         if (aliens[i]["active"]) {
-    //             drawAlien(aliens[i]["x"], aliens[i]["y"], aliens[i]["name"], aliens[i]["status"]);
-    //         }
-    //     }
-    //     aliens_temp = aliens;
-    // }
-    
+
     ctx.fillStyle = 'white';
     ctx.font = '16px pixel';
 

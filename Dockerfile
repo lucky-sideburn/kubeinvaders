@@ -2,8 +2,9 @@ FROM nginx:stable
 
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
-RUN apt-get -y install procps git vim wget gnupg ca-certificates jq openssl task-spooler at curl apt-transport-https python3 python3-pip redis libssl-dev
-RUN pip3 install pyyaml
+RUN apt-get -y install git vim wget curl at gnupg procps
+RUN apt-get -y install ca-certificates jq openssl task-spooler apt-transport-https python3 python3-pip redis libssl-dev
+RUN apt-get -y install python3-yaml python3-kubernetes python3-redis python3-requests
 
 # Install kubectl
 RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
@@ -64,7 +65,6 @@ COPY scripts/data/codenames.txt /usr/local/openresty/nginx/conf/kubeinvaders/dat
 COPY scripts/programming_mode /opt/programming_mode/
 COPY scripts/metrics_loop /opt/metrics_loop/
 COPY scripts/logs_loop /opt/logs_loop/
-RUN pip3 install -r /opt/programming_mode/requirements.txt
 
 EXPOSE 8080
 

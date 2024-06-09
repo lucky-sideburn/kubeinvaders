@@ -23,7 +23,7 @@ We have embedded a demo on the DevOpsTRibe blog for you to try out the tool.
 1. [Description](#Description)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
-4. [URL Monitoring During Chaos Session](#Url-Monitoring-During-Chaos-Session)
+4. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
 5. [Persistence](#Persistence)
 6. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
 7. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
@@ -369,7 +369,7 @@ Press the + or - buttons to increase or decrease the game screen.
 
 - Select "Set Custom Chaos Container for Nodes" from the menu to use your preferred image or configuration against nodes.
 
-# Url Monitoring During Chaos Session
+# URL Monitoring During Chaos Session
 
 During a chaos engineering session, you can monitor the behavior of an HTTP call exposed by an Ingress.
 

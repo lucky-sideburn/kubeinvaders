@@ -1,0 +1,43 @@
+{{ if .Values.grafanaDashboard.enabled }}
+{{ $currentScope := .}}
+{{ range $path, $_ :=  .Files.Glob  "dashboards/**.json" }}
+{{ $dashboardName := regexReplaceAll "(^.*/)(.*)\\.json$" $path "${2}" }}
+{{- with $currentScope}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "grafana-dashboards-{{ lower $dashboardName }}"
+  labels:
+    app.kubernetes.io/name: kubeinvaders
+    helm.sh/chart: {{ include "kubeinvaders.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.additionalLabels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+data:
+  {{- (.Files.Glob $path).AsConfig | nindent 2 }}
+---
+apiVersion: integreatly.org/v1alpha1
+kind: GrafanaDashboard
+metadata:
+  name: "grafana-dashboards-{{ lower $dashboardName }}"
+  labels:
+    app.kubernetes.io/name: kubeinvaders
+    helm.sh/chart: {{ include "kubeinvaders.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- with .Values.additionalLabels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+spec:
+  datasources:
+    - inputName: "DS_PROMETHEUS"
+      datasourceName: "Prometheus"
+  configMapRef:
+    name: "grafana-dashboards-{{ lower $dashboardName }}"
+    key: {{ $dashboardName }}.json
+{{- end }}
+{{ end }}
+{{ end }}

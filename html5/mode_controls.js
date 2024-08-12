@@ -28,6 +28,14 @@ function startGameMode() {
   resizeCharts();
 }
 
+function redirectToSREBoard(){
+  window.location.href = "./sre_board.html";
+}
+
+function backToHome(){
+  window.location.href = "./index.html";
+}
+
 function startProgrammingMode() {
 
   if (is_demo_mode()) {

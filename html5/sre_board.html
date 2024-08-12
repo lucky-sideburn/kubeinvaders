@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>KubeInvaders</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+      /* Adjust styling for sidebar */
+      *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+      #mainChaosMetrics > div > canvas {
+        width: 100% !important;
+      }
+      #mainChaosMetrics > div {
+        width: 100% !important;
+      }
+      #httpStatusCodeChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpStatusCodeChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .sidebar {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0; /* Initially hide sidebar */
+        background-color: black; /* Dark color */
+        padding-top: 60px; /* Adjust according to your navbar height */
+        transition: left 0.3s ease; /* Smooth transition */
+      }
+      
+      .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #gameModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #programmingModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+      
+      .sidebar a:hover {
+        background-color: #495057; /* Darker color on hover */
+      }
+      
+      /* Adjust styling for main content */
+      .main-content {
+        margin-left: 0; /* Initially no margin */
+        padding: 20px;
+        transition: margin-left 0.3s ease; /* Smooth transition */
+      }
+      
+      /* Adjust styling for toggler icon */
+      .toggler-icon {
+        color: #ffffff;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        left: 10px;
+        z-index: 999; /* Ensure it's above other elements */
+      }
+    </style>
+  </head>
+  <body id="kinvBody">  
+    <div id="splash-screen">
+        <img src="./images/kubeinvaders_spaceship.png" alt="Logo" class="splash-screen-img">
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <a id="backToHome" onclick="backToHome()" style="color: #ffffff;">Home</a>
+    </div>
+    
+    <!-- Main content -->
+    <div class="main-content">
+      <!-- Navbar -->
+  
+      <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </span>
+        <div id="main-game-div" style="display: block;">
+          <div class="container" id="gameContainer">
+                <div class="row" style="margin-top: 2%; text-align: center; margin: auto; margin-top: 1%;">
+                  <canvas id="SreBoardCanvas" width="1200" height="800" class="game-canvas"></canvas>
+                </div>
+          </div>
+        </div>
+  
+        <div id="footer" style="margin-top: 5%;">
+          <div class="container text-center">
+            <div class="container text-center" style="margin-top: 20%;">
+              <div>
+                <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
+                <p class="text-muted credit" style="color:#fff;">version: v1.9.6</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script src="./utils.js"></script>
+        <script src="./programming_mode.js"></script>
+        <script src="./modals.js"></script>
+        <script src="./mode_controls.js"></script>
+        <script src="./game_console.js"></script>
+        <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
+        <script src="./js/jquery-3.6.0.min.js"></script>
+        <script src="./js/popper.min.js"></script>
+        <script src="./sre_board.js"></script>
+        <script>
+          // Function to toggle sidebar
+          
+          const sidebar = document.getElementById('sidebar');
+          const mainContent = document.querySelector('.main-content');
+          sidebar.style.left = '0px';
+          mainContent.style.marginLeft = '250px';
+          $('.toggler-icon').css({"color": "white"});
+
+          function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            if (sidebar && mainContent) {
+              if (sidebar.style.left == '-250px') {
+                $('.toggler-icon').css({"color": "white"});
+                sidebar.style.left = '0';
+                mainContent.style.marginLeft = '250px';
+              } else {
+                $('.toggler-icon').css({"color": "black"});
+
+                sidebar.style.left = '-250px';
+                mainContent.style.marginLeft = '0';
+              }
+            }
+          }
+        </script>
+      </div>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

@@ -251,7 +251,7 @@
                   </div>
                   <div class="modal-footer">
                     <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
-                    <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModalAndUncheck()">Close</button>
+                    <button type="button" id="closeButtonReport" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModalAndUncheck()">Close</button>
                   </div>
                 </form>
               </div>
@@ -357,7 +357,7 @@
               </div>
               <div class="row" style="margin-bottom: 2%;">
                 <div class="col text-center" style="margin-bottom: 0%;">
-                  <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="showPrepareChaosReportModal(this)">
+                  <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="wrapShowPrepareChaosReportModal(this)">
                   <label class="form-check-label text-kinv" for="flexCheckDefault">
                     Add HTTP check & Chaos Report
                   </label>

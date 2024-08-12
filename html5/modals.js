@@ -45,6 +45,12 @@ function closeSetLoadTestModal() {
   setModalState(false);
 }
 
+function wrapShowPrepareChaosReportModal(checkbox) {
+  let close_button = document.getElementById("closeButtonReport");
+  close_button.innerHTML = "Close";
+  showPrepareChaosReportModal(checkbox)
+}
+
 function showPrepareChaosReportModal(checkbox) {
   if(checkbox.checked){
     $('#prepareChaosReportModal').modal('show');

@@ -98,7 +98,7 @@ var latest_preset_name = "";
 var latest_preset_lang = "";
 var codename = getCodeName();
 const codename_regex = /chaos-codename:\ [a-zA-Z_]*/g;
-const chaos_job_regex = /chaos_jobs_status.*/g;
+const chaos_job_regex = /chaos_jobs_pod_phase.*/g;
 var codename_configured = false;
 var chaos_jobs_status = new Map();
 var current_color_mode = "light";
@@ -200,6 +200,23 @@ function getMetrics() {
         }
     };;
     oReq.open("GET", k8s_url + "/metrics");
+    oReq.send();
+}
+
+function getChaosJobsPodsPhase() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        var lines = this.responseText.split('\n');
+        for (var i = 0;i < lines.length;i++){
+            metric = lines[i].split(' ');
+
+            if (metric[0].match(chaos_job_regex)) {
+                metrics_split = metric[0].split(":");
+                chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
+            }
+        }
+    };;
+    oReq.open("GET", k8s_url + "/chaos_jobs_pod_phase");
     oReq.send();
 }
 
@@ -859,6 +876,7 @@ window.setInterval(function backgroundTasks() {
 
     if (game_mode_switch || programming_mode_switch || log_tail_switch) {
         getMetrics();
+        getChaosJobsPodsPhase();
         updateMainMetricsChart();
     }
 

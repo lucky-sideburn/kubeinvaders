@@ -119,7 +119,7 @@ for exp in parsed_yaml["experiments"]:
         
         if 'additional-labels' in job_attrs and 'chaos-codename' in job_attrs['additional-labels']:
             codename = job_attrs['additional-labels']['chaos-codename']
-            r.set(f"chaos_jobs_status:{codename}:{exp['name']}:{exp['job']}", "Created")
+            r.set(f"chaos_jobs_status:{codename}:{exp['name']}:{exp['job']}", 0.0)
         
         if r.exists('chaos_node_jobs_total') == 1:
             r.incr('chaos_node_jobs_total')

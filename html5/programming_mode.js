@@ -129,7 +129,7 @@ function savePreset(action) {
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200 && (action == "apply" || action == "save-chaos-program")) {
           if (latest_preset_lang == "k-inv") {
-              console.log("[SAVE-PRESET-CHAOSPROGRAM] Payload: " + $('#currentLoadTest').val());
+              // console.log("[SAVE-PRESET-CHAOSPROGRAM] Payload: " + $('#currentLoadTest').val());
               if ($('#currentLoadTest').val() != "") {
                   presetBody = $('#currentLoadTest').val();
               } 
@@ -210,7 +210,6 @@ function drawChaosProgramFlow() {
                   else {
                       times = flow["experiments"][i]["loop"] + " times"
                   }
-                  console.log(flow_html);
                   if (current_color_mode == "light") {
                       flow_html = flow_html + '<div class="row"><div class="alert alert-light alert-kinv" id="' +  random_code + Math.floor(Math.random() * 9999) +'" role="alert" style="border-color: #000000; border-width: 1.5px;">Do ' + flow["experiments"][i]["name"] + ' ' + times + '</div></div>';
                   }
@@ -221,7 +220,6 @@ function drawChaosProgramFlow() {
 
                   flow_html = flow_html + '<img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">';
 
-                  //console.log("Search " + search_job);
                   for (let [key, value] of chaos_jobs_status) {
                       if (key.search(search_job) != -1 ) {
                           if (current_color_mode == "light") {
@@ -250,7 +248,7 @@ function getSavedPresets() {
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
           if ((this.responseText.trim() != "nil") && (this.responseText.trim() != "")) {
-              console.log("[GET-PRESETS] Response from backend: <" + this.responseText.trim() + ">");
+              // console.log("[GET-PRESETS] Response from backend: <" + this.responseText.trim() + ">");
               var savedPresets = this.responseText.split(",");
               for (i = 0; i < savedPresets.length; i++) {
                   var currentPresetName = savedPresets[i].split("_")[1];
@@ -260,7 +258,7 @@ function getSavedPresets() {
                   // console.log("[GET-PRESETS] Change border color of buttonId: " + buttonId);
                   // console.log(document.getElementById(buttonId));
                   if (document.getElementById(buttonId) == null){
-                      console.log("[GET-PRESETS] Appending button to loadButtonGroup. id: " + buttonId + " presetname: " + currentPresetName.trim());
+                      // console.log("[GET-PRESETS] Appending button to loadButtonGroup. id: " + buttonId + " presetname: " + currentPresetName.trim());
                       latest_preset_lang = "k-inv";
                       createChaosProgramButton(currentPresetName.trim(), latest_preset_lang);                      
                   } else {

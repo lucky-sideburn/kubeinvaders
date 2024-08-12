@@ -163,5 +163,9 @@ while True:
             codename = pod.metadata.labels.get('chaos-codename')
             job_name = pod.metadata.labels.get('job-name')
             exp_name = pod.metadata.labels.get('experiment-name')
-            r.set(f"chaos_jobs_status:{codename}:{exp_name}:{job_name}", pod.status.phase)
+            if pod.status.phase in ["Pending", "Running", "Succeeded"]:
+                r.set(f"chaos_jobs_status:{codename}:{exp_name}:{job_name}", 1.0)
+            else:
+                r.set(f"chaos_jobs_status:{codename}:{exp_name}:{job_name}", -1)
+            r.set(f"chaos_jobs_pod_phase:{codename}:{exp_name}:{job_name}", pod.status.phase)
     time.sleep(1)

@@ -161,7 +161,7 @@ while True:
                     logging.debug(e)
         if pod.metadata.labels.get('chaos-codename') != None:
             codename = pod.metadata.labels.get('chaos-codename')
-            job_name = pod.metadata.labels.get('job-name')
+            job_name = pod.metadata.labels.get('job-name').replace("-","_")
             exp_name = pod.metadata.labels.get('experiment-name')
             if pod.status.phase in ["Pending", "Running", "Succeeded"]:
                 r.set(f"chaos_jobs_status:{codename}:{exp_name}:{job_name}", 1.0)

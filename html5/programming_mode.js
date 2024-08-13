@@ -75,15 +75,20 @@ function runChaosProgram() {
   $('#chaosProgramTextArea').val(chaosProgramWithCodename);
   codename_configured = true;
 
-  var now = new Date().toLocaleString().replace(',','')
-  $('#alert_placeholder_programming_mode').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
+  //var now = new Date().toLocaleString().replace(',','')
+  //$('#alert_placeholder_programming_mode').replaceWith(alert_div + 'Chaos Program launched at ' + now + ' </div>');
 
   var oReq = new XMLHttpRequest();
   oReq.open("POST", k8s_url + "/kube/chaos/programming_mode?id=" + random_code, true);
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
           now = new Date().toLocaleString().replace(',','')
-          $('#alert_placeholder_programming_mode').replaceWith(alert_div + 'Chaos Program completed at ' + now + ' </div>');
+          if (this.responseText.includes("Invalid")) {
+            $('#alert_placeholder_programming_mode').replaceWith(alert_div + this.responseText + ' </div>');
+          }
+         else {
+            $('#alert_placeholder_programming_mode').replaceWith(alert_div + this.responseText + 'Chaos Program loaded at ' + now + ' </div>');
+         }  
       }
   };;
   oReq.setRequestHeader("Content-Type", "application/json");

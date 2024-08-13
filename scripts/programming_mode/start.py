@@ -10,6 +10,7 @@ from string import Template
 import string
 import random
 import redis
+import re
 
 def create_container(image, name, command, args):
     container = client.V1Container(
@@ -59,7 +60,7 @@ with open(sys.argv[1], 'r') as stream:
         parsed_yaml=yaml.safe_load(stream)
         logging.info(f"Parsed yaml => {parsed_yaml}")
     except yaml.YAMLError as exc:
-        print(exc)
+        print(exc + " ")
 
 r = redis.Redis(unix_socket_path='/tmp/redis.sock')
 
@@ -76,37 +77,53 @@ client.Configuration.set_default(configuration)
 api_instance = client.CoreV1Api()
 batch_api = client.BatchV1Api()
 namespace = "kubeinvaders"
+k8s_regex = "[a-z0-9]([-a-z0-9]*[a-z0-9])?"
+prom_regex = "[a-zA-Z_:][a-zA-Z0-9_:]*"
 
-for job in parsed_yaml["jobs"]:
+for job in parsed_yaml["k8s_jobs"]:
     logging.info(f"Found job {job}")
-
+    if not re.fullmatch(k8s_regex, job):
+        ret = f"Invalid name for k8s_jobs: {job}, please match Kubernetes name format '[a-z0-9]([-a-z0-9]*[a-z0-9])?'"
+        logging.info(ret)
+        print(ret)
+        quit()
+    
 for exp in parsed_yaml["experiments"]:
+
     for _ in range(exp["loop"]):
         logging.info(f"Processing the experiment {exp}")
-        job_attrs = parsed_yaml["jobs"][exp["job"]]
+        job_attrs = parsed_yaml["k8s_jobs"][exp["k8s_job"]]
         args = []
         for arg in job_attrs['args']:
             args.append(str(arg))
 
         logging.info(f"args = {args}")
         logging.info(f"command = {job_attrs['command']}")
+        logging.info(f"image = {job_attrs['image']}")
+        logging.info(f"k8s_job = {exp['k8s_job']}")
+
+        if not re.fullmatch(prom_regex, exp["name"]):
+            ret = f"Invalid name for experiment: {exp['name']}, please match Prometheus metric name format '[a-zA-Z_:][a-zA-Z0-9_:]*'"
+            logging.info(ret)
+            print(ret)
+            quit()
 
         container = create_container(
             image = job_attrs['image'], 
-            name = exp['name'],
+            name = exp['k8s_job'],
             command = [job_attrs['command']],
             args = args
         )
         
         letters = string.ascii_lowercase
         rand_suffix = ''.join(random.choice(letters) for i in range(5))
-        job_name = f"{exp['job']}-{rand_suffix}"
+        job_name = f"{exp['k8s_job']}-{rand_suffix}"
 
         if 'additional-labels' in job_attrs:
             logging.info(f"additional-labels = {job_attrs['additional-labels']}")
-            pod_template = create_pod_template(f"{exp['name']}-exec", job_attrs['additional-labels'], container, exp["name"])
+            pod_template = create_pod_template(f"{exp['k8s_job']}_exec", job_attrs['additional-labels'], container, exp['name'])
         else:
-            pod_template = create_pod_template(f"{exp['name']}-exec", {}, container, exp["name"])
+            pod_template = create_pod_template(f"{exp['k8s_job']}_exec", {}, container, exp['k8s_job'])
         
         logging.info(f"Creating job {job_name}")
         job_def = create_job(job_name, pod_template)
@@ -119,11 +136,11 @@ for exp in parsed_yaml["experiments"]:
         
         if 'additional-labels' in job_attrs and 'chaos-codename' in job_attrs['additional-labels']:
             codename = job_attrs['additional-labels']['chaos-codename']
-            r.set(f"chaos_jobs_status:{codename}:{exp['name']}:{exp['job']}", 0.0)
+            metric_job_name = job_name.replace("-","_");
+            r.set(f"chaos_jobs_status:{codename}:{exp['name']}:{job_name}", 0.0)
         
         if r.exists('chaos_node_jobs_total') == 1:
             r.incr('chaos_node_jobs_total')
         else:
             r.set("chaos_node_jobs_total", 1)
-
 os.remove(sys.argv[1])

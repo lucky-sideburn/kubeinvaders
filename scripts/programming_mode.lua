@@ -54,4 +54,4 @@ red:expire("logs_enabled:" .. arg['id'], "10")
 local handle = io.popen("python3 /opt/programming_mode/start.py " .. file_name .. " " .. k8s_url)
 local result = handle:read("*a")
 
-ngx.say("Chaos program has been started...")
+ngx.say(result)

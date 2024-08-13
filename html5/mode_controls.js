@@ -5,6 +5,13 @@ function startGameMode() {
     game_mode_switch = false;
     $("#gameModeButton").text("Enable Game Mode");
   } else {
+    /* TO DO: DO BETTER :D */
+    let checkbox = {
+      checked: true,
+    };
+    let close_button = document.getElementById("closeButtonReport");
+    close_button.innerHTML = "Skip";
+    showPrepareChaosReportModal(checkbox);
     game_mode_switch = true;
     document.getElementById("gameContainer").style.width = "100%";
     document.getElementById("gameContainer").style.height = "100%";
@@ -26,14 +33,6 @@ function startGameMode() {
   chaos_program_screen.style.display = "none";
   programming_mode_buttons.style.display = "none";
   resizeCharts();
-
-  /* TO DO: DO BETTER :D */
-  let checkbox = {
-    checked: true,
-  };
-  let close_button = document.getElementById("closeButtonReport");
-  close_button.innerHTML = "Skip";
-  showPrepareChaosReportModal(checkbox);
 }
 
 function startProgrammingMode() {

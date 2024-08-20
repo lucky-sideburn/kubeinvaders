@@ -78,6 +78,8 @@ function runChaosProgram() {
    // Regex per estrarre il valore dopo "chaos-codename:"
   
   //random_code = (Math.random() + 1).toString(36).substring(7);
+  chaosProgram = getChaosProgTextAreaValue();
+
   const regex = /^chaos-codename:\s+(.*)$/m;
   const match = chaosProgram.match(regex);
 
@@ -222,8 +224,8 @@ function drawChaosProgramFlow() {
               } 
               
               var flow = JSON.parse(this.responseText);
-              console.log("[DRAW-PROGRAM-FLOW] Drawing flow for " + codename);
-              console.log("[DRAW-PROGRAM-FLOW] Drawing: " + JSON.stringify(flow));
+            //   console.log("[DRAW-PROGRAM-FLOW] Drawing flow for " + codename);
+            //   console.log("[DRAW-PROGRAM-FLOW] Drawing: " + JSON.stringify(flow));
               var flow_html = "";
               let i = 0;
               var times = "";

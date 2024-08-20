@@ -3,9 +3,11 @@ function replaceDivWithContent(divId, content) {
 }
 
 function getChaosProgTextAreaValue() {
-  const chaosProgramTextArea = document.getElementById('chaosProgramTextArea');
-  const textValue = chaosProgramTextArea.value;
-  return textValue;
+  return editor.getValue();
+//   const chaosProgramTextArea = document.getElementById('chaosProgramTextArea');
+//   const textValue = chaosProgramTextArea.value;
+//   console.log("[GET-CHAOS-PROGRAM-TEXT-AREA-VALUE] " + textValue);
+//   return textValue;
 }
 /* Programming Mode Functions */
 function IsJsonString(str) {
@@ -204,7 +206,7 @@ loop: 5`);
 
 function drawChaosProgramFlow() {
   //var chaosProgram = "";
-  chaosProgram = $('#chaosProgramTextArea').val();
+  chaosProgram = getChaosProgTextAreaValue();
 
   var oReq = new XMLHttpRequest();
   oReq.open("POST", k8s_url + "/chaos/programs/json-flow", true);
@@ -220,8 +222,8 @@ function drawChaosProgramFlow() {
               } 
               
               var flow = JSON.parse(this.responseText);
-              // console.log("[DRAW-PROGRAM-FLOW] Drawing flow for " + codename);
-              // console.log("[DRAW-PROGRAM-FLOW] Drawing: " + JSON.stringify(flow));
+              console.log("[DRAW-PROGRAM-FLOW] Drawing flow for " + codename);
+              console.log("[DRAW-PROGRAM-FLOW] Drawing: " + JSON.stringify(flow));
               var flow_html = "";
               let i = 0;
               var times = "";

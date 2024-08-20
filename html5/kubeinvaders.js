@@ -51,6 +51,8 @@ var log_tail_screen = document.getElementById("logTailScreen");
 var random_code = (Math.random() + 1).toString(36).substring(7);
 var change_codename = false;
 var latest_sent_chaos_program = "";
+var editor = null;
+
 // nodes list from kubernetes
 var nodes = [];
 

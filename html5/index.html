@@ -472,6 +472,13 @@
                     <label for="chaosProgramTextArea"></label>
                     <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
 chaos-codename: CODENAME_PLACEHOLDER
+experiments:
+  - name: cpu_attack_exp
+    k8s_job: cpu-attack-job
+    loop: 5
+  - name: mem_attack_exp
+    k8s_job: mem-attack-job
+    loop: 5
 k8s_jobs:
   cpu-attack-job:
     additional-labels:
@@ -489,13 +496,6 @@ k8s_jobs:
     command: "stress-ng"
     args:
       - --version
-experiments:
-  - name: cpu_attack_exp
-    k8s_job: cpu-attack-job
-    loop: 5
-  - name: mem_attack_exp
-    k8s_job: mem-attack-job
-    loop: 5
                     </textarea>
                   </div>
                   </form>

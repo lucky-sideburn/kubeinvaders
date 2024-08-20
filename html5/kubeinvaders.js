@@ -39,6 +39,7 @@ var randomFactor = 10;
 var pods = [];
 var game_mode_switch = false;
 var programming_mode_switch = false; 
+var chaos_program_valid = false;
 var now = "";
 var game_buttons = document.getElementById("game-buttons");
 var game_screen = document.getElementById("game-screen");
@@ -48,7 +49,8 @@ var log_tail_switch = false;
 var log_tail_div = document.getElementById("logTailDiv");
 var log_tail_screen = document.getElementById("logTailScreen");
 var random_code = (Math.random() + 1).toString(36).substring(7);
-
+var change_codename = false;
+var latest_sent_chaos_program = "";
 // nodes list from kubernetes
 var nodes = [];
 
@@ -128,19 +130,31 @@ var chart_status_code_dict = {
 };
 
 function getCodeName() {
-    var oReq = new XMLHttpRequest();
-    oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            codename = this.responseText.trim();
-            if (codename == "") {
-                $('#alert_placeholder').replaceWith(alert_div + 'Error getting codename from backend. </div>');
-                codename = "error_fix_getcodename_from_backend";
-            }
-        }
-    };;
-    oReq.open("GET", k8s_url + "/codename");
-    oReq.send();
+    const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
+    const suffixes = ['nova', 'tron', 'wave', 'core', 'pulse', 'jump', 'drive', 'ship', 'gate', 'hole'];
+
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+
+    const   
+    codename = prefix + suffix;
+    return codename;
 }
+  
+// function getCodeName() {
+//     var oReq = new XMLHttpRequest();
+//     oReq.onreadystatechange = function () {
+//         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+//             codename = this.responseText.trim();
+//             if (codename == "") {
+//                 $('#alert_placeholder').replaceWith(alert_div + 'Error getting codename from backend. </div>');
+//                 codename = "error_fix_getcodename_from_backend";
+//             }
+//         }
+//     };;
+//     oReq.open("GET", k8s_url + "/codename");
+//     oReq.send();
+// }
 
 function setCodeNameToTextInput(elementId) {
     var oReq = new XMLHttpRequest();
@@ -871,6 +885,8 @@ window.setInterval(function backgroundTasks() {
         chaosProgram = $('#chaosProgramTextArea').val();
         chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
         $('#chaosProgramTextArea').val(chaosProgramWithCodename);
+        $('#chaosProgramTextArea').text(chaosProgramWithCodename);
+        chaosProgram = chaosProgramWithCodename;
         codename_configured = true;
     }
 
@@ -885,7 +901,7 @@ window.setInterval(function backgroundTasks() {
         getTotalLogsPos();
     }
     
-    if (programming_mode_switch) {
+    if (programming_mode_switch && chaos_program_valid) {
         drawChaosProgramFlow();
     }
     

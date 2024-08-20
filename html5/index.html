@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./codemirror.css">
+    <script src="./codemirror.js"></script>
+
     <style>
       /* Adjust styling for sidebar */
       *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
@@ -110,7 +113,6 @@
     <!-- Main content -->
     <div class="main-content">
       <!-- Navbar -->
-  
           <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
             <i class="fas fa-bars"></i>
           </span>
@@ -475,7 +477,6 @@ k8s_jobs:
     additional-labels:
       chaos-controller: kubeinvaders
       chaos-type: stress-ng
-      chaos-codename: CODENAME_PLACEHOLDER
     image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
     command: "stress-ng"
     args:
@@ -484,7 +485,6 @@ k8s_jobs:
     additional-labels:
       chaos-controller: kubeinvaders
       chaos-type: stress-ng
-      chaos-codename: CODENAME_PLACEHOLDER
     image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
     command: "stress-ng"
     args:

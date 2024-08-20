@@ -36,7 +36,6 @@ function startGameMode() {
 }
 
 function startProgrammingMode() {
-
   if (is_demo_mode()) {
     demo_mode_alert();
     return;
@@ -67,4 +66,11 @@ function startProgrammingMode() {
   }
   game_buttons.style.display = "none";
   game_screen.style.display = "none";
+
+  // var editor = CodeMirror.fromTextArea(chaosProgramTextArea, {
+  //   lineNumbers: true, 
+  //   theme: "dracula"
+  // });
+  //editor.setSize("100%", "100%");
+
 }

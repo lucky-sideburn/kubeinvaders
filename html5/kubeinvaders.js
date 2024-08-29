@@ -10,8 +10,8 @@ var spaceshipWidth = 60;
 var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
 var clu_endpoint = "endpoint_placeholder";
-var clu_insicure = "insecure_endpoint_placeholder";
-var demo_mode = "platform_engineering_demo_mode_placeholder"
+var clu_insecure = insecure_endpoint_placeholder;
+var demo_mode = demo_mode_placeholder;
 var k8s_url = "";
 var chaos_report_post_data = "";
 
@@ -19,12 +19,14 @@ var chaos_report_post_data = "";
 var maxAliensPerRow = 20;
 var startYforHelp = 700;
 
-if (clu_insicure == "true") {
+if (clu_insecure) {
     k8s_url = "http://" + clu_endpoint;
 }
 else {
     k8s_url = "https://" + clu_endpoint;
 }
+console.log("[K-INV STARTUP] k8s_url is " + k8s_url);
+console.log("[K-INV STARTUP] platformengineering.it demo_mode is " + String(demo_mode));
 
 var namespaces = [];
 var namespaces_index = 0;
@@ -52,6 +54,12 @@ var random_code = (Math.random() + 1).toString(36).substring(7);
 var change_codename = false;
 var latest_sent_chaos_program = "";
 var editor = null;
+
+var editor_chaos_container_definition = CodeMirror.fromTextArea(currentChaosContainerJsonTextArea, {
+    lineNumbers: true,
+    theme: "dracula",
+    mode: "javascript"
+  });
 
 // nodes list from kubernetes
 var nodes = [];
@@ -127,9 +135,14 @@ var chart_status_code_dict = {
     "401": 1,
     "403": 1,
     "404": 1,
+    "405": 1,
     "Connection Error": 1,
     "Other": 1
 };
+
+function currentChaosContainerJsonTextAreaVal() {
+    return editor_chaos_container_definition.getValue();
+  }
 
 function getCodeName() {
     const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
@@ -142,21 +155,6 @@ function getCodeName() {
     codename = prefix + suffix;
     return codename;
 }
-  
-// function getCodeName() {
-//     var oReq = new XMLHttpRequest();
-//     oReq.onreadystatechange = function () {
-//         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-//             codename = this.responseText.trim();
-//             if (codename == "") {
-//                 $('#alert_placeholder').replaceWith(alert_div + 'Error getting codename from backend. </div>');
-//                 codename = "error_fix_getcodename_from_backend";
-//             }
-//         }
-//     };;
-//     oReq.open("GET", k8s_url + "/codename");
-//     oReq.send();
-// }
 
 function setCodeNameToTextInput(elementId) {
     var oReq = new XMLHttpRequest();
@@ -347,7 +345,8 @@ function getCurrentChaosContainer() {
     oReq.onload = function () {
         job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
         $('#currentChaosContainerYaml').text(job_parsed);
-        $('#currentChaosContainerJsonTextArea').val(job_parsed);
+        editor_chaos_container_definition.setValue(job_parsed);
+        editor_chaos_container_definition.refresh();  
     };;
     oReq.open("GET", k8s_url + "/kube/chaos/containers?action=container_definition");
     oReq.send();
@@ -394,7 +393,7 @@ function setLogRegex() {
 }
 
 function setChaosContainer() {
-    if (!IsJsonString($('#currentChaosContainerJsonTextArea').val())) {
+    if (!IsJsonString(currentChaosContainerJsonTextAreaVal())) {
         $('#alert_placeholder2').text('JSON syntax not valid.');
     }
     else {
@@ -407,7 +406,7 @@ function setChaosContainer() {
             }
         };;
         oReq.setRequestHeader("Content-Type", "application/json");
-        oReq.send($('#currentChaosContainerJsonTextArea').val());
+        oReq.send(currentChaosContainerJsonTextAreaVal());
     }
 }
 

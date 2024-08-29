@@ -128,6 +128,7 @@ while True:
                         r.set(check_url_status_code_key, "Connection Error")
                         r.set(check_url_elapsed_time_key, 0)
                     else:
+                        #logging.info(f"[k-inv][metrics_loop][chaos_report] Status code {response.status_code} while checking {chaos_report_program['chaosReportCheckSiteURL']}")
                         r.set(check_url_status_code_key, response.status_code)
                         r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
     try:

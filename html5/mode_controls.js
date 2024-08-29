@@ -67,10 +67,12 @@ function startProgrammingMode() {
   game_buttons.style.display = "none";
   game_screen.style.display = "none";
 
-  editor = CodeMirror.fromTextArea(chaosProgramTextArea, {
-    lineNumbers: true, 
-    theme: "dracula"
-  });
-  editor.setSize("100%", "100%");
-
+  if (editor == null) {
+    editor = CodeMirror.fromTextArea(chaosProgramTextArea, {
+      lineNumbers: true, 
+      theme: "dracula",
+      mode: "javascript"
+    });
+    editor.setSize("100%", "100%");
+  }
 }

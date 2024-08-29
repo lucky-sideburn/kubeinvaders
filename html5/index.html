@@ -7,8 +7,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="./codemirror.css">
+    <link rel="stylesheet" href="./dracula.css">
     <script src="./codemirror.js"></script>
 
     <style>
@@ -105,22 +107,21 @@
     <div class="sidebar" id="sidebar">
       <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
       <a id="programmingModeButton"  onclick="startProgrammingMode()">Programming Mode</a>
+      <a href="#" onclick="showSetCurrentChaosContainer()">Chaos Container Editor</a>
       <a href="#" onclick="showSpecialKeys()">Show Special Keys</a>
-      <a href="#" onclick="showCurrentChaosContainer()">Show Current Chaos Container for nodes</a>
-      <a href="#" onclick="showSetCurrentChaosContainer()">Set Custom Chaos Container for nodes</a>
     </div>
     
     <!-- Main content -->
     <div class="main-content">
       <!-- Navbar -->
-          <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
-            <i class="fas fa-bars"></i>
-          </span>
+      <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </span>
     
       
       <div id="main-game-div" style="display: block;">
         <!-- Modal -->
-        <div class="modal fade" id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-body">
@@ -147,22 +148,18 @@
   
         <!-- Modal -->
         <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
+          <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title">Set Chaos Container Definition (Click on the code editor if you don't see anything.) - This job defines the chaos experiment that are executed when you target Kubernetes nodes in game mode</h6>
+              </div>
               <div class="modal-body">
-                <form>
-                  <div class="form-group">
-                    <label for="exampleFormControlTextarea1" style="margin-bottom: 3%;">Chaos Container Definition</label>
-                    <textarea class="form-control" id="currentChaosContainerJsonTextArea" rows="20"></textarea>
-                  </div>
-                  <div class="form-group">
-                    <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
-                    <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
-                  </div>
-                </form>
+                <textarea id="currentChaosContainerJsonTextArea"></textarea>
+                <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                <div class="modal-footer">
+                  <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
+                  <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
+                </div>
               </div>
             </div>
           </div>
@@ -232,7 +229,7 @@
                       </div> -->
                       <div class="row">
                         <div class="col col-xl-10">
-                          <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">add an http endpoint to be analyzed during the chaos engineering session</label>
+                          <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">Add an HTTP endpoint to be analyzed during the chaos engineering session</label>
                         </div>
                       </div>
                       <!-- <div class="row">
@@ -299,31 +296,30 @@
                   </h2>
                   <div id="guide-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-  Dear user, thank you for installing kubeinvaders!<br>
-  <br>
-  This is a chaos engineering tool written by luckysideburn and friends from https://platformengineering.it for the community of kubernetes users, software developers, and admins.<br>
-  It was born in 2019 as a gamified chaos engineering tool, and we are evolving it into a more serious instrument :d <br>
-  here's how it works<br> 
-  
-  For reports, bugs, ideas you can open issue on the project github repo https://github.com/lucky-sideburn/kubeinvaders or write to luckysideburn [at] gmail [dot] com <br>
-  
-  <br>
-  <font color="blue">[[game mode button]]</font><br>
-  Enabling the game console allows you to kill pods and launch workloads to stress cluster nodes (check "show keys and options" to understand how to do it). You can also jump between namespace and many other things.<br>
-  <br>
-  <font color="blue">[[add http check & chaos report checkbox]]</font><br>
-  Use it to activate the monitoring of an ingress and generate real-time reporting. it's very useful to know what happens to your applications during chaos sessions. for now, we monitor the elapsed time of http calls and status codes. also, you have some very useful default metrics:<br>
-  <br>
-  <font color="gren">Selected namespace</font> => indicates the current namespace focused on by the tool. you can jump between selected namespaces during installation.<br>
-  <br>
-  <font color="gren">Deleted pods total</font> => total number of killed pods.<br>
-  <br>
-  <font color="gren">Current chaos pods</font> => when the node stress test mode is activated, this metric indicates the number of jobs stressing your cluster.<br>
-  <br>
-  <font color="gren">Current replicas state delay</font> => a very important metric, indicates how long your cluster takes to return to the desired state that was before the chaos engineering session.<br>
-  <br>
-  <font color="blue">[[enable prog. mode button (under development)]]</font><br>
-  Through yaml programming, you can define your own chaos engineering experiments and execute them. we have preloaded some presets for various open-source tools to stress test (this feature is still in development, so contributions are welcome).<br>
+Thank you for installing Kubeinvaders!
+
+This is a chaos engineering tool developed by Luckysideburn and contributors from <a href="https://platformengineering.it">platformengineering.it</a> for the Kubernetes community, including software developers and admins.<br><br>
+
+Kubeinvaders started in 2019 as a gamified chaos engineering tool, and we are continually evolving it into a more sophisticated instrument :D<br><br>
+
+Here’s how it works:<br><br>
+
+For reports, bugs, or ideas, feel free to open an issue on the project's <a href="https://github.com/lucky-sideburn/kubeinvaders">GitHub repository</a> or contact Luckysideburn at <a href="mailto:luckysideburn@gmail.com">luckysideburn@gmail.com</a>.<br><br>
+
+<font color="blue">Game Mode</font><br>
+Enabling the game console allows you to kill pods and launch workloads to stress cluster nodes (check “Show keys and options” to learn how). You can also switch between namespaces and perform many other tasks.<br><br>
+
+<font color="blue">Check HTTP</font><br>
+Use this to monitor an ingress and generate real-time reports. It’s very useful for understanding what happens to your applications during chaos sessions. Currently, we monitor HTTP call durations and status codes. Additionally, you’ll find some very useful default metrics:<br><br>
+
+<font color="green">Selected Namespace</font> => Indicates the current namespace focused on by the tool. You can switch between selected namespaces during installation.<br><br>
+<font color="green">Deleted Pods Total</font> => The total number of killed pods.<br><br>
+<font color="green">Current Chaos Pods</font> => When the node stress test mode is activated, this metric shows the number of jobs stressing your cluster.<br><br>
+<font color="green">Current Replicas State Delay</font> => An important metric that shows how long your cluster takes to return to the desired state after a chaos engineering session.<br><br>
+
+<font color="blue">Programming Mode (Under Development)</font><br>
+Using YAML programming, you can define your own chaos engineering experiments and execute them. We have preloaded some presets for various open-source tools to stress test. This feature is still in development, so contributions are welcome.
+
                     </div>
                   </div>
                 </div>
@@ -361,7 +357,7 @@
                 <div class="col text-center" style="margin-bottom: 0%;">
                   <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="wrapShowPrepareChaosReportModal(this)">
                   <label class="form-check-label text-kinv" for="flexCheckDefault">
-                    Add HTTP check & Chaos Report
+                    Check HTTP
                   </label>
                 </div>
               </div>
@@ -451,7 +447,7 @@
                       <!-- <button type="button" id="loadVault" class="btn btn-light btn-md" onclick="loadPreset('vault', 'python')">Vault</button> -->
                     </div>
                 </div>
-                <div class="row">
+                <div class="row" hidden="true">
                   <div class="btn-group" id="loadChaosProgramButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2.0%; padding-top: 0.5%; scrollbar-color: dark;">
                   </div>
               </div>
@@ -539,7 +535,7 @@ k8s_jobs:
                           <td><p id="chaosReportSessionTimeDiv" class="text-kinv"></p></td>
                         </tr>
                         <tr>
-                          <td class="td-grey">Checked URL</td>
+                          <td class="td-grey">Check HTTP URL</td>
                           <td><p id="chaosReportCheckSiteURLDiv" class="text-kinv"></p></td>   
                         </tr>   
                         </tr>

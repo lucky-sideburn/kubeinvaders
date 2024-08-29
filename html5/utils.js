@@ -41,13 +41,10 @@ function convertStringToArrayWithSeparator(str, separator) {
 }
 
 function demo_mode_alert() {
-  alert("This is a demo mode, some features are disabled");
+  alert("This is a demo mode installed into the k8s cluster of platformengineering.it, some features are disabled.");
 }
 
 function is_demo_mode() {
-  if (demo_mode == "true") {
-    return true;
-  }
-  return false;
+  return demo_mode;
 }
 

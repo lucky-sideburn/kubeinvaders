@@ -74,39 +74,43 @@ function addPostUploadFile(selectedValue) {
 
 function chaosReportHttpEndpointAdd() {
   $("#addSiteAreaChaosReport").html(`
-  <div class="row">
-    <div class="col col-xl-10" sytle="margin-top: 2%;">
-      <label for="chaosReportCheckSiteURL">Ingress Host List</label>
-      <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onchange="setChaosReportURL(this)">
-      </select>
+<div class="row">
+    <div class="col col-xl-10" style="margin-top: 2%;">
+        <label for="ingressHostList">Ingress Host List</label>
+        <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onchange="setChaosReportURL(this)">
+        </select>
     </div>
-  </div>
-  <div class="row" style="margin-top: 2%;">
+</div>
+
+<div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">
-      <label for="chaosReportCheckSiteURL">URL</label>
-      <input type='text' class='input-lg' id='chaosReportCheckSiteURL' value='' style='margin-top: 1%; width: 80%'>
+        <label for="chaosReportCheckSiteURL">URL</label>
+        <input type="text" class="form-control input-lg" id="chaosReportCheckSiteURL" value="" style="margin-top: 1%; width: 80%;">
     </div>
-  </div>
-  <div class="row">
+</div>
+
+<div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">
-      <label for="chaosReportCheckSiteURLMethod" style='margin-top: 1%;'>method</label>
-      <select id="chaosReportCheckSiteURLMethod" class="input-sm" aria-label="method" onChange="addPostUploadFile(this.options[this.selectedIndex].value)">
-        <option value="GET">GET</option>
-        <option value="POST">POST</option>
-      </select>
+        <label for="chaosReportCheckSiteURLMethod" style="margin-top: 1%;">Method</label>
+        <select id="chaosReportCheckSiteURLMethod" class="form-select input-sm" aria-label="Method" onchange="addPostUploadFile(this.value)">
+            <option value="GET">GET</option>
+            <option value="POST">POST</option>
+        </select>
     </div>
-  </div>
-  <div class="row">
+</div>
+
+<div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">
-      <div id="chaosReportUploadFileDiv"></div>
+        <div id="chaosReportUploadFileDiv"></div>
     </div>
-  </div>
-  <div class="row">
+</div>
+
+<div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">  
-      <label for="chaosReportCheckSiteURLHeaders">HEADERS</label>
-      <input type='text' class='input-sm' id='chaosReportCheckSiteURLHeaders' value='{"Content-Type": "application/json; charset=utf-8"}' style='margin-top: 1%; margin-bottom: 1%; width: 80%;'><br>
+        <label for="chaosReportCheckSiteURLHeaders">Headers</label>
+        <input type="text" class="form-control input-sm" id="chaosReportCheckSiteURLHeaders" value='{"Content-Type": "application/json; charset=utf-8"}' style="margin-top: 1%; margin-bottom: 1%; width: 80%;">
     </div>
-  </div>
+</div>
   `);
 
   if (is_demo_mode()) {
@@ -331,6 +335,11 @@ function updateStatusCodePieChart(projectName) {
                 itemStyle: { color: 'yellow' },
               },
               {
+                value: chart_status_code_dict["405"],
+                name: '405',
+                itemStyle: { color: 'yellow' },
+              },
+              {
                 value: chart_status_code_dict["Connection Error"],
                 name: 'Connection Error',
                 itemStyle: { color: 'black' },
@@ -444,7 +453,7 @@ option = {
       type: 'line',
       smooth: true,
       itemStyle: {
-        color: 'green'
+        color: 'white'
       }
     }
   ]

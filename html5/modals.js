@@ -54,7 +54,7 @@ function wrapShowPrepareChaosReportModal(checkbox) {
 function showPrepareChaosReportModal(checkbox) {
   if(checkbox.checked){
     $('#prepareChaosReportModal').modal('show');
-    $("#chaosReportHeader").text("Configuration of Chaos Report for namespace: " + namespace);
+    $("#chaosReportHeader").text("Select Ingress - Namespace:" + namespace);
     setCodeNameToTextInput("chaosReportAuthor");
     setCodeNameToTextInput("chaosReportProject");
     setModalState(true);

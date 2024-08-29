@@ -76,8 +76,8 @@ else
 end
 
 --ngx.log(ngx.INFO, "token: " .. token)
-ngx.log(ngx.INFO, "url: " .. url)
-ngx.log(ngx.INFO, "namespace: " .. namespace)
+-- ngx.log(ngx.INFO, "url: " .. url)
+-- ngx.log(ngx.INFO, "namespace: " .. namespace)
 
 local headers = {
   ["Accept"] = "application/json",
@@ -94,10 +94,10 @@ local ok, statusCode, headers, statusText = https.request{
   sink = ltn12.sink.table(resp)
 }
 
-ngx.log(ngx.INFO, "REQUEST LOGS...")
-ngx.log(ngx.INFO, ok)
-ngx.log(ngx.INFO, statusCode)
-ngx.log(ngx.INFO, statusText)
+-- ngx.log(ngx.INFO, "REQUEST LOGS...")
+-- ngx.log(ngx.INFO, ok)
+-- ngx.log(ngx.INFO, statusCode)
+-- ngx.log(ngx.INFO, statusText)
 
 if action == "list" then
   local i = 1
@@ -108,7 +108,7 @@ if action == "list" then
     if decoded["kind"] == "PodList" then
       for k2,v2 in ipairs(decoded["items"]) do
         if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
           local status = "pending"
           for _, c in ipairs(v2["status"]["conditions"]) do
             if c["type"] == "ContainersReady" and c["status"] == "True" then
@@ -120,12 +120,12 @@ if action == "list" then
           i = i + 1
           pods_not_found = false;
         elseif v2["status"]["phase"] == "ContainerCreating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
           pods["items"][i] = { name = v2["metadata"]["name"], status = "pending" }
           i = i + 1
           pods_not_found = false;
         elseif v2["status"]["phase"] == "Terminating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
           pods["items"][i] = { name = v2["metadata"]["name"], status = "killed" }
           i = i + 1
           pods_not_found = false;
@@ -147,7 +147,7 @@ if action == "list" then
   local latest_fewer_replicas_seconds, err = red:get("latest_fewer_replicas_seconds")
   local fewer_replicas_time, err = red:get("fewer_replicas_time")
 
-  ngx.log(ngx.INFO, "[METRICS] pods_not_running_on=" .. pods_not_running_on)
+  -- ngx.log(ngx.INFO, "[METRICS] pods_not_running_on=" .. pods_not_running_on)
 
   if fewer_replicas_seconds == ngx.null then
     red:set("fewer_replicas_seconds", 0)

@@ -4,11 +4,8 @@ function replaceDivWithContent(divId, content) {
 
 function getChaosProgTextAreaValue() {
   return editor.getValue();
-//   const chaosProgramTextArea = document.getElementById('chaosProgramTextArea');
-//   const textValue = chaosProgramTextArea.value;
-//   console.log("[GET-CHAOS-PROGRAM-TEXT-AREA-VALUE] " + textValue);
-//   return textValue;
 }
+
 /* Programming Mode Functions */
 function IsJsonString(str) {
     try {
@@ -65,21 +62,7 @@ function loadPreset(tool, lang) {
 
 function runChaosProgram() {
   
-  // if (chaosProgramWithCodename != $('#chaosProgramTextArea').text()) {
-  //   random_code = (Math.random() + 1).toString(36).substring(7);
-  //   codename = getCodeName();
-  //   console.log("[RUN-CHAOS-PROGRAM] Running chaos program with codename: " + codename);
-  // }
-
-  //chaosProgramWithCodename = chaosProgram.replace(codename_regex, "chaos-codename: " + codename);
-  // $('#chaosProgramTextArea').val(chaosProgramWithCodename);
-  // $('#chaosProgramTextArea').text(chaosProgramWithCodename);
-  //codename_configured = true;
-   // Regex per estrarre il valore dopo "chaos-codename:"
-  
-  //random_code = (Math.random() + 1).toString(36).substring(7);
   chaosProgram = getChaosProgTextAreaValue();
-
   const regex = /^chaos-codename:\s+(.*)$/m;
   const match = chaosProgram.match(regex);
 

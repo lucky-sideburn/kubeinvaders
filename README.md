@@ -9,8 +9,6 @@ This project is part of landscape of [Cloud Native Computing Foudation](https://
 
 Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
 
-<img src="https://github.com/lucky-sideburn/kubeinvaders/blob/master/html5/images/kubeinvaders_spaceship.png" width=50% height=50%>
-
 ![Alt Text](./doc_images/ezgif-4-bc5b512057.gif)
 
 [Here are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I could not be present at my talk, but I would still like to share them with the community.

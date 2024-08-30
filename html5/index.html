@@ -97,6 +97,50 @@
         left: 10px;
         z-index: 999; /* Ensure it's above other elements */
       }
+
+      .settings {
+        background: #fff;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      
+      .settings h2 {
+        margin-top: 0;
+      }
+        
+      .setting-group {
+        margin-bottom: 20px;
+      }
+        
+      .setting-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+        
+      .setting-group input,
+      .setting-group select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .setting-group button {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+        
+      .setting-group button:hover {
+        background: #555;
+      }
+
     </style>
   </head>
   <body id="kinvBody">  
@@ -399,7 +443,7 @@ Using YAML programming, you can define your own chaos engineering experiments an
             <!-- START METRICS ROW -->
             <div class="row text-justify" align="center" id="metricsPresetsRow">
               <div style="margin-top: 1%;" class="text-justify" id="metricsGroup">
-  
+                  <!--   
                   <span style="color: #b2afaf;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
                   <span style="color: #b2afaf;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
                   <span style="color: #b2afaf"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
@@ -409,8 +453,71 @@ Using YAML programming, you can define your own chaos engineering experiments an
   
                   <span style="color: #b2afaf" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
                   <span style="color: #b2afaf" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
-                  <div id="mainChaosMetrics" style="width: 100%;height: 70%; margin-top: 1%;"></div>
-                  
+                  <div id="mainChaosMetrics" style="width: 100%;height: 70%; margin-top: 1%;"></div> 
+                  -->
+                <style>
+                  .status-label {
+                    color: #444242; /* Colore per le etichette */
+                    font-weight: bold;
+                    font-size: 14px;
+                  }
+                
+                  .status-value {
+                    color: #000000; /* Colore blu scuro per i valori */
+                    font-weight: normal;
+                    font-size: 14px;
+                  }
+                
+                  .status-unit {
+                    color: #6c757d; /* Colore per le unità */
+                    font-size: 12px;
+                  }
+                
+                  .status-container {
+                    margin-bottom: 8px; /* Spazio tra le righe */
+                  }
+                </style>
+                
+                <div class="status-container">
+                  <span class="status-label">Selected Namespace:&nbsp;</span>
+                  <span id="currentGameNamespace" class="status-value">NULL</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Deleted Pods Total:&nbsp;</span>
+                  <span id="deleted_pods_total" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Chaos Jobs Total:&nbsp;</span>
+                  <span id="chaos_jobs_total" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Current Chaos Pods:&nbsp;</span>
+                  <span id="current_chaos_job_pod" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Not Running Pods:&nbsp;</span>
+                  <span id="pods_not_running_on" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Current Replicas State Delay:&nbsp;</span>
+                  <span id="fewer_replicas_seconds" class="status-value">0</span>
+                  <span class="status-unit">sec</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Latest Replicas State Delay:&nbsp;</span>
+                  <span id="latest_fewer_replicas_seconds" class="status-value">0</span>
+                  <span class="status-unit">sec</span>
+                </div>
+                
+                <div id="mainChaosMetrics" style="width: 100%; height: 70%; margin-top: 16px;"></div>
+                
+                                 
                   <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
               </div>
               <!-- <div class="progress" style="margin-top: 1%;">
@@ -573,6 +680,22 @@ k8s_jobs:
             <div class="row">
               <div id="alert_placeholder" style="margin-top: 3%;"></div>
               <div id="alert_placeholder3" style="margin-top: 3%;"></div>
+            </div>
+            <div class="settings">
+                <h2></h2>
+                <div class="setting-group">
+                    <label for="sys_cluster_endpoint">k-inv url</label>
+                    <input type="text" id="sys_cluster_endpoint" name="sys_cluster_endpoint" readonly="true">
+                    <label for="sys_insecure_endpoint_flag">Insecure Endpoint Flag</label>
+                    <input type="text" id="sys_insecure_endpoint_flag" name="sys_insecure_endpoint_flag" readonly="true">
+                    <label for="sys_k8s_proxied_api_http_status_code">k-inv/k8s http status code</label>
+                    <input type="text" id="sys_k8s_proxied_api_http_status_code" name="sys_k8s_proxied_api_http_status_code" readonly="true">
+                    <label for="sys_openresty_env_vars">OpenResty Environment Variables</label>
+                    <input type="text" id="sys_openresty_env_vars" name="sys_openresty_env_vars" readonly="true">                                       
+                </div>
+            </div>
+            <div class="setting-group" style="margin-top: 2%;">
+              <button class="export-button" onclick="exportSettings()">Export</button>
             </div>
         </div>
   

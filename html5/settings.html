@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>KubeInvaders</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./bootstrap-5.0.0-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="./codemirror.css">
+    <link rel="stylesheet" href="./dracula.css">
+    <script src="./codemirror.js"></script>
+    <script src="./utils.js"></script>
+    <script src="./programming_mode.js"></script>
+    <script src="./modals.js"></script>
+    <script src="./mode_controls.js"></script>
+    <script src="./game_console.js"></script>
+    <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/popper.min.js"></script>
+    <script src="./kubeinvaders.js"></script>
+    <script src="./echarts/echarts.min.js"></script>
+    <script src="./chaos_report.js"></script>
+    <script>
+
+
+
+    </script>
+    <style>
+      /* Adjust styling for sidebar */
+      *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+      #mainChaosMetrics > div > canvas {
+        width: 100% !important;
+      }
+      #mainChaosMetrics > div {
+        width: 100% !important;
+      }
+      #httpStatusCodeChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpStatusCodeChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .sidebar {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0; /* Initially hide sidebar */
+        background-color: black; /* Dark color */
+        padding-top: 60px; /* Adjust according to your navbar height */
+        transition: left 0.3s ease; /* Smooth transition */
+      }
+      
+      .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #gameModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #programmingModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+      
+      .sidebar a:hover {
+        background-color: #495057; /* Darker color on hover */
+      }
+      
+      /* Adjust styling for main content */
+      .main-content {
+        margin-left: 0; /* Initially no margin */
+        padding: 20px;
+        transition: margin-left 0.3s ease; /* Smooth transition */
+      }
+      
+      /* Adjust styling for toggler icon */
+      .toggler-icon {
+        color: #ffffff;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        left: 10px;
+        z-index: 999; /* Ensure it's above other elements */
+      }
+
+      .settings {
+            background: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .settings h2 {
+            margin-top: 0;
+        }
+        .setting-group {
+            margin-bottom: 20px;
+        }
+        .setting-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .setting-group input,
+        .setting-group select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .setting-group button {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .setting-group button:hover {
+            background: #555;
+        }
+
+    </style>
+  </head>
+  <body id="kinvBody">
+    <div class="container">
+      <div class="setting-group" style="margin-top: 5%;">
+        <button class="export-button btn-sm" onclick="window.location='./index.html';" id="homeButton">Home</button>
+        <button class="export-button btn-sm" onclick="exportSettings()">Export</button>
+      </div>
+      <div class="settings">
+          <h2>k8s</h2>
+          <div class="setting-group">
+              <label for="site-name">Kubernetes API Endpoint</label>
+              <input type="text" id="sys_cluster_endpoint" name="sys_cluster_endpoint" readonly="true">
+              <label for="site-name">Insicure Endpoint Flag</label>
+              <input type="text" id="sys_insecure_endpoint_flag" name="sys_insecure_endpoint_flag" readonly="true">
+              <label for="site-name">Selected Namespaces</label>
+              <input type="text" id="sys_selected_namespaces" name="sys_selected_namespaces" readonly="true">
+          </div>
+      </div>
+    </div>
+  </body>
+</html>

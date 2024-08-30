@@ -14,6 +14,7 @@ var clu_insecure = insecure_endpoint_placeholder;
 var demo_mode = demo_mode_placeholder;
 var k8s_url = "";
 var chaos_report_post_data = "";
+var selected_env_vars = "selected_env_vars_placeholder";
 
 // when zoomIn is 12
 var maxAliensPerRow = 20;
@@ -140,9 +141,62 @@ var chart_status_code_dict = {
     "Other": 1
 };
 
+
+function checkHTTP(url, elementId) {
+    var oReq = new XMLHttpRequest();
+    oReq.onreadystatechange = function () {
+        if (this.readyState === XMLHttpRequest.DONE) {
+            $("#" + elementId).val(this.status);
+        }
+    };;
+    oReq.open("GET", url);
+    oReq.send();
+}
+
+function exportSettings() {
+    // Crea un oggetto con i dati delle impostazioni
+    const settings = {
+        sys_cluster_endpoint: document.getElementById('sys_cluster_endpoint').value,
+        sys_insecure_endpoint_flag: document.getElementById('sys_insecure_endpoint_flag').value,
+        sys_k8s_proxied_api_http_status_code: document.getElementById('sys_k8s_proxied_api_http_status_code').value,
+        sys_openresty_env_vars:  document.getElementById('sys_openresty_env_vars').value
+    };
+  
+    // Converti l'oggetto in una stringa JSON
+    const jsonSettings = JSON.stringify(settings, null, 2);
+  
+    // Crea un blob e un URL per il download
+    const blob = new Blob([jsonSettings], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+  
+    // Crea un link temporaneo per il download
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'settings.json';
+    document.body.appendChild(a);
+    a.click();
+  
+    // Pulisci
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+  
+function setSystemSettings() {
+    var sys_element = document.getElementById('sys_cluster_endpoint');
+    sys_element.value = k8s_url;
+
+    sys_element = document.getElementById('sys_insecure_endpoint_flag');
+    sys_element.value = clu_insecure;
+
+    sys_element = document.getElementById('sys_openresty_env_vars');
+    sys_element.value = selected_env_vars;
+    
+    checkHTTP(k8s_url, 'sys_k8s_proxied_api_http_status_code')
+}
+
 function currentChaosContainerJsonTextAreaVal() {
     return editor_chaos_container_definition.getValue();
-  }
+}
 
 function getCodeName() {
     const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
@@ -918,6 +972,7 @@ window.setInterval(function backgroundTasks() {
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
+setSystemSettings();
 getEndpoint();
 getNamespaces();
 getSavedPresets();

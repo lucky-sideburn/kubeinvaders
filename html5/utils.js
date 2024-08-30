@@ -47,4 +47,3 @@ function demo_mode_alert() {
 function is_demo_mode() {
   return demo_mode;
 }
-

@@ -55,6 +55,7 @@ var random_code = (Math.random() + 1).toString(36).substring(7);
 var change_codename = false;
 var latest_sent_chaos_program = "";
 var editor = null;
+var kubeping_sent = false;
 
 var editor_chaos_container_definition = CodeMirror.fromTextArea(currentChaosContainerJsonTextArea, {
     lineNumbers: true,

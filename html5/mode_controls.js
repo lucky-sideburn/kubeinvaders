@@ -1,6 +1,7 @@
 /* Functions for controlling game modes */
 
 function startGameMode() {
+  kubePingModalSwitch();
   if (game_mode_switch) {
     game_mode_switch = false;
     $("#gameModeButton").text("Enable Game Mode");
@@ -36,6 +37,7 @@ function startGameMode() {
 }
 
 function startProgrammingMode() {
+  kubePingModalSwitch();
   if (is_demo_mode()) {
     demo_mode_alert();
     return;

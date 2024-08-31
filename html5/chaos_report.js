@@ -41,7 +41,6 @@ function getIngressLists() {
   var oReq = new XMLHttpRequest();
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      console.log("[SAVE-CHAOS-REPORT-INGRESS-LISTS]" + JSON.parse(this.responseText));
       parseIngressListJSON(JSON.parse(this.responseText));
     }
   };;
@@ -51,9 +50,7 @@ function getIngressLists() {
 }
 
 function diffBetweenTwoDates(date1, date2) {
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + date1 + " and " + date2);
   var diff = (date2.getTime() - date1.getTime()) / 1000;
-  // console.log("[SAVE-CHAOS-REPORT-CONF] Diff between two dates: " + diff + " seconds")
   return diff;
 }
 

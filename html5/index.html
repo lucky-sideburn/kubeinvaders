@@ -164,8 +164,28 @@
     
       
       <div id="main-game-div" style="display: block;">
-        <!-- Modal -->
-        <div class="modal fade id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+
+        <div class="modal fade" id="kubePingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title">Help us improve KubeInvaders</h6>
+              </div>
+              <div class="modal-body">
+                <p style="color: #161616; font-size: medium; font-weight: normal;">KubeInvaders is still under active development. To help us better understand how the game is being used and identify any potential issues, we kindly request your permission to send an anonymous ping to our systems.
+                This ping will help us gather usage statistics without revealing any personal information. You can opt out of this at any time by changing your settings.
+                Would you like to help us improve KubeInvaders by sending an anonymous ping?
+                </p>
+                <div class="modal-footer">
+                  <button type="button" id="saveButton" class="btn btn-light" onclick="setKubePingStatusPing(1)">Ping</button>
+                  <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="setKubePingStatusPing(0)">Don't ping</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-body">
@@ -573,7 +593,7 @@ Using YAML programming, you can define your own chaos engineering experiments an
                   <form>
                   <div class="form-group">
                     <label for="chaosProgramTextArea"></label>
-                    <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-family: Courier, monospace;">
+                    <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-weight: normal; font-size: small;">
 chaos-codename: CODENAME_PLACEHOLDER
 experiments:
   - name: cpu_attack_exp
@@ -709,14 +729,14 @@ k8s_jobs:
             </div>
           </div>
         </div>
+        <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
+        <script src="./js/jquery-3.6.0.min.js"></script>
+        <script src="./js/popper.min.js"></script>
         <script src="./utils.js"></script>
         <script src="./programming_mode.js"></script>
         <script src="./modals.js"></script>
         <script src="./mode_controls.js"></script>
         <script src="./game_console.js"></script>
-        <script src="./bootstrap-5.0.0-dist/js/bootstrap.min.js"></script>
-        <script src="./js/jquery-3.6.0.min.js"></script>
-        <script src="./js/popper.min.js"></script>
         <script src="./kubeinvaders.js"></script>
         <script src="./echarts/echarts.min.js"></script>
         <script src="./chaos_report.js"></script>

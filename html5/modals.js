@@ -3,6 +3,17 @@ function setModalState(state) {
   modal_opened = state;
 }
 
+function showKubePingModal() {
+  if (!kubeping_sent) {
+    $('#kubePingModal').modal('show');
+    KubePingStatus();
+  }
+}
+
+function closeKubePingModal() {
+  $('#kubePingModal').modal('hide');
+}
+
 function showCurrentChaosContainer() {
   getCurrentChaosContainer();
   $('#currentChaosContainerModal').modal('show');

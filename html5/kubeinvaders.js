@@ -986,3 +986,8 @@ document.getElementById("gameContainer").style.visibility = "visible";
 document.getElementById("metricsPresetsRow").style.visibility = "visible";
 document.getElementById("gameContainer").style.opacity = 1;
 document.getElementById("metricsPresetsRow").style.opacity = 1;
+
+// TO DO: Apply also when modals are opened
+$('.modal').on('hidden.bs.modal', function () {
+ setModalState(false);
+});

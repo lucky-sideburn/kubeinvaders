@@ -6,12 +6,17 @@ function setModalState(state) {
 function showKubePingModal() {
   if (!kubeping_sent) {
     $('#kubePingModal').modal('show');
-    KubePingStatus();
   }
+
+  $('#kubePingModal').on('shown.bs.modal', function () {
+    setModalState(true);
+  });
+  
 }
 
 function closeKubePingModal() {
   $('#kubePingModal').modal('hide');
+  setModalState(false);
 }
 
 function showCurrentChaosContainer() {
@@ -64,6 +69,9 @@ function wrapShowPrepareChaosReportModal(checkbox) {
 
 function showPrepareChaosReportModal(checkbox) {
   if(checkbox.checked){
+    $('#kubePingModal').on('shown.bs.modal', function () {
+      setModalState(true);
+    });
     $('#prepareChaosReportModal').modal('show');
     $("#chaosReportHeader").text("Select Ingress - Namespace:" + namespace);
     setCodeNameToTextInput("chaosReportAuthor");
@@ -81,10 +89,12 @@ function closePrepareChaosReportModal() {
   $('#prepareChaosReportModal').modal('hide');
   document.getElementById("flagChaosReport").checked = false;
   setModalState(false);
+  kubePingModalSwitch();
 }
 
 function closePrepareChaosReportModalAndUncheck() {
   $('#prepareChaosReportModal').modal('hide');
   document.getElementById("flagChaosReport").checked = false;
   setModalState(false);
+  kubePingModalSwitch();
 }

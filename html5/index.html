@@ -166,7 +166,7 @@
       <div id="main-game-div" style="display: block;">
 
         <div class="modal fade" id="kubePingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog modal-lg" role="document">
+          <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
                 <h6 class="modal-title">Help us improve KubeInvaders</h6>
@@ -178,6 +178,7 @@
 
                   Thank you for you feedback!
                 </p>
+                <textarea id="kubePingJsonTextArea" rows=10 style="width: 50%; height: 50%; font-size: small; font-weight: normal; font-family: 'Courier New', Courier, monospace;" onclick="setModalState(true);">Please leave your feedback or suggestions here on how we can improve and make this product more enterprise-ready (it will always remain 100% open-source!)</textarea>
                 <div class="modal-footer">
                   <button type="button" id="saveButton" class="btn btn-light" onclick="setKubePingStatusPing(1)">Ping</button>
                   <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="setKubePingStatusPing(0)">Don't ping</button>

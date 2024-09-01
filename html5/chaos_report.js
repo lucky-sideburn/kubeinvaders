@@ -74,7 +74,7 @@ function chaosReportHttpEndpointAdd() {
 <div class="row">
     <div class="col col-xl-10" style="margin-top: 2%;">
         <label for="ingressHostList">Ingress Host List</label>
-        <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onchange="setChaosReportURL(this)">
+        <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onclick="setModalState(true)">
         </select>
     </div>
 </div>
@@ -105,7 +105,7 @@ function chaosReportHttpEndpointAdd() {
 <div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">  
         <label for="chaosReportCheckSiteURLHeaders">Headers</label>
-        <input type="text" class="form-control input-sm" id="chaosReportCheckSiteURLHeaders" value='{"Content-Type": "application/json; charset=utf-8"}' style="margin-top: 1%; margin-bottom: 1%; width: 80%;">
+        <input type="text" class="form-control input-sm" id="chaosReportCheckSiteURLHeaders" value='{"Content-Type": "application/json; charset=utf-8"}' style="margin-top: 1%; margin-bottom: 1%; width: 80%;" onclick="setModalState(true)">
     </div>
 </div>
   `);

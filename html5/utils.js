@@ -48,23 +48,36 @@ function is_demo_mode() {
   return demo_mode;
 }
 
+function sanitizeStringToURLFriendly(str) {
+  return str.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase();
+}
+
+
 function kubePingModalSwitch() {
   var oReq = new XMLHttpRequest();
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
         console.log("[K-INV STARTUP] kubeping status is: |" + this.responseText.trim() + "|");
         if (this.responseText.trim() == "Key not found" || is_demo_mode()) {
+          setModalState(true)
           showKubePingModal()
         }
       }
   };;
+
   oReq.open("GET", k8s_url + "/chaos/redis/get?key=kubeping", true);
   oReq.send();
 }
 
 function setKubePingStatusPing(value) {
   var oReq = new XMLHttpRequest();
-  oReq.open("POST", k8s_url + "/chaos/redis/set?key=kubeping", true);
+
+  if (value == 1) {
+    oReq.open("POST", k8s_url + "/chaos/redis/set?key=kubeping&msg=" + sanitizeStringToURLFriendly(document.getElementById("kubePingJsonTextArea").value), true);  
+  } 
+  else {
+    oReq.open("POST", k8s_url + "/chaos/redis/set?key=kubeping", true);  
+  }
 
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {

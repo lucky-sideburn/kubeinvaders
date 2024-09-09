@@ -177,6 +177,8 @@ body {
   background: #161616;
   display: block;
   margin: 0 auto;
+  border: 5px solid black;
+  box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .http-stats-code-canvas {

@@ -390,6 +390,7 @@ Currently, the Helm chart does not support PersistentVolumes, but this task is o
   1.  Open a terminal and run "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
   2.  Execute the following command from another terminal: `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
   3.  Open an issue with attached logs.
+- If you use route_host insted of ingress, please specify also the port like route_host: "kubeinvaders.example.com:8080". The port must be the same of the NodePort service
 
 ## Troubleshooting Unknown Namespace
 

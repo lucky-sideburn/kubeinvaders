@@ -334,7 +334,7 @@
                     Special Keys
                   </div>
                   <div class="card-body">
-                    <p class="card-text">
+                    <p class="card-text" style="font-weight: normal; font-size: 14px;">
                       h => Activate or deactivate help<br>
                       s => Activate or deactivate shuffle for aliens<br>
                       n => Change namespace<br>
@@ -362,7 +362,7 @@
                     </button>
                   </h2>
                   <div id="guide-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                    <div class="accordion-body">
+                    <div class="accordion-body" style="font-weight: normal; font-size: 14px;">
 Thank you for installing Kubeinvaders!
 
 This is a chaos engineering tool developed by Luckysideburn and contributors from <a href="https://platformengineering.it">platformengineering.it</a> for the Kubernetes community, including software developers and admins.<br><br>
@@ -408,8 +408,8 @@ Using YAML programming, you can define your own chaos engineering experiments an
             <!-- END FIRST ROW -->
   
             <!-- START GAME MODE BUTTONS -->
-            <div id="game-buttons" style="display: none;">
-              <div class="row container" style="width: 100%;">
+            <div id="game-buttons" style="display: none; border: 1px solid #ddd; border-radius: 4px;">
+              <div class="row container" style="width: 100%; margin-top: 2%;">
                 <div class="col text-center">
                   <button type="button" id="controlAutoPilotButton" class="btn btn-dark" onclick="controlAutoPilot()">Start</button>
                 </div>
@@ -447,7 +447,7 @@ Using YAML programming, you can define your own chaos engineering experiments an
                       </button>
                     </h2>
                     <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                      <div class="accordion-body">
+                      <div class="accordion-body" style="font-weight: normal; font-size: small;">
                         h => Activate or deactivate help<br>
                         s => Activate or deactivate shuffle for aliens<br>
                         n => Change namespace<br>
@@ -464,20 +464,8 @@ Using YAML programming, you can define your own chaos engineering experiments an
             <!-- END GAME MODE BUTTONS -->
   
             <!-- START METRICS ROW -->
-            <div class="row text-justify" align="center" id="metricsPresetsRow">
+            <div class="row" align="center" id="metricsPresetsRow">
               <div style="margin-top: 1%;" class="text-justify" id="metricsGroup">
-                  <!--   
-                  <span style="color: #b2afaf;" class="text-kinv text-wrap" id="currentGameNamespaceLabel">Selected Namespace:&nbsp;&nbsp;<span id="currentGameNamespace" style="color: #3ac961;" class="text-break">NULL</span></span><br>
-                  <span style="color: #b2afaf;" class="text-kinv" id="deletedPodsTotalText">Deleted Pods Total:&nbsp;&nbsp;<span id="deleted_pods_total" style="color: #3ac961">0</span></span><br>
-                  <span style="color: #b2afaf"  class="text-kinv" id="chaosJobTotalText">Chaos Jobs Total:&nbsp;&nbsp;<span id="chaos_jobs_total" style="color: #3ac961">0</span></span><br>
-  
-                  <span style="color: #b2afaf" class="text-kinv" id="currentChaosPodsText">Current Chaos Pods:&nbsp;&nbsp;<span id="current_chaos_job_pod" style="color: #3ac961">0</span></span><br>
-                  <span style="color: #b2afaf" class="text-kinv" id="podNotRunningText">Not Running Pods:&nbsp;&nbsp;<span id="pods_not_running_on" style="color: #3ac961">0</span></span><br>
-  
-                  <span style="color: #b2afaf" class="text-kinv" id="currentReplicasStateDelayText">Current Replicas State Delay:&nbsp;&nbsp;</span><span id="fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font></span><br>
-                  <span style="color: #b2afaf" class="text-kinv" id="latestReplicasStateDelayText">Latest Replicas State Delay:&nbsp;&nbsp;<span id="latest_fewer_replicas_seconds" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;sec</font>&nbsp;</span><br>
-                  <div id="mainChaosMetrics" style="width: 100%;height: 70%; margin-top: 1%;"></div> 
-                  -->
                 <style>
                   .status-label {
                     color: #444242; /* Colore per le etichette */
@@ -538,14 +526,8 @@ Using YAML programming, you can define your own chaos engineering experiments an
                   <span class="status-unit">sec</span>
                 </div>
                 
-                <div id="mainChaosMetrics" style="width: 100%; height: 70%; margin-top: 16px;"></div>
-                
-                                 
-                  <!-- <span style="color: #000000" class="text-kinv" id="podsMatchRegexText">PODs match regex:&nbsp;&nbsp;</span><span id="pods_match_regex" style="color: #3ac961">0</span><font color="#4f4f4f">&nbsp;</font></span> -->
+                <div id="mainChaosMetrics" style="width: 100%; height: 70%; margin-top: 16px;"></div>                                 
               </div>
-              <!-- <div class="progress" style="margin-top: 1%;">
-                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">0%</div>
-              </div> -->
             </div>
             <!-- END METRICS ROW -->
   
@@ -557,24 +539,6 @@ Using YAML programming, you can define your own chaos engineering experiments an
                 </div> -->
                 <div class="row">
                     <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
-                      <!-- <button type="button" id="loadDefault" class="btn btn-light btn-md" onclick="loadPreset('default', 'k-inv')">Default</button> -->
-                      <!-- <button type="button" id="loadCassandra" class="btn btn-light btn-md" onclick="loadPreset('cassandra', 'python')">Cassandra</button>
-                      <button type="button" id="loadConsul" class="btn btn-light btn-md" onclick="loadPreset('consul', 'python')">Consul</button>
-                      <button type="button" id="loadElasticsearch" class="btn btn-light btn-md" onclick="loadPreset('elasticsearch', 'python')">Elasticsearch</button>
-                      <button type="button" id="loadEtcd3" class="btn btn-light btn-md" onclick="loadPreset('etcd3', 'python')">Etcd3</button>
-                      <button type="button" id="loadGitlab" class="btn btn-light btn-md" onclick="loadPreset('gitlab', 'python')">Gitlab</button>
-                      <button type="button" id="loadHttp" class="btn btn-light btn-md" onclick="loadPreset('http', 'python')">Http</button>
-                      <button type="button" id="loadJira" class="btn btn-light btn-md" onclick="loadPreset('jira', 'python')">Jira</button>
-                      <button type="button" id="loadKafka" class="btn btn-light btn-md" onclick="loadPreset('kafka', 'python')">Kafka</button>
-                      <button type="button" id="loadKubernetes" class="btn btn-light btn-md" onclick="loadPreset('kubernetes', 'python')">Kubernetes</button>
-                      <button type="button" id="loadMongodb" class="btn btn-light btn-md" onclick="loadPreset('mongodb', 'python')">Mongodb</button>
-                      <button type="button" id="loadMysql" class="btn btn-light btn-md" onclick="loadPreset('mysql', 'python')">Mysql</button>
-                      <button type="button" id="loadNomad" class="btn btn-light btn-md" onclick="loadPreset('nomad', 'python')">Nomad</button>
-                      <button type="button" id="loadPostgresql" class="btn btn-light btn-md" onclick="loadPreset('postgresql', 'python')">Postgresql</button>
-                      <button type="button" id="loadPrometheus" class="btn btn-light btn-md" onclick="loadPreset('prometheus', 'python')">Prometheus</button>
-                      <button type="button" id="loadRabbit" class="btn btn-light btn-md" onclick="loadPreset('rabbit', 'python')">Rabbit</button> -->
-                      <!-- <button type="button" id="loadSSH" class="btn btn-light btn-md" onclick="loadPreset('SSH', 'python')">SSH</button> -->
-                      <!-- <button type="button" id="loadVault" class="btn btn-light btn-md" onclick="loadPreset('vault', 'python')">Vault</button> -->
                     </div>
                 </div>
                 <div class="row" hidden="true">
@@ -690,8 +654,8 @@ k8s_jobs:
                 <div class="col text-center">
                 </div>
                 <div class="col text-center">
-                  <input type="button" id="zoomInButton" style="margin-top: 2%" class="btn btn-light" id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
-                  <input type="button" id="zoomOutButton" style="margin-top: 2%" class="btn btn-light" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+                  <input type="button" id="zoomInButton" style="margin-top: 2%" class="btn btn-dark id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+                  <input type="button" id="zoomOutButton" style="margin-top: 2%" class="btn btn-dark" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
                 </div>
                 <div class="col text-center">
                 </div>
@@ -716,13 +680,13 @@ k8s_jobs:
                     <label for="sys_openresty_env_vars">OpenResty Environment Variables</label>
                     <input type="text" id="sys_openresty_env_vars" name="sys_openresty_env_vars" readonly="true">                                       
                 </div>
-            </div>
-            <div class="setting-group" style="margin-top: 2%;">
-              <button class="export-button" onclick="exportSettings()">Export</button>
+                <div class="setting-group" style="margin-top: 1%;">
+                  <button class="export-button" onclick="exportSettings()">Export</button>
+                </div>
             </div>
         </div>
   
-        <div id="footer" style="margin-top: 5%;">
+        <div id="footer" style="margin-top: 3%;">
           <div class="container text-center">
             <div class="container text-center" style="margin-top: 20%;">
               <div>

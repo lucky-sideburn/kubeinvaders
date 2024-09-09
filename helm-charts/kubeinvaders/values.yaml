@@ -67,7 +67,9 @@ ingress:
   hostName: ""
   tls: {}
 
-# Use route_host only if ingress is disabled
+# Use route_host only if ingress is disabled - please specify also the port like route_host: "kubeinvaders.example.com:8080"
+# The port must be the same of the NodePort service
+
 route_host: ""
 
 serviceMonitor:

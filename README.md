@@ -192,16 +192,18 @@ If you need a lab kubernetes cluster you can use this setup via Make and Minikub
 [![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
 
 ```bash
+# Please be sure to use kubeinvaders-1.9.8 that is ne latest helm chart version!
+
 helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
 helm repo update
 
 kubectl create namespace kubeinvaders
 
 # With ingress and TLS enabled
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.soukubedev.corp.sourcesense.com --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
 
 # With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.soukubedev.corp.sourcesense.com --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
 
 ```
 

@@ -197,8 +197,15 @@ helm repo update
 
 kubectl create namespace kubeinvaders
 
+# With ingress and TLS enabled
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
 -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
+
+# With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
+
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.tls_enabled=false --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
+
 ```
 
 ### Example for K3S

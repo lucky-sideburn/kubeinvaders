@@ -18,9 +18,11 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
+  {{- if .Values.ingress.tls_enabled -}}
     - hosts:
       - {{ .Values.ingress.hostName | quote }}
       secretName: {{ .Values.ingress.secretName }}
+  {{- end }}
   rules:
   - host: {{ .Values.ingress.hostName }}
     http:

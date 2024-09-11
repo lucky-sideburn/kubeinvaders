@@ -200,10 +200,10 @@ helm repo update
 kubectl create namespace kubeinvaders
 
 # With ingress and TLS enabled
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
 
 # With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders mychaoslab kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
 
 ```
 

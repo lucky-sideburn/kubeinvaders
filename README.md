@@ -35,10 +35,6 @@ With **k-inv**, you can stress a K8s cluster in a fun way and check how resilien
 
 ### Run through Docker or Podman
 
-Before you start, you need a token from a service account that has [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
-
-#### Example
-
 Create the required components (assumes k8s v1.24+):
 
 ```bash
@@ -117,7 +113,12 @@ Extract the token:
 ```bash
 TOKEN=$(k get secret -n kubeinvaders -o go-template='{{.data.token | base64decode}}' kinv-sa-token)
 ```
+Create two namespaces:
 
+```bash
+kubectl create namespace1
+kubectl create namespace2
+```
 Run the container:
 
 ```bash
@@ -125,8 +126,8 @@ podman run -p 3131:8080 \
 --env K8S_TOKEN=$TOKEN \
 --env ENDPOINT=localhost:3131 \
 --env INSECURE_ENDPOINT=true \
---env KUBERNETES_SERVICE_HOST=10.10.10.4 \
---env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
+--env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
+--env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
 --env NAMESPACE=namespace1,namespace2 \
 luckysideburn/kubeinvaders:latest
 ```

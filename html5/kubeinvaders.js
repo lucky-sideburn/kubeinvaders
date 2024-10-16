@@ -63,13 +63,16 @@ var editor_chaos_container_definition = CodeMirror.fromTextArea(currentChaosCont
     mode: "javascript"
   });
 
+const GameSettings = {
+    ALIENS_WIDTH: 40,
+    ROCKET_SPEED: 7,
+}
+
 // nodes list from kubernetes
 var nodes = [];
 
 // Hash of aliens related to pods or nodes
 var aliens = [];
-var aliensWidth = 40;
-var aliensHeight = 40;
 
 // Button vars
 var rightPressed = false;
@@ -86,7 +89,6 @@ var rocketLaunched = false;
 // Rocket position
 var rocketX = -400;
 var rocketY = -400;
-var rocketSpeed = 7;
 
 var collisionDetected = false;
 
@@ -110,7 +112,19 @@ var namespacesJumpFlag = false;
 var namespacesJumpStatus = 'Disabled';
 var latest_preset_name = "";
 var latest_preset_lang = "";
+
+function getCodeName() {
+    const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
+    const suffixes = ['nova', 'tron', 'wave', 'core', 'pulse', 'jump', 'drive', 'ship', 'gate', 'hole'];
+
+    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
+
+    return prefix + suffix;
+}
+
 var codename = getCodeName();
+
 const codename_regex = /chaos-codename:\ [a-zA-Z_]*/g;
 const chaos_job_regex = /chaos_jobs_pod_phase.*/g;
 var codename_configured = false;
@@ -142,16 +156,20 @@ var chart_status_code_dict = {
     "Other": 1
 };
 
+async function checkHTTP(url, elementId) {
+    const response = await fetch(url);
+    $("#" + elementId).val(response.status);
+}
 
-function checkHTTP(url, elementId) {
-    var oReq = new XMLHttpRequest();
-    oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE) {
-            $("#" + elementId).val(this.status);
-        }
-    };;
-    oReq.open("GET", url);
-    oReq.send();
+function httpGetToK8S(pathname, queryParams) {
+    const url = new URL(k8s_url);
+    url.pathname = pathname;
+
+    if (queryParams) {
+        Object.keys(queryParams).forEach(key => url.searchParams.set(key, queryParams[key]));
+    }
+
+    return fetch(url);
 }
 
 function exportSettings() {
@@ -199,77 +217,75 @@ function currentChaosContainerJsonTextAreaVal() {
     return editor_chaos_container_definition.getValue();
 }
 
-function getCodeName() {
-    const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
-    const suffixes = ['nova', 'tron', 'wave', 'core', 'pulse', 'jump', 'drive', 'ship', 'gate', 'hole'];
-
-    const prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
-    const suffix = suffixes[Math.floor(Math.random() * suffixes.length)];
-
-    const   
-    codename = prefix + suffix;
-    return codename;
+function showErrorAlert(message, newCodename) {
+    $('#alert_placeholder').replaceWith(alert_div + message + '</div>');
+    codename = newCodename;
 }
 
-function setCodeNameToTextInput(elementId) {
-    var oReq = new XMLHttpRequest();
-    oReq.onreadystatechange = function () {
-        if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            codename = this.responseText.trim();
-            $("#" + elementId).val(codename);
-            $("#" + elementId).text(codename);
-            if (codename == "") {
-                $('#alert_placeholder').replaceWith(alert_div + 'Error getting codename from backend. </div>');
-                codename = "error_fix_getcodename_from_backend";
-            }
-        }
-    };;
-    oReq.open("GET", k8s_url + "/codename");
-    oReq.send();
+async function setCodeNameToTextInput(elementId) {
+    const response = await httpGetToK8S("/codename");
+
+    if (!response.ok) {
+        showErrorAlert('Error getting codename from backend. ', "error_fix_getcodename_from_backend");
+        return;
+    }
+
+    const value = (await response.text()).trim();
+
+    $("#" + elementId).val(value);
+    $("#" + elementId).text(value);
+
+    if (value == "") {
+        showErrorAlert('Error getting codename from backend. ', "error_fix_getcodename_from_backend");
+    } else {
+        codename = value;
+    }
 }
 
-function getMetrics() {
-    var oReq = new XMLHttpRequest();
-    oReq.onload = function () {
-        var lines = this.responseText.split('\n');
-        for (var i = 0;i < lines.length;i++){
-            metric = lines[i].split(' ');
+async function getMetrics() {
+    const response = await httpGetToK8S("/metrics");
 
-            if (metric[0] == "chaos_node_jobs_total") {
-                $('#chaos_jobs_total').text(metric[1]);
-                chart_chaos_jobs_total = Number(metric[1]);
-            }
-            else if (metric[0] == "deleted_pods_total") {
-                chart_deleted_pods_total = Number(metric[1]);
-                $('#deleted_pods_total').text(metric[1]);            
-            }
-            else if (metric[0] == "fewer_replicas_seconds") {
-                chart_fewer_replicas_seconds = Number(metric[1]);
-                $('#fewer_replicas_seconds').text(metric[1]);            
-            }
-            else if (metric[0] == "latest_fewer_replicas_seconds") {
-                chart_latest_fewer_replicas_seconds = Number(metric[1]);
-                $('#latest_fewer_replicas_seconds').text(metric[1]);            
-            }
-            else if (metric[0] == "pods_not_running_on_selected_ns") {
-                chart_pods_not_running_on = Number(metric[1]);
-                $('#pods_not_running_on').text(metric[1]);            
-            }
-            else if (metric[0] == "pods_match_regex:" + random_code) {
-                $('#pods_match_regex').text(metric[1]);            
-            }
-            else if (metric[0].match(chaos_job_regex)) {
-                metrics_split = metric[0].split(":");
-                chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
-            }
-            else if (metric[0] == "current_chaos_job_pod") {
-                chart_current_chaos_job_pod = Number(metric[1]);
-                $('#current_chaos_job_pod').text(metric[1]);
-            }
+    if (!response.ok) {
+        return;
+    }
+
+    const text = await response.text();
+
+    for (const line of text.split('\n')) {
+        const [key, value] = line.split(' ');
+
+        if (key == "chaos_node_jobs_total") {
+            $('#chaos_jobs_total').text(value);
+            chart_chaos_jobs_total = Number(value);
         }
-    };;
-    oReq.open("GET", k8s_url + "/metrics");
-    oReq.send();
+        else if (key == "deleted_pods_total") {
+            chart_deleted_pods_total = Number(value);
+            $('#deleted_pods_total').text(value);            
+        }
+        else if (key == "fewer_replicas_seconds") {
+            chart_fewer_replicas_seconds = Number(value);
+            $('#fewer_replicas_seconds').text(value);            
+        }
+        else if (key == "latest_fewer_replicas_seconds") {
+            chart_latest_fewer_replicas_seconds = Number(value);
+            $('#latest_fewer_replicas_seconds').text(value);            
+        }
+        else if (key == "pods_not_running_on_selected_ns") {
+            chart_pods_not_running_on = Number(value);
+            $('#pods_not_running_on').text(value);            
+        }
+        else if (key == "pods_match_regex:" + random_code) {
+            $('#pods_match_regex').text(value);            
+        }
+        else if (key.match(chaos_job_regex)) {
+            metrics_split = metric[0].split(":");
+            chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], value);
+        }
+        else if (key == "current_chaos_job_pod") {
+            chart_current_chaos_job_pod = Number(value);
+            $('#current_chaos_job_pod').text(value);
+        }
+    }
 }
 
 function getChaosJobsPodsPhase() {
@@ -484,29 +500,30 @@ function deletePods(pod_name) {
     oReq.send();
 }
 
-function getPods() {
+async function getPods() {
     if (chaos_pods) {
-        var oReq = new XMLHttpRequest();
-        oReq.onload = function () {
-            new_pods = JSON.parse(this.responseText)["items"];
+        const response = await httpGetToK8S("/kube/pods", { action: "list", namespace: namespace });
 
-            // Pod might just be killed in game, but not terminated in k8s yet.
-            for (i=0; i<new_pods.length; i++) {
-                if (aliens.some((alien) => alien.name == new_pods[i].name && alien.status == "killed")) {
-                    new_pods[i].status = "killed";
-                }
-            }
+        if (!response.ok) {
+            return;
+        }
 
-            if (nodes && nodes.length > 0) {
-                pods = new_pods.concat(nodes);
-            } else {
-                pods = new_pods;
+        const json = await response.json();
+        
+        new_pods = json["items"];
+
+        for (const pod of new_pods) {
+            if (aliens.some((alien) => alien.name == pod.name && alien.status == "killed")) {
+                pod.status = "killed";
             }
-        };;
-        oReq.open("GET", k8s_url + "/kube/pods?action=list&namespace=" + namespace);
-        oReq.send();
-    }
-    else {
+        }
+
+        if (nodes && nodes.length > 0) {
+            pods = new_pods.concat(nodes);
+        } else {
+            pods = new_pods;
+        }
+    } else {
         if (nodes && nodes.length > 0) {
             pods = nodes;
         } else {
@@ -646,7 +663,7 @@ function checkRocketAlienCollision() {
                 var rangeX = []
                 rangeX.push(aliens[i]["x"]);
 
-                for (k=aliens[i]["x"]; k<aliens[i]["x"]+aliensWidth; k++) {
+                for (k=aliens[i]["x"]; k<aliens[i]["x"]+ GameSettings.ALIENS_WIDTH; k++) {
                     rangeX.push(k);
                 }
                 
@@ -697,7 +714,7 @@ function drawRocket() {
             rocketLaunched = false;
         }
         else {
-            rocketY = rocketY -= rocketSpeed;
+            rocketY = rocketY -= GameSettings.ROCKET_SPEED;
         }
     }
     else {

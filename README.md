@@ -116,8 +116,8 @@ TOKEN=$(k get secret -n kubeinvaders -o go-template='{{.data.token | base64decod
 Create two namespaces:
 
 ```bash
-kubectl create namespace1
-kubectl create namespace2
+kubectl create namespace namespace1
+kubectl create namespace namespace2
 ```
 Run the container:
 

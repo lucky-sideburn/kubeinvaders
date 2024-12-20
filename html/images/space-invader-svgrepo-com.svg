@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg version="1.1" id="Icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
+	 viewBox="0 0 32 32" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+</style>
+<rect x="10" y="26" class="st0" width="4" height="3"/>
+<rect x="7" y="4" transform="matrix(6.123234e-17 -1 1 6.123234e-17 3 14)" class="st0" width="3" height="3"/>
+<rect x="22" y="4" transform="matrix(6.123234e-17 -1 1 6.123234e-17 18 29)" class="st0" width="3" height="3"/>
+<rect x="18" y="26" class="st0" width="4" height="3"/>
+<polygon class="st0" points="28,17 28,14 25,14 25,11 22,11 22,7 19,7 19,11 13,11 13,7 10,7 10,11 7,11 7,14 4,14 4,17 1,17 1,20 
+	1,26 4,26 4,20 7,20 7,26 10,26 10,23 11,23 21,23 22,23 22,26 25,26 25,20 28,20 28,26 31,26 31,20 31,17 "/>
+<rect x="10" y="16" class="st0" width="3" height="3"/>
+<rect x="19" y="16" class="st0" width="3" height="3"/>
+</svg>

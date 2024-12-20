@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>KubeInvaders</title>
+    <link rel="icon" type="image/x-icon" href="./images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js "></script>
+
+    <link rel="stylesheet" href="./css/style.css">
+
+    <style>
+      /* Adjust styling for sidebar */
+      *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-weight: bold;
+      }
+      #mainChaosMetrics > div > canvas {
+        width: 100% !important;
+      }
+      #mainChaosMetrics > div {
+        width: 100% !important;
+      }
+      #httpStatusCodeChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpStatusCodeChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div > canvas {
+        width: 100% !important;
+        height: 100% !important;
+      }
+      #httpElapsedChart > div {
+        width: 100% !important;
+        height: 100% !important;
+      }
+
+      .sidebar {
+        height: 100%;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0; /* Initially hide sidebar */
+        background-color: black; /* Dark color */
+        padding-top: 60px; /* Adjust according to your navbar height */
+        transition: left 0.3s ease; /* Smooth transition */
+      }
+      
+      .sidebar a {
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #gameModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+
+      .sidebar #programmingModeButton{
+        padding: 10px 15px;
+        text-decoration: none;
+        font-size: 18px;
+        color: #ffffff;
+        display: block;
+      }
+      
+      .sidebar a:hover {
+        background-color: #495057; /* Darker color on hover */
+      }
+      
+      /* Adjust styling for main content */
+      .main-content {
+        margin-left: 0; /* Initially no margin */
+        padding: 20px;
+        transition: margin-left 0.3s ease; /* Smooth transition */
+      }
+      
+      /* Adjust styling for toggler icon */
+      .toggler-icon {
+        color: #ffffff;
+        cursor: pointer;
+        position: fixed;
+        top: 20px;
+        left: 10px;
+        z-index: 999; /* Ensure it's above other elements */
+      }
+
+      .settings {
+        background: #fff;
+        padding: 20px;
+        margin-top: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      }
+      
+      .settings h2 {
+        margin-top: 0;
+      }
+        
+      .setting-group {
+        margin-bottom: 20px;
+      }
+        
+      .setting-group label {
+        display: block;
+        margin-bottom: 5px;
+      }
+        
+      .setting-group input,
+      .setting-group select {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      
+      .setting-group button {
+        background: #333;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+        
+      .setting-group button:hover {
+        background: #555;
+      }
+
+    </style>
+  </head>
+  <body id="kinvBody">  
+    <div id="splash-screen">
+        <img src="./images/kubeinvaders_spaceship.png" alt="Logo" class="splash-screen-img">
+    </div>
+
+    <div class="sidebar" id="sidebar">
+      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
+      <a id="programmingModeButton"  onclick="startProgrammingMode()">Programming Mode</a>
+      <a href="#" onclick="showSetCurrentChaosContainer()">Chaos Container Editor</a>
+      <a href="#" onclick="showSpecialKeys()">Show Special Keys</a>
+    </div>
+    
+    <!-- Main content -->
+    <div class="main-content">
+      <!-- Navbar -->
+      <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+      </span>
+    
+      
+      <div id="main-game-div" style="display: block;">
+
+        <div class="modal fade" id="kubePingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title">Help us improve KubeInvaders</h6>
+              </div>
+              <div class="modal-body">
+                <p style="color: #161616; font-size: medium; font-weight: normal;">
+                  KubeInvaders is still under active development. To help us better understand if the game is being used, we kindly request your permission to send an anonymous ping to our systems. 
+                  This ping will help us gather usage statistics without revealing any personal information. You can opt out of this choosing "Don't ping".
+
+                  Thank you for you feedback!
+                </p>
+                <textarea id="kubePingJsonTextArea" rows=10 style="width: 50%; height: 50%; font-size: small; font-weight: normal; font-family: 'Courier New', Courier, monospace;" onclick="setModalState(true);">Please leave your feedback or suggestions here on how we can improve and make this product more enterprise-ready (it will always remain 100% open-source!)</textarea>
+                <div class="modal-footer">
+                  <button type="button" id="saveButton" class="btn btn-light" onclick="setKubePingStatusPing(1)">Ping</button>
+                  <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="setKubePingStatusPing(0)">Don't ping</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal fade" id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <pre id="currentChaosContainerYaml"></pre> 
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="closeButton1" class="btn btn-light" data-dismiss="modal" onclick="closeCurrentChaosJobModal()">Close</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Modal -->
+        <div class="modal" id="kubeLinterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
+              <div class="modal-body">
+                <p id="currentKubeLinterResult"></hp> 
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="closeButton2" class="btn btn-light" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
+              </div>
+          </div>
+        </div>
+  
+        <!-- Modal -->
+        <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h6 class="modal-title">Set Chaos Container Definition (Click on the code editor if you don't see anything.) - This job defines the chaos experiment that are executed when you target Kubernetes nodes in game mode</h6>
+              </div>
+              <div class="modal-body">
+                <textarea id="currentChaosContainerJsonTextArea"></textarea>
+                <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                <div class="modal-footer">
+                  <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
+                  <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Modal -->
+        <div class="modal fade" id="setLoadTestModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    
+                    <label for="exampleFormControlTextarea1" style="margin-bottom: 1%;">Load Test Code</label><br>
+  
+                    <label for="presetName">Name</label>
+                    <input type="text" id="presetName" value="foobar" readonly="true" style="margin-bottom: 1%;"><br>
+  
+                    <label for="presetLangText">Programming Language</label>
+                    <input type="text" id="presetLang" value="Python3" readonly="true" style="margin-bottom: 1%;">
+  
+                    <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea>
+  
+                  </div>
+                  <div class="form-group">
+                    <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="saveAndApplyButton" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
+                    <button type="button" id="savePresetButton" class="btn btn-light" onclick="savePreset('save')">Save</button>
+                    <button type="button" id="resetToDefaultButton" class="btn btn-light-saved" onclick="resetPreset('preset')">Reset to default</button>
+                    <button type="button" id="deleteChaosProgramButton" class="btn btn-dark" onclick="resetPreset('k-inv')">Delete</button>
+                    <button type="button" id="closeButton4" class="btn btn-dark" data-dismiss="modal" onclick="closeSetLoadTestModal()">Close</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <!-- Modal -->
+        <div class="modal fade" id="prepareChaosReportModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <form>
+                  <div class="form-group row">
+                    <div class="col col-xl-10">
+                      <label for="" style="margin-bottom: 1%;" id="chaosReportHeader"></label>
+                      <div class="row">
+                        <div class="col col-xl-10">
+                          <label for="chaosReportProject">Project</label>
+                          <input type="text" id="chaosReportProject" value="" style="margin-bottom: 1%;">
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col col-xl-10">
+                          <label for="chaosReportAuthor">Author</label>
+                          <input type="text" id="chaosReportAuthor" value="" style="margin-bottom: 1%; width: 100%;">
+                        </div>
+                      </div>
+                      <!-- <div class="row">
+                        <div class="col col-xl-10">
+                          <label for="chaosReportDate">Date</label>
+                          <input type="text" id="chaosReportDate" value="" style="margin-bottom: 1%; width: 30%;">
+                        </div>
+                      </div> -->
+                      <div class="row">
+                        <div class="col col-xl-10">
+                          <label for="chaosReportHttpEndpointButton" style="margin-top: 1%;">Add an HTTP endpoint to be analyzed during the chaos engineering session</label>
+                        </div>
+                      </div>
+                      <!-- <div class="row">
+                        <div class="col col-xl-10">
+                          <button type="button" id="chaosReportHttpEndpointButton" class="btn btn-light-saved" style="margin-top: 1%; margin-bottom: 1%;" onclick="chaosReportHttpEndpointAdd()">Configure Site</button>
+                        </div>
+                      </div> -->
+                      <div class="row">
+                        <div class="col col-xl-10">
+                          <div id="addSiteAreaChaosReport"></div>
+                        </div>
+                      </div>
+                      <!-- <textarea class="form-control" id="chaosReportTextArea" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea> -->
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 1%;"></p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
+                    <button type="button" id="closeButtonReport" class="btn btn-dark" data-dismiss="modal" onclick="closePrepareChaosReportModalAndUncheck()">Close</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Modal -->
+        <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <div class="card">
+                  <div class="card-header">
+                    Special Keys
+                  </div>
+                  <div class="card-body">
+                    <p class="card-text" style="font-weight: normal; font-size: 14px;">
+                      h => Activate or deactivate help<br>
+                      s => Activate or deactivate shuffle for aliens<br>
+                      n => Change namespace<br>
+                      p => Activate or deactivate chaos engineering against pods<br>
+                      c => Activate or deactivate chaos engineering against nodes
+                    </p>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" id="closeButton5" class="btn btn-secondary" data-dismiss="modal" onclick="closeSpecialKeysModal()">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container" id="gameContainer">
+            <!-- START FIRST ROW -->
+            <div class="row custom-btn-group" style="margin-top: 2%;">
+              <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->  
+              <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="guide-headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      k-inv guide - chaos mode controls and metrics
+                    </button>
+                  </h2>
+                  <div id="guide-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                    <div class="accordion-body" style="font-weight: normal; font-size: 14px;">
+Thank you for installing Kubeinvaders!
+
+This is a chaos engineering tool developed by Luckysideburn and contributors from <a href="https://platformengineering.it">platformengineering.it</a> for the Kubernetes community, including software developers and admins.<br><br>
+
+Kubeinvaders started in 2019 as a gamified chaos engineering tool, and we are continually evolving it into a more sophisticated instrument :D<br><br>
+
+Here’s how it works:<br><br>
+
+For reports, bugs, or ideas, feel free to open an issue on the project's <a href="https://github.com/lucky-sideburn/kubeinvaders">GitHub repository</a> or contact Luckysideburn at <a href="mailto:luckysideburn@gmail.com">luckysideburn@gmail.com</a>.<br><br>
+
+<font color="blue">Game Mode</font><br>
+Enabling the game console allows you to kill pods and launch workloads to stress cluster nodes (check “Show keys and options” to learn how). You can also switch between namespaces and perform many other tasks.<br><br>
+
+<font color="blue">Check HTTP</font><br>
+Use this to monitor an ingress and generate real-time reports. It’s very useful for understanding what happens to your applications during chaos sessions. Currently, we monitor HTTP call durations and status codes. Additionally, you’ll find some very useful default metrics:<br><br>
+
+<font color="green">Selected Namespace</font> => Indicates the current namespace focused on by the tool. You can switch between selected namespaces during installation.<br><br>
+<font color="green">Deleted Pods Total</font> => The total number of killed pods.<br><br>
+<font color="green">Current Chaos Pods</font> => When the node stress test mode is activated, this metric shows the number of jobs stressing your cluster.<br><br>
+<font color="green">Current Replicas State Delay</font> => An important metric that shows how long your cluster takes to return to the desired state after a chaos engineering session.<br><br>
+
+<font color="blue">Programming Mode (Under Development)</font><br>
+Using YAML programming, you can define your own chaos engineering experiments and execute them. We have preloaded some presets for various open-source tools to stress test. This feature is still in development, so contributions are welcome.
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- END SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->
+  
+              <!-- START CHAOS PROGRAM BUTTONS -->
+              <div id="programming-mode-buttons" style="display: none;">
+                <div class="row">
+                  <div class="col text-center">
+                  </div>
+                  <div class="col text-center">
+                  </div>
+                  <div class="col text-center">
+                  </div>
+                </div>
+              <!-- END CHAOS PROGRAMM BUTTONS -->
+            </div>
+            <!-- END FIRST ROW -->
+  
+            <!-- START GAME MODE BUTTONS -->
+            <div id="game-buttons" style="display: none; border: 1px solid #ddd; border-radius: 4px;">
+              <div class="row container" style="width: 100%; margin-top: 2%;">
+                <div class="col text-center">
+                  <button type="button" id="controlAutoPilotButton" class="btn btn-dark" onclick="controlAutoPilot()">Start</button>
+                </div>
+                <div class="col">
+                </div>
+                <div class="col">
+                  <input type="range" id="randomFactorInput" name="randomFactorInput" min="0" max="100" value="50" onclick="changeRandomFactor()">
+                  <label for="randomFactorInput" class="text-kinv" id="randomFactorText">Random Factor:&nbsp;<span id="currentRandomFactor">50</span></label>
+                </div>
+              </div>
+              <div class="row" style="margin-bottom: 2%;">
+                <div class="col text-center" style="margin-bottom: 0%;">
+                  <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="wrapShowPrepareChaosReportModal(this)">
+                  <label class="form-check-label text-kinv" for="flexCheckDefault">
+                    Check HTTP
+                  </label>
+                </div>
+              </div>
+              <div class="row container" style="margin-top: 1%; width: 100%;">
+                <div class="col text-center">
+                  <button style="margin-bottom: 2%" type="button" id="buttonShuffle" class="btn btn-light btn-sm" onclick="buttonShuffleHelper()">Disable Shuffle</button>
+                </div>
+                <div class="col text-center">
+                  <button style="margin-bottom: 2%" type="button" id="namespacesJumpButton" class="btn btn-light btn-sm" onclick="namespacesJumpControl()">Enable Auto NS Switch</button>
+                </div>
+                <div class="col text-center">
+                  <button style="margin-bottom: 2%" type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
+                </div>
+  
+                <div class="accordion" id="specialkeys" style="margin-top: 2%; margin-bottom: 2%;">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="specialkeys-headingThree">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        show keys and options
+                      </button>
+                    </h2>
+                    <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                      <div class="accordion-body" style="font-weight: normal; font-size: small;">
+                        h => Activate or deactivate help<br>
+                        s => Activate or deactivate shuffle for aliens<br>
+                        n => Change namespace<br>
+                        p => Activate or deactivate chaos engineering against pods<br>
+                        c => Activate or deactivate chaos engineering against nodes
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+  
+              </div>
+            </div>
+            <!-- END GAME MODE BUTTONS -->
+  
+            <!-- START METRICS ROW -->
+            <div class="row" align="center" id="metricsPresetsRow">
+              <div style="margin-top: 1%;" class="text-justify" id="metricsGroup">
+                <style>
+                  .status-label {
+                    color: #444242; /* Colore per le etichette */
+                    font-weight: bold;
+                    font-size: 14px;
+                  }
+                
+                  .status-value {
+                    color: #000000; /* Colore blu scuro per i valori */
+                    font-weight: normal;
+                    font-size: 14px;
+                  }
+                
+                  .status-unit {
+                    color: #6c757d; /* Colore per le unità */
+                    font-size: 12px;
+                  }
+                
+                  .status-container {
+                    margin-bottom: 8px; /* Spazio tra le righe */
+                  }
+                </style>
+                
+                <div class="status-container">
+                  <span class="status-label">Selected Namespace:&nbsp;</span>
+                  <span id="currentGameNamespace" class="status-value">NULL</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Deleted Pods Total:&nbsp;</span>
+                  <span id="deleted_pods_total" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Chaos Jobs Total:&nbsp;</span>
+                  <span id="chaos_jobs_total" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Current Chaos Pods:&nbsp;</span>
+                  <span id="current_chaos_job_pod" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Not Running Pods:&nbsp;</span>
+                  <span id="pods_not_running_on" class="status-value">0</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Current Replicas State Delay:&nbsp;</span>
+                  <span id="fewer_replicas_seconds" class="status-value">0</span>
+                  <span class="status-unit">sec</span>
+                </div>
+                
+                <div class="status-container">
+                  <span class="status-label">Latest Replicas State Delay:&nbsp;</span>
+                  <span id="latest_fewer_replicas_seconds" class="status-value">0</span>
+                  <span class="status-unit">sec</span>
+                </div>
+                
+                <div id="mainChaosMetrics" style="width: 100%; height: 70%; margin-top: 16px;"></div>                                 
+              </div>
+            </div>
+            <!-- END METRICS ROW -->
+  
+            <!-- START CHAOS PROGRAMMING MODE SCREEN -->
+            <div id="chaos-program-screen" style="display: none;">
+              <div class="">
+                <!-- <div class="row" style="margin-top: 2%;"> -->
+                  <!-- <font size="2" class="text-kinv" id="loadTestingPresetsText">Load Testing Presets & Chaos Programs</font>
+                </div> -->
+                <div class="row">
+                    <div class="btn-group" id="loadButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2%; padding-top: 2%; scrollbar-color: dark;">
+                    </div>
+                </div>
+                <div class="row" hidden="true">
+                  <div class="btn-group" id="loadChaosProgramButtonGroup" role="group" aria-label="Basic example" style="overflow-x: scroll; width: 100%; padding-bottom: 2.0%; padding-top: 0.5%; scrollbar-color: dark;">
+                  </div>
+              </div>
+              </div>
+              <div class="row" style="margin-top: 0,5%;">
+                <div id="alert_placeholder_programming_mode" style="margin-top: 1%; margin-bottom: 1%;"></div>
+                <div class="col">
+                  <div class="row" width="10px">
+                    <!-- <div class="col text-center">
+                      <button type="button" id="saveChaosProgramButton" class="btn btn-light" onclick="savePreset('save-chaos-program')">SAVE</button>
+                    </div> -->
+                    <div class="col text-center">
+                      <button type="button" id="runChaosProgramButton" class="btn btn-dark" onclick="runChaosProgram()">RUN</button>
+                    </div>
+                  </div>
+                  <form>
+                  <div class="form-group">
+                    <label for="chaosProgramTextArea"></label>
+                    <textarea class="form-control chaos-prog-area" id="chaosProgramTextArea" rows="50" style="min-width: 100%; font-weight: normal; font-size: small;">
+chaos-codename: CODENAME_PLACEHOLDER
+experiments:
+  - name: cpu_attack_exp
+    k8s_job: cpu-attack-job
+    loop: 5
+  - name: mem_attack_exp
+    k8s_job: mem-attack-job
+    loop: 5
+k8s_jobs:
+  cpu-attack-job:
+    additional-labels:
+      chaos-controller: kubeinvaders
+      chaos-type: stress-ng
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --version
+  mem-attack-job:
+    additional-labels:
+      chaos-controller: kubeinvaders
+      chaos-type: stress-ng
+    image: docker.io/luckysideburn/kubeinvaders-stress-ng:latest
+    command: "stress-ng"
+    args:
+      - --version
+                    </textarea>
+                  </div>
+                  </form>
+                </div>
+                <div class="col" style="margin-top: 4%; overflow-y: scroll;  height:900px;">
+                  <div id="chaosProgramFlow">
+                    <div class="row"><div class="alert alert-light alert-kinv" id="exampleAlert1" role="alert" style="border-color: #000000; border-width: 1.5px;">test attack 1</div></div>
+                    <img src="images/down-arrow.png" width="30" height="30" style="margin-bottom: 2%;">
+                    <div class="row"><div class="alert alert-light alert-kinv" id="exampleAlert2" role="alert" style="border-color: #000000; border-width: 1.5px;">test attack 2</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- END CHAOS PROGRAMMING MODE SCREEN --> 
+      
+            <!-- START GAME MODE SCREEN -->
+            <div id="game-screen" style="display: none;">
+              <div class="row" style="margin-top: 2%; display: none;" id="httpStatsCanvasDiv">
+                <div style="margin-top: 1%;" class="custom-btn-group text-justify" id="metricsGroup" style="width: 100%;">
+                  <div class="table-responsive">
+                    <table class="table" style="color:#b2afaf;">
+                      <thead>
+                        <tr>
+                          <th scope="col"></th>
+                          <th scope="col"></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td class="td-grey">PROJECT</td>
+                          <td><p id="chaosReportProjectDiv"></p></td>
+                        </tr>
+                        <tr>
+                          <td class="td-grey">AUTHOR</td>
+                          <td><p id="chaosReportAuthorDiv" class="text-kinv"></p></td>
+                        </tr>
+                          <td class="td-grey">Chaos session date</td>
+                          <td><p id="chaosReportDateDiv" class="text-kinv"></p></td>
+                        <tr>
+                          <td class="td-grey">Chaos session time</td>
+                          <td><p id="chaosReportSessionTimeDiv" class="text-kinv"></p></td>
+                        </tr>
+                        <tr>
+                          <td class="td-grey">Check HTTP URL</td>
+                          <td><p id="chaosReportCheckSiteURLDiv" class="text-kinv"></p></td>   
+                        </tr>   
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div id="chartDiv" class="row" style="display: none; height: 480px; margin-bottom: 15%;">
+                <label for="httpStatusCodeChart">HTTP Status Code</label>
+                <div id="httpStatusCodeChart" style="width: 50%; height: 50%; margin-top: 1%; margin-bottom: 0.5%;"></div>
+                <label for="httpElapsedChart">HTTP Elapsed (seconds)</label>
+                <div id="httpElapsedChart" style="width: 100%; height: 50%; margin-top: 0.5%;"></div>
+              </div>
+              
+              <div class="row" style="margin-top: 2%; text-align: center; margin: auto; margin-top: 1%;">
+                <canvas id="myCanvas" width="1200" height="800" class="game-canvas"></canvas>
+              </div>
+            
+              <div class="row">
+                <div class="col text-center">
+                </div>
+                <div class="col text-center">
+                  <input type="button" id="zoomInButton" style="margin-top: 2%" class="btn btn-dark id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+                  <input type="button" id="zoomOutButton" style="margin-top: 2%" class="btn btn-dark" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+                </div>
+                <div class="col text-center">
+                </div>
+              </div>
+            </div>
+            <!-- END GAME MODE SCREEN -->
+      
+            <!-- HELPER ALERT -->
+            <div class="row">
+              <div id="alert_placeholder" style="margin-top: 3%;"></div>
+              <div id="alert_placeholder3" style="margin-top: 3%;"></div>
+            </div>
+            <div class="settings">
+                <h2></h2>
+                <div class="setting-group">
+                    <label for="sys_cluster_endpoint">k-inv url</label>
+                    <input type="text" id="sys_cluster_endpoint" name="sys_cluster_endpoint" readonly="true">
+                    <label for="sys_insecure_endpoint_flag">Insecure Endpoint Flag</label>
+                    <input type="text" id="sys_insecure_endpoint_flag" name="sys_insecure_endpoint_flag" readonly="true">
+                    <label for="sys_k8s_proxied_api_http_status_code">k-inv/k8s http status code</label>
+                    <input type="text" id="sys_k8s_proxied_api_http_status_code" name="sys_k8s_proxied_api_http_status_code" readonly="true">
+                    <label for="sys_openresty_env_vars">OpenResty Environment Variables</label>
+                    <input type="text" id="sys_openresty_env_vars" name="sys_openresty_env_vars" readonly="true">                                       
+                </div>
+                <div class="setting-group" style="margin-top: 1%;">
+                  <button class="export-button" onclick="exportSettings()">Export</button>
+                </div>
+            </div>
+        </div>
+  
+        <div id="footer" style="margin-top: 3%;">
+          <div class="container text-center">
+            <div class="container text-center" style="margin-top: 20%;">
+              <div>
+                <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-20 17:41:52</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <script src="./js/globalvars.js"></script>
+        <script src="./js/utils.js"></script>
+        <script src="./js/programming_mode.js"></script>
+        <script src="./js/modals.js"></script>
+        <script src="./js/mode_controls.js"></script>
+        <script src="./js/game_console.js"></script>
+        <script src="./js/kubeinvaders.js"></script>
+        <script src="./echarts/echarts.min.js"></script>
+        <script src="./js/chaos_report.js"></script>
+        <script>
+          // Function to toggle sidebar
+          
+          const sidebar = document.getElementById('sidebar');
+          const mainContent = document.querySelector('.main-content');
+          sidebar.style.left = '0px';
+          mainContent.style.marginLeft = '250px';
+          $('.toggler-icon').css({"color": "white"});
+
+          function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            if (sidebar && mainContent) {
+              if (sidebar.style.left == '-250px') {
+                $('.toggler-icon').css({"color": "white"});
+                sidebar.style.left = '0';
+                mainContent.style.marginLeft = '250px';
+              } else {
+                $('.toggler-icon').css({"color": "black"});
+
+                sidebar.style.left = '-250px';
+                mainContent.style.marginLeft = '0';
+              }
+            }
+          }
+        </script>
+      </div>
+      </div>
+    </div>
+
+  
+  </body>
+</html>

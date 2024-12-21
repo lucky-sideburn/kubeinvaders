@@ -493,7 +493,7 @@ function drawAlien(alienX, alienY, name, status) {
         ctx.font = '8px pixel';
         ctx.drawImage(image, alienX, alienY, 40, 40);
         if (showPodName) {
-            ctx.fillText(name.substring(0, 19) + '..', alienX, alienY + 40);
+            ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 45);
         }
     }
     ctx.closePath();

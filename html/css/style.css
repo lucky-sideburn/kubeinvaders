@@ -147,11 +147,11 @@ hr {
   border-color: #000000;
 }
 
-/* @font-face {
+@font-face {
   font-family: pixel;
-  src: url("./fonts/pixel.otf");
-  font-size-adjust: inherit;
-} */
+  src: url(".././fonts/Adore64-0vVr.ttf");
+  size: 9px;
+}
 
 body {
   background-color: #ffffff;

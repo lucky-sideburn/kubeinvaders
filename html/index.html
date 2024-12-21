@@ -51,7 +51,7 @@
         position: fixed;
         top: 0;
         left: 0; /* Initially hide sidebar */
-        background-color: black; /* Dark color */
+        background-color: rgb(35, 35, 35); /* Dark color */
         padding-top: 60px; /* Adjust according to your navbar height */
         transition: left 0.3s ease; /* Smooth transition */
       }
@@ -168,7 +168,7 @@
       
       <div id="main-game-div" style="display: block;">
 
-        <div class="modal fade" id="kubePingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <!-- <div class="modal fade" id="kubePingModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
@@ -189,7 +189,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div class="modal fade" id="currentChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog" role="document">
@@ -427,7 +427,7 @@ Using YAML programming, you can define your own chaos engineering experiments an
                 <div class="col text-center" style="margin-bottom: 0%;">
                   <input class="form-check-input" type="checkbox" value="" id="flagChaosReport" onclick="wrapShowPrepareChaosReportModal(this)">
                   <label class="form-check-label text-kinv" for="flexCheckDefault">
-                    Check HTTP
+                    Check Ingress HTTP during Chaos Experiment
                   </label>
                 </div>
               </div>
@@ -694,7 +694,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: 2024-12-20 17:41:52</p>
+                <p class="text-muted credit" style="color:#fff;">version: v1.9.7</p>
               </div>
             </div>
           </div>

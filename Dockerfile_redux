@@ -1,7 +1,7 @@
 FROM 10.10.10.3:5000/local/kubeinvaders_base:develop
 
 # Install KubeInvaders (html and js)
-COPY html5/ /var/www/html
+COPY html/ /var/www/html
 
 # Configure Redis
 COPY confs/redis/redis.conf /etc/redis/redis.conf

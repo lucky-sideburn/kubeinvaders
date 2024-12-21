@@ -33,7 +33,7 @@ COPY kube-linter/kube-linter-parser.sh /opt/kube-linter-parser.sh
 RUN chmod +x /opt/kube-linter-parser.sh
 
 # Install KubeInvaders (html and js)
-COPY html5/ /var/www/html
+COPY html/ /var/www/html
 
 # Configure Redis
 COPY confs/redis/redis.conf /etc/redis/redis.conf

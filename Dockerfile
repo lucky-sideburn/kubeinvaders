@@ -20,7 +20,7 @@ RUN chmod 777 /usr/local/openresty/nginx
 RUN apt-get -y install luarocks lua-json lua-socket libyaml-dev
 RUN apt-get update --fix-missing
 
-RUN for pkg in luasec lunajson lyaml; do luarocks install $pkg; done
+RUN for pkg in luasec lunajson lua-resty-http lyaml; do luarocks install $pkg; done
 
 # Install kube-linter
 RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.6.0/kube-linter-linux.tar.gz
@@ -50,6 +50,7 @@ RUN chmod 777 /var/www/html
 COPY scripts/metrics.lua /usr/local/openresty/nginx/conf/kubeinvaders/metrics.lua
 COPY scripts/pod.lua /usr/local/openresty/nginx/conf/kubeinvaders/pod.lua
 COPY scripts/ingress.lua /usr/local/openresty/nginx/conf/kubeinvaders/ingress.lua
+COPY scripts/vm.lua /usr/local/openresty/nginx/conf/kubeinvaders/vm.lua
 COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
 COPY scripts/kube-linter.lua /usr/local/openresty/nginx/conf/kubeinvaders/kube-linter.lua
 COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-node.lua

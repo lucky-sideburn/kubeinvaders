@@ -70,6 +70,7 @@ var spaceshipxOld = 0;
 var randomFactor = 10;
 // pods list from kubernetes
 var pods = [];
+var virtualMachines = [];
 var game_mode_switch = false;
 var programming_mode_switch = false; 
 var chaos_program_valid = false;

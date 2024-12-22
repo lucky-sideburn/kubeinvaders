@@ -72,15 +72,19 @@ for k2,v2 in ipairs(decoded["items"]) do
   if check_table_key_exists(v2["spec"], "tls") then
     for k3,v3 in ipairs(v2["spec"]["tls"]) do
       for i in pairs(v3["hosts"]) do
-        ngx.log(ngx.INFO, "Ingress: " .. v3["hosts"][i])
-        table.insert(host_list, "https://" .. v3["hosts"][i])
+        if v3["hosts"] ~= nil then
+          ngx.log(ngx.INFO, "Ingress: " .. v3["hosts"][i])
+          table.insert(host_list, "https://" .. v3["hosts"][i])
+        end
       end
     end
   end
 
   for k3,v3 in ipairs(v2["spec"]["rules"]) do
-    ngx.log(ngx.INFO, "Ingress: " .. v3["host"])
-    table.insert(host_list, "http://" .. v3["host"])
+    if v3["hosts"] ~= nil then
+      ngx.log(ngx.INFO, "Ingress: " .. v3["host"])
+      table.insert(host_list, "http://" .. v3["host"])
+    end
   end
 end
 

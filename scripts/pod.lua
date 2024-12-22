@@ -75,10 +75,6 @@ else
   ngx.exit(ngx.OK)
 end
 
---ngx.log(ngx.INFO, "token: " .. token)
--- ngx.log(ngx.INFO, "url: " .. url)
--- ngx.log(ngx.INFO, "namespace: " .. namespace)
-
 local headers = {
   ["Accept"] = "application/json",
   ["Content-Type"] = "application/json",
@@ -93,11 +89,6 @@ local ok, statusCode, headers, statusText = https.request{
   method = method,
   sink = ltn12.sink.table(resp)
 }
-
--- ngx.log(ngx.INFO, "REQUEST LOGS...")
--- ngx.log(ngx.INFO, ok)
--- ngx.log(ngx.INFO, statusCode)
--- ngx.log(ngx.INFO, statusText)
 
 if action == "list" then
   local i = 1

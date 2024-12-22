@@ -152,10 +152,10 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
-      <a id="programmingModeButton"  onclick="startProgrammingMode()">Programming Mode</a>
-      <a href="#" onclick="showSetCurrentChaosContainer()">Chaos Container Editor</a>
-      <a href="#" onclick="showSpecialKeys()">Show Special Keys</a>
+      <a id="gameModeButton" onclick="startGameMode()" style="font-family: pixel;">Game Mode</a>
+      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-family: pixel;">Programming Mode</a>
+      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-family: pixel;">Chaos Container Editor</a>
+      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel;">Show Special Keys</a>
     </div>
     
     <!-- Main content -->
@@ -445,12 +445,12 @@ Using YAML programming, you can define your own chaos engineering experiments an
                 <div class="accordion" id="specialkeys" style="margin-top: 2%; margin-bottom: 2%;">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="specialkeys-headingThree">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-size: small; font-family: pixel;">
                         show keys and options
                       </button>
                     </h2>
                     <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                      <div class="accordion-body" style="font-weight: normal; font-size: small;">
+                      <div class="accordion-body" style="font-weight: normal; font-size: small; font-family: pixel;">
                         h => Activate or deactivate help<br>
                         s => Activate or deactivate shuffle for aliens<br>
                         n => Change namespace<br>
@@ -694,7 +694,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: v1.9.7</p>
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-22 11:38:01</p>
               </div>
             </div>
           </div>

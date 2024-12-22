@@ -59,7 +59,7 @@
       .sidebar a {
         padding: 10px 15px;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
         color: #ffffff;
         display: block;
       }
@@ -67,7 +67,7 @@
       .sidebar #gameModeButton{
         padding: 10px 15px;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
         color: #ffffff;
         display: block;
       }
@@ -75,7 +75,7 @@
       .sidebar #programmingModeButton{
         padding: 10px 15px;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
         color: #ffffff;
         display: block;
       }
@@ -153,9 +153,9 @@
 
     <div class="sidebar" id="sidebar">
       <a id="gameModeButton" onclick="startGameMode()" style="font-family: pixel;">Game Mode</a>
-      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-family: pixel;">Programming Mode</a>
-      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-family: pixel;">Chaos Container Editor</a>
-      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel;">Show Special Keys</a>
+      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-family: pixel; font-weight: normal;">Programming Mode</a>
+      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-family: pixel; font-weight: normal;">Chaos Container Editor</a>
+      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel; font-weight: normal;">Show Special Keys</a>
     </div>
     
     <!-- Main content -->
@@ -341,8 +341,9 @@
                       h => Activate or deactivate help<br>
                       s => Activate or deactivate shuffle for aliens<br>
                       n => Change namespace<br>
-                      p => Activate or deactivate chaos engineering against pods<br>
-                      c => Activate or deactivate chaos engineering against nodes
+                      p => Activate or deactivate chaos engineering on pods<br>
+                      c => Activate or deactivate chaos engineering on nodes<br>
+                      v => Activate or deactivate chaos engineering on virtual machines (kubevirt)<br>
                     </p>
                   </div>
                 </div>
@@ -454,8 +455,9 @@ Using YAML programming, you can define your own chaos engineering experiments an
                         h => Activate or deactivate help<br>
                         s => Activate or deactivate shuffle for aliens<br>
                         n => Change namespace<br>
-                        p => Activate or deactivate chaos engineering against pods<br>
-                        c => Activate or deactivate chaos engineering against nodes
+                        p => Activate or deactivate chaos engineering on pods<br>
+                        c => Activate or deactivate chaos engineering on nodes<br>
+                        v => Activate or deactivate chaos engineering on virtual machines (kubevirt)<br>
                       </div>
                     </div>
                   </div>
@@ -694,7 +696,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: 2024-12-22 11:38:01</p>
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-22 18:48:13</p>
               </div>
             </div>
           </div>

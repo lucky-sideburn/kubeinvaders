@@ -358,6 +358,10 @@ function getPods() {
                 }
             }
 
+            if (chaos_vms && virtualMachines && virtualMachines.length > 0) {
+                pods = new_pods.concat(virtualMachines);
+            } 
+
             if (nodes && nodes.length > 0) {
                 pods = new_pods.concat(nodes);
             } 
@@ -365,12 +369,6 @@ function getPods() {
                 pods = new_pods;
             }
 
-            if (nodes && virtualMachines.length > 0) {
-                pods = new_pods.concat(virtualMachines);
-            } 
-            else {
-                pods = new_pods;
-            }
         };;
         oReq.open("GET", k8s_url + "/kube/pods?action=list&namespace=" + namespace);
         oReq.send();
@@ -400,21 +398,21 @@ function getNodes() {
 }
 
 function getVMs() {
-    if (chaos_nodes) {
+    if (chaos_vms) {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
             const jsonData = JSON.parse(this.responseText);
               
-            const vmList = {
-                items: [
-                //  { name: "node1", status: "ready" } // Primo elemento
-                ]
-              };
+            // const vmList = {
+            //     items: [
+            //     //  { name: "node1", status: "ready" } // Primo elemento
+            //     ]
+            //   };
             
             Array.from(jsonData.items).forEach(vm => {
                 const name = vm.metadata.name; // Nome della VM
                 const status = vm.status.printableStatus; // Stato della VM
-                vmList.items.push({ name: name, status: status });
+                virtualMachines.push({ name: name, status: status });
             });
             
             console.log("Mappa delle VM e dei loro stati:");
@@ -494,6 +492,25 @@ function keyDownHandler(e) {
                 $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Show nodes</div>');
             }
         }
+
+        else if (e.keyCode == 86) {
+
+            if (is_demo_mode()) {
+                demo_mode_alert();
+                return;
+            }
+
+            if (chaos_vms) {
+                chaos_vms = false;
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Hide Virtual Machines</div>');
+
+            }
+            else {
+                chaos_vms = true
+                $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Show Virtual Machines</div>');
+            }
+        }
+
         else if (e.keyCode == 80) {
             if (chaos_pods) {
                 chaos_pods = false;
@@ -530,12 +547,12 @@ function drawAlien(alienX, alienY, name, status) {
         ctx.drawImage(image, alienX, alienY, 30, 40);
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
-    else if (virtualMachines.some((vm) => vm.name == name)) {
-        image.src = './images/k8s_node.png';
-        ctx.font = '10px pixel';
-        ctx.drawImage(image, alienX, alienY, 30, 40);
-        ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
-    }
+    // else if (virtualMachines.some((vm) => vm.name == name)) {
+    //     image.src = './images/k8s_node.png';
+    //     ctx.font = '10px pixel';
+    //     ctx.drawImage(image, alienX, alienY, 30, 40);
+    //     ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
+    // }
     else {
         image.src = `./images/sprite_invader_${status}.png`;
         ctx.font = '8px pixel';

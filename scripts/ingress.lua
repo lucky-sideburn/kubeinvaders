@@ -2,6 +2,7 @@ local https = require "ssl.https"
 local ltn12 = require "ltn12"
 local json = require 'lunajson'
 local redis = require "resty.redis"
+local http = require("resty.http")
 
 local k8s_url = ""
 
@@ -33,6 +34,7 @@ local arg = ngx.req.get_uri_args()
 local namespace = arg["namespace"]
 local url = k8s_url .. "/apis/networking.k8s.io/v1/namespaces/" .. namespace .. "/ingresses"
 local decoded = nil
+local host_list = {}
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
 ngx.header['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
@@ -41,47 +43,39 @@ ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 
 ngx.log(ngx.INFO, "Requesting nodes using this url: " .. url)
 
-local headers = {
-  ["Accept"] = "application/json",
-  ["Content-Type"] = "application/json",
-  ["Authorization"] = "Bearer " .. token,
-}
+local httpc = http.new()
 
-local resp = {}
-local host_list = {}
-local ok, statusCode, headers, statusText = https.request{
-  url = url,
-  headers = headers,
-  method = "GET",
-  sink = ltn12.sink.table(resp)
-}
+-- Esegui la richiesta
+local res, err = httpc:request_uri(url, {
+    method = "GET",
+    ssl_verify = false, -- TODO: use a valid certificate
+    headers = {
+        ["Accept"] = "application/json",
+        ["Content-Type"] = "application/json",
+        ["Authorization"] = "Bearer " .. token
+    }
+})
 
-ngx.log(ngx.INFO, "REQUEST LOGS...")
-ngx.log(ngx.INFO, ok)
-ngx.log(ngx.INFO, statusCode)
-ngx.log(ngx.INFO, statusText)
-ngx.log(ngx.INFO, "[INGRESS-LIST] resp: " .. convert_table_to_string(resp))
-
-decoded = json.decode(table.concat(resp))
-if table.getn(decoded["items"]) == 0 then
-  host_list = {"No Ingress found"}
+if not res then
+    ngx.log(ngx.ERR, "Errore durante la richiesta HTTP: ", err)
+    return
 end
 
-for k2,v2 in ipairs(decoded["items"]) do
+decoded = json.decode(res.body)
+ngx.log(ngx.ERR, "Decoded: " .. json.encode(decoded))
 
+for k2,v2 in ipairs(decoded["items"]) do
   if check_table_key_exists(v2["spec"], "tls") then
     for k3,v3 in ipairs(v2["spec"]["tls"]) do
-      for i in pairs(v3["hosts"]) do
-        if v3["hosts"] ~= nil then
-          ngx.log(ngx.INFO, "Ingress: " .. v3["hosts"][i])
-          table.insert(host_list, "https://" .. v3["hosts"][i])
-        end
+      for i, host in ipairs(v3["hosts"]) do        
+        ngx.log(ngx.INFO, "Ingress: " .. host)
+        table.insert(host_list, "https://" .. host)
       end
     end
   end
 
-  for k3,v3 in ipairs(v2["spec"]["rules"]) do
-    if v3["hosts"] ~= nil then
+  for k3, v3 in ipairs(v2["spec"]["rules"]) do
+    if v3["host"] ~= nil then
       ngx.log(ngx.INFO, "Ingress: " .. v3["host"])
       table.insert(host_list, "http://" .. v3["host"])
     end

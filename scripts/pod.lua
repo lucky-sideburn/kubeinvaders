@@ -37,7 +37,6 @@ if action == "delete" then
     ngx.log(ngx.INFO, "Connection to Redis is not ok")
     ngx.log(ngx.INFO, errredis)
   end
-  -- Count the total of deleted pods
 
   local res, err = red:get("deleted_pods_total")
 

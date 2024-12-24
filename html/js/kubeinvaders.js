@@ -378,7 +378,11 @@ function getPods() {
             pods = nodes;
         } else {
             pods = [];
-        }    
+        }
+
+        if (chaos_vms && virtualMachines && virtualMachines.length > 0) {
+            pods = pods.concat(virtualMachines);
+        } 
     }
 }
 
@@ -402,22 +406,11 @@ function getVMs() {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
             const jsonData = JSON.parse(this.responseText);
-              
-            // const vmList = {
-            //     items: [
-            //     //  { name: "node1", status: "ready" } // Primo elemento
-            //     ]
-            //   };
-            
+            virtualMachines = [];
             Array.from(jsonData.items).forEach(vm => {
                 const name = vm.metadata.name; // Nome della VM
                 const status = vm.status.printableStatus; // Stato della VM
                 virtualMachines.push({ name: name, status: status });
-            });
-            
-            console.log("Mappa delle VM e dei loro stati:");
-            vmList.items.forEach(vm => {
-                console.log(`Nome: ${vm.name}, Stato: ${vm.status}`);
             });
         };;
         oReq.open("GET", k8s_url + "/kube/vm?namespace=" + namespace);
@@ -547,12 +540,12 @@ function drawAlien(alienX, alienY, name, status) {
         ctx.drawImage(image, alienX, alienY, 30, 40);
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
-    // else if (virtualMachines.some((vm) => vm.name == name)) {
-    //     image.src = './images/k8s_node.png';
-    //     ctx.font = '10px pixel';
-    //     ctx.drawImage(image, alienX, alienY, 30, 40);
-    //     ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
-    // }
+    else if (virtualMachines.some((vm) => vm.name == name)) {
+        image.src = './images/k8s_node.png';
+        ctx.font = '10px pixel';
+        ctx.drawImage(image, alienX, alienY, 30, 40);
+        ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
+    }
     else {
         image.src = `./images/sprite_invader_${status}.png`;
         ctx.font = '8px pixel';
@@ -862,6 +855,10 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function backgroundTasks() {
+
+    console.log("Virtual Machines:", virtualMachines);
+    console.log("Pods:", pods);
+    
 
     if (!codename_configured) {
         chaosProgram = $('#chaosProgramTextArea').val();

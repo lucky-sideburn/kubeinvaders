@@ -99,7 +99,7 @@ function chaosReportHttpEndpointAdd() {
 
 <div class="row" style="margin-top: 2%;">
     <div class="col col-xl-10">
-        <label for="chaosReportCheckSiteURL">URL</label>
+        <label for="chaosReportCheckSiteURL">URL (insert manually if it is not an ingress)</label>
         <input type="text" class="form-control input-lg" id="chaosReportCheckSiteURL" value="" style="margin-top: 1%; width: 80%;">
     </div>
 </div>

@@ -336,6 +336,16 @@ function startChaosNode(node_name) {
     oReq.send();
 }
 
+function rebootVirtualMachine(vm_name) {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Prepareing reboot virtual machine ' + vm_name + '</div>');
+    };;
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Reboot virtual machine ' + vm_name + '</div>');
+    oReq.open("GET", k8s_url + "/kube/chaos/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
+    oReq.send();
+}
+
 function deletePods(pod_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
@@ -355,8 +365,6 @@ function addNodeAndVMstoPods() {
     }
     return pods;
 }
-
-
 
 function getPods() {
     if (chaos_pods) {
@@ -405,7 +413,7 @@ function getVMs() {
             virtualMachines = [];
             Array.from(jsonData.items).forEach(vm => {
                 const name = vm.metadata.name; // Nome della VM
-                const status = vm.status.printableStatus; // Stato della VM
+                const status = vm.status.printableStatus.toLowerCase(); // Stato della VM
                 virtualMachines.push({ name: name, status: status });
             });
         };;
@@ -537,9 +545,9 @@ function drawAlien(alienX, alienY, name, status) {
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
     else if (virtualMachines.some((vm) => vm.name == name)) {
-        image.src = './images/k8s_node.png';
+        image.src = `./images/sprite_invader_vm_${status}.png`;
         ctx.font = '10px pixel';
-        ctx.drawImage(image, alienX, alienY, 30, 40);
+        ctx.drawImage(image, alienX, alienY, 40, 40);
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
     else {
@@ -577,6 +585,10 @@ function checkRocketAlienCollision() {
                     if (nodes.some((node) => node.name == aliens[i]["name"])) {
                         aliens[i]["active"] = false;
                         startChaosNode(aliens[i]["name"]);
+                    }
+                    else if (virtualMachines.some((vm) => vm.name == aliens[i]["name"])) {
+                        aliens[i]["active"] = false;
+                        rebootVirtualMachine(aliens[i]["name"]);
                     }
                     else {
                         deletePods(aliens[i]["name"]);
@@ -851,10 +863,10 @@ window.setInterval(function setAliens() {
 }, 1000)
 
 window.setInterval(function backgroundTasks() {
-    console.log("Nodes:", nodes);
-    console.log("Virtual Machines:", virtualMachines);
-    console.log("chaos_vms flag:", chaos_vms);
-    console.log("Pods:", pods);
+    // console.log("Nodes:", nodes);
+    // console.log("Virtual Machines:", virtualMachines);
+    // console.log("chaos_vms flag:", chaos_vms);
+    // console.log("Pods:", pods);
 
     if (!codename_configured) {
         chaosProgram = $('#chaosProgramTextArea').val();

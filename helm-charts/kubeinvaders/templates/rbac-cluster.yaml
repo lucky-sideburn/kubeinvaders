@@ -42,26 +42,27 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: {{ template "kubeinvaders.clusterRoleName" . }}
-{{- end -}}
-kind: Role
+---
+kind: ClusterRole
 metadata:
   namespace: {{ .Release.Namespace }}
-  name: kubevirt-vm-restart-role
+  name: kubeinvaders-vm-restart-role
 rules:
 - apiGroups: ["subresources.kubevirt.io"]
   resources: ["virtualmachines/restart"]
   verbs: ["update"]
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: kubevirt-vm-restart-binding
+  name: kubeinvaders-vm-restart-binding
   namespace: {{ .Release.Namespace }}
 subjects:
 - kind: ServiceAccount
   name: {{ template "kubeinvaders.serviceAccountName" . }}
   namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: Role
-  name: kubevirt-vm-restart-role
+  kind: ClusterRole
+  name: kubeinvaders-vm-restart-role
   apiGroup: rbac.authorization.k8s.io
+{{- end -}}
 {{- end -}}

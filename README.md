@@ -105,6 +105,30 @@ metadata:
   namespace: kubeinvaders
   annotations:
     kubernetes.io/service-account.name: kinv-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: kubevirt-vm-restart-role
+rules:
+- apiGroups: ["subresources.kubevirt.io"]
+  resources: ["virtualmachines/restart"]
+  verbs: ["update"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubevirt-vm-restart-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: kubeinvaders
+  namespace: kubeinvaders
+roleRef:
+  kind: Role
+  name: kubevirt-vm-restart-role
+  apiGroup: rbac.authorization.k8s.io
 EOF
 ```
 

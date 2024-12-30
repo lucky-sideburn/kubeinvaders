@@ -339,9 +339,9 @@ function startChaosNode(node_name) {
 function rebootVirtualMachine(vm_name) {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Prepareing reboot virtual machine ' + vm_name + '</div>');
+        $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Reboot virtual machine ' + vm_name + '</div>');
     };;
-    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Reboot virtual machine ' + vm_name + '</div>');
+    $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Preparing virtual machine ' + vm_name + '</div>');
     oReq.open("GET", k8s_url + "/kube/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
     oReq.send();
 }

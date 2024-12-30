@@ -155,7 +155,7 @@
       <a id="gameModeButton" onclick="startGameMode()" style="font-family: pixel;">Game Mode</a>
       <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-family: pixel; font-weight: normal;">Programming Mode</a>
       <a href="#" onclick="showSetCurrentChaosContainer()" style="font-family: pixel; font-weight: normal;">Chaos Container Editor</a>
-      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel; font-weight: normal;">Show Special Keys</a>
+      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel; font-weight: normal;">Controls and options</a>
     </div>
     
     <!-- Main content -->
@@ -327,33 +327,30 @@
             </div>
           </div>
         </div>
+
         <!-- Modal -->
-        <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
+        <div class="modal fade" id="showSpecialKeysModal" tabindex="-1" aria-labelledby="specialkeysModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
             <div class="modal-content">
-              <div class="modal-body">
-                <div class="card">
-                  <div class="card-header">
-                    Special Keys
-                  </div>
-                  <div class="card-body">
-                    <p class="card-text" style="font-weight: normal; font-size: 14px;">
-                      h => Activate or deactivate help<br>
-                      s => Activate or deactivate shuffle for aliens<br>
-                      n => Change namespace<br>
-                      p => Activate or deactivate chaos engineering on pods<br>
-                      c => Activate or deactivate chaos engineering on nodes<br>
-                      v => Activate or deactivate chaos engineering on virtual machines (kubevirt)<br>
-                    </p>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" id="closeButton5" class="btn btn-secondary" data-dismiss="modal" onclick="closeSpecialKeysModal()">Close</button>
-                </div>
+              <div class="modal-header">
+                <h5 class="modal-title pixel-font" id="specialkeysModalLabel">Controls and Options</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body" style="font-family: pixel;">
+                h => Enable or disable help<br>
+                s => Activate or deactivate shuffle for aliens<br>
+                n => Change the namespace<br>
+                p => Display pods<br>
+                c => Display nodes<br>
+                v => Display virtual machines (KubeVirt)<br>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="closeButton5" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
           </div>
         </div>
+
         <div class="container" id="gameContainer">
             <!-- START FIRST ROW -->
             <div class="row custom-btn-group" style="margin-top: 2%;">
@@ -442,22 +439,22 @@ Using YAML programming, you can define your own chaos engineering experiments an
                 <div class="col text-center">
                   <button style="margin-bottom: 2%" type="button" id="buttonOnlyPodName" class="btn btn-light btn-sm" onclick="showPodNameControl()">Hide Pods Name</button>
                 </div>
-  
+
                 <div class="accordion" id="specialkeys" style="margin-top: 2%; margin-bottom: 2%;">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="specialkeys-headingThree">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-size: small; font-family: pixel;">
-                        show keys and options
+                        Controls and Options
                       </button>
                     </h2>
                     <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                       <div class="accordion-body" style="font-weight: normal; font-size: small; font-family: pixel;">
-                        h => Activate or deactivate help<br>
+                        h => Enable or disable help<br>
                         s => Activate or deactivate shuffle for aliens<br>
-                        n => Change namespace<br>
-                        p => Activate or deactivate chaos engineering on pods<br>
-                        c => Activate or deactivate chaos engineering on nodes<br>
-                        v => Activate or deactivate chaos engineering on virtual machines (kubevirt)<br>
+                        n => Change the namespace<br>
+                        p => Display pods<br>
+                        c => Display nodes<br>
+                        v => Display virtual machines (kubevirt)<br>
                       </div>
                     </div>
                   </div>
@@ -745,7 +742,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: 2024-12-30 09:11:59</p>
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-30 16:28:16</p>
               </div>
             </div>
           </div>

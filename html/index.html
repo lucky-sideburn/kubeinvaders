@@ -336,7 +336,7 @@
                 <h5 class="modal-title pixel-font" id="specialkeysModalLabel">Controls and Options</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" style="font-family: pixel;">
+              <div class="modal-body" style="font-family: pixel; font-size: small;">
                 h => Enable or disable help<br>
                 s => Enable or disable shuffle for aliens<br>
                 n => Change the namespace<br>
@@ -358,36 +358,56 @@
               <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="guide-headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      k-inv guide - chaos mode controls and metrics
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-family: pixel;">
+                      Quick guide
                     </button>
                   </h2>
                   <div id="guide-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                    <div class="accordion-body" style="font-weight: normal; font-size: 14px;">
-Thank you for installing Kubeinvaders!
+                    <div class="accordion-body" style="font-weight: small; font-size: 12px;">
 
-This is a chaos engineering tool developed by Luckysideburn and contributors from <a href="https://platformengineering.it">platformengineering.it</a> for the Kubernetes community, including software developers and admins.<br><br>
-
-Kubeinvaders started in 2019 as a gamified chaos engineering tool, and we are continually evolving it into a more sophisticated instrument :D<br><br>
-
-Here’s how it works:<br><br>
-
-For reports, bugs, or ideas, feel free to open an issue on the project's <a href="https://github.com/lucky-sideburn/kubeinvaders">GitHub repository</a> or contact Luckysideburn at <a href="mailto:luckysideburn@gmail.com">luckysideburn@gmail.com</a>.<br><br>
-
-<font color="blue">Game Mode</font><br>
-Enabling the game console allows you to kill pods and launch workloads to stress cluster nodes (check “Show keys and options” to learn how). You can also switch between namespaces and perform many other tasks.<br><br>
-
-<font color="blue">Check HTTP</font><br>
-Use this to monitor an ingress and generate real-time reports. It’s very useful for understanding what happens to your applications during chaos sessions. Currently, we monitor HTTP call durations and status codes. Additionally, you’ll find some very useful default metrics:<br><br>
-
-<font color="green">Selected Namespace</font> => Indicates the current namespace focused on by the tool. You can switch between selected namespaces during installation.<br><br>
-<font color="green">Deleted Pods Total</font> => The total number of killed pods.<br><br>
-<font color="green">Current Chaos Pods</font> => When the node stress test mode is activated, this metric shows the number of jobs stressing your cluster.<br><br>
-<font color="green">Current Replicas State Delay</font> => An important metric that shows how long your cluster takes to return to the desired state after a chaos engineering session.<br><br>
-
-<font color="blue">Programming Mode (Under Development)</font><br>
-Using YAML programming, you can define your own chaos engineering experiments and execute them. We have preloaded some presets for various open-source tools to stress test. This feature is still in development, so contributions are welcome.
-
+                      <p>
+                          Kubeinvaders is a chaos engineering tool (featured in the CNCF landscape) developed by Luckysideburn and contributors from 
+                          <a href="https://platformengineering.it">platformengineering.it</a> for the Kubernetes community, including software developers and administrators.
+                      </p>
+                      <p>
+                          For bug reports, feature requests, or suggestions, feel free to open an issue on the project's 
+                          <a href="https://github.com/lucky-sideburn/kubeinvaders">GitHub repository</a> or contact Luckysideburn directly at 
+                          <a href="mailto:luckysideburn@gmail.com">luckysideburn@gmail.com</a>.
+                      </p>
+                  
+                      <p>>> Main Modes</p>
+                      <p>
+                          There are three main modes: Game Mode and Programming Mode (which is still under development).
+                      </p>
+                  
+                      <p>>> Game Mode</p>
+                      <p>
+                          In Game Mode, accessible through the sidebar, you can view the list of all commands via the "Controls and Options" section or by pressing "h".
+                      </p>
+  
+                      <p>>> Some Metrics</p>
+                      <ul>
+                          <li><strong>Selected Namespace:</strong> Displays the currently focused namespace. You can switch namespaces during operation.</li>
+                          <li><strong>Deleted Pods Total:</strong> The total number of pods terminated during the session.</li>
+                          <li><strong>Current Chaos Pods:</strong> Shows the number of jobs stressing your cluster when node stress testing is active.</li>
+                          <li><strong>Current Replicas State Delay:</strong> Indicates how long it takes for your cluster to return to the desired state after a chaos engineering event.</li>
+                      </ul>
+  
+                      <p>>> The "Check Ingress HTTP during Chaos Experiment" Flag</p>
+                      <p>
+                          This feature allows you to monitor an ingress and generate real-time reports, making it invaluable for observing your applications during chaos engineering sessions.
+                      </p>
+                      <p>Currently, it tracks:</p>
+                      <ul>
+                          <li>HTTP call durations</li>
+                          <li>HTTP status codes</li>
+                      </ul>
+                  
+                      <p>>> Programming Mode (Under Development)</p>
+                      <p>
+                          In Programming Mode, you’ll be able to use YAML to define and execute custom chaos engineering experiments.
+                      </p>
+                
                     </div>
                   </div>
                 </div>
@@ -742,7 +762,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: 2024-12-30 16:38:57</p>
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-30 17:32:49</p>
               </div>
             </div>
           </div>

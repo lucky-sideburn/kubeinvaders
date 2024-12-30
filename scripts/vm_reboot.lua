@@ -16,7 +16,8 @@ local token = os.getenv("TOKEN")
 local arg = ngx.req.get_uri_args()
 local namespace = arg["namespace"]
 local vm_name = arg["vm_name"]
-local url = k8s_url .. "/apis/kubevirt.io/v1/namespaces/" .. namespace .. "/virtualmachines/" .. vm_name .. "/restart"
+local url = k8s_url .. "/apis/subresources.kubevirt.io/v1/namespaces/" .. namespace .. "/virtualmachines/" .. vm_name .. "/restart"
+                       
 local decoded = nil
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
@@ -30,10 +31,10 @@ local httpc = http.new()
 
 -- Esegui la richiesta
 local res, err = httpc:request_uri(url, {
-    method = "GET",
+    method = "PUT",
     ssl_verify = false, -- TODO: use a valid certificate
     headers = {
-        ["Accept"] = "application/json",
+        ["Accept"] = "*/*",
         ["Content-Type"] = "application/json",
         ["Authorization"] = "Bearer " .. token
     }

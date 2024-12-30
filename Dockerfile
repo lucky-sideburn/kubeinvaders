@@ -51,6 +51,7 @@ COPY scripts/metrics.lua /usr/local/openresty/nginx/conf/kubeinvaders/metrics.lu
 COPY scripts/pod.lua /usr/local/openresty/nginx/conf/kubeinvaders/pod.lua
 COPY scripts/ingress.lua /usr/local/openresty/nginx/conf/kubeinvaders/ingress.lua
 COPY scripts/vm.lua /usr/local/openresty/nginx/conf/kubeinvaders/vm.lua
+COPY scripts/vm_reboot.lua /usr/local/openresty/nginx/conf/kubeinvaders/vm_reboot.lua
 COPY scripts/node.lua /usr/local/openresty/nginx/conf/kubeinvaders/node.lua
 COPY scripts/kube-linter.lua /usr/local/openresty/nginx/conf/kubeinvaders/kube-linter.lua
 COPY scripts/chaos-node.lua /usr/local/openresty/nginx/conf/kubeinvaders/chaos-node.lua

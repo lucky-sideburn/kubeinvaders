@@ -49,6 +49,10 @@ function startGameMode() {
   chaos_program_screen.style.display = "none";
   programming_mode_buttons.style.display = "none";
   resizeCharts();
+  let canvasElement = document.getElementById("myCanvas");
+  if (canvasElement) {
+      canvasElement.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 }
 
 function startProgrammingMode() {

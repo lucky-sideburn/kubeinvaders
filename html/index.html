@@ -650,6 +650,50 @@ k8s_jobs:
                 <label for="httpElapsedChart">HTTP Elapsed (seconds)</label>
                 <div id="httpElapsedChart" style="width: 100%; height: 50%; margin-top: 0.5%;"></div>
               </div>
+              
+              <div class="row">
+                <!-- Pods Section -->
+                <div class="col-md-6">
+                    <h4>Pods status</h4>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_ready.png" alt="Pod Ready" class="me-3" style="width: 20px; height: 20px;">
+                            ready
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_pending.png" alt="Pod Pending" class="me-3" style="width: 20px; height: 20px;">
+                            pending
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_killed.png" alt="Pod Killed" class="me-3" style="width: 20px; height: 20px;">
+                            killed
+                        </li>
+                    </ul>
+                </div>
+                <!-- Virtual Machines Section -->
+                <div class="col-md-6">
+                    <h5>Virtual Machines Status</h5>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_vm_running.png" alt="VM Running" class="me-3" style="width: 20px; height: 20px;">
+                            running
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_vm_starting.png" alt="VM Starting" class="me-3" style="width: 20px; height: 20px;">
+                            restarting
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_vm_stopped.png" alt="VM Stopped" class="me-3" style="width: 20px; height: 20px;">
+                            stopped
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="./images/sprite_invader_vm_failed.png" alt="VM Failed" class="me-3" style="width: 20px; height: 20px;">
+                            failed
+                        </li>
+                    </ul>
+                </div>
+              </div>
+
               <div class="row" style="margin-top: 2%; text-align: center; margin: auto; margin-top: 1%;">
                 <div id="alert_placeholder" style="margin-top: 3%;"></div>
               </div>
@@ -697,7 +741,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: 2024-12-29 17:50:52</p>
+                <p class="text-muted credit" style="color:#fff;">version: 2024-12-30 08:58:24</p>
               </div>
             </div>
           </div>

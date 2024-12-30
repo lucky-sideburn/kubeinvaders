@@ -342,7 +342,7 @@ function rebootVirtualMachine(vm_name) {
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Prepareing reboot virtual machine ' + vm_name + '</div>');
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Reboot virtual machine ' + vm_name + '</div>');
-    oReq.open("GET", k8s_url + "/kube/chaos/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
+    oReq.open("GET", k8s_url + "/kube/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -742,8 +742,9 @@ window.setInterval(function draw() {
         ctx.fillText('h => Activate or deactivate help', 10, 280);
         ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 300);
         ctx.fillText('n => Change namespace', 10, 320);
-        ctx.fillText('p => Activate or deactivate chaos engineering against pods', 10, 340);
-        ctx.fillText('c => Activate or deactivate chaos engineering against nodes', 10, 360);
+        ctx.fillText('p => Activate or deactivate chaos engineering on pods', 10, 340);
+        ctx.fillText('c => Activate or deactivate chaos engineering on nodes', 10, 360);
+        ctx.fillText('v => Activate or deactivate chaos engineering on virtual machines (kubevirt)', 10, 380);
     }
 }, 10)
 

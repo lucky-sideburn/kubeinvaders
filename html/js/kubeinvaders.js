@@ -739,12 +739,12 @@ window.setInterval(function draw() {
     ctx.fillText('press \'h\' for help!', 10, startYforHelp + 80);
 
     if (help) {
-        ctx.fillText('h => Activate or deactivate help', 10, 280);
-        ctx.fillText('s => Activate or deactivate shuffle for aliens', 10, 300);
-        ctx.fillText('n => Change namespace', 10, 320);
-        ctx.fillText('p => Activate or deactivate chaos engineering on pods', 10, 340);
-        ctx.fillText('c => Activate or deactivate chaos engineering on nodes', 10, 360);
-        ctx.fillText('v => Activate or deactivate chaos engineering on virtual machines (kubevirt)', 10, 380);
+        ctx.fillText('h => Enable or disable help', 10, 280);
+        ctx.fillText('s => Enable or disable shuffle for aliens', 10, 300);
+        ctx.fillText('n => Change the namespace', 10, 320);
+        ctx.fillText('p => Display pods', 10, 340);
+        ctx.fillText('c => Display nodes', 10, 360);
+        ctx.fillText('v => Display virtual machines (KubeVirt)', 10, 380);
     }
 }, 10)
 

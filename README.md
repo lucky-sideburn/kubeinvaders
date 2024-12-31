@@ -146,12 +146,12 @@ kubectl create namespace namespace2
 Run the container:
 
 ```bash
-podman run -p 3131:8080 \
---env K8S_TOKEN=$TOKEN \
---env APPLICATION_URL=localhost:3131 \
+podman run -p 8080:8080 \
+--env K8S_TOKEN=**** \
+--env APPLICATION_URL=http://localhost:8080 \
 --env DISABLE_TLS=true \
---env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
---env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
+--env KUBERNETES_SERVICE_HOST=10.10.10.4 \
+--env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
 --env NAMESPACE=namespace1,namespace2 \
 luckysideburn/kubeinvaders:latest
 ```
@@ -200,14 +200,14 @@ TCP port of the target control plane.
 List the namespaces you want to stress or on which you want to see logs (logs are a beta feature, they might not work or could slow down the browser...).
 
 ```bash
-docker run -p 8080:8080 \
---env K8S_TOKEN=<k8s_service_account_token>  \
+podman run -p 8080:8080 \
+--env K8S_TOKEN=*** \
 --env APPLICATION_URL=http://localhost:8080 \
 --env DISABLE_TLS=true \
---env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
---env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
---env NAMESPACE=<comma_separated_namespaces_to_stress> \
-luckysideburn/kubeinvaders:develop
+--env KUBERNETES_SERVICE_HOST=10.10.10.4 \
+--env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
+--env NAMESPACE=namespace1,namespace2 \
+luckysideburn/kubeinvaders:latest
 ```
 
 ### Install to Kubernetes with Helm (v3+)

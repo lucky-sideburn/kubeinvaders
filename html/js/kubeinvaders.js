@@ -742,9 +742,9 @@ window.setInterval(function draw() {
         ctx.fillText('h => Enable or disable help', 10, 280);
         ctx.fillText('s => Enable or disable shuffle for aliens', 10, 300);
         ctx.fillText('n => Change the namespace', 10, 320);
-        ctx.fillText('p => Display pods', 10, 340);
-        ctx.fillText('c => Display nodes', 10, 360);
-        ctx.fillText('v => Display virtual machines (KubeVirt)', 10, 380);
+        ctx.fillText('p => Display pods switch', 10, 340);
+        ctx.fillText('c => Display nodes switch', 10, 360);
+        ctx.fillText('v => Display virtual machines (KubeVirt) switch', 10, 380);
     }
 }, 10)
 

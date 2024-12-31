@@ -107,7 +107,7 @@ metadata:
     kubernetes.io/service-account.name: kinv-sa
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
   namespace: default
   name: kubevirt-vm-restart-role
@@ -117,7 +117,7 @@ rules:
   verbs: ["update"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
   name: kubevirt-vm-restart-binding
   namespace: default
@@ -126,7 +126,7 @@ subjects:
   name: kubeinvaders
   namespace: kubeinvaders
 roleRef:
-  kind: Role
+  kind: ClusterRole
   name: kubevirt-vm-restart-role
   apiGroup: rbac.authorization.k8s.io
 EOF

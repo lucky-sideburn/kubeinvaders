@@ -148,8 +148,8 @@ Run the container:
 ```bash
 podman run -p 3131:8080 \
 --env K8S_TOKEN=$TOKEN \
---env ENDPOINT=localhost:3131 \
---env INSECURE_ENDPOINT=true \
+--env APPLICATION_URL=localhost:3131 \
+--env DISABLE_TLS=true \
 --env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
 --env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
 --env NAMESPACE=namespace1,namespace2 \
@@ -159,7 +159,7 @@ luckysideburn/kubeinvaders:latest
 Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
 
 - Please pay attention to the command "podman run -p 3131:8080". Forwarding port 8080 is important.
-- We suggest using `INSECURE_ENDPOINT=true` for local development environments.
+- We suggest using `DISABLE_TLS=true` for local development environments.
 - Follow the instructions above to create the token for `K8S_TOKEN`.
 - In the example, we use image tag `latest`, use `latest_debug` for debugging.
 
@@ -179,13 +179,13 @@ These are the permissions your service account must have. You can take an exampl
   resources: ["*"]
   verbs: ["get", "watch", "list"]
 
-##### ENDPOINT
+##### APPLICATION_URL
 
-Host and port of the web console.
+URL of the web console
 
-##### INSECURE_ENDPOINT
+##### DISABLE_TLS
 
-Select HTTP or HTTPS for the web console.
+Disable HTTPS for the web console
 
 ##### KUBERNETES_SERVICE_HOST
 
@@ -202,8 +202,8 @@ List the namespaces you want to stress or on which you want to see logs (logs ar
 ```bash
 docker run -p 8080:8080 \
 --env K8S_TOKEN=<k8s_service_account_token>  \
---env ENDPOINT=localhost:8080 \
---env INSECURE_ENDPOINT=true \
+--env APPLICATION_URL=http://localhost:8080 \
+--env DISABLE_TLS=true \
 --env KUBERNETES_SERVICE_HOST=<k8s_controlplane_host> \
 --env KUBERNETES_SERVICE_PORT_HTTPS=<k8s_controlplane_port> \
 --env NAMESPACE=<comma_separated_namespaces_to_stress> \
@@ -289,7 +289,7 @@ helm install kubeinvaders --set-string config.target_namespace="namespace1\,name
 ```bash
 helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest --set service.type=LoadBalancer --set service.port=80
 
-kubectl set env deployment/kubeinvaders INSECURE_ENDPOINT=true -n kubeinvaders
+kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
 ```
 
 ### SCC for Openshift

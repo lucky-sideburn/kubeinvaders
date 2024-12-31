@@ -20,7 +20,7 @@ RUN chmod 777 /usr/local/openresty/nginx
 RUN apt-get -y install luarocks lua-json lua-socket libyaml-dev
 RUN apt-get update --fix-missing
 
-RUN for pkg in luasec lunajson lua-resty-http lyaml; do luarocks install $pkg; done
+RUN for pkg in luasec lunajson lua-resty-http lyaml lua-resty-openssl; do luarocks install $pkg; done
 
 # Install kube-linter
 RUN curl -L -O https://github.com/stackrox/kube-linter/releases/download/0.6.0/kube-linter-linux.tar.gz

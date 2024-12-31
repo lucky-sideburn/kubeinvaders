@@ -16,6 +16,10 @@
 
 /* KubeInvaders Global Variables */
 
+function checkURLProtocol(url) {
+    return url.startsWith("http://") || url.startsWith("https://");
+}
+
 function getCodeName() {
     const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
     const suffixes = ['nova', 'tron', 'wave', 'core', 'pulse', 'jump', 'drive', 'ship', 'gate', 'hole'];
@@ -39,8 +43,8 @@ var spaceshipHeight = 60;
 var spaceshipWidth = 60;
 var spaceshipX = (canvas.width-spaceshipWidth)/2;
 var spaceshipY = (canvas.height-spaceshipHeight)/2;
-var clu_endpoint = "endpoint_placeholder";
-var clu_insecure = insecure_endpoint_placeholder;
+var clu_endpoint = "application_url_placeholder";
+var clu_insecure = disable_tls_placeholder;
 var demo_mode = demo_mode_placeholder;
 var k8s_url = "";
 var chaos_report_post_data = "";
@@ -50,12 +54,16 @@ var selected_env_vars = "selected_env_vars_placeholder";
 var maxAliensPerRow = 20;
 var startYforHelp = 700;
 
-if (clu_insecure) {
+if (clu_insecure && !checkURLProtocol(clu_endpoint)) {
     k8s_url = "http://" + clu_endpoint;
 }
-else {
+else if (!clu_insecure && !checkURLProtocol(clu_endpoint)) {
     k8s_url = "https://" + clu_endpoint;
 }
+else {
+    k8s_url = clu_endpoint;
+}
+
 console.log("[K-INV STARTUP] k8s_url is " + k8s_url);
 console.log("[K-INV STARTUP] platformengineering.it demo_mode is " + String(demo_mode));
 

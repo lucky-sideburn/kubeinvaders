@@ -38,10 +38,10 @@ spec:
       containers:
         - env:
           {{- if .Values.ingress.enabled }}
-          - name: ENDPOINT
+          - name: APPLICATION_URL
             value: {{ required ".Values.ingress.hostName is required if Ingress is enabled" .Values.ingress.hostName }}
           {{- else }}
-          - name: ENDPOINT
+          - name: APPLICATION_URL
             value: {{ required ".Values.route_host is required if Ingress is disabled" .Values.route_host }}
           {{- end }}
           - name: NAMESPACE

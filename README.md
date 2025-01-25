@@ -2,16 +2,15 @@
 
 **Gamified Chaos Engineering and Educational Tool for Kubernetes**
 
-As recommended by the CNCF (https://github.com/cncf/sandbox/issues/124), this project has a strong following and significant educational value. Therefore, in addition to being a chaos engineering tool, it is recommended for studying Kubernetes and resilience topics.
+This project, recommended by the CNCF (https://github.com/cncf/sandbox/issues/124), has a strong following and significant educational value. It's a chaos engineering tool, but it's also recommended for studying Kubernetes and resilience topics.
 
-This project is part of landscape of [Cloud Native Computing Foudation](https://landscape.cncf.io/) in the Observability and Analysis - Chaos Engineering section.
+It is part of the Cloud Native Computing Foundation's (CNCF) landscape in the Observability and Analysis - Chaos Engineering section (https://landscape.cncf.io/).
 
-- Launch the demo at this link [https://kubeinvaders.platformengineering.it](https://kubeinvaders.platformengineering.it/)
-- Monitor the pod status here [https://kubeopsview.platformengineering.it](https://kubeopsview.platformengineering.it)
+Launch the demo at this link: https://kubeinvaders.platformengineering.it/
 
-Backed by the teams at [platformengineering.it](https://platformengineering.it) and [devopstribe.it](https://devopstribe.it), which provides enterprise-grade features and certified resilience services for your Kubernetes infrastructure.
+The teams at Platform Engineering (https://platformengineering.it/) and DevOps Tribe (https://devopstribe.it/) back this project. They provide enterprise-grade features and SRE experts to help customers verify the resilience of their Kubernetes infrastructure.
 
-[Here are the slides](https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I could not be present at my talk, but I would still like to share them with the community.
+Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I couldn't be present at my talk, but I still wanted to share them with the community."
 
 # Table of Contents
 
@@ -33,7 +32,7 @@ Backed by the teams at [platformengineering.it](https://platformengineering.it) 
 
 ## Description
 
-With **k-inv**, you can stress a K8s cluster in a fun way and check how resilient it is.
+Inspired by the classic Space Invaders game, Kubeinvaders offers a playful and engaging way to learn about Kubernetes resilience by stressing a cluster and observing its behavior under pressure. This open-source project, built without relying on any external frameworks, provides a fun and educational experience for developers to explore the limits and strengths of their Kubernetes deployments
 
 ## Installation-default
 
@@ -162,6 +161,7 @@ spec:
         - containerPort: 81
 EOF
 ```
+
 Apply Nginx Deployment in namespace1 and namespace2
 ```bash
 sudo kubectl apply -f deployment.yaml -n namespace1
@@ -170,28 +170,16 @@ sudo kubectl apply -f deployment.yaml -n namespace2
 
 ## Installation-nodeport
 
-Let's say we have a Layer4 or Layer7 Load Balancer that redirect traffic directly to the KubeInvaders Service Node Port.
+Let's say we have a Layer 4 or Layer 7 Load Balancer that redirects traffic directly to the KubeInvaders Service Node Port.
 
-For example this HaProxy configuration and we don't want use TLS (no secure just for experiment)
+For example, consider this HaProxy configuration. We don't want to use TLS in this scenario (just for experimentation).
 
-Please remember to disable TLS: **kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders**
+Remember to disable TLS: **kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders**
 (TODO: put this into values of the Helm)
 
+**HaProxy Configuration**
 ```bash
 global
-    # to have these messages end up in /var/log/haproxy.log you will
-    # need to:
-    #
-    # 1) configure syslog to accept network log events.  This is done
-    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
-    #    /etc/sysconfig/syslog
-    #
-    # 2) configure local2 events to go to the /var/log/haproxy.log
-    #   file. A line like the following can be added to
-    #   /etc/sysconfig/syslog
-    #
-    #    local2.*                       /var/log/haproxy.log
-    #
     log         127.0.0.1 local2
 
     chroot      /var/lib/haproxy
@@ -233,7 +221,8 @@ frontend mylb
 backend mynodeport
     balance roundrobin
 ```
-Follow these steps:
+
+**Installation steps using NodePort**
 
 ```bash
 

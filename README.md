@@ -1,6 +1,6 @@
 # kubeinvaders :space_invader: aka k-inv :joystick:
 
-**Gamified Chaos Engineering and Education Tool for K8s**
+**Gamified Chaos Engineering and Educational Tool for Kubernetes**
 
 As recommended by the CNCF (https://github.com/cncf/sandbox/issues/124), this project has a strong following and significant educational value. Therefore, in addition to being a chaos engineering tool, it is recommended for studying Kubernetes and resilience topics.
 

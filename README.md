@@ -14,7 +14,9 @@ Backed by the teams at [platformengineering.it](https://platformengineering.it) 
 # Table of Contents
 
 1. [Description](#Description)
-2. [Installation](#Installation)
+2. [Installation - Helm with ClusterIP Service + Nginx Ingress](#Installation-default)
+2. [Installation - Helm with NodePort Service](#Installation-nodeport)
+2. [Installation - Using Podman or Docker](#Installation-podman)
 3. [Usage](#Usage)
 4. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
 5. [Persistence](#Persistence)
@@ -31,7 +33,224 @@ Backed by the teams at [platformengineering.it](https://platformengineering.it) 
 
 With **k-inv**, you can stress a K8s cluster in a fun way and check how resilient it is.
 
-## Installation
+## Installation-default
+
+If you need a lab kubernetes cluster you can use this setup via Make and Minikube. Follow [this readme](./minikube-setup/README.md)
+
+[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
+
+```bash
+# Please be sure to use kubeinvaders-1.9.8 that is ne latest helm chart version!
+
+helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
+helm repo update
+
+kubectl create namespace kubeinvaders
+
+# With ingress and TLS enabled
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
+
+# With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
+helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
+
+```
+
+### Example for K3S
+
+```bash
+curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
+
+cat >/tmp/ingress-nginx.yaml <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: ingress-nginx
+---
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: ingress-nginx
+  namespace: kube-system
+spec:
+  chart: ingress-nginx
+  repo: https://kubernetes.github.io/ingress-nginx
+  targetNamespace: ingress-nginx
+  version: v4.9.0
+  set:
+  valuesContent: |-
+    fullnameOverride: ingress-nginx
+    controller:
+      kind: DaemonSet
+      hostNetwork: true
+      hostPort:
+        enabled: true
+      service:
+        enabled: false
+      publishService:
+        enabled: false
+      metrics:
+        enabled: false
+        serviceMonitor:
+          enabled: false
+      config:
+        use-forwarded-headers: "true"
+EOF
+
+kubectl create -f /tmp/ingress-nginx.yaml
+
+kubectl create ns namespace1
+kubectl create ns namespace2
+
+export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
+-n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
+```
+
+### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
+
+```bash
+helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest --set service.type=LoadBalancer --set service.port=80
+
+kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
+```
+
+### SCC for Openshift
+
+```bash
+oc adm policy add-scc-to-user anyuid -z kubeinvaders
+```
+
+### Route for Openshift
+
+```bash
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: kubeinvaders
+  namespace: "kubeinvaders"
+spec:
+  host: "kubeinvaders.io"
+  to:
+    name: kubeinvaders
+  tls:
+    termination: Edge
+```
+## Add simple nginx Deployment for Pods to shot at
+```bash
+cat >deployment.yaml <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 20 # tells deployment to run 20 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.24.0
+        ports:
+        - containerPort: 81
+EOF
+```
+Apply Nginx Deployment in namespace1 and namespace2
+```bash
+sudo kubectl apply -f deployment.yaml -n namespace1
+sudo kubectl apply -f deployment.yaml -n namespace2
+```
+
+## Installation-nodeport
+
+Let's say we have a Layer4 or Layer7 Load Balancer that redirect traffic directly to the KubeInvaders Service Node Port.
+
+For example this HaProxy configuration and we don't want use TLS (no secure just for experiment)
+
+Please remember to disable TLS: **kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders**
+(TODO: put this into values of the Helm)
+
+```bash
+global
+    # to have these messages end up in /var/log/haproxy.log you will
+    # need to:
+    #
+    # 1) configure syslog to accept network log events.  This is done
+    #    by adding the '-r' option to the SYSLOGD_OPTIONS in
+    #    /etc/sysconfig/syslog
+    #
+    # 2) configure local2 events to go to the /var/log/haproxy.log
+    #   file. A line like the following can be added to
+    #   /etc/sysconfig/syslog
+    #
+    #    local2.*                       /var/log/haproxy.log
+    #
+    log         127.0.0.1 local2
+
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    maxconn     4000
+    user        haproxy
+    group       haproxy
+    daemon
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+    # utilize system-wide crypto-policies
+    ssl-default-bind-ciphers PROFILE=SYSTEM
+    ssl-default-server-ciphers PROFILE=SYSTEM
+
+defaults
+    mode                    tcp
+    log                     global
+    option                  httplog
+    option                  dontlognull
+    option http-server-close
+    option forwardfor       except 127.0.0.0/8
+    option                  redispatch
+    retries                 3
+    timeout http-request    10s
+    timeout queue           1m
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    timeout http-keep-alive 10s
+    timeout check           10s
+    maxconn                 3000
+
+frontend mylb
+    bind *:80
+    default_backend mynodeport
+
+backend mynodeport
+    balance roundrobin
+```
+Follow these steps:
+
+```bash
+
+helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/ && helm repo list
+VERSION=latest
+
+helm install kubeinvaders kubeinvaders/kubeinvaders \
+  --version=$VERSION \
+  --namespace kubeinvaders \
+  --create-namespace \
+  --set service.type=NodePort \
+  --set service.nodePort=30016 \
+  --set ingress.enabled=false \
+  --set config.target_namespace="default\,namespace1" \
+  --set route_host=foobar.local
+
+kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
+```
+## Installation-podman
 
 ### Run through Docker or Podman
 
@@ -210,138 +429,6 @@ podman run -p 8080:8080 \
 luckysideburn/kubeinvaders:latest
 ```
 
-### Install to Kubernetes with Helm (v3+)
-
-If you need a lab kubernetes cluster you can use this setup via Make and Minikube. Follow [this readme](./minikube-setup/README.md)
-
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
-
-```bash
-# Please be sure to use kubeinvaders-1.9.8 that is ne latest helm chart version!
-
-helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
-helm repo update
-
-kubectl create namespace kubeinvaders
-
-# With ingress and TLS enabled
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
-
-# With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
-
-```
-
-### Example for K3S
-
-```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
-
-cat >/tmp/ingress-nginx.yaml <<EOF
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress-nginx
----
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: ingress-nginx
-  namespace: kube-system
-spec:
-  chart: ingress-nginx
-  repo: https://kubernetes.github.io/ingress-nginx
-  targetNamespace: ingress-nginx
-  version: v4.9.0
-  set:
-  valuesContent: |-
-    fullnameOverride: ingress-nginx
-    controller:
-      kind: DaemonSet
-      hostNetwork: true
-      hostPort:
-        enabled: true
-      service:
-        enabled: false
-      publishService:
-        enabled: false
-      metrics:
-        enabled: false
-        serviceMonitor:
-          enabled: false
-      config:
-        use-forwarded-headers: "true"
-EOF
-
-kubectl create -f /tmp/ingress-nginx.yaml
-
-kubectl create ns namespace1
-kubectl create ns namespace2
-
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-
-helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
-```
-
-### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
-
-```bash
-helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest --set service.type=LoadBalancer --set service.port=80
-
-kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
-```
-
-### SCC for Openshift
-
-```bash
-oc adm policy add-scc-to-user anyuid -z kubeinvaders
-```
-
-### Route for Openshift
-
-```bash
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: kubeinvaders
-  namespace: "kubeinvaders"
-spec:
-  host: "kubeinvaders.io"
-  to:
-    name: kubeinvaders
-  tls:
-    termination: Edge
-```
-## Add simple nginx Deployment for Pods to shot at
-```bash
-cat >deployment.yaml <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 20 # tells deployment to run 20 pods matching the template
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.24.0
-        ports:
-        - containerPort: 81
-EOF
-```
-Apply Nginx Deployment in namespace1 and namespace2
-```bash
-sudo kubectl apply -f deployment.yaml -n namespace1
-sudo kubectl apply -f deployment.yaml -n namespace2
-```
 ## Usage
 
 At the top you will find some metrics as described below:

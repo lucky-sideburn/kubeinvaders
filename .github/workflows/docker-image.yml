@@ -16,10 +16,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Login to Quay.io
+    - name: Login to registry
       uses: docker/login-action@v2
       with:
-        registry: quay.io
+        registry: ${{ vars.REGISTRY_ADDRESS }}
         username: ${{ secrets.REGISTRY_ROBOT_USERNAME }}
         password: ${{ secrets.REGISTRY_ROBOT_PASSWORD }}
 

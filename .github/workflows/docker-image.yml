@@ -25,6 +25,9 @@ jobs:
 
     - uses: actions/checkout@v4
 
+    - name: Lint helm chart
+      run: helm lint helm-charts/kubeinvaders
+
     - name: Build the Docker image
       run: |
         docker build . --file Dockerfile --tag ${{ vars.REGISTRY_ADDRESS }}/${{ vars.REGISTRY_USERNAME }}/kubeinvaders:${{ env.IMAGE_TAG }}
@@ -36,7 +39,7 @@ jobs:
         driver: docker
         kubernetes-version: v1.26.3
         cpus: 4
-        memory: 2048m
+        memory: 4000m
 
     - name: Try the cluster!
       run: kubectl get pods -A
@@ -59,8 +62,9 @@ jobs:
           --set-string config.target_namespace="ns-1" \
           --set deployment.image.repository=${{ vars.REGISTRY_ADDRESS }}/${{ vars.REGISTRY_USERNAME }}
 
-    - name: Check if service is available
+    - name: Helm test
       run: |
         kubectl get all -n kubeinvaders
+        helm test kubeinvaders -n kubeinvaders
 
 

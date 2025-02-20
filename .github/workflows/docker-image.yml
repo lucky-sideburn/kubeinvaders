@@ -60,7 +60,8 @@ jobs:
           --set deployment.image.tag=latest \
           --set ingress.hostName=kubeinvaders.local \
           --set-string config.target_namespace="ns-1" \
-          --set deployment.image.repository=${{ vars.REGISTRY_ADDRESS }}/${{ vars.REGISTRY_USERNAME }}
+          --set deployment.image.tag=${{ env.IMAGE_TAG }} \
+          --set deployment.image.repository=${{ vars.REGISTRY_ADDRESS }}/${{ vars.REGISTRY_USERNAME }}/kubeinvaders
 
     - name: Helm test
       run: |

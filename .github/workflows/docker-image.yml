@@ -39,7 +39,7 @@ jobs:
         driver: docker
         kubernetes-version: v1.26.3
         cpus: 4
-        memory: 4000m
+        memory: 2000m
 
     - name: Try the cluster!
       run: kubectl get pods -A
@@ -52,12 +52,12 @@ jobs:
     - name: Deploy with helm
       run: |
         helm upgrade --install \
+          --atomic \
           kubeinvaders \
           -n kubeinvaders \
           --create-namespace \
           helm-charts/kubeinvaders \
           --set ingress.enabled=true \
-          --set deployment.image.tag=latest \
           --set ingress.hostName=kubeinvaders.local \
           --set-string config.target_namespace="ns-1" \
           --set deployment.image.tag=${{ env.IMAGE_TAG }} \

@@ -6,6 +6,8 @@ This project, recommended by the CNCF (https://github.com/cncf/sandbox/issues/12
 
 It is part of the Cloud Native Computing Foundation's (CNCF) landscape in the Observability and Analysis - Chaos Engineering section (https://landscape.cncf.io/).
 
+Some companies use it for marketing at tech conferences in DevOps & SRE. For example at [𝗗𝗲𝗰𝗼𝗺𝗽𝗶𝗹𝗲𝗗 𝟮𝟬𝟮𝟱](https://www.linkedin.com/posts/cloud-%26-heat-technologies-gmbh_kubeinvaders-onpremise-managedkubernetes-activity-7293538807906258946-YtKV?utm_source=share&utm_medium=member_desktop&rcm=ACoAAAkOMNYBK7j_raLIIJBfs2RBA94_sK4Yeyg)
+
 Launch the demo at this link: https://kubeinvaders.platformengineering.it/
 
 The teams at Platform Engineering (https://platformengineering.it/) and DevOps Tribe (https://devopstribe.it/) back this project. They provide enterprise-grade features and SRE experts to help customers verify the resilience of their Kubernetes infrastructure.
@@ -616,6 +618,7 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - Chaos Engineering for SQL Server | Andrew Pruski | Conf42: Chaos Engineering: [YouTube_Video](https://www.youtube.com/watch?v=HCy3sjMRvlI)
 - nicholaschangblog: [Introducing Azure Chaos Studio](https://nicholaschangblog.com/azure/introduction-to-azure-choas-studio/)
 - bugbug: [Chaos Testing: Everything You Need To Know](https://bugbug.io/blog/software-testing/chaos-testing-guide/)
+- Kinetikon: [Chaos Engineering: 5 strumenti open source](https://www.kinetikon.com/chaos-engineering-strumenti-open-source/)
 
 ## License
 

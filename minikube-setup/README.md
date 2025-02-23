@@ -19,7 +19,7 @@
 
 ```make init-cluster```
 
-If no hypervisor is specified within the Makefile, the default will be parallels. Check this [link](https://minikube.sigs.k8s.io/docs/drivers/) for a complete list of Minikube-compatible drivers
+If no hypervisor is specified within the Makefile, the default will be VirtualBox. Check this [link](https://minikube.sigs.k8s.io/docs/drivers/) for a complete list of Minikube-compatible drivers
 Within the makefile, you can specify other configurations as well:
 
 - Number of nodes

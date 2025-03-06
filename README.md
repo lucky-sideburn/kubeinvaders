@@ -2,8 +2,6 @@
 
 **Gamified Chaos Engineering and Educational Tool for Kubernetes**
 
-![Alt Text](./doc_images/1741171163503.jpg)
-
 This project, recommended by the CNCF (https://github.com/cncf/sandbox/issues/124), has a strong following and significant educational value. It's a chaos engineering tool, but it's also recommended for studying Kubernetes and resilience topics.
 
 It is part of the Cloud Native Computing Foundation's (CNCF) landscape in the Observability and Analysis - Chaos Engineering section (https://landscape.cncf.io/).

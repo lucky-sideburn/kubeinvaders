@@ -595,6 +595,7 @@ Please reach out for news, bugs, feature requests, and other issues via:
 - New features are published on YouTube too in [this channel](https://www.youtube.com/channel/UCQ5BQ8R2fDL_WkNAllYRrpQ)
 
 ## Community blogs and videos
+![Alt Text](./doc_images/1741171163503.jpg)
 
 - [The Kubernetes ecosystem is a candy store](https://opensource.googleblog.com/2024/06/the-kubernetes-ecosystem-is-candy-store.html)
 - [ AdaCon Norway Live Stream ](https://www.youtube.com/watch?v=rt_eM_KRfK4)

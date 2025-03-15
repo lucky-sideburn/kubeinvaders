@@ -10,7 +10,7 @@ Some companies use it for marketing at tech conferences in DevOps & SRE. For exa
 
 Launch the demo at this link: https://kubeinvaders.platformengineering.it/
 
-The teams at Platform Engineering (https://platformengineering.it/) and DevOps Tribe (https://devopstribe.it/) back this project. They provide enterprise-grade features and SRE experts to help customers verify the resilience of their Kubernetes infrastructure.
+The teams at Platform Engineering (https://platformengineering.it/) and GDT - Garanti Del Talento ([https://www.garantideltalento.it/](https://www.garantideltalento.it)) back this project. They provide enterprise-grade features and SRE experts to help customers verify the resilience of their Kubernetes infrastructure.
 
 Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I couldn't be present at my talk, but I still wanted to share them with the community."
 

@@ -93,40 +93,38 @@ if action == "list" then
   local i = 1
   local j = 0
   pods["items"] = {}
-  for k,v in ipairs(resp) do
-    decoded = json.decode(v)
-    if decoded["kind"] == "PodList" then
-      for k2,v2 in ipairs(decoded["items"]) do
-        if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
-          local status = "pending"
-          for _, c in ipairs(v2["status"]["conditions"]) do
-            if c["type"] == "ContainersReady" and c["status"] == "True" then
-              status = "ready"
-              break
-            end
+  decoded = json.decode(table.concat(resp))
+  if decoded["kind"] == "PodList" then
+    for k2,v2 in ipairs(decoded["items"]) do
+      if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
+        -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+        local status = "pending"
+        for _, c in ipairs(v2["status"]["conditions"]) do
+          if c["type"] == "ContainersReady" and c["status"] == "True" then
+            status = "ready"
+            break
           end
-          pods["items"][i] = { name = v2["metadata"]["name"], status = status }
-          i = i + 1
-          pods_not_found = false;
-        elseif v2["status"]["phase"] == "ContainerCreating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
-          pods["items"][i] = { name = v2["metadata"]["name"], status = "pending" }
-          i = i + 1
-          pods_not_found = false;
-        elseif v2["status"]["phase"] == "Terminating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
-          -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
-          pods["items"][i] = { name = v2["metadata"]["name"], status = "killed" }
-          i = i + 1
-          pods_not_found = false;
-        elseif v2["status"]["phase"] ~= "Running" and v2["status"]["phase"] ~= "Completed" and v2["status"]["phase"] ~= "Succeeded" then
-          j = j + 1
         end
+        pods["items"][i] = { name = v2["metadata"]["name"], status = status }
+        i = i + 1
+        pods_not_found = false;
+      elseif v2["status"]["phase"] == "ContainerCreating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
+        -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+        pods["items"][i] = { name = v2["metadata"]["name"], status = "pending" }
+        i = i + 1
+        pods_not_found = false;
+      elseif v2["status"]["phase"] == "Terminating" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
+        -- ngx.log(ngx.INFO, "found pod " .. v2["metadata"]["name"])
+        pods["items"][i] = { name = v2["metadata"]["name"], status = "killed" }
+        i = i + 1
+        pods_not_found = false;
+      elseif v2["status"]["phase"] ~= "Running" and v2["status"]["phase"] ~= "Completed" and v2["status"]["phase"] ~= "Succeeded" then
+        j = j + 1
       end
-      local red = redis:new()
-      local okredis, errredis = red:connect("unix:/tmp/redis.sock")
-      red:set("pods_not_running_on_selected_ns", j)
     end
+    local red = redis:new()
+    local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+    red:set("pods_not_running_on_selected_ns", j)
   end
 
   local red = redis:new()

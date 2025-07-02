@@ -495,7 +495,7 @@ K-inv uses Redis to save and manage data. Redis is configured with "appendonly."
 Currently, the Helm chart does not support PersistentVolumes, but this task is on the to-do list...
 
 ## Generic Troubleshooting and Known Problems
-
+- If you don't see aliens, please follow these steps: ![Alt Text](https://github.com/lucky-sideburn/kubeinvaders/issues/100#event-18433067619) 
 - It seems that KubeInvaders does not work with EKS due to problems with ServiceAccount.
 - Currently, the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported.
 - I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray.

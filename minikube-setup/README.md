@@ -11,7 +11,7 @@
 
 - Kubeinvasers 1.9.6
 - Ingress addons for Minikube
-- x1 Deployment, x1 ReplicaSet, x10 nginx pods in namesapce **ns-1**
+- x1 Deployment, x1 ReplicaSet, x10 nginx pods in namespace **ns-1**
 
 ## Walkthrough
 

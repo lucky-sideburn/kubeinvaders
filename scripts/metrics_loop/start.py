@@ -22,11 +22,22 @@ def join_string_to_array(project_list_string, separator):
 
 def do_http_request(url, method, headers, data):
     try:
-        response = requests.request(method, url, headers=headers, data=data, verify=False, allow_redirects=True, timeout=10)
-        elaped_time = response.elapsed.total_seconds()
+        # Do not inherit HTTP(S)_PROXY from the container environment;
+        # those proxies often cannot resolve in-cluster or local ingress hosts.
+        with requests.Session() as session:
+            session.trust_env = False
+            response = session.request(
+                method,
+                url,
+                headers=headers,
+                data=data,
+                verify=False,
+                allow_redirects=True,
+                timeout=10,
+            )
         return response
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error while sending HTTP request: {e}")
+        logging.error(f"Error while sending HTTP request to {url} with method {method}: {e}")
         return "Connection Error"
 
 def check_if_json_is_valid(json_data):
@@ -75,7 +86,12 @@ def create_job(job_name, pod_template):
 
 r = redis.Redis(unix_socket_path='/tmp/redis.sock')
 
-logging.basicConfig(level=os.environ.get("LOGLEVEL", "INFO"))
+logging.basicConfig(
+    level=os.environ.get("LOGLEVEL", "INFO"),
+    stream=sys.stdout,
+    format="%(asctime)s %(levelname)s %(message)s",
+    force=True,
+)
 logging.getLogger('kubernetes').setLevel(logging.ERROR)
 
 logging.debug('Starting script for KubeInvaders metrics loop')
@@ -97,19 +113,45 @@ batch_api = client.BatchV1Api()
 while True:
     #logging.info(f"[k-inv][metrics_loop] Metrics loop is active - {r.exists('chaos_report_project_list')}")
     if r.exists('chaos_report_project_list'):
-        #logging.info("[k-inv][metrics_loop] Found chaos_report_project_list Redis Key")
+        logging.info("[k-inv][metrics_loop] Found chaos_report_project_list Redis Key")
         for project in join_string_to_array(r.get('chaos_report_project_list').decode(), ','):
-            #logging.info(f"[k-inv][metrics_loop] Computing Chaos Report Project: {project}")
+            logging.info(f"[k-inv][metrics_loop] Computing Chaos Report Project: {project}")
             chaos_program_key = f"chaos_report_project_{project}"
             if r.exists(chaos_program_key):
-                #logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_project_{project} key in Redis. Starting {project} ")
+                logging.info(f"[k-inv][metrics_loop][chaos_report] Found chaos_report_project_{project} key in Redis. Starting {project} ")
 
                 if check_if_json_is_valid(r.get(chaos_program_key)):
                     chaos_report_program = json.loads(r.get(chaos_program_key))
                     now = datetime.datetime.now()
 
-                    #logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
-                    response = do_http_request(chaos_report_program['chaosReportCheckSiteURL'], chaos_report_program['chaosReportCheckSiteURLMethod'], json.loads(chaos_report_program['chaosReportCheckSiteURLHeaders']), chaos_report_program['chaosReportCheckSiteURLPayload'])
+                    logging.info(f"[k-inv][metrics_loop][chaos_report] chaos_report_program is valid JSON: {chaos_report_program}")
+                    url = str(chaos_report_program.get('chaosReportCheckSiteURL', '')).strip()
+                    method = str(chaos_report_program.get('chaosReportCheckSiteURLMethod', 'GET')).strip().upper()
+                    payload = chaos_report_program.get('chaosReportCheckSiteURLPayload', '')
+
+                    logging.info(
+                        f"[k-inv][metrics_loop][chaos_report] project={project} parsed url='{url}' method='{method}'"
+                    )
+
+                    headers = {"Content-Type": "application/json; charset=utf-8"}
+                    raw_headers = chaos_report_program.get('chaosReportCheckSiteURLHeaders', '{}')
+                    try:
+                        parsed_headers = json.loads(raw_headers) if isinstance(raw_headers, str) else raw_headers
+                        if isinstance(parsed_headers, dict):
+                            headers = parsed_headers
+                    except Exception as e:
+                        logging.warning(f"Invalid chaos report headers for project {project}: {e}")
+
+                    if method not in ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]:
+                        method = "GET"
+
+                    if not url:
+                        logging.warning(
+                            f"[k-inv][metrics_loop][chaos_report] Empty chaosReportCheckSiteURL for project={project}. Raw program: {chaos_report_program}"
+                        )
+                        response = "Connection Error"
+                    else:
+                        response = do_http_request(url, method, headers, payload)
                     check_url_counter_key = f"{chaos_report_program['chaosReportProject']}_check_url_counter"
                     check_url_status_code_key = f"{chaos_report_program['chaosReportProject']}_check_url_status_code"
                     check_url_elapsed_time_key = f"{chaos_report_program['chaosReportProject']}_check_url_elapsed_time"
@@ -124,11 +166,11 @@ while True:
                         r.set(check_url_start_time, now.strftime("%Y-%m-%d %H:%M:%S"))
 
                     if response == "Connection Error":
-                        #logging.info(f"[k-inv][metrics_loop][chaos_report] Connection Error while checking {chaos_report_program['chaosReportCheckSiteURL']}")
+                        logging.info(f"[k-inv][metrics_loop][chaos_report] Connection Error while checking {chaos_report_program['chaosReportCheckSiteURL']}")
                         r.set(check_url_status_code_key, "Connection Error")
                         r.set(check_url_elapsed_time_key, 0)
                     else:
-                        #logging.info(f"[k-inv][metrics_loop][chaos_report] Status code {response.status_code} while checking {chaos_report_program['chaosReportCheckSiteURL']}")
+                        logging.info(f"[k-inv][metrics_loop][chaos_report] Status code {response.status_code} while checking {chaos_report_program['chaosReportCheckSiteURL']}")
                         r.set(check_url_status_code_key, response.status_code)
                         r.set(check_url_elapsed_time_key, float(response.elapsed.total_seconds()))
     try:

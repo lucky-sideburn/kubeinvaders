@@ -841,7 +841,13 @@ window.setInterval(function draw() {
     ctx.fillStyle = 'white';
     ctx.font = "18px 'Ubuntu Mono'";
 
-    ctx.fillText('Cluster: ' + endpoint, 10, startYforHelp);
+    if (localStorage.getItem('k8s_api_endpoint') != "") {
+        ctx.fillText('API Endpoint: ' + localStorage.getItem('k8s_api_endpoint'), 10, startYforHelp);
+    }
+    else if (endpoint != "") {
+        ctx.fillText('Cluster: ' + endpoint, 10, startYforHelp);
+
+    }
     ctx.fillText('Current Namespace: ' + namespace, 10, startYforHelp + 20);
     ctx.fillText('Alien Shuffle: ' + shuffle, 10, startYforHelp + 40);
     ctx.fillText('Auto Namespaces Switch: ' + namespacesJumpStatus, 10, startYforHelp + 60);
@@ -1018,7 +1024,10 @@ document.addEventListener("keyup", keyUpHandler, false);
 setSystemSettings();
 
 waitForReachableK8sUrl(function () {
-    getEndpoint();
+    if (endpoint != null && endpoint != "") {
+        console.log("[K-INV] Connected to Kubernetes API at " + endpoint);
+         getEndpoint();
+    }   
     getNamespaces();
     getSavedPresets();
 });

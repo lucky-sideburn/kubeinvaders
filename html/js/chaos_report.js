@@ -247,21 +247,6 @@ function sendSavedChaosReport() {
     chaos_report_start_date = new Date();
   }
 
-  //startGameMode()
-  chaos_report_switch = true;
-  document.getElementById("httpStatsCanvasDiv").style.display = "block";
-  document.getElementById("chartDiv").style.display = "block";
-
-  drawCanvasHTTPStatusCodeStats();
-
-  chaosReportprojectName = presetBodyDict["chaosReportProject"];
-  $("#chaosReportAuthorDiv").html(presetBodyDict["chaosReportAuthor"]);
-  $("#chaosReportProjectDiv").html(presetBodyDict["chaosReportProject"]);
-  $("#chaosReportDateDiv").html(chaos_report_start_date.toLocaleString());
-  $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
-  $("#chaosReportCheckSiteURLDiv").html(presetBodyDict["chaosReportCheckSiteURL"]);
-
-
   if (headerAreLikePythonRequestHeaders(presetBodyDict["chaosReportCheckSiteURLHeaders"]) == false) {
     alert("Invalid headers. Insert them like this: \"Content-Type\": \"application/json; charset=utf-8\";\"Authorization\"");
     return;
@@ -277,6 +262,20 @@ function sendSavedChaosReport() {
     return;
   }
 
+  // Enable charts only after all validations pass.
+  chaos_report_switch = true;
+  chaosReportprojectName = presetBodyDict["chaosReportProject"];
+  document.getElementById("httpStatsCanvasDiv").style.display = "block";
+  document.getElementById("chartDiv").style.display = "block";
+
+  $("#chaosReportAuthorDiv").html(presetBodyDict["chaosReportAuthor"]);
+  $("#chaosReportProjectDiv").html(presetBodyDict["chaosReportProject"]);
+  $("#chaosReportDateDiv").html(chaos_report_start_date.toLocaleString());
+  $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
+  $("#chaosReportCheckSiteURLDiv").html(presetBodyDict["chaosReportCheckSiteURL"]);
+
+  drawCanvasHTTPStatusCodeStats();
+
   var oReq = new XMLHttpRequest();
   oReq.open("POST", k8s_url + "/chaos/report/save?project=" + $("#chaosReportProject").val(), true);
 
@@ -291,6 +290,7 @@ function sendSavedChaosReport() {
   oReq.send(JSON.stringify(presetBodyDict));
   closePrepareChaosReportModal();
   resizeCharts();
+  setTimeout(resizeCharts, 100);
   document.getElementById("myCanvas").scrollIntoView(true);
   document.getElementById("flagChaosReport").checked = true;
   $('#alert_placeholder').replaceWith(alert_div + 'RETURN TO TOP, PRESS START TO BEGIN AUTOMATIC SESSION </div>');
@@ -320,6 +320,10 @@ function saveChaosReport() {
 }
 
 function updateElapsedTimeArray(projectName) {
+  if (!projectName || projectName.trim() === "") {
+    return;
+  }
+
   $("#chaosReportSessionTimeDiv").html(diffBetweenTwoDates(chaos_report_start_date, new Date()) + " seconds");
   // console.log("[SAVE-CHAOS-REPORT-CONF] Diff Between Dates: " + toString(diffBetweenTwoDates(chaos_report_start_date, new Date())));
   // console.log("[SAVE-CHAOS-REPORT-CONF] Updating elapsed time array for project: " + projectName);
@@ -330,10 +334,12 @@ function updateElapsedTimeArray(projectName) {
 
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      // console.log("[SAVE-CHAOS-REPORT-CONF] Elapsed time array received from Redis: " + parseFloat(this.responseText));
-      chaos_report_http_elapsed_time_array.push(parseFloat(this.responseText));
-      while (chaos_report_http_elapsed_time_array.length > 40) {
-        chaos_report_http_elapsed_time_array.shift();
+      var elapsed = parseFloat(this.responseText);
+      if (!isNaN(elapsed) && isFinite(elapsed)) {
+        chaos_report_http_elapsed_time_array.push(elapsed);
+        while (chaos_report_http_elapsed_time_array.length > 40) {
+          chaos_report_http_elapsed_time_array.shift();
+        }
       }
     }
   };;
@@ -345,6 +351,10 @@ function updateElapsedTimeArray(projectName) {
 }
 
 function updateStatusCodePieChart(projectName) {
+  if (!projectName || projectName.trim() === "") {
+    return;
+  }
+
   // console.log("[SAVE-CHAOS-REPORT-CONF] Updating Status Code Pie Chart for project: " + projectName);
 
   var oReq = new XMLHttpRequest();
@@ -354,9 +364,18 @@ function updateStatusCodePieChart(projectName) {
   oReq.onreadystatechange = function () {
     if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
       var status_code = this.responseText.trim();
-      // console.log("[SAVE-CHAOS-REPORT-CONF] Status Code Pie Chart received from Redis: |" + status_code + "|");
+      if (status_code === "" || status_code === "Key not found") {
+        return;
+      }
+      if (!(status_code in chart_status_code_dict)) {
+        if (/^\d{3}$/.test(status_code)) {
+          status_code = "Other";
+        } else {
+          status_code = "Connection Error";
+        }
+      }
 
-      chart_status_code_dict[status_code] = chart_status_code_dict[status_code] + 1
+      chart_status_code_dict[status_code] = (chart_status_code_dict[status_code] || 0) + 1
 
       myHTTPStatusCodeChart.setOption({
         series: [

@@ -159,6 +159,15 @@ Extract the token:
 ```bash
 TOKEN=$(k get secret -n kubeinvaders -o go-template='{{.data.token | base64decode}}' kinv-sa-token)
 ```
+
+Important: use a valid Kubernetes token. If the token is missing, invalid, or expired, KubeInvaders cannot call the Kubernetes API and game actions will fail.
+
+The example above shows how to extract the token from `kinv-sa-token`. If you use short-lived tokens, generate a new one when needed:
+
+```bash
+kubectl create token kinv-sa -n kubeinvaders --duration=8h
+```
+
 Create two namespaces:
 
 ```bash
@@ -167,16 +176,6 @@ kubectl create namespace namespace2
 ```
 
 ## Usage
-
-At the top you will find some metrics as described below:
-
-![Alt Text](./doc_images/metrics_bar.png)
-
-**Current Replicas State Delay** is a metric that show how much time the cluster takes to come back at the desired state of pods replicas.
-
-This is a control-plane you can use to switch off & on various features.
-
-![Alt Text](./doc_images/control-plane.png)
 
 ### Start The Chaos Experiment
 

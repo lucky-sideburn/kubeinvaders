@@ -99,11 +99,11 @@ function getK8sCaCert() {
 
 function getK8sToken() {
   var tokenInput = document.getElementById('k8s_token');
-  if (!tokenInput) {
-    return '';
-  }
-
-  return tokenInput.value || '';
+  var inputVal = tokenInput ? tokenInput.value : '';
+  var storageVal = localStorage.getItem('k8s_token') || '';
+  var result = inputVal || storageVal;
+  console.log('[K8S-TOKEN] inputElement exists=' + !!tokenInput + ', inputVal.length=' + inputVal.length + ', storageVal.length=' + storageVal.length + ', result.length=' + result.length);
+  return result;
 }
 
 function getStoredK8sConnectionConfig() {
@@ -126,14 +126,13 @@ function appendK8sTargetParam(url) {
 
 function applyK8sConnectionHeaders(xhr) {
   var cfg = getStoredK8sConnectionConfig();
+  console.log('[K8S-HEADERS] target=' + (cfg.target || '<empty>') + ', token.length=' + (cfg.token ? cfg.token.length : 0) + ', caCert.length=' + (cfg.caCert ? cfg.caCert.length : 0));
 
   if (cfg.target) {
     xhr.setRequestHeader('X-K8S-Target', cfg.target);
   }
 
-  if (cfg.token) {
-    xhr.setRequestHeader('X-K8S-Token', cfg.token);
-  }
+  xhr.setRequestHeader('X-K8S-Token', cfg.token || '');
 
   if (cfg.caCert) {
     try {
@@ -282,12 +281,17 @@ function saveK8sConnectionRequest() {
       return;
     }
 
+    // Persist everything immediately so token/endpoint survive page reloads
+    // even if the healthz probe fails.
+    localStorage.setItem('k8s_api_endpoint', targetUrl);
+    localStorage.setItem('k8s_namespaces', namespacesRaw);
+    localStorage.setItem('k8s_ca_cert', caCert);
+    var tokenVal = getK8sToken();
+    localStorage.setItem('k8s_token', tokenVal);
+    configured_namespaces = parseNamespacesInput(namespacesRaw);
+
     requestBackendHealthz(targetUrl, 'Save', caCert)
       .then(function () {
-        localStorage.setItem('k8s_api_endpoint', targetUrl);
-        localStorage.setItem('k8s_namespaces', namespacesRaw);
-        localStorage.setItem('k8s_ca_cert', caCert);
-        configured_namespaces = parseNamespacesInput(namespacesRaw);
         resolve(true);
       })
       .catch(function (error) {
@@ -345,9 +349,11 @@ document.addEventListener("DOMContentLoaded", function() {
   var endpointInput = document.getElementById("k8s_api_endpoint");
   var namespacesInput = document.getElementById("k8s_namespaces");
   var caCertInput = document.getElementById("k8s_ca_cert");
+  var tokenInput = document.getElementById("k8s_token");
   var storedK8sUrl = localStorage.getItem("k8s_api_endpoint");
   var storedNamespaces = localStorage.getItem("k8s_namespaces");
   var storedCaCert = localStorage.getItem("k8s_ca_cert");
+  var storedToken = localStorage.getItem("k8s_token");
 
   if (endpointInput) {
     endpointInput.value = storedK8sUrl || '';
@@ -359,6 +365,17 @@ document.addEventListener("DOMContentLoaded", function() {
 
   if (caCertInput) {
     caCertInput.value = storedCaCert || "";
+  }
+
+  if (tokenInput && storedToken) {
+    tokenInput.value = storedToken;
+  }
+
+  // Auto-persist token whenever the user types in the field
+  if (tokenInput) {
+    tokenInput.addEventListener('input', function () {
+      localStorage.setItem('k8s_token', tokenInput.value);
+    });
   }
 
   configured_namespaces = parseNamespacesInput(storedNamespaces || "");

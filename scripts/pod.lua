@@ -4,10 +4,18 @@ local json = require 'lunajson'
 local redis = require "resty.redis"
 local incr = 0
 
+ngx.log(ngx.INFO, "[pod.lua] === Request started ===")
+
 local k8s_url = ""
 local kube_host = os.getenv("KUBERNETES_SERVICE_HOST")
 local kube_port = os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
 local endpoint = os.getenv("ENDPOINT")
+
+ngx.log(ngx.INFO, "[pod.lua] ENV KUBERNETES_SERVICE_HOST=" .. tostring(kube_host))
+ngx.log(ngx.INFO, "[pod.lua] ENV KUBERNETES_SERVICE_PORT_HTTPS=" .. tostring(kube_port))
+ngx.log(ngx.INFO, "[pod.lua] ENV ENDPOINT=" .. tostring(endpoint))
+ngx.log(ngx.INFO, "[pod.lua] ENV TOKEN present=" .. tostring(os.getenv("TOKEN") ~= nil and os.getenv("TOKEN") ~= ""))
+ngx.log(ngx.INFO, "[pod.lua] ENV DISABLE_TLS=" .. tostring(os.getenv("DISABLE_TLS")))
 
 if kube_host and kube_host ~= "" then
   local port_suffix = ""
@@ -15,28 +23,22 @@ if kube_host and kube_host ~= "" then
     port_suffix = ":" .. kube_port
   end
   k8s_url = "https://" .. kube_host .. port_suffix
+  ngx.log(ngx.INFO, "[pod.lua] k8s_url from KUBERNETES_SERVICE_HOST=" .. k8s_url)
 else
   k8s_url = endpoint or ""
+  ngx.log(ngx.INFO, "[pod.lua] k8s_url from ENDPOINT=" .. k8s_url)
 end
-
-if k8s_url == "" then
-  ngx.status = 500
-  ngx.say("Missing Kubernetes endpoint configuration. Set KUBERNETES_SERVICE_HOST or ENDPOINT.")
-  ngx.exit(ngx.OK)
-end
-
-if not string.match(k8s_url, "^https?://") then
-  k8s_url = "https://" .. k8s_url
-end
-
-k8s_url = string.gsub(k8s_url, "/+$", "")
-
 local token = tostring(os.getenv("TOKEN") or "")
 if token == "" then
-  ngx.status = 500
-  ngx.say("Missing Kubernetes API token configuration.")
-  ngx.exit(ngx.OK)
+  local f = io.open("/var/run/secrets/kubernetes.io/serviceaccount/token", "r")
+  if f then
+    token = f:read("*a") or ""
+    token = token:gsub("%s+$", "")
+    f:close()
+    ngx.log(ngx.INFO, "[pod.lua] Token loaded from SA file, length=" .. tostring(#token))
+  end
 end
+ngx.log(ngx.INFO, "[pod.lua] Initial token length=" .. tostring(#token))
 
 local disable_tls_env = string.lower(tostring(os.getenv("DISABLE_TLS") or "false"))
 local disable_tls = disable_tls_env == "true" or disable_tls_env == "1" or disable_tls_env == "yes"
@@ -47,12 +49,24 @@ local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
 local ca_cert_b64 = req_headers["x-k8s-ca-cert-b64"] or req_headers["X-K8S-CA-CERT-B64"]
 local ca_cert = nil
 
+ngx.log(ngx.INFO, "[pod.lua] Query arg target=" .. tostring(arg['target']))
+ngx.log(ngx.INFO, "[pod.lua] Header x-k8s-target=" .. tostring(req_headers["x-k8s-target"]))
+ngx.log(ngx.INFO, "[pod.lua] Resolved target=" .. tostring(target))
+ngx.log(ngx.INFO, "[pod.lua] Header x-k8s-token present=" .. tostring(header_token ~= nil and header_token ~= ""))
+ngx.log(ngx.INFO, "[pod.lua] Header x-k8s-ca-cert-b64 present=" .. tostring(ca_cert_b64 ~= nil and ca_cert_b64 ~= ""))
+ngx.log(ngx.INFO, "[pod.lua] Query arg namespace=" .. tostring(arg['namespace']))
+ngx.log(ngx.INFO, "[pod.lua] Query arg action=" .. tostring(arg['action']))
+
 if ca_cert_b64 and ca_cert_b64 ~= "" then
   ca_cert = ngx.decode_base64(ca_cert_b64)
+  ngx.log(ngx.INFO, "[pod.lua] CA cert decoded, length=" .. tostring(#ca_cert))
 end
 
 if header_token and header_token ~= "" then
   token = header_token
+  ngx.log(ngx.INFO, "[pod.lua] Token overridden from header, new length=" .. tostring(#token))
+else
+  ngx.log(ngx.INFO, "[pod.lua] No token override from header, keeping env token (length=" .. tostring(#token) .. ")")
 end
 
 local namespace = arg['namespace']
@@ -68,6 +82,38 @@ if target and target ~= "" then
     target = "https://" .. target
   end
   k8s_url = string.gsub(target, "/+$", "")
+  ngx.log(ngx.INFO, "[pod.lua] k8s_url overridden from target=" .. k8s_url)
+end
+
+ngx.log(ngx.INFO, "[pod.lua] Final k8s_url=" .. k8s_url)
+ngx.log(ngx.INFO, "[pod.lua] Final token length=" .. tostring(#token))
+ngx.log(ngx.INFO, "[pod.lua] disable_tls=" .. tostring(disable_tls))
+
+if k8s_url == "" then
+  ngx.log(ngx.ERR, "[pod.lua] FAIL: k8s_url is empty")
+  ngx.status = 500
+  ngx.say("Missing Kubernetes endpoint configuration. Set KUBERNETES_SERVICE_HOST or ENDPOINT.")
+  ngx.exit(ngx.OK)
+end
+
+if not string.match(k8s_url, "^https?://") then
+  k8s_url = "https://" .. k8s_url
+end
+
+k8s_url = string.gsub(k8s_url, "/+$", "")
+
+if token == "" then
+  ngx.log(ngx.ERR, "[pod.lua] FAIL: token is empty. ENV TOKEN set=" .. tostring(os.getenv("TOKEN") ~= nil) .. ", header_token=" .. tostring(header_token))
+  ngx.status = 500
+  ngx.say("Missing Kubernetes API token configuration.")
+  ngx.exit(ngx.OK)
+end
+
+if not namespace or namespace == "" then
+  ngx.log(ngx.ERR, "[pod.lua] FAIL: namespace is missing")
+  ngx.status = 400
+  ngx.say("Missing required query parameter: namespace")
+  ngx.exit(ngx.OK)
 end
 
 ngx.header['Access-Control-Allow-Origin'] = '*'
@@ -111,13 +157,16 @@ end
 
 if action == "list" then
   url = k8s_url.. "/api/v1/namespaces/" .. namespace  .. "/pods"
+  ngx.log(ngx.INFO, "[pod.lua] Action=list, URL=" .. url)
 
 elseif action == "delete" then
   local pod_name = arg['pod_name']
   url = k8s_url.. "/api/v1/namespaces/" .. namespace  .. "/pods/" .. pod_name
   method = "DELETE"
+  ngx.log(ngx.INFO, "[pod.lua] Action=delete, pod=" .. tostring(pod_name) .. ", URL=" .. url)
 
 else
+  ngx.log(ngx.ERR, "[pod.lua] FAIL: invalid action=" .. tostring(action))
   ngx.say("Please set the parameter 'action'")
   ngx.exit(ngx.OK)
 end
@@ -145,16 +194,30 @@ if not disable_tls and ca_cert and ca_cert ~= "" then
     ca_file:write(ca_cert)
     ca_file:close()
     request_opts.cafile = ca_file_path
+    ngx.log(ngx.INFO, "[pod.lua] Custom CA cert written to " .. ca_file_path)
+  else
+    ngx.log(ngx.ERR, "[pod.lua] Failed to write CA cert to " .. ca_file_path)
   end
 end
 
+ngx.log(ngx.INFO, "[pod.lua] Sending " .. method .. " request to " .. url .. " verify=" .. tostring(request_opts.verify) .. " cafile=" .. tostring(request_opts.cafile))
 local ok, statusCode, headers, statusText = https.request(request_opts)
+ngx.log(ngx.INFO, "[pod.lua] Response: ok=" .. tostring(ok) .. " statusCode=" .. tostring(statusCode) .. " statusText=" .. tostring(statusText))
+ngx.log(ngx.INFO, "[pod.lua] Response body length=" .. tostring(#table.concat(resp)))
 
 if action == "list" then
   local i = 1
   local j = 0
   pods["items"] = {}
-  decoded = json.decode(table.concat(resp))
+  local resp_body = table.concat(resp)
+  ngx.log(ngx.INFO, "[pod.lua] Decoding JSON response for list action, body preview=" .. string.sub(resp_body, 1, 200))
+  local decode_ok, decode_err = pcall(function() decoded = json.decode(resp_body) end)
+  if not decode_ok then
+    ngx.log(ngx.ERR, "[pod.lua] JSON decode failed: " .. tostring(decode_err))
+    ngx.say("{\"items\": []}")
+    return
+  end
+  ngx.log(ngx.INFO, "[pod.lua] Decoded kind=" .. tostring(decoded["kind"]) .. " items count=" .. tostring(decoded["items"] and #decoded["items"] or "nil"))
   if decoded["kind"] == "PodList" then
     for k2,v2 in ipairs(decoded["items"]) do
       if v2["status"]["phase"] == "Running" and v2["metadata"]["labels"]["chaos-controller"] ~= "kubeinvaders" then
@@ -222,12 +285,18 @@ if action == "list" then
   end
 
   if pods_not_found then
-    ngx.log(ngx.INFO, "No pods found into the namespace " .. namespace)
+    ngx.log(ngx.INFO, "[pod.lua] No pods found in namespace " .. namespace)
     ngx.say("{\"items\": []}")
   else
-    ngx.say(json.encode(pods))
+    local encoded = json.encode(pods)
+    ngx.log(ngx.INFO, "[pod.lua] Returning " .. tostring(i - 1) .. " pods for namespace " .. namespace)
+    ngx.say(encoded)
   end
 
 elseif action == "delete" then
-  ngx.say(table.concat(resp))
+  local delete_resp = table.concat(resp)
+  ngx.log(ngx.INFO, "[pod.lua] Delete response: " .. string.sub(delete_resp, 1, 300))
+  ngx.say(delete_resp)
 end
+
+ngx.log(ngx.INFO, "[pod.lua] === Request finished ===")

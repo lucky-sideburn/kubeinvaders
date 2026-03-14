@@ -80,8 +80,39 @@ function currentChaosContainerJsonTextAreaVal() {
     return editor_chaos_container_definition.getValue();
 }
 
+var nginxAlertThrottle = {};
+
+function alertNginxDebugOnce(key, message, throttleMs) {
+    var now = Date.now();
+    var wait = throttleMs || 5000;
+    var last = nginxAlertThrottle[key] || 0;
+
+    if (now - last < wait) {
+        return;
+    }
+
+    nginxAlertThrottle[key] = now;
+    alert(message);
+}
+
+function buildNginxDebugMessage(requestLabel, xhr) {
+    var body = (xhr.responseText || "").trim();
+    if (body.length > 500) {
+        body = body.substring(0, 500) + "...";
+    }
+
+    return "[NGINX DEBUG] " + requestLabel + "\n"
+        + "HTTP status: " + xhr.status + "\n"
+        + "Response body:\n" + (body || "<empty>");
+}
+
 function parseJsonResponseOrNull(xhr, requestLabel) {
     if (xhr.status < 200 || xhr.status >= 300) {
+        alertNginxDebugOnce(
+            requestLabel + "-status-" + xhr.status,
+            buildNginxDebugMessage(requestLabel, xhr),
+            4000
+        );
         console.warn("[K-INV] " + requestLabel + " returned status " + xhr.status);
         return null;
     }
@@ -89,6 +120,11 @@ function parseJsonResponseOrNull(xhr, requestLabel) {
     try {
         return JSON.parse(xhr.responseText);
     } catch (error) {
+        alertNginxDebugOnce(
+            requestLabel + "-non-json",
+            buildNginxDebugMessage(requestLabel, xhr),
+            4000
+        );
         console.error("[K-INV] " + requestLabel + " returned non-JSON response", error);
         return null;
     }
@@ -600,19 +636,19 @@ function drawAlien(alienX, alienY, name, status) {
     var image = new Image(); // Image constructor
     if (nodes.some((node) => node.name == name)) {
         image.src = './images/k8s_node.png';
-        ctx.font = '10px pixel';
+        ctx.font = "14px 'Ubuntu Mono'";
         ctx.drawImage(image, alienX, alienY, 30, 40);
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
     else if (virtualMachines.some((vm) => vm.name == name)) {
         image.src = `./images/sprite_invader_vm_${status}.png`;
-        ctx.font = '10px pixel';
+        ctx.font = "14px 'Ubuntu Mono'";
         ctx.drawImage(image, alienX, alienY, 40, 40);
         ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 50);
     }
     else {
         image.src = `./images/sprite_invader_${status}.png`;
-        ctx.font = '8px pixel';
+        ctx.font = "12px 'Ubuntu Mono'";
         ctx.drawImage(image, alienX, alienY, 40, 40);
         if (showPodName) {
             ctx.fillText(name.substring(0, 10) + '..', alienX, alienY + 45);
@@ -789,7 +825,7 @@ window.setInterval(function draw() {
     }
 
     ctx.fillStyle = 'white';
-    ctx.font = '16px pixel';
+    ctx.font = "18px 'Ubuntu Mono'";
 
     ctx.fillText('Cluster: ' + endpoint, 10, startYforHelp);
     ctx.fillText('Current Namespace: ' + namespace, 10, startYforHelp + 20);

@@ -14,16 +14,16 @@
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./css/style.css">
 
     <style>
-      /* Global default font: keep neutral and let component-specific fonts win */
+      /* Global retro font */
       body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Ubuntu Mono', monospace;
         font-weight: 400;
-      }
-      [style*="font-family: pixel"] {
-        font-family: "pixel", "Courier New", Courier, monospace !important;
       }
       #mainChaosMetrics > div > canvas {
         width: 100% !important;
@@ -180,10 +180,10 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-      <a id="gameModeButton" onclick="startGameMode()" style="font-family: pixel;">Game Mode</a>
-      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-family: pixel; font-weight: normal;">Programming Mode</a>
-      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-family: pixel; font-weight: normal;">Chaos Container Editor</a>
-      <a href="#" onclick="showSpecialKeys()" style="font-family: pixel; font-weight: normal;">Controls and options</a>
+      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
+      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-weight: normal;">Programming Mode</a>
+      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-weight: normal;">Chaos Container Editor</a>
+      <a href="#" onclick="showSpecialKeys()" style="font-weight: normal;">Controls and options</a>
     </div>
     
     <!-- Main content -->
@@ -209,7 +209,7 @@
 
                   Thank you for you feedback!
                 </p>
-                <textarea id="kubePingJsonTextArea" rows=10 style="width: 50%; height: 50%; font-size: small; font-weight: normal; font-family: 'Courier New', Courier, monospace;" onclick="setModalState(true);">Please leave your feedback or suggestions here on how we can improve and make this product more enterprise-ready (it will always remain 100% open-source!)</textarea>
+                <textarea id="kubePingJsonTextArea" rows=10 style="width: 50%; height: 50%; font-size: small; font-weight: normal;" onclick="setModalState(true);">Please leave your feedback or suggestions here on how we can improve and make this product more enterprise-ready (it will always remain 100% open-source!)</textarea>
                 <div class="modal-footer">
                   <button type="button" id="saveButton" class="btn btn-light" onclick="setKubePingStatusPing(1)">Ping</button>
                   <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="setKubePingStatusPing(0)">Don't ping</button>
@@ -253,7 +253,7 @@
               </div>
               <div class="modal-body">
                 <textarea id="currentChaosContainerJsonTextArea"></textarea>
-                <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                <p id="alert_placeholder2" style="color: #161616; margin-top: 3%;"></p>
                 <div class="modal-footer">
                   <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
                   <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
@@ -279,11 +279,11 @@
                     <label for="presetLangText">Programming Language</label>
                     <input type="text" id="presetLang" value="Python3" readonly="true" style="margin-bottom: 1%;">
   
-                    <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea>
+                    <textarea class="form-control" id="currentLoadTest" rows="20" style="color: #161616;"></textarea>
   
                   </div>
                   <div class="form-group">
-                    <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 3%;"></p>
+                    <p id="alert_placeholder2" style="color: #161616; margin-top: 3%;"></p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" id="saveAndApplyButton" class="btn btn-light" onclick="savePreset('apply')">Save and apply</button>
@@ -340,11 +340,11 @@
                           <div id="addSiteAreaChaosReport"></div>
                         </div>
                       </div>
-                      <!-- <textarea class="form-control" id="chaosReportTextArea" rows="20" style="color: #161616; font-family: 'Courier New', Courier, monospace;"></textarea> -->
+                      <!-- <textarea class="form-control" id="chaosReportTextArea" rows="20" style="color: #161616;"></textarea> -->
                     </div>
                   </div>
                   <div class="form-group">
-                    <p id="alert_placeholder2" style="color: #161616; font-family: 'Courier New', Courier, monospace; margin-top: 1%;"></p>
+                    <p id="alert_placeholder2" style="color: #161616; margin-top: 1%;"></p>
                   </div>
                   <div class="modal-footer">
                     <button type="button" id="savePresetButton" class="btn btn-light" onclick="saveChaosReport()">Save</button>
@@ -364,7 +364,7 @@
                 <h5 class="modal-title pixel-font" id="specialkeysModalLabel">Controls and Options</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
-              <div class="modal-body" style="font-family: pixel; font-size: small;">
+              <div class="modal-body" style="font-size: small;">
                 h => Enable or disable help<br>
                 s => Enable or disable shuffle for aliens<br>
                 n => Change the namespace<br>
@@ -412,7 +412,7 @@
                   name="k8s_ca_cert"
                   rows="6"
                   placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
-                  style="width: 100%; font-family: 'Courier New', Courier, monospace; font-weight: normal;"
+                  style="width: 100%; font-weight: normal;"
                   ></textarea>
                   <small style="display:block; margin-bottom:10px; color:#6c757d; font-weight:normal;">
                   Optional. Provide the CA certificate when using a self-signed Kubernetes API certificate.
@@ -447,7 +447,7 @@
               <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="guide-headingThree">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-family: pixel;">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#guide-collapseThree" aria-expanded="false" aria-controls="collapseThree">
                       Quick guide
                     </button>
                   </h2>
@@ -552,12 +552,12 @@
                 <div class="accordion" id="specialkeys" style="margin-top: 2%; margin-bottom: 2%;">
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="specialkeys-headingThree">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-size: small; font-family: pixel;">
+                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#specialkeys-collapseThree" aria-expanded="false" aria-controls="collapseThree" style="font-size: small;">
                         Controls and Options
                       </button>
                     </h2>
                     <div id="specialkeys-collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                      <div class="accordion-body" style="font-weight: normal; font-size: small; font-family: pixel;">
+                      <div class="accordion-body" style="font-weight: normal; font-size: small;">
                         h => Enable or disable help<br>
                         s => Enable or disable shuffle for aliens<br>
                         n => Change the namespace<br>

@@ -21,7 +21,7 @@
 } */
 
 input[type="text"] {
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 .transition {
@@ -51,7 +51,7 @@ hr {
   border-color: #fff;
   border-radius: 1px;
   font-size: 14px;
-  font-family: Courier New, Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 .alert-logs-pod {
@@ -60,7 +60,7 @@ hr {
   border-color: #fff;
   border-radius: 1px;
   font-size: 14px;
-  font-family: Courier New, Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 .alert-logs-container {
@@ -69,7 +69,7 @@ hr {
   border-color: #fff;
   border-radius: 1px;
   font-size: 14px;
-  font-family: Courier New, Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 .custom-btn-group {
@@ -132,7 +132,7 @@ hr {
 .log-row {
   color: #4fa80b;
   font-size: 14px;
-  font-family: Courier New, Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
   margin-top: 0.5%;
 }
 
@@ -147,22 +147,13 @@ hr {
   border-color: #000000;
 }
 
-@font-face {
-  font-family: "pixel";
-  src:
-    url("../fonts/pixel.ttf") format("truetype"),
-    url("../fonts/Adore64-0vVr.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-}
-
 .pixel-font {
-  font-family: "pixel", "Courier New", Courier, monospace;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 body {
   background-color: #ffffff;
+  font-family: 'Ubuntu Mono', monospace;
 }
 
 .modal-content {
@@ -177,9 +168,7 @@ body {
   background-color: #ffffff;
 }
 
-/* div {
-  font-family: pixel;
-} */
+
 
 .game-canvas {
   background: #161616;

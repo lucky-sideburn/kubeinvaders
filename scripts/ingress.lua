@@ -8,9 +8,7 @@ local k8s_url = ""
 local kube_host = os.getenv("KUBERNETES_SERVICE_HOST")
 local kube_port = os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
 local endpoint = os.getenv("ENDPOINT")
-local kube_host = os.getenv("KUBERNETES_SERVICE_HOST")
-local kube_port = os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
-local endpoint = os.getenv("ENDPOINT")
+local arg = ngx.req.get_uri_args()
 
 function convert_table_to_string(table)
   local str = ""
@@ -76,7 +74,6 @@ end
 local disable_tls_env = string.lower(tostring(os.getenv("DISABLE_TLS") or "false"))
 local disable_tls = disable_tls_env == "true" or disable_tls_env == "1" or disable_tls_env == "yes"
 
-local arg = ngx.req.get_uri_args()
 local namespace = arg["namespace"]
 if not namespace or namespace == "" then
   ngx.status = 400
@@ -125,8 +122,20 @@ if not ok then
   return
 end
 
-decoded = json.decode(table.concat(resp))
+local decode_ok, decoded_payload = pcall(json.decode, table.concat(resp))
+if not decode_ok or type(decoded_payload) ~= "table" then
+  ngx.status = 502
+  ngx.say("[]")
+  return
+end
+
+decoded = decoded_payload
 ngx.log(ngx.ERR, "Decoded: " .. json.encode(decoded))
+
+if type(decoded["items"]) ~= "table" then
+  ngx.say("[]")
+  return
+end
 
 for k2,v2 in ipairs(decoded["items"]) do
   if check_table_key_exists(v2["spec"], "tls") then

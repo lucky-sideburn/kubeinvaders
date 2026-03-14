@@ -148,9 +148,17 @@ hr {
 }
 
 @font-face {
-  font-family: pixel;
-  src: url(".././fonts/Adore64-0vVr.ttf");
-  size: 9px;
+  font-family: "pixel";
+  src:
+    url("../fonts/pixel.ttf") format("truetype"),
+    url("../fonts/Adore64-0vVr.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+.pixel-font {
+  font-family: "pixel", "Courier New", Courier, monospace;
 }
 
 body {

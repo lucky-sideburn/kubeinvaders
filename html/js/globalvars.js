@@ -20,6 +20,30 @@ function checkURLProtocol(url) {
     return url.startsWith("http://") || url.startsWith("https://");
 }
 
+function resolveFrontendBackendUrl(rawEndpoint) {
+    var browserOrigin = window.location.origin;
+    if (!rawEndpoint || rawEndpoint.indexOf("placeholder") !== -1) {
+        return browserOrigin;
+    }
+
+    var endpoint = rawEndpoint;
+    if (!checkURLProtocol(endpoint)) {
+        endpoint = (clu_insecure ? "http://" : "https://") + endpoint;
+    }
+
+    try {
+        var parsed = new URL(endpoint);
+        // Service names like "kube" are reachable in-cluster but not from the browser.
+        if (parsed.hostname === "kube") {
+            return browserOrigin;
+        }
+    } catch (error) {
+        return browserOrigin;
+    }
+
+    return endpoint.replace(/\/+$/, "");
+}
+
 function getCodeName() {
     const prefixes = ['astro', 'cosmo', 'space', 'star', 'nova', 'nebula', 'galaxy', 'super', 'hyper', 'quantum'];
     const suffixes = ['nova', 'tron', 'wave', 'core', 'pulse', 'jump', 'drive', 'ship', 'gate', 'hole'];
@@ -54,22 +78,27 @@ var selected_env_vars = "selected_env_vars_placeholder";
 var maxAliensPerRow = 20;
 var startYforHelp = 700;
 
-if (clu_insecure && !checkURLProtocol(clu_endpoint)) {
-    k8s_url = "http://" + clu_endpoint;
-}
-else if (!clu_insecure && !checkURLProtocol(clu_endpoint)) {
-    k8s_url = "https://" + clu_endpoint;
-}
-else {
-    k8s_url = clu_endpoint;
-}
+k8s_url = resolveFrontendBackendUrl(clu_endpoint);
 
 console.log("[K-INV STARTUP] k8s_url is " + k8s_url);
 console.log("[K-INV STARTUP] platformengineering.it demo_mode is " + String(demo_mode));
 
 var namespaces = [];
+var configured_namespaces = [];
 var namespaces_index = 0;
 var namespace = namespaces[namespaces_index];
+
+var stored_namespaces = localStorage.getItem("k8s_namespaces");
+if (stored_namespaces) {
+    configured_namespaces = stored_namespaces
+        .split(",")
+        .map(function (ns) {
+            return ns.trim();
+        })
+        .filter(function (ns) {
+            return ns !== "";
+        });
+}
 var endpoint = "";
 var modal_opened = false;
 var autoPilot = false;

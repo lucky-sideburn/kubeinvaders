@@ -17,10 +17,13 @@
     <link rel="stylesheet" href="./css/style.css">
 
     <style>
-      /* Adjust styling for sidebar */
-      *, button, div, canvas,a,p,h1,h2,h3,h4,h5 {
+      /* Global default font: keep neutral and let component-specific fonts win */
+      body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-weight: bold;
+        font-weight: 400;
+      }
+      [style*="font-family: pixel"] {
+        font-family: "pixel", "Courier New", Courier, monospace !important;
       }
       #mainChaosMetrics > div > canvas {
         width: 100% !important;
@@ -43,6 +46,31 @@
       #httpElapsedChart > div {
         width: 100% !important;
         height: 100% !important;
+      }
+
+      #splash-screen {
+        position: fixed;
+        inset: 0;
+        background-color: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 0.6s ease, visibility 0.6s ease;
+      }
+
+      #splash-screen.hidden {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+      }
+
+      .splash-screen-img {
+        max-width: 280px;
+        width: 60%;
+        height: auto;
       }
 
       .sidebar {
@@ -208,7 +236,7 @@
         <div class="modal" id="kubeLinterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
           <div class="modal-dialog modal-xl modal-dialog-scrollable" role="document">
               <div class="modal-body">
-                <p id="currentKubeLinterResult"></hp> 
+                <p id="currentKubeLinterResult"></p> 
               </div>
               <div class="modal-footer">
                 <button type="button" id="closeButton2" class="btn btn-light" data-dismiss="modal" onclick="closeKubeLinterModal()">Close</button>
@@ -354,6 +382,67 @@
         <div class="container" id="gameContainer">
             <!-- START FIRST ROW -->
             <div class="row custom-btn-group" style="margin-top: 2%;">
+
+              <!-- START KUBERNETES CONNECTION FORM -->
+              <div class="row" style="margin-bottom: 2%;">
+              <div class="col">
+                <div class="settings">
+                <h2>Kubernetes Connection</h2>
+                <div class="setting-group">
+                  <label for="k8s_api_endpoint">Kubernetes API Endpoint</label>
+                  <input type="text" id="k8s_api_endpoint" name="k8s_api_endpoint" placeholder="https://kubernetes.default.svc">
+                  
+                  <label for="k8s_token">Kubernetes Token</label>
+                  <input type="password" id="k8s_token" name="k8s_token" placeholder="Enter your token">
+
+                  <label for="k8s_namespaces">Kubernetes Namespaces</label>
+                  <input
+                  type="text"
+                  id="k8s_namespaces"
+                  name="k8s_namespaces"
+                  placeholder="default,kube-system"
+                  >
+                  <small style="display:block; margin-bottom:10px; color:#6c757d; font-weight:normal;">
+                  Comma-separated list of namespaces to target
+                  </small>
+
+                  <label for="k8s_ca_cert">Certification Authority (CA) Certificate</label>
+                  <textarea
+                  id="k8s_ca_cert"
+                  name="k8s_ca_cert"
+                  rows="6"
+                  placeholder="-----BEGIN CERTIFICATE-----&#10;...&#10;-----END CERTIFICATE-----"
+                  style="width: 100%; font-family: 'Courier New', Courier, monospace; font-weight: normal;"
+                  ></textarea>
+                  <small style="display:block; margin-bottom:10px; color:#6c757d; font-weight:normal;">
+                  Optional. Provide the CA certificate when using a self-signed Kubernetes API certificate.
+                  </small>
+
+                    <button onclick="testK8sConnection()">Test Connection</button>
+                    <button onclick="saveK8sConnection()">Save Connection</button>
+                    <div id="k8s-save-status" style="margin-top: 10px; display: none;">
+                      <div id="k8s-save-success" class="alert alert-success" style="display: none;">
+                      ✅ Connection settings saved successfully!
+                      </div>
+                      <div id="k8s-save-error" class="alert alert-danger" style="display: none;">
+                      ❌ Failed to save connection settings: <span id="k8s-save-error-msg"></span>
+                      </div>
+                    </div>
+
+                    <div id="k8s-connection-status" style="margin-top: 10px; display: none;">
+                      <div id="k8s-connection-success" class="alert alert-success" style="display: none;">
+                      ✅ Connection successful!
+                      </div>
+                      <div id="k8s-connection-error" class="alert alert-danger" style="display: none;">
+                      ❌ Connection failed: <span id="k8s-connection-error-msg"></span>
+                      </div>
+                    </div>
+
+                </div>
+                </div>
+              </div>
+              </div>
+              <!-- END KUBERNETES CONNECTION FORM -->
               <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->  
               <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
                 <div class="accordion-item">
@@ -725,8 +814,8 @@ k8s_jobs:
                 <div class="col text-center">
                 </div>
                 <div class="col text-center">
-                  <input type="button" id="zoomInButton" style="margin-top: 2%" class="btn btn-dark id="zoomInGameScreenInput" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
-                  <input type="button" id="zoomOutButton" style="margin-top: 2%" class="btn btn-dark" id="zoomOutGameScreenInput" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
+                  <input type="button" id="zoomInButton" style="margin-top: 2%" class="btn btn-dark" name="zoomInGameScreenInput" value="+" onclick="zoomIn()">
+                  <input type="button" id="zoomOutButton" style="margin-top: 2%" class="btn btn-dark" name="zoomOutGameScreenInput" value="-" onclick="zoomOut()">
                 </div>
                 <div class="col text-center">
                 </div>
@@ -778,6 +867,23 @@ k8s_jobs:
         <script src="./js/chaos_report.js"></script>
         <script>
           // Function to toggle sidebar
+
+          function initSplashScreen() {
+            const splash = document.getElementById('splash-screen');
+            if (!splash) {
+              return;
+            }
+
+            setTimeout(() => {
+              splash.classList.add('hidden');
+            }, 700);
+
+            setTimeout(() => {
+              splash.remove();
+            }, 1400);
+          }
+
+          window.addEventListener('load', initSplashScreen);
           
           const sidebar = document.getElementById('sidebar');
           const mainContent = document.querySelector('.main-content');

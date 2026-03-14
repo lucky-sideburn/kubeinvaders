@@ -64,12 +64,45 @@ function setSystemSettings() {
 
     sys_element = document.getElementById('sys_openresty_env_vars');
     sys_element.value = selected_env_vars;
-    
-    checkHTTP(k8s_url, 'sys_k8s_proxied_api_http_status_code')
+
+    (function waitForK8sUrl() {
+        if (k8s_url) {
+            if (k8s_url !== "" && /^https?:\/\/.+/.test(k8s_url)) {
+                checkHTTP(k8s_url, 'sys_k8s_proxied_api_http_status_code');
+            }
+            return;
+        }
+        setTimeout(waitForK8sUrl, 100);
+    })();
 }
 
 function currentChaosContainerJsonTextAreaVal() {
     return editor_chaos_container_definition.getValue();
+}
+
+function parseJsonResponseOrNull(xhr, requestLabel) {
+    if (xhr.status < 200 || xhr.status >= 300) {
+        console.warn("[K-INV] " + requestLabel + " returned status " + xhr.status);
+        return null;
+    }
+
+    try {
+        return JSON.parse(xhr.responseText);
+    } catch (error) {
+        console.error("[K-INV] " + requestLabel + " returned non-JSON response", error);
+        return null;
+    }
+}
+
+function getConfiguredK8sApiEndpoint() {
+    var endpoint = localStorage.getItem('k8s_api_endpoint') || '';
+    return endpoint.trim();
+}
+
+function openKubeApiRequest(oReq, method, path, async) {
+    var requestUrl = appendK8sTargetParam(k8s_url + path);
+    oReq.open(method, requestUrl, async !== false);
+    applyK8sConnectionHeaders(oReq);
 }
 
 function setCodeNameToTextInput(elementId) {
@@ -230,20 +263,30 @@ function runKubeLinter() {
 
     $('#currentKubeLinterResult').text('KubeLinter launched. Set this regex and start log tail: {"since": "60", "pod":".*", "namespace":"' + namespace + '", "labels":".*", "annotations":".*", "containers":".*"}');
 
-    oReq.open("GET", k8s_url + "/kube/kube-linter?logid=" + random_code +"&namespace=" + namespace);
+    openKubeApiRequest(oReq, "GET", "/kube/kube-linter?logid=" + random_code +"&namespace=" + namespace);
     oReq.send();
 }
 
 function getNamespaces() {
+    if (configured_namespaces && configured_namespaces.length > 0) {
+        namespaces = configured_namespaces;
+        namespaces_index = 0;
+        namespace = namespaces[namespaces_index];
+        console.log("[CURRENT-NAMESPACE] " + namespace);
+        $('#currentGameNamespace').text(namespace);
+        return;
+    }
+
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
         namespaces = this.responseText;
         namespaces = namespaces.split(",");
+        namespaces_index = 0;
         namespace = namespaces[namespaces_index];
         console.log("[CURRENT-NAMESPACE] " + namespace);
         $('#currentGameNamespace').text(namespace);
     };;
-    oReq.open("GET", k8s_url + "/kube/namespaces");
+    openKubeApiRequest(oReq, "GET", "/kube/namespaces");
     oReq.send();
 }
 
@@ -252,7 +295,7 @@ function getEndpoint() {
     oReq.onload = function () {
         endpoint = this.responseText;
     };;
-    oReq.open("GET", k8s_url + "/kube/endpoint");
+    openKubeApiRequest(oReq, "GET", "/kube/endpoint");
     oReq.send();
 }
 
@@ -264,13 +307,13 @@ function getCurrentChaosContainer() {
         editor_chaos_container_definition.setValue(job_parsed);
         editor_chaos_container_definition.refresh();  
     };;
-    oReq.open("GET", k8s_url + "/kube/chaos/containers?action=container_definition");
+    openKubeApiRequest(oReq, "GET", "/kube/chaos/containers?action=container_definition");
     oReq.send();
 }
 
 function enableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=enable_log_tail&id=" + random_code, true);
+    openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=enable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail started </div>');
@@ -283,7 +326,7 @@ function enableLogTail() {
 
 function disableLogTail() {
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=disable_log_tail&id=" + random_code, true);
+    openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=disable_log_tail&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'Logs tail stopped </div>');
@@ -298,7 +341,7 @@ function setLogRegex() {
     log_tail_div.style.display = "block";
     $('#alert_placeholder3').replaceWith(log_tail_alert + 'Setting regex for filtering log source (by pod name)</div>');
     var oReq = new XMLHttpRequest();
-    oReq.open("POST", k8s_url + "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
+    openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=set_log_regex&id=" + random_code, true);
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
             $('#alert_placeholder3').replaceWith(log_tail_alert + 'New regex has been configured</div>');
@@ -314,7 +357,7 @@ function setChaosContainer() {
     }
     else {
         var oReq = new XMLHttpRequest();
-        oReq.open("POST", k8s_url + "/kube/chaos/containers?action=set", true);
+        openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=set", true);
 
         oReq.onreadystatechange = function () {
             if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
@@ -332,7 +375,7 @@ function startChaosNode(node_name) {
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Launched chaos job against ' + node_name + '</div>');
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Start chaos job against ' + node_name + '</div>');
-    oReq.open("GET", k8s_url + "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
+    openKubeApiRequest(oReq, "GET", "/kube/chaos/nodes?nodename=" + node_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -342,7 +385,7 @@ function rebootVirtualMachine(vm_name) {
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Reboot virtual machine ' + vm_name + '</div>');
     };;
     $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Preparing virtual machine ' + vm_name + '</div>');
-    oReq.open("GET", k8s_url + "/kube/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
+    openKubeApiRequest(oReq, "GET", "/kube/vm_reboot?vm_name=" + vm_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -351,7 +394,7 @@ function deletePods(pod_name) {
     oReq.onload = function () {
         $('#alert_placeholder').replaceWith(alert_div + 'Latest action: Kill ' + pod_name + '</div>');
     };;
-    oReq.open("GET", k8s_url + "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
+    openKubeApiRequest(oReq, "GET", "/kube/pods?action=delete&pod_name=" + pod_name + "&namespace=" + namespace);
     oReq.send();
 }
 
@@ -368,9 +411,18 @@ function addNodeAndVMstoPods() {
 
 function getPods() {
     if (chaos_pods) {
+        if (!namespace) {
+            return;
+        }
+
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
-            let new_pods = JSON.parse(this.responseText)["items"];
+            var jsonData = parseJsonResponseOrNull(this, "GET /kube/pods?action=list");
+            if (!jsonData || !Array.isArray(jsonData.items)) {
+                return;
+            }
+
+            let new_pods = jsonData.items;
             
             // Pod might just be killed in game, but not terminated in k8s yet.
             for (i=0; i<new_pods.length; i++) {
@@ -381,7 +433,7 @@ function getPods() {
             pods = new_pods;
             addNodeAndVMstoPods();
         };;
-        oReq.open("GET", k8s_url + "/kube/pods?action=list&namespace=" + namespace);
+        openKubeApiRequest(oReq, "GET", "/kube/pods?action=list&namespace=" + encodeURIComponent(namespace));
         oReq.send();
     }
     else {
@@ -394,10 +446,14 @@ function getNodes() {
     if (chaos_nodes) {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
-            json_parsed = JSON.parse(this.responseText);
-            nodes = json_parsed["items"];
+            var jsonData = parseJsonResponseOrNull(this, "GET /kube/nodes");
+            if (!jsonData || !Array.isArray(jsonData.items)) {
+                return;
+            }
+
+            nodes = jsonData.items;
         };;
-        oReq.open("GET", k8s_url + "/kube/nodes");
+        openKubeApiRequest(oReq, "GET", "/kube/nodes");
         oReq.send();
     }
     else {
@@ -409,7 +465,11 @@ function getVMs() {
     if (chaos_vms) {
         var oReq = new XMLHttpRequest();
         oReq.onload = function () {
-            const jsonData = JSON.parse(this.responseText);
+            const jsonData = parseJsonResponseOrNull(this, "GET /kube/vm");
+            if (!jsonData || !Array.isArray(jsonData.items)) {
+                return;
+            }
+
             virtualMachines = [];
             Array.from(jsonData.items).forEach(vm => {
                 const name = vm.metadata.name; // Nome della VM
@@ -417,7 +477,7 @@ function getVMs() {
                 virtualMachines.push({ name: name, status: status });
             });
         };;
-        oReq.open("GET", k8s_url + "/kube/vm?namespace=" + namespace);
+        openKubeApiRequest(oReq, "GET", "/kube/vm?namespace=" + namespace);
         oReq.send();
     }
     else {
@@ -906,9 +966,12 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 setSystemSettings();
-getEndpoint();
-getNamespaces();
-getSavedPresets();
+
+waitForReachableK8sUrl(function () {
+    getEndpoint();
+    getNamespaces();
+    getSavedPresets();
+});
 
 document.getElementById("gameContainer").style.visibility = "hidden";
 document.getElementById("metricsPresetsRow").style.visibility = "hidden";
@@ -923,3 +986,27 @@ document.getElementById("metricsPresetsRow").style.opacity = 1;
 $('.modal').on('hidden.bs.modal', function () {
  setModalState(false);
 });
+
+function waitForReachableK8sUrl(onReady, retryMs = 500) {
+    (function poll() {
+        if (!k8s_url || !/^https?:\/\/.+/.test(k8s_url)) {
+            return setTimeout(poll, retryMs);
+        }
+
+        var oReq = new XMLHttpRequest();
+        oReq.timeout = 5000;
+        oReq.onreadystatechange = function () {
+            if (this.readyState === XMLHttpRequest.DONE) {
+                if (this.status >= 200 && this.status < 500) {
+                    onReady();
+                } else {
+                    setTimeout(poll, retryMs);
+                }
+            }
+        };
+        oReq.ontimeout = function () { setTimeout(poll, retryMs); };
+        oReq.onerror = function () { setTimeout(poll, retryMs); };
+        oReq.open('GET', k8s_url, true);
+        oReq.send();
+    })();
+}

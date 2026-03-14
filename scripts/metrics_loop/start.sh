@@ -8,10 +8,13 @@ else
   export TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
 fi
 
-python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &
+if python3 -c "import urllib.request; urllib.request.urlopen('https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}', timeout=5)" 2>/dev/null; then
+  python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &
+  while true
+  do
+    pgrep -a -f -c "^python3.*metrics_loop.*$" > /dev/null || ( python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
+    sleep 2
+  done
+fi
 
-while true
-do
-  pgrep -a -f -c "^python3.*metrics_loop.*$" > /dev/null || ( python3 /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
-  sleep 2
-done
+

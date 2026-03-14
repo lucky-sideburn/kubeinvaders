@@ -92,7 +92,9 @@ function runChaosProgram() {
   }
 
   var oReq = new XMLHttpRequest();
-  oReq.open("POST", k8s_url + "/kube/chaos/programming_mode?id=" + random_code, true);
+    var programmingModeUrl = appendK8sTargetParam(k8s_url + "/kube/chaos/programming_mode?id=" + random_code);
+    oReq.open("POST", programmingModeUrl, true);
+    applyK8sConnectionHeaders(oReq);
   oReq.onreadystatechange = function () {
       if (this.readyState === XMLHttpRequest.DONE && this.status == 200) {
         //console.log("[PROGRAMMING_MODE] Chaos program loaded... HTTP Status code: " + this.status);

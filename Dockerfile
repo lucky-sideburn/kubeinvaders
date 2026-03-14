@@ -1,4 +1,4 @@
-FROM nginx:stable
+FROM openresty/openresty:1.25.3.1-4-bookworm-fat
 
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
@@ -9,12 +9,14 @@ RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin/kubectl
 
-# Install Openresty
-RUN wget -O - https://openresty.org/package/pubkey.gpg | apt-key add -
-RUN codename=`grep -Po 'VERSION="[0-9]+ \(\K[^)]+' /etc/os-release` && echo "deb http://openresty.org/package/debian $codename openresty" | tee /etc/apt/sources.list.d/openresty.list
-RUN apt-get update -y
-RUN apt-get -y install openresty
-RUN chmod 777 /usr/local/openresty/nginx
+# # Install Openresty
+# RUN curl -fsSL https://openresty.org/package/pubkey.gpg | gpg --dearmor -o /usr/share/keyrings/openresty.gpg \
+#     && echo "deb [signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/debian $(. /etc/os-release && echo "$VERSION_CODENAME") openresty" \
+#     > /etc/apt/sources.list.d/openresty.list
+
+# RUN apt-get update -y
+# RUN apt-get -y install openresty
+# RUN chmod 777 /usr/local/openresty/nginx
 
 # Install LUA Module
 RUN apt-get -y install luarocks lua-json lua-socket libyaml-dev
@@ -43,7 +45,7 @@ RUN sed -i.bak 's/listen\(.*\)80;/listen 8081;/' /etc/nginx/conf.d/default.conf
 RUN mkdir -p /usr/local/openresty/nginx/conf/kubeinvaders/data
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 COPY nginx/KubeInvaders.conf /etc/nginx/conf.d/KubeInvaders.conf
-RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx /etc/nginx/conf.d
+RUN chmod g+rwx /var/run /etc/nginx/conf.d
 RUN chmod 777 /var/www/html
 
 # Copy LUA scripts

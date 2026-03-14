@@ -62,7 +62,9 @@ function getIngressLists() {
       parseIngressListJSON(JSON.parse(this.responseText));
     }
   };;
-  oReq.open("GET", k8s_url + "/kube/ingresses?namespace=" + namespace, true);
+  var ingressUrl = appendK8sTargetParam(k8s_url + "/kube/ingresses?namespace=" + namespace);
+  oReq.open("GET", ingressUrl, true);
+  applyK8sConnectionHeaders(oReq);
   oReq.setRequestHeader("Content-Type", "application/json");
   oReq.send();
 }

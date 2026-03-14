@@ -58,7 +58,21 @@ end
 
 k8s_url = string.gsub(k8s_url, "/+$", "")
 
-local token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"] or tostring(os.getenv("TOKEN") or "")
+local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
+local token = ""
+if header_token and header_token ~= "" then
+  token = header_token
+else
+  token = tostring(os.getenv("TOKEN") or "")
+end
+if token == "" then
+  local f = io.open("/var/run/secrets/kubernetes.io/serviceaccount/token", "r")
+  if f then
+    token = f:read("*a") or ""
+    token = token:gsub("%s+$", "")
+    f:close()
+  end
+end
 if token == "" then
   ngx.status = 500
   ngx.say("Missing Kubernetes API token configuration.")

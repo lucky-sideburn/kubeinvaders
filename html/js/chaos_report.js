@@ -18,11 +18,17 @@
 
 function setChaosReportURL(select) {
   var selectedValue = select.options[select.selectedIndex].value;
+  if (selectedValue === "No Ingress found") {
+    return;
+  }
   document.getElementById("chaosReportCheckSiteURL").value = selectedValue;
 }
 
 function addElementToSelect(selectId, elementValue) {
   var select = document.getElementById(selectId);
+  if (!select || !elementValue) {
+    return;
+  }
   var option = document.createElement("option");
   option.text = elementValue;
   option.value = elementValue;
@@ -30,17 +36,38 @@ function addElementToSelect(selectId, elementValue) {
 }
 
 function parseIngressListJSON(ingressList) {
-  var hostOfIngress = convertStringToArrayWithSeparator(ingressList, ",")
-
-  if (hostOfIngress.length > 0) {
-    document.getElementById("chaosReportCheckSiteURL").value = hostOfIngress[0];
+  var select = document.getElementById("ingressHostList");
+  if (!select) {
+    return;
   }
 
-  for (i in hostOfIngress) {
-    if (hostOfIngress[i] != "No Ingress found") {
-      addElementToSelect("ingressHostList", hostOfIngress[i]);
-    }
+  select.innerHTML = "";
+
+  var hostOfIngress = [];
+  if (Array.isArray(ingressList)) {
+    hostOfIngress = ingressList;
+  } else if (typeof ingressList === "string") {
+    hostOfIngress = convertStringToArrayWithSeparator(ingressList, ",");
   }
+
+  hostOfIngress = hostOfIngress
+    .map(function (host) {
+      return String(host || "").trim();
+    })
+    .filter(function (host) {
+      return host !== "" && host !== "No Ingress found";
+    });
+
+  if (hostOfIngress.length === 0) {
+    addElementToSelect("ingressHostList", "No Ingress found");
+    return;
+  }
+
+  for (var i = 0; i < hostOfIngress.length; i++) {
+    addElementToSelect("ingressHostList", hostOfIngress[i]);
+  }
+
+  document.getElementById("chaosReportCheckSiteURL").value = hostOfIngress[0];
 }
 
 function resizeCharts() {
@@ -56,12 +83,42 @@ function resizeCharts() {
 }
 
 function getIngressLists() {
+  if (!namespace && configured_namespaces && configured_namespaces.length > 0) {
+    namespace = configured_namespaces[0];
+  }
+
+  if (!namespace) {
+    $('#alert_placeholder').replaceWith(alert_div + 'Set at least one namespace before configuring ingress checks.</div>');
+    return;
+  }
+
   var oReq = new XMLHttpRequest();
-  oReq.onreadystatechange = function () {
-    if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-      parseIngressListJSON(JSON.parse(this.responseText));
+  oReq.onload = function () {
+    if (this.status !== 200) {
+      $('#alert_placeholder').replaceWith(alert_div + 'Ingress lookup failed with status ' + this.status + ' on namespace ' + namespace + '.</div>');
+      parseIngressListJSON([]);
+      return;
     }
-  };;
+
+    var ingressData = [];
+    try {
+      ingressData = JSON.parse(this.responseText);
+    } catch (e) {
+      ingressData = [];
+    }
+
+    parseIngressListJSON(ingressData);
+
+    if (!Array.isArray(ingressData) || ingressData.length === 0) {
+      $('#alert_placeholder').replaceWith(alert_div + 'No ingress hosts found in namespace ' + namespace + '. You can type a URL manually.</div>');
+    }
+  };
+
+  oReq.onerror = function () {
+    $('#alert_placeholder').replaceWith(alert_div + 'Ingress lookup failed due to network or CORS error. You can type a URL manually.</div>');
+    parseIngressListJSON([]);
+  };
+
   var ingressUrl = appendK8sTargetParam(k8s_url + "/kube/ingresses?namespace=" + namespace);
   oReq.open("GET", ingressUrl, true);
   applyK8sConnectionHeaders(oReq);
@@ -94,7 +151,7 @@ function chaosReportHttpEndpointAdd() {
 <div class="row">
     <div class="col col-xl-10" style="margin-top: 2%;">
         <label for="ingressHostList">Ingress Host List</label>
-        <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onclick="setModalState(true)">
+        <select id="ingressHostList" class="form-select" aria-label="Ingress Host List" onclick="setModalState(true)" onchange="setChaosReportURL(this)">
         </select>
     </div>
 </div>

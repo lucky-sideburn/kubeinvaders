@@ -161,9 +161,14 @@ function setCodeNameToTextInput(elementId) {
 function getMetrics() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
+        if (this.status !== 200) {
+            console.warn('[METRICS] /metrics returned status ' + this.status);
+            return;
+        }
         var lines = this.responseText.split('\n');
         for (var i = 0;i < lines.length;i++){
-            metric = lines[i].split(' ');
+            var metric = lines[i].split(' ');
+            if (!metric[0] || metric[0] === '') continue;
 
             if (metric[0] == "chaos_node_jobs_total") {
                 $('#chaos_jobs_total').text(metric[1]);
@@ -189,7 +194,7 @@ function getMetrics() {
                 $('#pods_match_regex').text(metric[1]);            
             }
             else if (metric[0].match(chaos_job_regex)) {
-                metrics_split = metric[0].split(":");
+                var metrics_split = metric[0].split(":");
                 chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
             }
             else if (metric[0] == "current_chaos_job_pod") {
@@ -197,7 +202,10 @@ function getMetrics() {
                 $('#current_chaos_job_pod').text(metric[1]);
             }
         }
-    };;
+    };
+    oReq.onerror = function () {
+        console.error('[METRICS] XHR error fetching /metrics');
+    };
     oReq.open("GET", k8s_url + "/metrics");
     oReq.send();
 }
@@ -205,16 +213,21 @@ function getMetrics() {
 function getChaosJobsPodsPhase() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
+        if (this.status !== 200) return;
         var lines = this.responseText.split('\n');
         for (var i = 0;i < lines.length;i++){
-            metric = lines[i].split(' ');
+            var metric = lines[i].split(' ');
+            if (!metric[0] || metric[0] === '') continue;
 
             if (metric[0].match(chaos_job_regex)) {
-                metrics_split = metric[0].split(":");
+                var metrics_split = metric[0].split(":");
                 chaos_jobs_status.set(metrics_split[1] + ":" + metrics_split[2] + ":" +  metrics_split[3], metric[1]);
             }
         }
-    };;
+    };
+    oReq.onerror = function () {
+        console.error('[METRICS] XHR error fetching /chaos_jobs_pod_phase');
+    };
     oReq.open("GET", k8s_url + "/chaos_jobs_pod_phase");
     oReq.send();
 }
@@ -461,8 +474,9 @@ function getPods() {
             let new_pods = jsonData.items;
             
             // Pod might just be killed in game, but not terminated in k8s yet.
+            // Only keep "killed" visual if K8s hasn't reported it as fully ready again.
             for (i=0; i<new_pods.length; i++) {
-                if (aliens.some((alien) => alien.name == new_pods[i].name && alien.status == "killed")) {
+                if (new_pods[i].status !== "ready" && aliens.some((alien) => alien.name == new_pods[i].name && alien.status == "killed")) {
                     new_pods[i].status = "killed";
                 }
             }

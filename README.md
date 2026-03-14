@@ -17,20 +17,15 @@ Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-
 # Table of Contents
 
 1. [Description](#Description)
-2. [Installation - Helm with ClusterIP Service + Nginx Ingress](#Installation-default)
-2. [Installation - Helm with NodePort Service](#Installation-nodeport)
-2. [Installation - Using Podman or Docker](#Installation-podman)
 3. [Usage](#Usage)
 4. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
 5. [Persistence](#Persistence)
 6. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
 7. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
 8. [Metrics](#Metrics)
-9. [Security](#Security)
-10. [Roadmap](#Roadmap)
-11. [Community](#Community)
-12. [Community blogs and videos](#Community-blogs-and-videos)
-13. [License](#License)
+9. [Community](#Community)
+10. [Community blogs and videos](#Community-blogs-and-videos)
+11. [License](#License)
 
 ## Description
 
@@ -38,212 +33,29 @@ Inspired by the classic Space Invaders game, Kubeinvaders offers a playful and e
 
 ## Installation-default
 
-If you need a lab kubernetes cluster you can use this setup via Make and Minikube. Follow [this readme](./minikube-setup/README.md)
+**Helm installation is currently not supported.**
 
-[![Artifact HUB](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/kubeinvaders)](https://artifacthub.io/packages/search?repo=kubeinvaders)
+The easiest way to run KubeInvaders is directly with Podman or Docker.
 
-```bash
-helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/
-helm repo update
-
-kubectl create namespace kubeinvaders
-
-# With ingress and TLS enabled
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders --set ingress.tls_enabled=true
-
-# With ingress enabled but TLS disabled (in case you have a reverse-proxy that does TLS termination and nginx controller in http)
-helm install --set-string config.target_namespace="namespace1\,namespace2" --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest -n kubeinvaders kubeinvaders kubeinvaders/kubeinvaders/ --set ingress.tls_enabled=false
-
-```
-
-### Example for K3S
+Run with Podman:
 
 ```bash
-curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -s -
-
-cat >/tmp/ingress-nginx.yaml <<EOF
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: ingress-nginx
----
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
-metadata:
-  name: ingress-nginx
-  namespace: kube-system
-spec:
-  chart: ingress-nginx
-  repo: https://kubernetes.github.io/ingress-nginx
-  targetNamespace: ingress-nginx
-  version: v4.9.0
-  set:
-  valuesContent: |-
-    fullnameOverride: ingress-nginx
-    controller:
-      kind: DaemonSet
-      hostNetwork: true
-      hostPort:
-        enabled: true
-      service:
-        enabled: false
-      publishService:
-        enabled: false
-      metrics:
-        enabled: false
-        serviceMonitor:
-          enabled: false
-      config:
-        use-forwarded-headers: "true"
-EOF
-
-kubectl create -f /tmp/ingress-nginx.yaml
-
-kubectl create ns namespace1
-kubectl create ns namespace2
-
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-
-helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" \
--n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.io --set deployment.image.tag=latest
+podman run -p 8080:8080 docker.io/luckysideburn/kubeinvaders:latest
 ```
 
-### Install to Kubernetes with Helm (v3+) - LoadBalancer / HTTP (tested with GKE)
+Run with Docker:
 
 ```bash
-helm install kubeinvaders --set-string config.target_namespace="namespace1\,namespace2" -n kubeinvaders kubeinvaders/kubeinvaders --set ingress.enabled=true --set ingress.hostName=kubeinvaders.local --set deployment.image.tag=latest --set service.type=LoadBalancer --set service.port=80
-
-kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
+docker run --rm -p 8080:8080 docker.io/luckysideburn/kubeinvaders:latest
 ```
 
-### SCC for Openshift
+Then open:
 
 ```bash
-oc adm policy add-scc-to-user anyuid -z kubeinvaders
+http://localhost:8080
 ```
 
-### Route for Openshift
-
-```bash
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: kubeinvaders
-  namespace: "kubeinvaders"
-spec:
-  host: "kubeinvaders.io"
-  to:
-    name: kubeinvaders
-  tls:
-    termination: Edge
-```
-## Add simple nginx Deployment for Pods to shot at
-```bash
-cat >deployment.yaml <<EOF
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
-spec:
-  selector:
-    matchLabels:
-      app: nginx
-  replicas: 20 # tells deployment to run 20 pods matching the template
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-      - name: nginx
-        image: nginx:1.24.0
-        ports:
-        - containerPort: 81
-EOF
-```
-
-Apply Nginx Deployment in namespace1 and namespace2
-```bash
-sudo kubectl apply -f deployment.yaml -n namespace1
-sudo kubectl apply -f deployment.yaml -n namespace2
-```
-
-## Installation-nodeport
-
-Let's say we have a Layer 4 or Layer 7 Load Balancer that redirects traffic directly to the KubeInvaders Service Node Port.
-
-For example, consider this HaProxy configuration. We don't want to use TLS in this scenario (just for experimentation).
-
-Remember to disable TLS: **kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders**
-(TODO: put this into values of the Helm)
-
-**HaProxy Configuration**
-```bash
-global
-    log         127.0.0.1 local2
-
-    chroot      /var/lib/haproxy
-    pidfile     /var/run/haproxy.pid
-    maxconn     4000
-    user        haproxy
-    group       haproxy
-    daemon
-
-    # turn on stats unix socket
-    stats socket /var/lib/haproxy/stats
-
-    # utilize system-wide crypto-policies
-    ssl-default-bind-ciphers PROFILE=SYSTEM
-    ssl-default-server-ciphers PROFILE=SYSTEM
-
-defaults
-    mode                    tcp
-    log                     global
-    option                  httplog
-    option                  dontlognull
-    option http-server-close
-    option forwardfor       except 127.0.0.0/8
-    option                  redispatch
-    retries                 3
-    timeout http-request    10s
-    timeout queue           1m
-    timeout connect         10s
-    timeout client          1m
-    timeout server          1m
-    timeout http-keep-alive 10s
-    timeout check           10s
-    maxconn                 3000
-
-frontend mylb
-    bind *:80
-    default_backend mynodeport
-
-backend mynodeport
-    balance roundrobin
-```
-
-**Installation steps using NodePort**
-
-```bash
-
-helm repo add kubeinvaders https://lucky-sideburn.github.io/helm-charts/ && helm repo list
-VERSION=latest
-
-helm install kubeinvaders kubeinvaders/kubeinvaders \
-  --version=$VERSION \
-  --namespace kubeinvaders \
-  --create-namespace \
-  --set service.type=NodePort \
-  --set service.nodePort=30016 \
-  --set ingress.enabled=false \
-  --set config.target_namespace="default\,namespace1" \
-  --set route_host=foobar.local
-
-kubectl set env deployment/kubeinvaders DISABLE_TLS=true -n kubeinvaders
-```
-## Installation-podman
-
-### Run through Docker or Podman
+If you want to run KubeInvaders against your own Kubernetes cluster, create the required RBAC components (assumes k8s v1.24+):
 
 Create the required components (assumes k8s v1.24+):
 
@@ -353,72 +165,6 @@ Create two namespaces:
 kubectl create namespace namespace1
 kubectl create namespace namespace2
 ```
-Run the container:
-
-```bash
-podman run -p 8080:8080 \
---env K8S_TOKEN=**** \
---env APPLICATION_URL=http://localhost:8080 \
---env DISABLE_TLS=true \
---env KUBERNETES_SERVICE_HOST=10.10.10.4 \
---env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
---env NAMESPACE=namespace1,namespace2 \
-luckysideburn/kubeinvaders:latest
-```
-
-Given this example, you can access k-inv at the following address: [http://localhost:3131](http://localhost:3131)
-
-- Please pay attention to the command "podman run -p 3131:8080". Forwarding port 8080 is important.
-- We suggest using `DISABLE_TLS=true` for local development environments.
-- Follow the instructions above to create the token for `K8S_TOKEN`.
-- In the example, we use image tag `latest`, use `latest_debug` for debugging.
-
-#### Params
-
-##### K8S_TOKEN
-
-These are the permissions your service account must have. You can take an example from [this clusterrole](https://github.com/lucky-sideburn/kubeinvaders/blob/master/helm-charts/kubeinvaders/templates/rbac-cluster.yaml).
-
-- apiGroups: [""]
-  resources: ["pods", "pods/log"]
-  verbs: ["delete"]
-- apiGroups: ["batch", "extensions"]
-  resources: ["jobs"]
-  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
-- apiGroups: ["*"]
-  resources: ["*"]
-  verbs: ["get", "watch", "list"]
-
-##### APPLICATION_URL
-
-URL of the web console
-
-##### DISABLE_TLS
-
-Disable HTTPS for the web console
-
-##### KUBERNETES_SERVICE_HOST
-
-IP address or DNS name of your control plane.
-
-##### KUBERNETES_SERVICE_PORT_HTTPS
-
-TCP port of the target control plane.
-
-#### NAMESPACE
-
-List the namespaces you want to stress or on which you want to see logs (logs are a beta feature, they might not work or could slow down the browser...).
-
-```bash
-podman run -p 8080:8080 \
---env K8S_TOKEN=*** \
---env APPLICATION_URL=http://localhost:8080 \
---env DISABLE_TLS=true \
---env KUBERNETES_SERVICE_HOST=10.10.10.4 \
---env KUBERNETES_SERVICE_PORT_HTTPS=6443 \
---env NAMESPACE=namespace1,namespace2 \
-luckysideburn/kubeinvaders:latest
-```
 
 ## Usage
 
@@ -488,7 +234,7 @@ Follow real time charts during the experiment
 
 K-inv uses Redis to save and manage data. Redis is configured with "appendonly."
 
-Currently, the Helm chart does not support PersistentVolumes, but this task is on the to-do list...
+The legacy Helm chart does not support PersistentVolumes.
 
 ## Generic Troubleshooting and Known Problems
 - If you don't see aliens, please follow these steps: ![Alt Text](https://github.com/lucky-sideburn/kubeinvaders/issues/100#event-18433067619) 
@@ -503,7 +249,7 @@ Currently, the Helm chart does not support PersistentVolumes, but this task is o
 
 ## Troubleshooting Unknown Namespace
 
-- Check if the namespaces declared with helm config.target_namespace (e.g., config.target_namespace="namespace1\,namespace2") exist and contain some pods.
+- Check if the namespaces configured in the UI (for example: namespace1,namespace2) exist and contain pods.
 - Check your browser's developer console for any failed HTTP requests (send them to luckysideburn[at]gmail[dot]com or open an issue on this repo).
 - Try using latest_debug and send logs to luckysideburn[at]gmail[dot]com or open an issue on this repo.
 
@@ -535,55 +281,6 @@ Example of metrics:
 ![Alt Text](./doc_images/grafana1.png)
 
 ![Alt Text](./doc_images/grafana2.png)
-
-## Security
-
-In order to restrict the access to the Kubeinvaders endpoint add this annotation into the ingress.
-
-```yaml
-nginx.ingress.kubernetes.io/whitelist-source-range: <your_ip>/32
-```
-
-## Roadmap
-
-Roadmap: Chaos Engineering Platform Enhancement
-Phase 1: Authentication and Authorization
-
-    Implement robust user authentication:
-        Allow for both local and external authentication (e.g., LDAP, OAuth)
-        Securely store user credentials
-    Introduce role-based access control (RBAC):
-        Define granular permissions based on user roles (e.g., admin, engineer, viewer)
-        Enforce authorization at the resource level (namespaces, experiments, etc.)
-
-Phase 2: Analytics and Reporting
-
-    Develop namespace-specific statistics:
-        Track the frequency of chaos engineering sessions per namespace
-        Visualize trends and patterns over time
-    Create comprehensive reports:
-        Generate customizable reports for management
-        Include metrics on experiment coverage, success rates, and failure rates
-    Export reporting data:
-        Allow for data export in various formats (e.g., CSV, JSON, PDF)
-
-Phase 3: API Development
-
-    Expose platform functionality via a RESTful API:
-        Enable integration with other tools and systems
-        Support CRUD operations for core entities (experiments, scenarios, etc.)
-
-Phase 4: UI Enhancements
-
-    Improve user experience:
-        Redesign the UI for better usability and aesthetics
-        Optimize performance and responsiveness
-
-Phase 5: LLM Integration for Experiment Creation
-
-    Integrate an LLM: Develop an interface that allows users to describe experiments in natural language.
-    Translate to code: Utilize the LLM to translate natural language descriptions into executable code.
-    Validate and optimize: Implement mechanisms to validate and optimize the code generated by the LLM.
 
 ## Community
 

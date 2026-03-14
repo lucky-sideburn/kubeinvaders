@@ -37,6 +37,15 @@ else
   k8s_url = endpoint or ""
 end
 
+local req_headers = ngx.req.get_headers()
+local target = arg["target"] or req_headers["x-k8s-target"] or req_headers["X-K8S-Target"]
+if target and target ~= "" then
+  if not string.match(target, "^https?://") then
+    target = "https://" .. target
+  end
+  k8s_url = string.gsub(target, "/+$", "")
+end
+
 if k8s_url == "" then
   ngx.status = 500
   ngx.say("Missing Kubernetes endpoint configuration. Set KUBERNETES_SERVICE_HOST or ENDPOINT.")
@@ -49,16 +58,24 @@ end
 
 k8s_url = string.gsub(k8s_url, "/+$", "")
 
-local req_headers = ngx.req.get_headers()
-local target = arg["target"] or req_headers["x-k8s-target"] or req_headers["X-K8S-Target"]
-if target and target ~= "" then
-  if not string.match(target, "^https?://") then
-    target = "https://" .. target
-  end
-  k8s_url = string.gsub(target, "/+$", "")
+local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
+local token = ""
+
+if header_token and header_token ~= "" then
+  token = header_token
+else
+  token = tostring(os.getenv("TOKEN") or "")
 end
 
-local token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"] or tostring(os.getenv("TOKEN") or "")
+if token == "" then
+  local f = io.open("/var/run/secrets/kubernetes.io/serviceaccount/token", "r")
+  if f then
+    token = f:read("*a") or ""
+    token = token:gsub("%s+$", "")
+    f:close()
+  end
+end
+
 if token == "" then
   ngx.status = 500
   ngx.say("Missing Kubernetes API token configuration.")

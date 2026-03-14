@@ -8,9 +8,24 @@ local k8s_url = ""
 local kube_host = os.getenv("KUBERNETES_SERVICE_HOST")
 local kube_port = os.getenv("KUBERNETES_SERVICE_PORT_HTTPS")
 local endpoint = os.getenv("ENDPOINT")
+local arg = ngx.req.get_uri_args()
 local req_headers = ngx.req.get_headers()
 local target = arg["target"] or req_headers["x-k8s-target"] or req_headers["X-K8S-Target"]
-local token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"] or tostring(os.getenv("TOKEN") or "")
+local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
+local token = ""
+if header_token and header_token ~= "" then
+  token = header_token
+else
+  token = tostring(os.getenv("TOKEN") or "")
+end
+if token == "" then
+  local f = io.open("/var/run/secrets/kubernetes.io/serviceaccount/token", "r")
+  if f then
+    token = f:read("*a") or ""
+    token = token:gsub("%s+$", "")
+    f:close()
+  end
+end
 local ca_cert_b64 = req_headers["x-k8s-ca-cert-b64"] or req_headers["X-K8S-CA-CERT-B64"]
 
 if kube_host and kube_host ~= "" then
@@ -62,7 +77,6 @@ ngx.header['Access-Control-Allow-Headers'] = 'DNT,User-Agent,X-Requested-With,If
 ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 ngx.req.read_body()
 
-local arg = ngx.req.get_uri_args()
 local body_data = ngx.req.get_body_data() 
 
 ngx.log(ngx.INFO, "[PROGRAMMING_MODE] Payload sent by client: " .. body_data)

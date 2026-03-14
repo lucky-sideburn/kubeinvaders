@@ -23,7 +23,21 @@ local disable_tls = disable_tls_env == "true" or disable_tls_env == "1" or disab
 local arg = ngx.req.get_uri_args()
 local req_headers = ngx.req.get_headers()
 local target = arg['target'] or req_headers["x-k8s-target"] or req_headers["X-K8S-Target"]
-local token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"] or tostring(os.getenv("TOKEN") or "")
+local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
+local token = ""
+if header_token and header_token ~= "" then
+  token = header_token
+else
+  token = tostring(os.getenv("TOKEN") or "")
+end
+if token == "" then
+  local f = io.open("/var/run/secrets/kubernetes.io/serviceaccount/token", "r")
+  if f then
+    token = f:read("*a") or ""
+    token = token:gsub("%s+$", "")
+    f:close()
+  end
+end
 local ca_cert_b64 = req_headers["x-k8s-ca-cert-b64"] or req_headers["X-K8S-CA-CERT-B64"]
 local ca_cert = nil
 if ca_cert_b64 and ca_cert_b64 ~= "" then

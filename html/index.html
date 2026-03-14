@@ -179,10 +179,10 @@
     </div>
 
     <div class="sidebar" id="sidebar">
-      <a id="gameModeButton" onclick="startGameMode()">Game Mode</a>
-      <a id="programmingModeButton"  onclick="startProgrammingMode()" style="font-weight: normal;">Programming Mode</a>
-      <a href="#" onclick="showSetCurrentChaosContainer()" style="font-weight: normal;">Chaos Container Editor</a>
-      <a href="#" onclick="showSpecialKeys()" style="font-weight: normal;">Controls and options</a>
+      <a id="gameModeButton" onclick="saveK8sConnection(); startGameMode()">Enable Game Mode</a>
+      <a id="programmingModeButton"  onclick="saveK8sConnection(); startProgrammingMode()" style="font-weight: normal;">Programming Mode</a>
+      <a href="#" onclick="saveK8sConnection(); showSetCurrentChaosContainer()" style="font-weight: normal;">Chaos Container Editor</a>
+      <a href="#" onclick="saveK8sConnection(); showSpecialKeys()" style="font-weight: normal;">Controls and options</a>
     </div>
     
     <!-- Main content -->
@@ -191,6 +191,11 @@
       <span style="color:white" class="toggler-icon" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
       </span>
+
+      <div class="alert alert-warning alert-dismissible fade show" role="alert" style="margin-top: 20px; margin-bottom: 10px;">
+        Before starting, configure the Kubernetes connection, click <strong>Test Connection</strong>, then <strong>Save Connection</strong>. After that, click <strong>Enable Game Mode</strong> in the sidebar.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
     
       
       <div id="main-game-div" style="display: block;">

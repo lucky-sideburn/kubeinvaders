@@ -175,7 +175,14 @@ if os.environ.get("DEV"):
     logging.debug(r.get("logs_enabled:aaaa"))
 
 configuration = client.Configuration()
-token = os.environ["TOKEN"]
+token = os.environ.get("TOKEN", "")
+if not token:
+    redis_token = r.get("x_k8s_token")
+    if redis_token:
+        token = redis_token if isinstance(redis_token, str) else redis_token.decode()
+        logging.debug("[k-inv][logs-loop] TOKEN not set in env, using X-K8S-Token from Redis")
+if not token:
+    logging.warning("[k-inv][logs-loop] No token available (TOKEN env and Redis x_k8s_token both empty) — API calls may fail")
 configuration.api_key = {"authorization": f"Bearer {token}"}
 configuration.host = sys.argv[1]
 

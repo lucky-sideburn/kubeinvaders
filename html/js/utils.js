@@ -107,8 +107,14 @@ function getK8sToken() {
 }
 
 function getStoredK8sConnectionConfig() {
+  var endpointInput = document.getElementById('k8s_api_endpoint');
+  var inputEndpoint = endpointInput ? endpointInput.value.trim() : '';
+  var storedEndpoint = (localStorage.getItem('k8s_api_endpoint') || '').trim();
+  var normalizedInputEndpoint = normalizeK8sEndpoint(inputEndpoint);
+  var normalizedStoredEndpoint = normalizeK8sEndpoint(storedEndpoint);
+
   return {
-    target: (localStorage.getItem('k8s_api_endpoint') || '').trim(),
+    target: normalizedInputEndpoint || normalizedStoredEndpoint || '',
     token: getK8sToken().trim(),
     caCert: getK8sCaCert()
   };

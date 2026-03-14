@@ -10,13 +10,36 @@ fi
 
 export PYTHONUNBUFFERED=1
 
-if python3 -c "import urllib.request; urllib.request.urlopen('https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}', timeout=5)" 2>/dev/null; then
-  python3 -u /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} &
-  while true
-  do
-    pgrep -a -f -c "^python3.*metrics_loop.*$" > /dev/null || ( python3 -u /opt/metrics_loop/start.py https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS} & )
-    sleep 2
-  done
+RESOLVED_ENDPOINT=""
+
+# 1) Endpoint configured from the web console (persisted by /kube/healthz in Redis)
+REDIS_ENDPOINT=$(python3 - <<'PY'
+import redis
+try:
+    r = redis.Redis(unix_socket_path='/tmp/redis.sock', decode_responses=True)
+    v = r.get('k8s_api_endpoint')
+    print(v.strip() if v else '')
+except Exception:
+    print('')
+PY
+)
+
+if [ ! -z "$REDIS_ENDPOINT" ]; then
+  RESOLVED_ENDPOINT="$REDIS_ENDPOINT"
+  echo "Using k8s_api_endpoint from Redis: $RESOLVED_ENDPOINT"
+elif [ ! -z "$ENDPOINT" ]; then
+  RESOLVED_ENDPOINT="$ENDPOINT"
+  echo "Using ENDPOINT env var: $RESOLVED_ENDPOINT"
+else
+  RESOLVED_ENDPOINT="https://${KUBERNETES_SERVICE_HOST}:${KUBERNETES_SERVICE_PORT_HTTPS}"
+  echo "Using in-cluster endpoint: $RESOLVED_ENDPOINT"
 fi
+
+python3 -u /opt/metrics_loop/start.py "$RESOLVED_ENDPOINT" &
+while true
+do
+  pgrep -a -f -c "^python3.*metrics_loop.*$" > /dev/null || ( python3 -u /opt/metrics_loop/start.py "$RESOLVED_ENDPOINT" & )
+  sleep 2
+done
 
 

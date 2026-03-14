@@ -3,6 +3,7 @@ import yaml
 import logging
 import os
 import sys
+import base64
 from kubernetes import client, config
 from kubernetes.client.rest import ApiException
 import requests
@@ -69,7 +70,24 @@ with open(sys.argv[1], 'r') as stream:
 r = redis.Redis(unix_socket_path='/tmp/redis.sock')
 
 configuration = client.Configuration()
-token = os.environ["TOKEN"]
+token = ""
+token_b64 = os.environ.get("K8S_TOKEN_B64", "")
+if token_b64:
+    try:
+        token = base64.b64decode(token_b64).decode("utf-8").strip()
+        logging.info("[PROGRAMMING_MODE] Using token from K8S_TOKEN_B64")
+    except Exception as e:
+        logging.warning(f"[PROGRAMMING_MODE] Invalid K8S_TOKEN_B64: {e}")
+
+if not token:
+    token = os.environ.get("TOKEN", "")
+if not token:
+    redis_token = r.get("x_k8s_token")
+    if redis_token:
+        token = redis_token.decode() if isinstance(redis_token, bytes) else redis_token
+        logging.info("[PROGRAMMING_MODE] TOKEN not set in env, using X-K8S-Token from Redis")
+if not token:
+    logging.warning("[PROGRAMMING_MODE] No token available (TOKEN env and Redis x_k8s_token both empty) — API calls may fail")
 configuration.api_key = {"authorization": f"Bearer {token}"}
 configuration.host = sys.argv[2]
 configuration.insecure_skip_tls_verify = True

@@ -34,6 +34,12 @@ local arg = ngx.req.get_uri_args()
 local req_headers = ngx.req.get_headers()
 local target = arg['target'] or req_headers["x-k8s-target"] or req_headers["X-K8S-Target"]
 local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
+
+if header_token and header_token ~= "" then
+  local red_tok = redis:new()
+  red_tok:connect("unix:/tmp/redis.sock")
+  red_tok:set("x_k8s_token", header_token)
+end
 local ca_cert_b64 = req_headers["x-k8s-ca-cert-b64"] or req_headers["X-K8S-CA-CERT-B64"]
 local ca_cert = nil
 

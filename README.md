@@ -12,26 +12,28 @@ Some companies use it for marketing at tech conferences in DevOps & SRE. For exa
 
 The teams at Platform Engineering (https://platformengineering.it/) and GDT - Garanti Del Talento ([https://www.garantideltalento.it/](https://www.garantideltalento.it)) back this project. They provide enterprise-grade features and SRE experts to help customers verify the resilience of their Kubernetes infrastructure.
 
-Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I couldn't be present at my talk, but I still wanted to share them with the community."
+Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-engineering-practices-for-kubernetes1pdf) from the Chaos Engineering speech I prepared for FOSDEM 2023. Unfortunately, I couldn't be present at my talk, but I still wanted to share them with the community.
 
 # Table of Contents
 
 1. [Description](#Description)
-3. [Usage](#Usage)
-4. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
-5. [Persistence](#Persistence)
-6. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-And-Known-Problems)
-7. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
-8. [Metrics](#Metrics)
-9. [Community](#Community)
-10. [Community blogs and videos](#Community-blogs-and-videos)
-11. [License](#License)
+2. [Installation](#Installation)
+3. [Example using Podman + MiniKube](#Example-using-Podman--MiniKube)
+4. [Usage](#Usage)
+5. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
+6. [Persistence](#Persistence)
+7. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-and-Known-Problems)
+8. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
+9. [Prometheus Metrics](#Prometheus-Metrics)
+10. [Community](#Community)
+11. [Community blogs and videos](#Community-blogs-and-videos)
+12. [License](#License)
 
 ## Description
 
-Inspired by the classic Space Invaders game, Kubeinvaders offers a playful and engaging way to learn about Kubernetes resilience by stressing a cluster and observing its behavior under pressure. This open-source project, built without relying on any external frameworks, provides a fun and educational experience for developers to explore the limits and strengths of their Kubernetes deployments
+Inspired by the classic Space Invaders game, KubeInvaders offers a playful and engaging way to learn about Kubernetes resilience by stressing a cluster and observing its behavior under pressure. This open-source project, built without relying on any external frameworks, provides a fun and educational experience for developers to explore the limits and strengths of their Kubernetes deployments.
 
-## Installation-default
+## Installation
 
 **Helm installation is currently not supported.**
 
@@ -56,8 +58,6 @@ http://localhost:8080
 ```
 
 If you want to run KubeInvaders against your own Kubernetes cluster, create the required RBAC components (assumes k8s v1.24+):
-
-Create the required components (assumes k8s v1.24+):
 
 ```bash
 cat << 'EOF' | kubectl apply -f -
@@ -160,7 +160,7 @@ Extract the token:
 TOKEN=$(k get secret -n kubeinvaders -o go-template='{{.data.token | base64decode}}' kinv-sa-token)
 ```
 
-Important: use a valid Kubernetes token. If the token is missing, invalid, or expired, KubeInvaders cannot call the Kubernetes API and game actions will fail.
+**Important:** Use a valid Kubernetes token. If the token is missing, invalid, or expired, KubeInvaders cannot call the Kubernetes API and game actions will fail.
 
 The example above shows how to extract the token from `kinv-sa-token`. If you use short-lived tokens, generate a new one when needed:
 
@@ -174,6 +174,88 @@ Create two namespaces:
 kubectl create namespace namespace1
 kubectl create namespace namespace2
 ```
+
+## Example using Podman + MiniKube
+
+Install MiniKube
+```bash
+luckysideburn:~ >> % minikube start
+😄  minikube v1.38.1 on Darwin 26.2 (arm64)
+✨  Automatically selected the vfkit driver. Other choices: qemu2, virtualbox, vmware, ssh, podman (experimental)
+❗  Starting v1.39.0, minikube will default to "containerd" container runtime. See #21973 for more info.
+💿  Downloading VM boot image ...
+    > minikube-v1.38.0-arm64.iso....:  65 B / 65 B [---------] 100.00% ? p/s 0s
+    > minikube-v1.38.0-arm64.iso:  402.91 MiB / 402.91 MiB  100.00% 13.39 MiB p
+👍  Starting "minikube" primary control-plane node in "minikube" cluster
+💾  Downloading Kubernetes v1.35.1 preload ...
+    > preloaded-images-k8s-v18-v1...:  243.95 MiB / 243.95 MiB  100.00% 14.15 M
+🔥  Creating vfkit VM (CPUs=2, Memory=4600MB, Disk=20000MB) ...
+🐳  Preparing Kubernetes v1.35.1 on Docker 28.5.2 ...
+🔗  Configuring bridge CNI (Container Networking Interface) ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+❗  /usr/local/bin/kubectl is version 1.30.1, which may have incompatibilities with Kubernetes 1.35.1.
+    ▪ Want kubectl v1.35.1? Try 'minikube kubectl -- get pods -A'
+```
+
+Take MiniKube IP
+```bash
+luckysideburn:~ >> % cat /Users/eugenio/.kube/config | grep server | grep $(minikube ip)
+    server: https://192.168.64.2:8443
+
+OR
+
+luckysideburn:~ >> % kubectl cluster-info
+
+Kubernetes control plane is running at https://192.168.64.2:8443
+CoreDNS is running at https://192.168.64.2:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+```
+
+Take MiniKube CA
+```bash
+luckysideburn:~ >> % cat ~/.minikube/ca.crt
+-----BEGIN CERTIFICATE-----
+MIIDBjCCAe6gAwIBAgIBATANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwptaW5p
+a3ViZUNBMB4XDTI2MDQyMzA2MTQwMVoXDTM2MDQyMTA2MTQwMVowFTETMBEGA1UE
+AxMKbWluaWt1YmVDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBANuB
+SAmidikCwaaCYW5wuTzdrtSv/8plGenF5EOh95c01YZgfd9nE/w5fFqDLbbiZ6sm
+qJI9JzomVI/Dhc5E+GLFsX+Ij0FPEb1AXvM0UEcLnfue9vhVLmR6bOQ8XFolOfb4
+gijD7V05nyMxMeWU+txRBJeSCNuckvnKzSb9+8l/8CtYSnqZI4pbdpQtjWg2G/De
+1b3xzxTMLPcWL9s8EnX9S5tfWB41ADlz2r4fVZanW3FiT7jTOC+Kh7oCPfaMmpVj
+gNDJCXvevrRtp1kztdl+UqMTt2JOi2xd6SCT9njYc1jvTM/JrK1YN1cH69x+LhVR
+jzvrtiIYWT3aqwt0bCMCAwEAAaNhMF8wDgYDVR0PAQH/BAQDAgKkMB0GA1UdJQQW
+MBQGCCsGAQUFBwMCBggrBgEFBQcDATAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQW
+BBTvgRYoLtGLZEO1XuEHC55vWc1nMzANBgkqhkiG9w0BAQsFAAOCAQEAdmZBj4Nm
+GHsqKztFAWrNMtu9SPxzCnPJ/tIJQxBSupRFWkdsv65xxAQZWqunpxZ/iDj7A7qd
+M6E/xbQc5Df6PpSntgagZesW//xNIXXFWOkiLCH2jaxrj7PkC86TLQRV1phKdVEX
+2DHOTwrrEo62iKYSlV9pZHpG2VH6HGYIcyqCMFeDRVZGEqPJKgWD+xEoMBO/yHe5
+gf9pcpaGe4hpj1esitonng+92HwIDldgkRfNipVYgmwqnoeLwMdYhfb+4erjjwyU
+gQNOiYSIKnBc4A3VwI6oeom8w0aMTikIo9/ljQwNpQgAjgrg+9C0kZfV7BzHtU0o
+RGlvZDpBZQTHPQ==
+-----END CERTIFICATE-----
+```
+
+Create Namespace, Service Account and Token
+```bash
+luckysideburn:~ >> % kubectl create ns kubeinvaders
+namespace/kubeinvaders created
+
+luckysideburn:~ >> % kubectl create sa kubeinvaders-sa -n kubeinvaders
+serviceaccount/kubeinvaders-sa created
+
+luckysideburn:~ >> % kubectl create token kubeinvaders-sa -n kubeinvaders --duration=24h
+eyJhbGciOiJSUzI1NiIsImtpZCI6Imh4MGs0WXk3ZXE1eHk4M2pMWHZsRFducmR2d0xQeFJrQ2xzdnlNaDVYcVEifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiXSwiZXhwIjoxNzc3MDk3ODE5LCJpYXQiOjE3NzcwMTE0MTksImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiOWZiNjA3ZGEtYjM5NS00ZTI4LTk5MmEtODkyYzY5OWE0OWFlIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJrdWJlaW52YWRlcnMiLCJzZXJ2aWNlYWNjb3VudCI6eyJuYW1lIjoia3ViZWludmFkZXJzLXNhIiwidWlkIjoiYzVhMTkwZjYtYjZiZi00NTFiLWIzMTktODg2YmZkZjJlZGZkIn19LCJuYmYiOjE3NzcwMTE0MTksInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDprdWJlaW52YWRlcnM6a3ViZWludmFkZXJzLXNhIn0.j1D8EZOPxIvtTL3ydtuFLDt9GVD1s8phj59dJI9AI6LSGJllCF-hmJmT0o-1p2imrS7FYKpq8NAly5IQqlBBKbIzliU84l8gD-DcsBxiuFcqyOqpckMC-ogxvfjcfhc-AB08ROrm9IM7xaporkRBiiC60Q3F0mlqw2_rmLlcZc_CFd2xo515gG56BAA6JJZ-mRLNYsBbMrYbI-TTs0jaIRWk-S-sQXOVhVf_asWt9pqnJ09-t_vevPSkbHGjAWoUp6PQElI4WalZZQqikmxsMdRANpimVne4vZf0HIcueqU4clYkfZdrsRtEhhswd_LDoMz6u6tGL1C5AkWvBwkzhA
+```
+
+Run KubeInvaders
+```bash
+podman run -p 8080:8080 --network=host kubeinvaders:latest
+```
+
+If you are on macOS, you may encounter issues due to Podman Machine networking.
+
+
 
 ## Usage
 
@@ -195,7 +277,7 @@ Press the "Hide Pods Name" button to conceal the names of the pods beneath the a
 
 ### Information about Current Status and Events :joystick:
 
-As described below, on the game screen near the spaceship, there are details about the current cluster, namespace, and some configurations.
+As shown below, on the game screen near the spaceship, there are details about the current cluster, namespace, and some configurations.
 
 ![Alt Text](./doc_images/game-info.png)
 
@@ -217,14 +299,14 @@ Press the + or - buttons to increase or decrease the game screen.
 
 - Select "Set Custom Chaos Container for Nodes" from the menu to use your preferred image or configuration against nodes.
 
-# URL Monitoring During Chaos Session
+## URL Monitoring During Chaos Session
 
 During a chaos engineering session, you can monitor the behavior of an HTTP call exposed by an Ingress.
 
 Use the flag "Add HTTP check & Chaos Report" and add the URL to monitor
 ![Alt Text](./doc_images/url_monitor.png)
 
-Follow real time charts during the experiment
+Follow real-time charts during the experiment
 
 ![Alt Text](./doc_images/http_stats.png)
 
@@ -236,7 +318,7 @@ K-inv uses Redis to save and manage data. Redis is configured with "appendonly."
 The legacy Helm chart does not support PersistentVolumes.
 
 ## Generic Troubleshooting and Known Problems
-- If you don't see aliens, please follow these steps: ![Alt Text](https://github.com/lucky-sideburn/kubeinvaders/issues/100#event-18433067619) 
+- If you don't see aliens, please follow these steps: [see issue #100](https://github.com/lucky-sideburn/kubeinvaders/issues/100#event-18433067619)
 - It seems that KubeInvaders does not work with EKS due to problems with ServiceAccount.
 - Currently, the installation of KubeInvaders into a namespace that is not named "kubeinvaders" is not supported.
 - I have only tested KubeInvaders with a Kubernetes cluster installed through KubeSpray.
@@ -244,7 +326,7 @@ The legacy Helm chart does not support PersistentVolumes.
   1.  Open a terminal and run "kubectl logs <pod_of_kubeinvader> -n kubeinvaders -f"
   2.  Execute the following command from another terminal: `curl "https://<your_kubeinvaders_url>/kube/pods?action=list&namespace=namespace1" -k`
   3.  Open an issue with attached logs.
-- If you use route_host insted of ingress, please specify also the port like route_host: "kubeinvaders.example.com:8080". The port must be the same of the NodePort service
+- If you use route_host instead of ingress, please also specify the port, e.g. route_host: "kubeinvaders.example.com:8080". The port must match the NodePort service port.
 
 ## Troubleshooting Unknown Namespace
 
@@ -275,7 +357,7 @@ Example of metrics:
 | deleted_pods_total 16                                      | Total number of deleted pods                                 |
 | deleted_namespace_pods_count{namespace=myawesomenamespace} | Total number of deleted pods per namespace                   |
 
-![Download Grafana dashboard](./confs/grafana/KubeInvadersDashboard.json)
+[Download Grafana dashboard](./confs/grafana/KubeInvadersDashboard.json)
 
 ![Alt Text](./doc_images/grafana1.png)
 
@@ -317,4 +399,4 @@ Please reach out for news, bugs, feature requests, and other issues via:
 
 ## License
 
-KubeInvaders is licensed under the Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text.
+KubeInvaders is licensed under the GNU General Public License v3.0. See [LICENSE](./LICENSE) for the full license text.

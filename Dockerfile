@@ -61,6 +61,7 @@ COPY scripts/chaos-containers.lua /usr/local/openresty/nginx/conf/kubeinvaders/c
 COPY scripts/programming_mode.lua /usr/local/openresty/nginx/conf/kubeinvaders/programming_mode.lua
 COPY scripts/config_kubeinv.lua /usr/local/openresty/lualib/config_kubeinv.lua
 COPY scripts/data/codenames.txt /usr/local/openresty/nginx/conf/kubeinvaders/data/codenames.txt
+COPY scripts/demo_deploy.lua /usr/local/openresty/nginx/conf/kubeinvaders/demo_deploy.lua
 
 # Copy Python helpers
 COPY scripts/programming_mode /opt/programming_mode/

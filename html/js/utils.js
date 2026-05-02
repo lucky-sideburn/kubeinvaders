@@ -16,6 +16,183 @@
 
 /* Utility Functions */
 
+function loadKubeconfigFile(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+
+  var filenameSpan = document.getElementById('kubeconfig_filename');
+  var statusDiv = document.getElementById('kubeconfig-load-status');
+  var successDiv = document.getElementById('kubeconfig-load-success');
+  var errorDiv = document.getElementById('kubeconfig-load-error');
+
+  if (filenameSpan) filenameSpan.textContent = file.name;
+  if (statusDiv) statusDiv.style.display = 'none';
+  if (successDiv) { successDiv.style.display = 'none'; successDiv.textContent = ''; }
+  if (errorDiv) { errorDiv.style.display = 'none'; errorDiv.textContent = ''; }
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var kubeconfig;
+    try {
+      kubeconfig = jsyaml.load(e.target.result);
+    } catch (err) {
+      showKubeconfigStatus('Failed to parse KUBECONFIG: ' + err.message, true);
+      return;
+    }
+
+    if (!kubeconfig || typeof kubeconfig !== 'object') {
+      showKubeconfigStatus('Invalid KUBECONFIG file.', true);
+      return;
+    }
+
+    var currentContextName = kubeconfig['current-context'];
+    var contexts = kubeconfig.contexts || [];
+    var contextEntry = contexts.find(function(c) { return c.name === currentContextName; }) || contexts[0];
+
+    if (!contextEntry) {
+      showKubeconfigStatus('No context found in KUBECONFIG.', true);
+      return;
+    }
+
+    var ctx = contextEntry.context || {};
+    var clusterName = ctx.cluster;
+    var userName = ctx.user;
+    var namespace = ctx.namespace || '';
+
+    var clusters = kubeconfig.clusters || [];
+    var clusterEntry = clusters.find(function(c) { return c.name === clusterName; });
+    var clusterData = clusterEntry ? (clusterEntry.cluster || {}) : {};
+
+    var users = kubeconfig.users || [];
+    var userEntry = users.find(function(u) { return u.name === userName; });
+    var userData = userEntry ? (userEntry.user || {}) : {};
+
+    var server = clusterData.server || '';
+    var caCertB64 = clusterData['certificate-authority-data'] || '';
+    var caCertFilePath = clusterData['certificate-authority'] || '';
+    var token = userData.token || userData['token-data'] || '';
+    var usesClientCert = !token && (
+      userData['client-certificate'] || userData['client-certificate-data'] ||
+      userData['exec']
+    );
+
+    var caCert = '';
+    if (caCertB64) {
+      try {
+        caCert = atob(caCertB64);
+      } catch (_) {
+        caCert = caCertB64;
+      }
+    }
+
+    var endpointInput = document.getElementById('k8s_api_endpoint');
+    var tokenInput = document.getElementById('k8s_token');
+    var caCertInput = document.getElementById('k8s_ca_cert');
+    var namespacesInput = document.getElementById('k8s_namespaces');
+
+    if (endpointInput && server) endpointInput.value = server;
+    if (tokenInput && token) { tokenInput.value = token; localStorage.setItem('k8s_token', token); }
+    if (caCertInput) caCertInput.value = caCert;
+    if (namespacesInput && namespace && !namespacesInput.value) namespacesInput.value = namespace;
+
+    if (server) localStorage.setItem('k8s_api_endpoint', server);
+    if (caCert) localStorage.setItem('k8s_ca_cert', caCert);
+
+    if (usesClientCert) {
+      var ns = namespace || 'default';
+      var cmds = [
+        'kubectl create serviceaccount kubeinvaders -n ' + ns,
+        'kubectl create clusterrolebinding kubeinvaders \\',
+        '  --clusterrole=cluster-admin \\',
+        '  --serviceaccount=' + ns + ':kubeinvaders',
+        'kubectl create token kubeinvaders -n ' + ns
+      ];
+      var caCertWarning = (!caCert && caCertFilePath)
+        ? '<br><br><strong>CA certificate:</strong> your kubeconfig references a local file (<code>' +
+          escapeHtml(caCertFilePath) + '</code>) that cannot be read by the browser. ' +
+          'Paste its contents manually into the CA Certificate field above.'
+        : '';
+      var statusDiv = document.getElementById('kubeconfig-load-status');
+      var errorDiv = document.getElementById('kubeconfig-load-error');
+      var successDiv = document.getElementById('kubeconfig-load-success');
+      if (statusDiv) statusDiv.style.display = 'block';
+      if (successDiv) successDiv.style.display = 'none';
+      if (errorDiv) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML =
+          'Endpoint loaded (context: <strong>' + contextEntry.name + '</strong>), but no token found.<br>' +
+          'This context uses client-certificate auth, which is not supported directly.<br>' +
+          'We suggest running these commands to create a <strong>cluster-admin</strong> service account token:<br><br>' +
+          '<code style="display:block; background:#f0f0f0; color:#222; padding:8px 10px; border-radius:4px; white-space:pre-wrap; overflow-wrap:break-word; font-size:12px;">' +
+          cmds.map(function(c) { return escapeHtml(c); }).join('\n') +
+          '</code>' +
+          '<button type="button" onclick="copyKubeconfigCommands(this)" ' +
+          'data-commands="' + escapeAttr(cmds.join('\n')) + '" ' +
+          'style="margin-top:8px; font-size:12px; padding:3px 10px;">Copy commands</button>' +
+          caCertWarning;
+      }
+      return;
+    }
+
+    var loaded = [];
+    if (server) loaded.push('endpoint');
+    if (token) loaded.push('token');
+    if (caCert) loaded.push('CA cert');
+    var contextLabel = contextEntry.name ? ' (context: ' + contextEntry.name + ')' : '';
+    var msg = 'Loaded ' + loaded.join(', ') + contextLabel + '.';
+    if (!caCert && caCertFilePath) {
+      msg += '\nCA certificate references a local file (' + caCertFilePath + ') — paste it manually into the CA Certificate field.';
+    }
+
+    showKubeconfigStatus(msg, false);
+  };
+  reader.readAsText(file);
+}
+
+function showKubeconfigStatus(message, isError) {
+  var statusDiv = document.getElementById('kubeconfig-load-status');
+  var successDiv = document.getElementById('kubeconfig-load-success');
+  var errorDiv = document.getElementById('kubeconfig-load-error');
+  if (!statusDiv) return;
+  statusDiv.style.display = 'block';
+  if (isError) {
+    if (errorDiv) { errorDiv.style.display = 'block'; errorDiv.textContent = message; }
+    if (successDiv) successDiv.style.display = 'none';
+  } else {
+    if (successDiv) { successDiv.style.display = 'block'; successDiv.textContent = message; }
+    if (errorDiv) errorDiv.style.display = 'none';
+  }
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function escapeAttr(str) {
+  return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
+}
+
+function copyKubeconfigCommands(btn) {
+  var commands = btn.getAttribute('data-commands');
+  navigator.clipboard.writeText(commands).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = orig; }, 2000);
+  }).catch(function() {
+    var ta = document.createElement('textarea');
+    ta.value = commands;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = orig; }, 2000);
+  });
+}
+
 function parseNamespacesInput(input) {
   if (!input) {
     return [];
@@ -336,12 +513,71 @@ function saveK8sConnection() {
       }
 
       showConnectionStatus('', false, 'k8s-save', 3000);
+      showDemoDeployBlock();
       return true;
     })
     .catch(function (error) {
       showConnectionStatus(error.message, true, 'k8s-save', 3000);
       return false;
     });
+}
+
+function showDemoDeployBlock() {
+  var block = document.getElementById('demo-deploy-block');
+  if (block) {
+    block.style.display = 'block';
+  }
+}
+
+function deployDemoResources() {
+  var btn = document.getElementById('demo-deploy-btn');
+  var statusDiv = document.getElementById('demo-deploy-status');
+  var successDiv = document.getElementById('demo-deploy-success');
+  var errorDiv = document.getElementById('demo-deploy-error');
+
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Deploying...';
+  }
+
+  var url = appendK8sTargetParam('/kube/demo/deploy');
+  var oReq = new XMLHttpRequest();
+  oReq.open('POST', url, true);
+  applyK8sConnectionHeaders(oReq);
+  oReq.timeout = 30000;
+
+  oReq.onreadystatechange = function () {
+    if (this.readyState !== XMLHttpRequest.DONE) return;
+
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Deploy ns-1 & ns-2 (10 pods each)';
+    }
+
+    statusDiv.style.display = 'block';
+    var payload = null;
+    try { payload = JSON.parse(this.responseText); } catch (e) {}
+
+    if (this.status === 200 || this.status === 207) {
+      var msg = (payload && payload.message) ? payload.message : 'Deployed successfully.';
+      if (payload && payload.errors && payload.errors.length > 0) {
+        errorDiv.style.display = 'block';
+        successDiv.style.display = 'none';
+        errorDiv.textContent = 'Partial failure: ' + payload.errors.join('; ');
+      } else {
+        successDiv.style.display = 'block';
+        errorDiv.style.display = 'none';
+        successDiv.textContent = '✅ ' + msg;
+      }
+    } else {
+      var errMsg = (payload && payload.error) ? payload.error : this.responseText;
+      errorDiv.style.display = 'block';
+      successDiv.style.display = 'none';
+      errorDiv.textContent = '❌ Deploy failed: ' + errMsg;
+    }
+  };
+
+  oReq.send();
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -385,6 +621,10 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 
   configured_namespaces = parseNamespacesInput(storedNamespaces || "");
+
+  if (storedK8sUrl && storedToken) {
+    showDemoDeployBlock();
+  }
 
   setTimeout(function() {
       var splashScreen = document.getElementById("splash-screen");

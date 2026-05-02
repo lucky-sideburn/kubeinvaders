@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/codemirror@5.65.18/lib/codemirror.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js "></script>
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -549,6 +550,20 @@ EOF</pre>
                 <div class="settings">
                 <h2>Kubernetes Connection</h2>
                 <div class="setting-group">
+                  <label>Load from KUBECONFIG file</label>
+                  <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
+                    <input type="file" id="kubeconfig_file" style="display:none;" onchange="loadKubeconfigFile(event)">
+                    <button type="button" onclick="document.getElementById('kubeconfig_file').click()">Choose KUBECONFIG file</button>
+                    <span id="kubeconfig_filename" style="color:#6c757d; font-size:13px;"></span>
+                  </div>
+                  <div id="kubeconfig-load-status" style="margin-bottom:10px; display:none;">
+                    <div id="kubeconfig-load-success" class="alert alert-success" style="display:none; padding:6px 10px; font-size:13px;"></div>
+                    <div id="kubeconfig-load-error" class="alert alert-danger" style="display:none; padding:6px 10px; font-size:13px;"></div>
+                  </div>
+                  <small style="display:block; margin-bottom:14px; color:#6c757d; font-weight:normal;">
+                  Parses the selected context and auto-fills the fields below. Or fill them manually.
+                  </small>
+
                   <label for="k8s_api_endpoint">Kubernetes API Endpoint</label>
                   <input type="text" id="k8s_api_endpoint" name="k8s_api_endpoint" placeholder="https://kubernetes.default.svc">
                   
@@ -603,6 +618,27 @@ EOF</pre>
               </div>
               </div>
               <!-- END KUBERNETES CONNECTION FORM -->
+
+              <!-- START DEMO DEPLOY BLOCK -->
+              <div class="row" id="demo-deploy-block" style="display:none; margin-bottom: 2%;">
+              <div class="col">
+                <div class="settings">
+                <h2>Deploy Demo Resources</h2>
+                <div class="setting-group">
+                  <p style="font-weight:normal; color:#6c757d; font-size:13px; margin-bottom:14px;">
+                    Creates namespaces <strong>ns-1</strong> and <strong>ns-2</strong>, each with a Deployment of <strong>10 nginx pods</strong> — ready to use as chaos experiment targets.
+                  </p>
+                  <button id="demo-deploy-btn" onclick="deployDemoResources()">Deploy ns-1 &amp; ns-2 (10 pods each)</button>
+                  <div id="demo-deploy-status" style="margin-top: 10px; display: none;">
+                    <div id="demo-deploy-success" class="alert alert-success" style="display: none;"></div>
+                    <div id="demo-deploy-error" class="alert alert-danger" style="display: none;"></div>
+                  </div>
+                </div>
+                </div>
+              </div>
+              </div>
+              <!-- END DEMO DEPLOY BLOCK -->
+
               <!-- START SWITCH BUTTONS FOR MODE (GAME, PROGRAMMING)-->  
               <div class="accordion" id="guide" style="margin-top: 2%; margin-bottom: 2%;">
                 <div class="accordion-item">

@@ -220,3 +220,150 @@ body {
     transform: rotate(360deg);
   }
 }
+
+/* ─── Sidebar enhancements ─────────────────────────────── */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  padding: 14px 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 6px;
+}
+
+.sidebar a:hover {
+  background-color: #771996;
+  color: #fff;
+}
+
+/* ─── Metrics table ─────────────────────────────────────── */
+.metrics-table-wrapper {
+  max-width: 620px;
+  margin: 14px auto 0;
+}
+
+.metrics-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.metrics-table tbody tr:not(:last-child) td {
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.metrics-table tbody tr:hover td {
+  background: #fafafa;
+}
+
+.metrics-table td {
+  padding: 10px 16px;
+  vertical-align: middle;
+}
+
+.metrics-table-label {
+  font-size: 11px;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.metrics-table-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #212529;
+  text-align: right;
+}
+
+.metrics-table-value--text {
+  font-size: 14px;
+  color: #6366f1;
+  word-break: break-all;
+}
+
+.metrics-table-unit {
+  font-size: 12px;
+  font-weight: normal;
+  color: #6c757d;
+}
+
+/* Colored dot accent per row */
+.metric-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.metric-dot--ns     { background: #6366f1; }
+.metric-dot--deleted { background: #ef4444; }
+.metric-dot--jobs   { background: #f97316; }
+.metric-dot--chaosp { background: #eab308; }
+.metric-dot--notrn  { background: #f43f5e; }
+.metric-dot--delay  { background: #14b8a6; }
+.metric-dot--ldelay { background: #a855f7; }
+
+/* ─── Programming mode layout ───────────────────────────── */
+.prog-mode-toolbar {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+}
+
+.prog-mode-editor-panel,
+.prog-mode-flow-panel {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.prog-mode-editor-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #282a36;
+  color: #f8f8f2;
+  padding: 8px 12px;
+}
+
+.prog-mode-editor-title {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.prog-mode-flow-title {
+  background: #282a36;
+  color: #f8f8f2;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.prog-run-btn {
+  background-color: #771996;
+  border-color: #5a1270;
+  color: #fff;
+  font-weight: bold;
+  letter-spacing: 0.05em;
+}
+
+.prog-run-btn:hover,
+.prog-run-btn:focus {
+  background-color: #5a1270;
+  border-color: #440e56;
+  color: #fff;
+}
+
+/* CodeMirror fills the editor panel */
+.prog-mode-editor-panel .CodeMirror {
+  border-radius: 0;
+  font-size: 13px;
+}

@@ -19,7 +19,7 @@
 function startGameMode() {
   if (game_mode_switch) {
     game_mode_switch = false;
-    $("#gameModeButton").text("Enable Game Mode");
+    $("#gameModeButton").html('<i class="fas fa-gamepad me-2"></i>Enable Game Mode');
   } else {
     /* TO DO: DO BETTER :D */
     let checkbox = {
@@ -32,8 +32,8 @@ function startGameMode() {
     document.getElementById("gameContainer").style.width = "100%";
     document.getElementById("gameContainer").style.height = "100%";
     //document.getElementById("loadButtonGroup").style.width = "650px";
-    $("#gameModeButton").text("Disable Game Mode");
-    $("#programmingModeButton").text("Enable Prog. Mode");
+    $("#gameModeButton").html('<i class="fas fa-gamepad me-2"></i>Disable Game Mode');
+    $("#programmingModeButton").html('<i class="fas fa-code me-2"></i>Programming Mode');
     programming_mode_switch = false;
   }
   if (game_buttons.style.display === "none") {
@@ -90,10 +90,15 @@ function startProgrammingMode() {
 
   if (editor == null) {
     editor = CodeMirror.fromTextArea(chaosProgramTextArea, {
-      lineNumbers: true, 
+      lineNumbers: true,
       theme: "dracula",
-      mode: "javascript"
+      mode: "yaml",
+      indentUnit: 2,
+      tabSize: 2,
+      indentWithTabs: false,
+      lineWrapping: false,
+      extraKeys: { "Tab": "indentMore", "Shift-Tab": "indentLess" }
     });
-    editor.setSize("100%", "100%");
+    editor.setSize("100%", "820px");
   }
 }

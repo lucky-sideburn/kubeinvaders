@@ -64,7 +64,7 @@ function startProgrammingMode() {
 
   if (programming_mode_switch) {
     programming_mode_switch = false;
-    $("#programmingModeButton").text("Enable Prog. Mode");
+    $("#programmingModeButton").html('<i class="fas fa-code me-2"></i>Programming Mode');
   } else {
     document.getElementById("gameContainer").style.width = "100%";
     document.getElementById("gameContainer").style.height = "100%";
@@ -72,8 +72,8 @@ function startProgrammingMode() {
 
     programming_mode_switch = true;
     game_mode_switch = false;
-    $("#gameModeButton").text("Enable Game Mode");
-    $("#programmingModeButton").text("Disable Prog. Mode");
+    $("#gameModeButton").html('<i class="fas fa-gamepad me-2"></i>Enable Game Mode');
+    $("#programmingModeButton").html('<i class="fas fa-code me-2"></i>Disable Prog. Mode');
   }
   if (chaos_program_screen.style.display === "none") {
     chaos_program_screen.style.display = "block";

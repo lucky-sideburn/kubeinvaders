@@ -225,6 +225,7 @@ body {
 .sidebar-brand {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 14px 15px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   margin-bottom: 6px;

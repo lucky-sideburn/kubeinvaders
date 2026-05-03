@@ -257,19 +257,23 @@
         </div>
   
         <!-- Modal -->
-        <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal fade" id="setChaosContainerModal" tabindex="-1" role="dialog" aria-labelledby="setChaosContainerModalLabel">
           <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h6 class="modal-title">Set Chaos Container Definition (Click on the code editor if you don't see anything.) - This job defines the chaos experiment that are executed when you target Kubernetes nodes in game mode</h6>
+                <h5 class="modal-title" id="setChaosContainerModalLabel"><i class="fas fa-cube me-2"></i>Chaos Container Definition</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="closeSetChaosContainerModal()"></button>
               </div>
               <div class="modal-body">
+                <p class="text-muted" style="font-size: 13px; font-weight: normal; margin-bottom: 12px;">
+                  Defines the Kubernetes Job executed when you target nodes in Game Mode. Click inside the editor if content does not appear immediately.
+                </p>
                 <textarea id="currentChaosContainerJsonTextArea"></textarea>
                 <p id="alert_placeholder2" style="color: #161616; margin-top: 3%;"></p>
-                <div class="modal-footer">
-                  <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
-                  <button type="button" id="closeButton3" class="btn btn-dark" data-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
-                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
+                <button type="button" id="closeButton3" class="btn btn-dark" data-bs-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
               </div>
             </div>
           </div>
@@ -462,6 +466,23 @@ rules:
       - update
       - patch
       - delete
+  - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - create
+      - get
+      - list
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+    verbs:
+      - create
+      - get
+      - list
+      - watch
   - apiGroups:
       - "*"
     resources:

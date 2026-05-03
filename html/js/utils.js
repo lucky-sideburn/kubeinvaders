@@ -563,7 +563,11 @@ function deployDemoResources() {
       if (payload && payload.errors && payload.errors.length > 0) {
         errorDiv.style.display = 'block';
         successDiv.style.display = 'none';
-        errorDiv.textContent = 'Partial failure: ' + payload.errors.join('; ');
+        var hasUnauthorized = payload.errors.some(function(e) { return e.includes('401'); });
+        var hint = hasUnauthorized
+          ? ' — token may lack RBAC permissions. Use the ⓘ button next to the Token field to create a service account with the correct cluster role.'
+          : '';
+        errorDiv.innerHTML = '⚠️ Partial failure: ' + payload.errors.join('; ') + hint;
       } else {
         successDiv.style.display = 'block';
         errorDiv.style.display = 'none';

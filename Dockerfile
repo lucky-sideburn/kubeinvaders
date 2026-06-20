@@ -1,3 +1,4 @@
+# v1.9.7 requires FROM docker.io/nginx:stable-bullseye
 FROM docker.io/openresty/openresty:1.25.3.1-4-bookworm-fat
 
 # Update repo and install some utilities and prerequisites

@@ -18,16 +18,17 @@ Here are the slides (https://www.slideshare.net/EugenioMarzo/kubeinvaders-chaos-
 
 1. [Description](#Description)
 2. [Installation](#Installation)
-3. [Example using Podman + MiniKube](#Example-using-Podman--MiniKube)
-4. [Usage](#Usage)
-5. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
-6. [Persistence](#Persistence)
-7. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-and-Known-Problems)
-8. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
-9. [Prometheus Metrics](#Prometheus-Metrics)
-10. [Community](#Community)
-11. [Community blogs and videos](#Community-blogs-and-videos)
-12. [License](#License)
+3. [Running Legacy Version v1.9.7](#Running-Legacy-Version-v197)
+4. [Example using Podman + MiniKube](#Example-using-Podman--MiniKube)
+5. [Usage](#Usage)
+6. [URL Monitoring During Chaos Session](#URL-Monitoring-During-Chaos-Session)
+7. [Persistence](#Persistence)
+8. [Generic Troubleshooting & Known Problems](#Generic-Troubleshooting-and-Known-Problems)
+9. [Troubleshooting Unknown Namespace](#Troubleshooting-Unknown-Namespace)
+10. [Prometheus Metrics](#Prometheus-Metrics)
+11. [Community](#Community)
+12. [Community blogs and videos](#Community-blogs-and-videos)
+13. [License](#License)
 
 ## Description
 
@@ -174,6 +175,29 @@ Create two namespaces:
 kubectl create namespace namespace1
 kubectl create namespace namespace2
 ```
+
+## Running Legacy Version v1.9.7
+
+If you need to run the legacy version v1.9.7, first extract the service account token:
+
+```bash
+TOKEN=$(kubectl get secret -n kubeinvaders -o go-template='{{.data.token | base64decode}}' kinv-sa-token)
+```
+
+Then run the container with the required environment variables pointing to your cluster:
+
+```bash
+podman run -p 8080:8080 \
+  --env APPLICATION_URL=http://localhost:8080 \
+  --env K8S_TOKEN=$TOKEN \
+  --env INSECURE_ENDPOINT=true \
+  --env KUBERNETES_SERVICE_HOST=192.168.39.182 \
+  --env KUBERNETES_SERVICE_PORT_HTTPS=8443 \
+  --env NAMESPACE=ns-1,ns-2 \
+  local/kubeinvaders:v1.9.7
+```
+
+Replace `KUBERNETES_SERVICE_HOST` and `KUBERNETES_SERVICE_PORT_HTTPS` with your cluster's API server address and port, and set `NAMESPACE` to a comma-separated list of the namespaces you want to target.
 
 ## Example using Podman + MiniKube
 

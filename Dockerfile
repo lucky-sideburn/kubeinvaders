@@ -1,4 +1,4 @@
-FROM nginx:stable
+FROM docker.io/nginx:stable-bullseye
 
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y

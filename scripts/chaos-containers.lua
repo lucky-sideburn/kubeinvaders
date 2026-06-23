@@ -3,7 +3,7 @@ local action = arg['action']
 local config = require "config_kubeinv"
 local redis = require "resty.redis"
 local red = redis:new()
-local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+local okredis, errredis = red:connect("127.0.0.1", 6379)
 
 if okredis then
   ngx.log(ngx.INFO, "Connection to Redis is ok")

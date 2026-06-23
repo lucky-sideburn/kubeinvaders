@@ -1,6 +1,4 @@
-# v1.9.7 requires FROM docker.io/nginx:stable-bullseye
-FROM docker.io/openresty/openresty:1.25.3.1-4-bookworm-fat
-
+FROM docker.io/openresty/openresty:bullseye-fat
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
 RUN apt-get -y install wget at procps gnupg ca-certificates jq openssl task-spooler apt-transport-https python3 python3-pip redis libssl-dev  python3-yaml python3-kubernetes python3-redis python3-requests

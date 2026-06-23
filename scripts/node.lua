@@ -75,7 +75,7 @@ local nodes = {}
 
 if ngx.var.request_method == "GET" and string.match(ngx.var.request_uri, "^.*/chaos[-]node.*$") then
   local red = redis:new()
-  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+  local okredis, errredis = red:connect("127.0.0.1", 6379)
 
   if okredis then
     ngx.log(ngx.INFO, "Connection to Redis is ok")

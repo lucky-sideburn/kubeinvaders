@@ -37,7 +37,7 @@ local header_token = req_headers["x-k8s-token"] or req_headers["X-K8S-Token"]
 
 if header_token and header_token ~= "" then
   local red_tok = redis:new()
-  red_tok:connect("unix:/tmp/redis.sock")
+  red_tok:connect("127.0.0.1", 6379)
   red_tok:set("x_k8s_token", header_token)
 end
 local ca_cert_b64 = req_headers["x-k8s-ca-cert-b64"] or req_headers["X-K8S-CA-CERT-B64"]
@@ -100,7 +100,7 @@ ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range';
 
 if action == "delete" then
   local red = redis:new()
-  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+  local okredis, errredis = red:connect("127.0.0.1", 6379)
 
   if okredis then
   else
@@ -218,12 +218,12 @@ if action == "list" then
       end
     end
     local red = redis:new()
-    local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+    local okredis, errredis = red:connect("127.0.0.1", 6379)
     red:set("pods_not_running_on_selected_ns", j)
   end
 
   local red = redis:new()
-  local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+  local okredis, errredis = red:connect("127.0.0.1", 6379)
   
   local pods_not_running_on, err = red:get("pods_not_running_on_selected_ns")
   local fewer_replicas_seconds, err = red:get("fewer_replicas_seconds")

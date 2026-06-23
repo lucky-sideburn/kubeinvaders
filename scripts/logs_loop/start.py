@@ -158,12 +158,7 @@ logging.getLogger('kubernetes').setLevel(logging.ERROR)
 
 logging.debug('Starting script for KubeInvaders taking logs from pods...')
 
-file = pathlib.Path('/tmp/redis.sock')
-
-if file.exists():
-    r = redis.Redis(unix_socket_path='/tmp/redis.sock', charset="utf-8", decode_responses=True)
-else:
-    r = redis.Redis("127.0.0.1", charset="utf-8", decode_responses=True)
+r = redis.Redis(host='127.0.0.1', port=6379, charset="utf-8", decode_responses=True)
 
 if os.environ.get("DEV"):
     logging.debug("Setting env var for dev...")

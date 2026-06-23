@@ -9,7 +9,7 @@ local incr = 0
 local config = require "config_kubeinv"
 local chaos_container = ""
 local red = redis:new()
-local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+local okredis, errredis = red:connect("127.0.0.1", 6379)
 
 local function read_all(file)
     local f = assert(io.open(file, "rb"))

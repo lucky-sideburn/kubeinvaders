@@ -114,7 +114,7 @@ def create_job(job_name, pod_template):
     return job
 
 
-r = redis.Redis(unix_socket_path='/tmp/redis.sock')
+r = redis.Redis(host='127.0.0.1', port=6379)
 
 logging.getLogger('kubernetes').setLevel(logging.ERROR)
 

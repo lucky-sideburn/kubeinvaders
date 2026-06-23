@@ -15,7 +15,7 @@ RESOLVED_ENDPOINT=""
 REDIS_ENDPOINT=$(python3 - <<'PY'
 import redis
 try:
-    r = redis.Redis(unix_socket_path='/tmp/redis.sock', decode_responses=True)
+    r = redis.Redis(host='127.0.0.1', port=6379, decode_responses=True)
     v = r.get('k8s_api_endpoint')
     print(v.strip() if v else '')
 except Exception:

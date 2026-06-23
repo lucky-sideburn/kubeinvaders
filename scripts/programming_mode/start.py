@@ -67,7 +67,7 @@ with open(sys.argv[1], 'r') as stream:
         print(ret)
         quit()
 
-r = redis.Redis(unix_socket_path='/tmp/redis.sock')
+r = redis.Redis(host='127.0.0.1', port=6379)
 
 configuration = client.Configuration()
 token = ""

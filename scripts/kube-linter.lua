@@ -11,7 +11,7 @@ local arg = ngx.req.get_uri_args()
 local namespace = arg['namespace']
 local logid = arg['logid']
 local red = redis:new()
-local okredis, errredis = red:connect("unix:/tmp/redis.sock")
+local okredis, errredis = red:connect("127.0.0.1", 6379)
   
 if okredis then
   ngx.log(ngx.INFO, "Connection to Redis is ok")

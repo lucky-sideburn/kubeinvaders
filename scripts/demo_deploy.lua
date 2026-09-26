@@ -110,17 +110,24 @@ end
 local ns_body_fmt = '{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"%s","labels":{"app":"kubeinvaders-demo"}}}'
 local deploy_body_fmt = '{"apiVersion":"apps/v1","kind":"Deployment","metadata":{"name":"kubeinvaders-demo","namespace":"%s","labels":{"app":"kubeinvaders-demo"}},"spec":{"replicas":10,"selector":{"matchLabels":{"app":"kubeinvaders-demo"}},"template":{"metadata":{"labels":{"app":"kubeinvaders-demo"}},"spec":{"containers":[{"name":"nginx","image":"nginx:alpine","resources":{"requests":{"memory":"32Mi","cpu":"10m"},"limits":{"memory":"64Mi","cpu":"50m"}}}]}}}}'
 
+local function forbidden_hint(status)
+  if status == 403 then
+    return " (the ServiceAccount cannot create namespaces/deployments: apply manifests/kubeinvaders-rbac.yaml)"
+  end
+  return ""
+end
+
 local created = {}
 local errors = {}
 
-for _, ns in ipairs({"ns-1", "ns-2"}) do
+for _, ns in ipairs({"namespace1", "namespace2"}) do
   local ns_body = string.format(ns_body_fmt, ns)
   local ok, status, _ = k8s_request(k8s_url .. "/api/v1/namespaces", "POST", ns_body)
 
   if not ok then
     table.insert(errors, "namespace " .. ns .. ": request failed")
   elseif status ~= 200 and status ~= 201 and status ~= 409 then
-    table.insert(errors, "namespace " .. ns .. ": HTTP " .. tostring(status))
+    table.insert(errors, "namespace " .. ns .. ": HTTP " .. tostring(status) .. forbidden_hint(status))
   else
     local deploy_body = string.format(deploy_body_fmt, ns)
     local dok, dstatus, _ = k8s_request(
@@ -131,7 +138,7 @@ for _, ns in ipairs({"ns-1", "ns-2"}) do
     if not dok then
       table.insert(errors, "deployment in " .. ns .. ": request failed")
     elseif dstatus ~= 200 and dstatus ~= 201 and dstatus ~= 409 then
-      table.insert(errors, "deployment in " .. ns .. ": HTTP " .. tostring(dstatus))
+      table.insert(errors, "deployment in " .. ns .. ": HTTP " .. tostring(dstatus) .. forbidden_hint(dstatus))
     else
       table.insert(created, ns)
     end
@@ -140,7 +147,7 @@ end
 
 if #errors == 0 then
   ngx.status = 200
-  ngx.say(json.encode({ok = true, created = created, message = "Deployed ns-1 and ns-2 with 10 nginx pods each"}))
+  ngx.say(json.encode({ok = true, created = created, message = "Deployed namespace1 and namespace2 with 10 nginx pods each"}))
 else
   ngx.status = 207
   ngx.say(json.encode({ok = #created > 0, created = created, errors = errors}))

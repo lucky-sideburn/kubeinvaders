@@ -1,0 +1,46 @@
+# Same permissions as helm-charts/kubeinvaders/templates/rbac-cluster.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kubeinvaders
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kubeinvaders
+  namespace: kubeinvaders
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubeinvaders
+rules:
+- apiGroups: [""]
+  resources: ["pods", "pods/log"]
+  verbs: ["delete"]
+- apiGroups: ["batch", "extensions"]
+  resources: ["jobs"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["get", "watch", "list"]
+# Used only by "Deploy Demo Resources" in the web console
+- apiGroups: [""]
+  resources: ["namespaces"]
+  verbs: ["create"]
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["create"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubeinvaders
+subjects:
+- kind: ServiceAccount
+  name: kubeinvaders
+  namespace: kubeinvaders
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubeinvaders

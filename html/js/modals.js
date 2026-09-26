@@ -58,6 +58,12 @@ function showSetCurrentChaosContainer() {
   setModalState(true);
 }
 
+// CodeMirror cannot measure itself while the modal is hidden: redraw it once the modal is visible
+$('#setChaosContainerModal').on('shown.bs.modal', function () {
+  editor_chaos_container_definition.refresh();
+  editor_chaos_container_definition.focus();
+});
+
 function closeSetChaosContainerModal() {
   $('#setChaosContainerModal').modal('hide');
   setModalState(false);

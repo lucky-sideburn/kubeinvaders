@@ -21,13 +21,7 @@ function startGameMode() {
     game_mode_switch = false;
     $("#gameModeButton").html('<i class="fas fa-gamepad me-2"></i>Enable Game Mode');
   } else {
-    /* TO DO: DO BETTER :D */
-    let checkbox = {
-      checked: true,
-    };
-    let close_button = document.getElementById("closeButtonReport");
-    close_button.innerHTML = "Skip";
-    showPrepareChaosReportModal(checkbox);
+    // The Select Ingress modal is opened on demand with its own button
     game_mode_switch = true;
     document.getElementById("gameContainer").style.width = "100%";
     document.getElementById("gameContainer").style.height = "100%";

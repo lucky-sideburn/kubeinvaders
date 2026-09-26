@@ -136,14 +136,8 @@ headers = {
 
 local res, err = red:get("chaos_container")
   
-if res ~= ngx.null then
-  ngx.log(ngx.INFO, "Found chaos_container defined in Redis!")
-  ngx.log(ngx.INFO, res)
-  chaos_container = res
-else
-  ngx.log(ngx.INFO, "Using default chaos container")
-  chaos_container = config["default_chaos_container"]
-end
+chaos_container = config.chaos_container(res)
+ngx.log(ngx.INFO, "Using chaos container: " .. chaos_container)
 
 local body = [[
 {

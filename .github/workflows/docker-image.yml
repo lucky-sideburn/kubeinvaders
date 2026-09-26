@@ -47,7 +47,7 @@ jobs:
     - name: Deploy example
       run: |
         kubectl apply -f minikube-setup/manifests --wait=true
-        kubectl get all -n "ns-1"
+        kubectl get all -n "namespace1"
 
     - name: Deploy with helm
       run: |
@@ -59,7 +59,7 @@ jobs:
           helm-charts/kubeinvaders \
           --set ingress.enabled=true \
           --set ingress.hostName=kubeinvaders.local \
-          --set-string config.target_namespace="ns-1" \
+          --set-string config.target_namespace="namespace1" \
           --set deployment.image.tag=${{ env.IMAGE_TAG }} \
           --set deployment.image.repository=${{ vars.REGISTRY_ADDRESS }}/${{ vars.REGISTRY_USERNAME }}/kubeinvaders
 

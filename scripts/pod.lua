@@ -240,19 +240,25 @@ if action == "list" then
     red:set("latest_fewer_replicas_seconds", 0)
   end
 
-  if fewer_replicas_time == ngx.null or tonumber(pods_not_running_on) == 0 then
+  -- Redis keys are missing (ngx.null) until the first pod list succeeds: treat them as 0
+  local not_running_count = tonumber(pods_not_running_on) or 0
+  local replicas_seconds = tonumber(fewer_replicas_seconds) or 0
+  local replicas_time = tonumber(fewer_replicas_time) or 0
+
+  if fewer_replicas_time == ngx.null or not_running_count == 0 then
     red:set("fewer_replicas_time", 0)
-    
-    if fewer_replicas_seconds ~= ngx.null and tonumber(fewer_replicas_seconds) > 0 then
+    replicas_time = 0
+
+    if replicas_seconds > 0 then
       red:set("latest_fewer_replicas_seconds", fewer_replicas_seconds)
       red:set("fewer_replicas_seconds", 0)
     end
   end
 
-  if pods_not_running_on ~= ngx.null and tonumber(pods_not_running_on) > 1 and tonumber(fewer_replicas_time) == 0 then
+  if not_running_count > 1 and replicas_time == 0 then
     red:set("fewer_replicas_time", tonumber(os.time(os.date("!*t"))))
-  elseif tonumber(pods_not_running_on) > 1 and tonumber(fewer_replicas_time) > 1 then
-    red:set("fewer_replicas_seconds", tonumber(os.time(os.date("!*t"))) - tonumber(fewer_replicas_time))
+  elseif not_running_count > 1 and replicas_time > 1 then
+    red:set("fewer_replicas_seconds", tonumber(os.time(os.date("!*t"))) - replicas_time)
   end
 
   if pods_not_found then

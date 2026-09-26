@@ -1,10 +1,11 @@
-FROM docker.io/openresty/openresty:bullseye-fat
+FROM docker.io/openresty/openresty:bookworm-fat
 # Update repo and install some utilities and prerequisites
 RUN apt-get update -y
 RUN apt-get -y install wget at procps gnupg ca-certificates jq openssl task-spooler apt-transport-https python3 python3-pip redis libssl-dev  python3-yaml python3-kubernetes python3-redis python3-requests
 
 # Install kubectl
-RUN curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN ARCH=$(dpkg --print-architecture) && \
+    curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/${ARCH}/kubectl"
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin/kubectl
 
@@ -66,6 +67,32 @@ COPY scripts/demo_deploy.lua /usr/local/openresty/nginx/conf/kubeinvaders/demo_d
 COPY scripts/programming_mode /opt/programming_mode/
 COPY scripts/metrics_loop /opt/metrics_loop/
 COPY scripts/logs_loop /opt/logs_loop/
+
+# Embedded KWOK demo cluster (see docs/kwok.md). Build with --build-arg WITH_KWOK=false for a slim image.
+# etcd and kube-* binaries (~400 MB) are downloaded here so the container starts offline.
+ARG WITH_KWOK=true
+ARG KWOK_VERSION=v0.8.0
+ARG KUBE_VERSION=v1.36.1
+ARG ETCD_VERSION=v3.6.10
+RUN if [ "$WITH_KWOK" = "true" ]; then \
+      set -e; \
+      ARCH=$(dpkg --print-architecture); \
+      mkdir -p /opt/kwok/bin; \
+      fetch() { echo "[kwok] Downloading $2"; curl -fsSL --retry 3 -o "$1" "$2"; }; \
+      fetch /usr/local/bin/kwokctl "https://github.com/kubernetes-sigs/kwok/releases/download/${KWOK_VERSION}/kwokctl-linux-${ARCH}"; \
+      fetch /opt/kwok/bin/kwok "https://github.com/kubernetes-sigs/kwok/releases/download/${KWOK_VERSION}/kwok-linux-${ARCH}"; \
+      for c in kube-apiserver kube-controller-manager kube-scheduler; do \
+        fetch "/opt/kwok/bin/$c" "https://dl.k8s.io/release/${KUBE_VERSION}/bin/linux/${ARCH}/$c"; \
+      done; \
+      fetch /tmp/etcd.tar.gz "https://github.com/etcd-io/etcd/releases/download/${ETCD_VERSION}/etcd-${ETCD_VERSION}-linux-${ARCH}.tar.gz"; \
+      tar -xzf /tmp/etcd.tar.gz -C /opt/kwok/bin --strip-components=1 "etcd-${ETCD_VERSION}-linux-${ARCH}/etcd"; \
+      rm -f /tmp/etcd.tar.gz; \
+      chmod +x /usr/local/bin/kwokctl /opt/kwok/bin/*; \
+      echo "[kwok] Binaries installed in /opt/kwok/bin"; \
+    fi
+COPY kwok/manifests/ /opt/kwok/manifests/
+COPY kwok/start-kwok.sh /opt/kwok/start-kwok.sh
+RUN chmod a+rx /opt/kwok/start-kwok.sh
 
 EXPOSE 8080
 

@@ -147,17 +147,15 @@ ngx.log(ngx.INFO, statusCode)
 ngx.log(ngx.INFO, statusText)
 
 nodes["items"] = {}
-for k,v in ipairs(resp) do
-  ngx.log(ngx.INFO, k)
-  decoded = json.decode(v)
-  if decoded["kind"] == "NodeList" then
-    for k2,v2 in ipairs(decoded["items"]) do
-      -- TODO: masters should be included?
-      -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
-      ngx.log(ngx.INFO, "found node " .. v2["metadata"]["name"])
-      table.insert(nodes["items"], { name = v2["metadata"]["name"], status = "ready" })
-      --end
-    end
+-- The response body may arrive in several chunks: decode it as a whole
+local ok_decode, decoded = pcall(json.decode, table.concat(resp))
+if ok_decode and decoded and decoded["kind"] == "NodeList" then
+  for k2,v2 in ipairs(decoded["items"]) do
+    -- TODO: masters should be included?
+    -- if not v2["metadata"]["labels"]["node-role.kubernetes.io/master"] then
+    ngx.log(ngx.INFO, "found node " .. v2["metadata"]["name"])
+    table.insert(nodes["items"], { name = v2["metadata"]["name"], status = "ready" })
+    --end
   end
 end
 ngx.say(json.encode(nodes))

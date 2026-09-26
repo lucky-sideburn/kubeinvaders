@@ -20,19 +20,24 @@ ngx.header['Access-Control-Expose-Headers'] = 'Content-Length,Content-Range'
 if ngx.var.request_method == "GET" and action == 'container_definition' then
     ngx.log(ngx.INFO, "Received request for getting chaos container definition")
     local res, err = red:get("chaos_container")
-    if res == ngx.null then
-      ngx.log(ngx.INFO, "There is no chaos_container key set in Redis. Taking default chaos container definition")
-      ngx.say(config['default_chaos_container'])
-    else
-      ngx.log(ngx.INFO, "There is chaos_container key set in Redis. Taking custom chaos container definition")
-      ngx.say(res)
-    end
+    ngx.say(config.chaos_container(res))
+    return ngx.exit(ngx.HTTP_OK)
 elseif ngx.var.request_method == "POST" and action == 'set' then
-  local body_data = ngx.req.get_body_data()  
+  local body_data = ngx.req.get_body_data()
+  if config.chaos_container(body_data) ~= body_data then
+    ngx.status = ngx.HTTP_BAD_REQUEST
+    ngx.say('Chaos container definition must be a JSON object with at least "name" and "image"')
+    return ngx.exit(ngx.HTTP_BAD_REQUEST)
+  end
   ngx.log(ngx.INFO, "Received new yaml definition for chaos container: " .. body_data)
   red:set("chaos_container", body_data)
   ngx.say("New chaos container definition has been configured in Redis")
   return ngx.exit(ngx.status)
+
+elseif ngx.var.request_method == "POST" and action == 'reset' then
+  red:del("chaos_container")
+  ngx.say(config['default_chaos_container'])
+  return ngx.exit(ngx.HTTP_OK)
 
 elseif ngx.var.request_method == "POST" and action == "set_log_regex" then
   local body_data = ngx.req.get_body_data()  

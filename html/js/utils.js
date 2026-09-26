@@ -256,15 +256,6 @@ function getK8sTargetUrl() {
   return normalizedEndpoint;
 }
 
-function buildNetworkErrorMessage(targetUrl, action) {
-  var message = action + ' failed: network error while reaching ' + targetUrl + '/healthz.';
-  if (/^https:\/\/(localhost|127\.0\.0\.1|\[::1\])(?::\d+)?(\/|$)/i.test(targetUrl)) {
-    return message + ' Possible cause: TLS certificate is not trusted (ERR_CERT_AUTHORITY_INVALID). Browsers cannot ignore invalid TLS certificates for XHR requests.';
-  }
-
-  return message + ' Possible causes: DNS error (ERR_NAME_NOT_RESOLVED), TLS certificate issue, or unreachable endpoint.';
-}
-
 function getK8sCaCert() {
   var caCertInput = document.getElementById('k8s_ca_cert');
   if (!caCertInput) {
@@ -329,10 +320,11 @@ function applyK8sConnectionHeaders(xhr) {
 function requestBackendHealthz(targetUrl, action, caCert) {
   return new Promise(function(resolve, reject) {
     var oReq = new XMLHttpRequest();
-    oReq.timeout = 5000;
+    oReq.timeout = 10000;
 
     oReq.onreadystatechange = function() {
-      if (this.readyState === XMLHttpRequest.DONE) {
+      // status 0 means no HTTP response: ontimeout/onerror report a clearer message
+      if (this.readyState === XMLHttpRequest.DONE && this.status !== 0) {
         var payload = null;
         try {
           payload = this.responseText ? JSON.parse(this.responseText) : null;
@@ -343,10 +335,13 @@ function requestBackendHealthz(targetUrl, action, caCert) {
         if (this.status === 200 && (!payload || payload.ok === true)) {
           resolve(payload || true);
         } else {
-          var errorDetails = '';
           if (payload && payload.error) {
-            errorDetails = ' (' + payload.error + ')';
-          } else if (payload && payload.body) {
+            reject(new Error(action + ' failed: KubeInvaders cannot reach ' + targetUrl + ' (' + payload.error + '). Check that the endpoint is reachable from the KubeInvaders container.'));
+            return;
+          }
+
+          var errorDetails = '';
+          if (payload && payload.body) {
             errorDetails = ' (' + payload.body + ')';
           } else if (this.responseText) {
             errorDetails = ' (' + this.responseText + ')';
@@ -358,11 +353,11 @@ function requestBackendHealthz(targetUrl, action, caCert) {
     };
 
     oReq.ontimeout = function() {
-      reject(new Error(action + ' timeout'));
+      reject(new Error(action + ' timeout: KubeInvaders did not answer within 10 seconds. Check that the container is still running.'));
     };
 
     oReq.onerror = function() {
-      reject(new Error(buildNetworkErrorMessage(targetUrl, action)));
+      reject(new Error(action + ' failed: the KubeInvaders backend is not responding. Check that the container is still running.'));
     };
 
     oReq.open('POST', '/kube/healthz', true);
@@ -472,6 +467,7 @@ function saveK8sConnectionRequest() {
     var tokenVal = getK8sToken();
     localStorage.setItem('k8s_token', tokenVal);
     configured_namespaces = parseNamespacesInput(namespacesRaw);
+    rememberConnectionSource(targetUrl, tokenVal);
 
     requestBackendHealthz(targetUrl, 'Save', caCert)
       .then(function () {
@@ -551,7 +547,7 @@ function deployDemoResources() {
 
     if (btn) {
       btn.disabled = false;
-      btn.textContent = 'Deploy ns-1 & ns-2 (10 pods each)';
+      btn.textContent = 'Deploy namespace1 & namespace2 (10 pods each)';
     }
 
     statusDiv.style.display = 'block';
@@ -584,6 +580,79 @@ function deployDemoResources() {
   oReq.send();
 }
 
+// Connection of the embedded KWOK demo cluster, when it is running (see docs/kwok.md)
+var kwok_connection = null;
+
+function loadKwokConnection() {
+  try {
+    var oReq = new XMLHttpRequest();
+    // Synchronous on purpose: the defaults must be in localStorage before the page reads them
+    oReq.open("GET", "/kube/kwok", false);
+    oReq.send();
+    if (oReq.status === 200) {
+      var cfg = JSON.parse(oReq.responseText);
+      if (cfg && cfg.enabled) {
+        kwok_connection = cfg;
+      }
+    }
+  } catch (error) {
+    console.warn("[K8S-CONNECTION] Unable to load KWOK connection", error);
+  }
+  return kwok_connection;
+}
+
+// k8s_connection_source tells where the stored connection comes from:
+// "kwok" (embedded demo cluster) or "user" (saved from the Kubernetes Connection form).
+// When KWOK is running it is the default, unless the user saved a different cluster.
+function applyKwokConnectionDefaults() {
+  var cfg = loadKwokConnection();
+  var source = localStorage.getItem("k8s_connection_source");
+
+  if (!cfg) {
+    // KWOK is not running anymore: forget its stale connection
+    if (source === "kwok") {
+      ["k8s_api_endpoint", "k8s_token", "k8s_namespaces", "k8s_ca_cert", "k8s_connection_source"].forEach(function (key) {
+        localStorage.removeItem(key);
+      });
+    }
+    return;
+  }
+
+  if (source === "user") {
+    return;
+  }
+
+  console.log("[K8S-CONNECTION] Using embedded KWOK cluster at " + cfg.endpoint);
+  localStorage.setItem("k8s_api_endpoint", cfg.endpoint);
+  localStorage.setItem("k8s_token", cfg.token);
+  localStorage.setItem("k8s_namespaces", cfg.namespaces);
+  localStorage.setItem("k8s_ca_cert", cfg.ca_cert);
+  localStorage.setItem("k8s_connection_source", "kwok");
+}
+
+function rememberConnectionSource(targetUrl, token) {
+  var isKwok = kwok_connection && targetUrl === kwok_connection.endpoint && token === kwok_connection.token;
+  localStorage.setItem("k8s_connection_source", isKwok ? "kwok" : "user");
+  updateKwokNotice();
+}
+
+function useKwokConnection() {
+  localStorage.removeItem("k8s_connection_source");
+  location.reload();
+}
+
+function updateKwokNotice() {
+  var notice = document.getElementById("kwok-notice");
+  if (!notice) {
+    return;
+  }
+
+  var usingKwok = localStorage.getItem("k8s_connection_source") === "kwok";
+  notice.style.display = kwok_connection ? "block" : "none";
+  document.getElementById("kwok-notice-active").style.display = usingKwok ? "block" : "none";
+  document.getElementById("kwok-notice-user").style.display = usingKwok ? "none" : "block";
+}
+
 document.addEventListener("DOMContentLoaded", function() {
   // Migrate old localStorage key name used in earlier versions
   var legacyK8sUrl = localStorage.getItem("k8s_url");
@@ -591,6 +660,9 @@ document.addEventListener("DOMContentLoaded", function() {
     localStorage.setItem("k8s_api_endpoint", legacyK8sUrl);
     localStorage.removeItem("k8s_url");
   }
+
+  applyKwokConnectionDefaults();
+  updateKwokNotice();
 
   var endpointInput = document.getElementById("k8s_api_endpoint");
   var namespacesInput = document.getElementById("k8s_namespaces");

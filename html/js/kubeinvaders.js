@@ -348,15 +348,42 @@ function getEndpoint() {
     oReq.send();
 }
 
+function showChaosContainerDefinition(definition) {
+    var job_parsed = definition;
+    try {
+        job_parsed = JSON.stringify(JSON.parse(definition), null, 4);
+    } catch (error) {
+        console.warn("[K-INV] Chaos container definition is not valid JSON", error);
+    }
+    $('#currentChaosContainerYaml').text(job_parsed);
+    editor_chaos_container_definition.setValue(job_parsed);
+    editor_chaos_container_definition.refresh();
+}
+
 function getCurrentChaosContainer() {
     var oReq = new XMLHttpRequest();
     oReq.onload = function () {
-        job_parsed = JSON.stringify(JSON.parse(this.responseText), null, 4);
-        $('#currentChaosContainerYaml').text(job_parsed);
-        editor_chaos_container_definition.setValue(job_parsed);
-        editor_chaos_container_definition.refresh();  
+        if (this.status !== 200) {
+            $('#alert_placeholder2').text('Unable to load the chaos container definition (HTTP ' + this.status + ').');
+            return;
+        }
+        showChaosContainerDefinition(this.responseText);
     };;
     openKubeApiRequest(oReq, "GET", "/kube/chaos/containers?action=container_definition");
+    oReq.send();
+}
+
+function resetChaosContainer() {
+    var oReq = new XMLHttpRequest();
+    oReq.onload = function () {
+        if (this.status === 200) {
+            showChaosContainerDefinition(this.responseText);
+            $('#alert_placeholder2').text('Default container definition (stress-ng) has been restored.');
+        } else {
+            $('#alert_placeholder2').text('Unable to restore the default container definition (HTTP ' + this.status + ').');
+        }
+    };;
+    openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=reset", true);
     oReq.send();
 }
 
@@ -409,8 +436,13 @@ function setChaosContainer() {
         openKubeApiRequest(oReq, "POST", "/kube/chaos/containers?action=set", true);
 
         oReq.onreadystatechange = function () {
-            if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+            if (this.readyState !== XMLHttpRequest.DONE) {
+                return;
+            }
+            if (this.status === 200) {
                 $('#alert_placeholder2').text('New container definition has been saved.');
+            } else {
+                $('#alert_placeholder2').text(this.responseText || ('Unable to save the container definition (HTTP ' + this.status + ').'));
             }
         };;
         oReq.setRequestHeader("Content-Type", "application/json");

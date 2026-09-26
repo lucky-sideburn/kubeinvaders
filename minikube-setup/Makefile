@@ -23,7 +23,7 @@ init-cluster:
 setup-cluster: 
 	kubectl apply -f ${MAKEFILE_DIRECTORY}/manifests \
 		&& helm upgrade --install kubeinvaders \
-			--set-string config.target_namespace="ns-1" \
+			--set-string config.target_namespace="namespace1" \
 			-n kubeinvaders \
 			kubeinvaders/kubeinvaders \
 			--set ingress.enabled=true \
@@ -35,7 +35,7 @@ setup-cluster:
 dev-cluster:
 	kubectl apply -f ${MAKEFILE_DIRECTORY}/manifests \
 		&& helm upgrade --install kubeinvaders \
-			--set-string config.target_namespace="ns-1" \
+			--set-string config.target_namespace="namespace1" \
 			-n kubeinvaders \
 			${MAKEFILE_DIRECTORY}/../helm-charts/kubeinvaders \
 			--set ingress.enabled=true \

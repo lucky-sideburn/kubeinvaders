@@ -266,12 +266,13 @@
               </div>
               <div class="modal-body">
                 <p class="text-muted" style="font-size: 13px; font-weight: normal; margin-bottom: 12px;">
-                  Defines the Kubernetes Job executed when you target nodes in Game Mode. Click inside the editor if content does not appear immediately.
+                  Defines the Kubernetes Job executed when you target nodes in Game Mode.
                 </p>
                 <textarea id="currentChaosContainerJsonTextArea"></textarea>
                 <p id="alert_placeholder2" style="color: #161616; margin-top: 3%;"></p>
               </div>
               <div class="modal-footer">
+                <button type="button" id="resetChaosContainerButton" class="btn btn-light" onclick="resetChaosContainer()">Reset to default</button>
                 <button type="button" id="saveButton" class="btn btn-light" onclick="setChaosContainer()">Save</button>
                 <button type="button" id="closeButton3" class="btn btn-dark" data-bs-dismiss="modal" onclick="closeSetChaosContainerModal()">Close</button>
               </div>
@@ -577,6 +578,18 @@ EOF</pre>
               <div class="col">
                 <div class="settings">
                 <h2>Kubernetes Connection</h2>
+                <div id="kwok-notice" class="alert alert-info" style="display:none; padding:8px 12px; font-size:13px; font-weight:normal;">
+                  <div id="kwok-notice-active">
+                    You are playing on the <strong>built-in KWOK demo cluster</strong>: nodes and pods are simulated, nothing real is deleted.<br>
+                    <strong>Want to use a real cluster?</strong> Fill in the fields below (or load a KUBECONFIG file) and press <strong>Save Connection</strong>,
+                    or restart the container with <code>-e KWOK_ENABLED=false</code> and your cluster settings.
+                    <a href="https://github.com/lucky-sideburn/kubeinvaders#connect-your-cluster" target="_blank" rel="noopener">How to connect your cluster</a>
+                  </div>
+                  <div id="kwok-notice-user">
+                    You are connected to your own cluster. The built-in KWOK demo cluster is still available.
+                    <button type="button" onclick="useKwokConnection()" style="margin-left:8px;">Use KWOK demo cluster</button>
+                  </div>
+                </div>
                 <div class="setting-group">
                   <label>Load from KUBECONFIG file</label>
                   <div style="display:flex; align-items:center; gap:10px; margin-bottom:6px;">
@@ -654,9 +667,9 @@ EOF</pre>
                 <h2>Deploy Demo Resources</h2>
                 <div class="setting-group">
                   <p style="font-weight:normal; color:#6c757d; font-size:13px; margin-bottom:14px;">
-                    Creates namespaces <strong>ns-1</strong> and <strong>ns-2</strong>, each with a Deployment of <strong>10 nginx pods</strong> — ready to use as chaos experiment targets.
+                    Creates namespaces <strong>namespace1</strong> and <strong>namespace2</strong>, each with a Deployment of <strong>10 nginx pods</strong> — ready to use as chaos experiment targets.
                   </p>
-                  <button id="demo-deploy-btn" onclick="deployDemoResources()">Deploy ns-1 &amp; ns-2 (10 pods each)</button>
+                  <button id="demo-deploy-btn" onclick="deployDemoResources()">Deploy namespace1 &amp; namespace2 (10 pods each)</button>
                   <div id="demo-deploy-status" style="margin-top: 10px; display: none;">
                     <div id="demo-deploy-success" class="alert alert-success" style="display: none;"></div>
                     <div id="demo-deploy-error" class="alert alert-danger" style="display: none;"></div>
@@ -760,6 +773,7 @@ EOF</pre>
                   <label class="form-check-label text-kinv" for="flexCheckDefault">
                     Check Ingress HTTP during Chaos Experiment
                   </label>
+                  <button type="button" id="selectIngressButton" class="btn btn-light btn-sm" style="margin-left: 12px;" onclick="wrapShowPrepareChaosReportModal({checked: true})">Select Ingress</button>
                 </div>
               </div>
               <div class="row container" style="margin-top: 1%; width: 100%;">
@@ -1042,7 +1056,7 @@ k8s_jobs:
             <div class="container text-center" style="margin-top: 20%;">
               <div>
                 <img style="scale: 60%" src="images/kubeinvaders_spaceship2.png" id="spaceShip">
-                <p class="text-muted credit" style="color:#fff;">version: v2.0.0</p>
+                <p class="text-muted credit" style="color:#fff;">version: v2.1.1</p>
               </div>
             </div>
           </div>

@@ -145,7 +145,7 @@ function setCodeNameToTextInput(elementId) {
     var oReq = new XMLHttpRequest();
     oReq.onreadystatechange = function () {
         if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
-            codename = this.responseText.trim();
+            codename = this.responseText.trim().replace(/[^a-zA-Z0-9_-]/g, "");
             $("#" + elementId).val(codename);
             $("#" + elementId).text(codename);
             if (codename == "") {

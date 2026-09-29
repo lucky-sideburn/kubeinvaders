@@ -13,7 +13,7 @@
 
 set -euo pipefail
 
-VERSION="${1:-v2.1.1}"
+VERSION="${1:-v2.1.3}"
 REPO="${REPO:-docker.io/luckysideburn/kubeinvaders}"
 ARCHS=(${ARCHS:-amd64 arm64})
 TAGS=("$VERSION" "latest" "develop")

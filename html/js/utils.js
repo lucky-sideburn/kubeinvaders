@@ -364,7 +364,8 @@ function requestBackendHealthz(targetUrl, action, caCert) {
     oReq.setRequestHeader('Content-Type', 'application/json');
     oReq.send(JSON.stringify({
       target: targetUrl,
-      ca_cert: caCert || ''
+      ca_cert: caCert || '',
+      token: getK8sToken()
     }));
   });
 }
